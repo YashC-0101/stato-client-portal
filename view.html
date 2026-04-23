@@ -191,7 +191,7 @@
 
   const RADIO_LABELS = {
     'yes-i-will-upgrade': 'Yes — I will upgrade myself',
-    'yes-yash-handles': 'Yes — Yash to send instructions',
+    'yes-yash-handles': 'Yes — Octogle Team to send instructions',
     'other-provider': 'Use a different provider',
     'keep-leadbyte': 'Keep LeadByte (already built)',
     'switch-leadreports': 'Switch to Leadreports.io',
@@ -290,7 +290,7 @@
       const isSam = m.from === 'sam';
       const bg = isSam ? '#f0f9ff' : '#f0fdf4';
       const border = isSam ? '#bae6fd' : '#bbf7d0';
-      const author = isSam ? 'Sam' : 'You (Yash)';
+      const author = isSam ? 'Sam' : 'You (Octogle Team)';
       const authorColor = isSam ? '#0066cc' : '#16a34a';
       const dt = new Date(m.timestamp).toLocaleString();
       return `

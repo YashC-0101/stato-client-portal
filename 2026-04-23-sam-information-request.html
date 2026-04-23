@@ -540,12 +540,12 @@
       Hi Sam — instead of working through the status doc, just fill in what
       you can below. Your answers save automatically as you go. When you're
       done, hit Submit at the bottom and your email client will open with
-      everything ready to send back to Yash.
+      everything ready to send back to the Octogle Team.
     </p>
     <div class="meta">
       <strong>Date</strong><span>23 April 2026</span>
       <strong>For</strong><span>Sam — leadgeneration.io</span>
-      <strong>From</strong><span>Yash Chavan (yash.c@octogle.com)</span>
+      <strong>From</strong><span>Octogle Team (yash.c@octogle.com)</span>
       <strong>Time needed</strong><span>~10 minutes</span>
     </div>
   </header>
@@ -823,7 +823,7 @@
             <input type="radio" name="signnow_decision" value="yes-yash-handles" data-q />
             <div>
               <div class="opt-title">Yes — but please send me the link / instructions</div>
-              <div class="opt-desc">Yash will send you a step-by-step guide.</div>
+              <div class="opt-desc">Our team will send you a step-by-step guide.</div>
             </div>
           </label>
           <label>
@@ -918,7 +918,7 @@
             <input type="radio" name="r2_card" value="done" data-q />
             <div>
               <div class="opt-title">Yes — card is added</div>
-              <div class="opt-desc">Yash will activate R2 and confirm.</div>
+              <div class="opt-desc">Our team will activate R2 and confirm.</div>
             </div>
           </label>
           <label>
@@ -965,7 +965,7 @@
             <input type="radio" name="resend_dns" value="done" data-q />
             <div>
               <div class="opt-title">Yes — done</div>
-              <div class="opt-desc">Yash will switch the from-address and test.</div>
+              <div class="opt-desc">Our team will switch the from-address and test.</div>
             </div>
           </label>
           <label>
@@ -1062,8 +1062,9 @@
       </h2>
       <p class="sub">
         Stato's backend will run on Railway (a hosting service). To deploy
-        and manage it, Yash needs to be added as a member of your Railway
-        team. He hasn't received the invite email yet — could you check?
+        and manage it, Yash (from the Octogle Team) needs to be added as
+        a member of your Railway team. He hasn't received the invite email
+        yet — could you check?
       </p>
 
       <div class="callout urgent">
@@ -1144,7 +1145,7 @@
       </h2>
       <p class="sub">
         Open box for anything you've noticed in the status doc or want
-        Yash to know — feature requests, concerns, missing pieces, etc.
+        the Octogle Team to know — feature requests, concerns, missing pieces, etc.
       </p>
 
       <div class="field">
@@ -1152,24 +1153,24 @@
       </div>
     </section>
 
-    <!-- ─── Ask Yash a question (NEW) ─────────────────────── -->
+    <!-- ─── Ask Octogle Team a question (NEW) ─────────────────────── -->
     <section class="card" id="askCard">
       <h2>
         <span class="num" style="background: #16a34a;">💬</span>
-        Ask Yash a question
+        Ask Octogle Team a question
       </h2>
       <p class="sub">
         Need to ask something not covered in the form above? Send a quick
-        note here — Yash will see it and reply by email or WhatsApp.
+        note here — the Octogle Team will see it and reply by email or WhatsApp.
       </p>
 
       <div id="messageHistory" style="margin: 14px 0;"></div>
 
       <div class="field">
-        <textarea id="newMessage" placeholder="Type your question or note for Yash here…" rows="3"></textarea>
+        <textarea id="newMessage" placeholder="Type your question or note for the Octogle Team here…" rows="3"></textarea>
       </div>
       <div style="display: flex; gap: 10px; align-items: center;">
-        <button type="button" class="primary" id="sendMessageBtn" style="font: inherit; font-size: 14px; font-weight: 600; padding: 10px 18px; border-radius: 999px; border: none; background: #16a34a; color: white; cursor: pointer;">Send to Yash</button>
+        <button type="button" class="primary" id="sendMessageBtn" style="font: inherit; font-size: 14px; font-weight: 600; padding: 10px 18px; border-radius: 999px; border: none; background: #16a34a; color: white; cursor: pointer;">Send to Octogle Team</button>
         <span id="sendMessageStatus" style="font-size: 13px; color: #6e6e73;"></span>
       </div>
     </section>
@@ -1179,8 +1180,8 @@
     <div class="footer-actions">
       <p>
         Click Submit when you're ready. Your answers are saved
-        securely — Yash will see them right away. You can come back and
-        update at any time.
+        securely — the Octogle Team will see them right away. You can come
+        back and update at any time.
       </p>
       <div class="button-row">
         <button type="button" class="secondary" id="clearBtn" style="color: #dc2626; border-color: #fecaca;">Clear all answers</button>
@@ -1282,7 +1283,7 @@
 
   function buildEmailBody() {
     const data = snapshot();
-    const lines = ['Hi Yash,', '', 'Here are my answers:', ''];
+    const lines = ['Hi Octogle Team,', '', 'Here are my answers:', ''];
     for (const [key, label] of Object.entries(LABELS)) {
       const value = (data[key] || '').trim();
       lines.push(label + ':');
@@ -1324,7 +1325,7 @@
       const isSam = m.from === 'sam';
       const bg = isSam ? '#f0f9ff' : '#f0fdf4';
       const border = isSam ? '#bae6fd' : '#bbf7d0';
-      const author = isSam ? 'You' : 'Yash';
+      const author = isSam ? 'You' : 'Octogle Team';
       const authorColor = isSam ? '#0066cc' : '#16a34a';
       return `
         <div style="background: ${bg}; border: 1px solid ${border}; border-radius: 12px; padding: 10px 14px; margin-bottom: 8px;">
@@ -1369,14 +1370,14 @@
       if (!password) throw new Error('Session expired — refresh and re-enter the code.');
       await postMessage(password, 'sam', text);
       ta.value = '';
-      setMessageStatus('✓ Sent — Yash will see it shortly.', '#16a34a');
+      setMessageStatus('✓ Sent — the Octogle Team will see it shortly.', '#16a34a');
       await refreshMessages(password);
     } catch (err) {
       console.error(err);
       setMessageStatus('Sorry, send failed: ' + (err.message || err), '#dc2626');
     } finally {
       btn.disabled = false;
-      btn.textContent = 'Send to Yash';
+      btn.textContent = 'Send to Octogle Team';
     }
   });
 
@@ -1397,7 +1398,7 @@
       const password = await getPasswordOrPrompt();
       const data = snapshot();
       await submitToGitHub(password, data);
-      setStatus('✓ Submitted — Yash will see your answers shortly. You can update them anytime by editing here and re-submitting.', '#16a34a');
+      setStatus('✓ Submitted — the Octogle Team will see your answers shortly. You can update them anytime by editing here and re-submitting.', '#16a34a');
       btn.textContent = 'Update answers';
     } catch (err) {
       console.error(err);
@@ -1465,7 +1466,7 @@
     const ok = confirm(
       'Clear all your answers?\n\n' +
       'This will empty every field on this page on this device. ' +
-      'Anything you have already submitted to Yash stays with him.\n\n' +
+      'Anything you have already submitted to the Octogle Team stays with us.\n\n' +
       'You can re-fill the form and submit again to update.'
     );
     if (!ok) return;
@@ -1477,7 +1478,7 @@
     form.querySelectorAll('input[type="radio"]').forEach((el) => { el.checked = false; });
     refreshProgress();
 
-    setStatus('Cleared. You can start fresh — answers are not removed from Yash\'s side.', '#6e6e73');
+    setStatus('Cleared. You can start fresh — answers are not removed from our side.', '#6e6e73');
     document.getElementById('submitBtn').textContent = 'Submit answers';
     document.getElementById('samForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
