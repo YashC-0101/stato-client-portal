@@ -606,6 +606,7 @@
       Waiting on you (covered in the form below)
     </h3>
     <ul class="check-list">
+      <li><span class="ic wait">!</span><div><strong>Railway invite</strong> — please send to <code style="background: #fef3c7; padding: 1px 6px; border-radius: 4px; color: #92400e; font-weight: 600;">yash.c@octogle.com</code> — needed before we can deploy</div></li>
       <li><span class="ic wait">!</span><div><strong>SignNow paid plan</strong> — trial expires 29 April</div></li>
       <li><span class="ic wait">!</span><div><strong>LeadByte API key</strong> — currently mock data</div></li>
       <li><span class="ic wait">!</span><div><strong>Cloudflare R2 card</strong> — for file storage</div></li>
@@ -1052,10 +1053,68 @@
       </div>
     </section>
 
-    <!-- ─── F. Demo / launch ───────────────────────── -->
+    <!-- ─── F. Railway hosting access (NEW) ───────────────────────── -->
+    <section class="card">
+      <h2 class="urgent">
+        <span class="num">6</span>
+        Railway hosting access
+        <span class="badge urgent">Not received yet</span>
+      </h2>
+      <p class="sub">
+        Stato's backend will run on Railway (a hosting service). To deploy
+        and manage it, Yash needs to be added as a member of your Railway
+        team. He hasn't received the invite email yet — could you check?
+      </p>
+
+      <div class="callout urgent">
+        Please send the Railway team invite to:
+        <strong style="display: inline-block; background: white; padding: 4px 10px; border-radius: 6px; margin-left: 6px; font-family: 'SF Mono', Menlo, Consolas, monospace; font-size: 13px; color: #1d1d1f; border: 1px solid #fecaca;">yash.c@octogle.com</strong>
+      </div>
+
+      <div class="field">
+        <label>Have you sent the Railway invite to <code>yash.c@octogle.com</code>?</label>
+        <div class="radio-group">
+          <label>
+            <input type="radio" name="railway_invite" value="yes-sent" data-q />
+            <div>
+              <div class="opt-title">Yes — already sent</div>
+              <div class="opt-desc">Yash will re-check his inbox / spam.</div>
+            </div>
+          </label>
+          <label>
+            <input type="radio" name="railway_invite" value="will-send-today" data-q />
+            <div>
+              <div class="opt-title">Not yet — sending today</div>
+              <div class="opt-desc">Tell us roughly when so we can plan deploy.</div>
+            </div>
+          </label>
+          <label>
+            <input type="radio" name="railway_invite" value="need-help" data-q />
+            <div>
+              <div class="opt-title">Need help — please send instructions</div>
+              <div class="opt-desc">We'll send a one-line guide for adding members in Railway.</div>
+            </div>
+          </label>
+          <label>
+            <input type="radio" name="railway_invite" value="dont-have-railway" data-q />
+            <div>
+              <div class="opt-title">I don't have a Railway account yet</div>
+              <div class="opt-desc">We'll send you the sign-up link + suggested plan.</div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Anything else on the hosting side? (optional)</label>
+        <textarea name="railway_notes" placeholder="e.g. team name in Railway, plan you've chosen, billing email for invoices…"></textarea>
+      </div>
+    </section>
+
+    <!-- ─── G. Demo / launch ───────────────────────── -->
     <section class="card">
       <h2>
-        <span class="num">6</span>
+        <span class="num">7</span>
         Live demo + launch readiness
       </h2>
       <p class="sub">
@@ -1077,10 +1136,10 @@
       </div>
     </section>
 
-    <!-- ─── G. Open questions / extras ───────────────────────── -->
+    <!-- ─── H. Open questions / extras ───────────────────────── -->
     <section class="card">
       <h2>
-        <span class="num">7</span>
+        <span class="num">8</span>
         Anything else?
       </h2>
       <p class="sub">
@@ -1131,6 +1190,8 @@
     api_subdomain: 'Backend / API subdomain',
     portal_domain: 'Client portal domain',
     domain_notes: 'Domain notes',
+    railway_invite: 'Railway invite to yash.c@octogle.com',
+    railway_notes: 'Railway notes',
     demo_day: 'Demo day',
     demo_time: 'Demo time',
     demo_focus: 'Demo focus areas',
