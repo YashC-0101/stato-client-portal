@@ -400,6 +400,30 @@
   .field textarea { min-height: 90px; resize: vertical; }
   .field .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
+  .field-clear {
+    background: none;
+    border: none;
+    color: #6e6e73;
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 2px 8px;
+    margin-left: 8px;
+    border-radius: 999px;
+    transition: color 120ms ease, background 120ms ease;
+    display: none;
+    vertical-align: middle;
+    line-height: 1.2;
+  }
+  .field-clear:hover {
+    color: #dc2626;
+    background: #fef2f2;
+  }
+  .field.has-value > label > .field-clear,
+  .field.has-value > .field-clear {
+    display: inline-block;
+  }
+
   .radio-group { display: flex; flex-direction: column; gap: 8px; }
   .radio-group label {
     display: flex;
@@ -1220,6 +1244,59 @@
     }
   });
 
+  // Per-field "× Clear" buttons. Injected once at startup; each one knows
+  // which field name(s) it owns and clears them. Visibility driven by a
+  // .has-value class on the parent .field, refreshed on every input.
+  function addFieldClearButtons() {
+    form.querySelectorAll('.field').forEach((field) => {
+      const inputs = field.querySelectorAll('input, textarea, select');
+      const fieldNames = new Set();
+      inputs.forEach((i) => { if (i.name) fieldNames.add(i.name); });
+      if (fieldNames.size === 0) return;
+
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'field-clear';
+      btn.textContent = '× Clear';
+      btn.title = 'Clear this answer';
+      btn.addEventListener('click', (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        fieldNames.forEach((name) => {
+          form.querySelectorAll('[name="' + name + '"]').forEach((el) => {
+            if (el.type === 'radio' || el.type === 'checkbox') el.checked = false;
+            else el.value = '';
+          });
+        });
+        save();
+        refreshProgress();
+        refreshFieldClearVisibility();
+      });
+
+      // Outer label is the first <label> direct child of .field. Radio-option
+      // labels live inside .radio-group, so first match is correct.
+      const outerLabel = field.querySelector(':scope > label');
+      if (outerLabel) outerLabel.appendChild(btn);
+      else field.insertBefore(btn, field.firstChild);
+    });
+    refreshFieldClearVisibility();
+  }
+
+  function refreshFieldClearVisibility() {
+    form.querySelectorAll('.field').forEach((field) => {
+      const inputs = field.querySelectorAll('input, textarea, select');
+      let hasValue = false;
+      inputs.forEach((el) => {
+        if (el.type === 'radio' || el.type === 'checkbox') {
+          if (el.checked) hasValue = true;
+        } else if (el.value && el.value.trim()) {
+          hasValue = true;
+        }
+      });
+      field.classList.toggle('has-value', hasValue);
+    });
+  }
+
   document.getElementById('clearBtn').addEventListener('click', () => {
     const ok = confirm(
       'Clear all your answers?\n\n' +
@@ -1261,14 +1338,16 @@
     setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 100);
   });
 
-  form.addEventListener('input', () => { save(); refreshProgress(); });
+  form.addEventListener('input', () => { save(); refreshProgress(); refreshFieldClearVisibility(); });
   form.addEventListener('change', () => { save(); refreshProgress(); });
 
   // Mount password gate first; only show form after correct code typed.
   // Then try to pre-fill from the latest GitHub submission so Sam sees his
   // existing answers even on a different device.
+  addFieldClearButtons();
   mountPasswordGate(async (password) => {
     load(); // local-storage values first (instant)
+    refreshFieldClearVisibility();
     try {
       const latest = await loadLatest(password);
       if (latest && latest.answers) {
@@ -1280,6 +1359,7 @@
           });
         }
         refreshProgress();
+        refreshFieldClearVisibility();
         const t = new Date(latest.submittedAt).toLocaleString();
         setStatus('Loaded your last submission from ' + t + '. Edit anything and re-submit when ready.', '#0066cc');
       }
