@@ -1073,24 +1073,25 @@
 
     <div class="footer-actions">
       <p>
-        Click Submit and your email client will open with all answers
-        pre-filled. Just hit Send.
+        Click Submit when you're ready. Your answers are saved
+        securely — Yash will see them right away. You can come back and
+        update at any time.
       </p>
       <div class="button-row">
-        <button type="button" class="secondary" id="downloadBtn">Download answers as text</button>
-        <button type="button" class="primary" id="submitBtn">Submit by email</button>
+        <button type="button" class="secondary" id="downloadBtn">Download a copy</button>
+        <button type="button" class="primary" id="submitBtn">Submit answers</button>
       </div>
-      <div style="margin-top: 12px;"><span class="saved-hint visible">Your answers are saved on this device</span></div>
+      <div id="submitStatus" style="margin-top: 14px; font-size: 13px; min-height: 18px;"></div>
+      <div style="margin-top: 8px;"><span class="saved-hint visible">Your answers are saved on this device as you type</span></div>
     </div>
   </form>
 </div>
 
+<script src="lib.js"></script>
 <script>
 (function () {
   const form = document.getElementById('samForm');
   const STORAGE_KEY = 'stato-sam-form-2026-04-23';
-  const TO_EMAIL = 'yash.c@octogle.com';
-  const SUBJECT = 'Stato — my answers (Sam, leadgeneration.io)';
 
   const LABELS = {
     signnow_decision: 'SignNow decision',
@@ -1184,19 +1185,51 @@
     return lines.join('\n');
   }
 
-  document.getElementById('submitBtn').addEventListener('click', () => {
+  function setStatus(text, color) {
+    const el = document.getElementById('submitStatus');
+    el.textContent = text;
+    el.style.color = color || '#6e6e73';
+  }
+
+  function getPasswordOrPrompt() {
+    const pw = getStoredPassword();
+    if (pw) return Promise.resolve(pw);
+    // Re-trigger gate (shouldn't happen because gate runs at page load).
+    return new Promise((resolve) => mountPasswordGate(resolve));
+  }
+
+  document.getElementById('submitBtn').addEventListener('click', async () => {
     save();
-    const body = buildEmailBody();
-    const url = 'mailto:' + encodeURIComponent(TO_EMAIL)
-      + '?subject=' + encodeURIComponent(SUBJECT)
-      + '&body=' + encodeURIComponent(body);
-    window.location.href = url;
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.textContent = 'Submitting…';
+    setStatus('');
+    try {
+      const password = await getPasswordOrPrompt();
+      const data = snapshot();
+      await submitToGitHub(password, data);
+      setStatus('✓ Submitted — Yash will see your answers shortly. You can update them anytime by editing here and re-submitting.', '#16a34a');
+      btn.textContent = 'Update answers';
+    } catch (err) {
+      console.error(err);
+      setStatus('Sorry, submission failed: ' + (err.message || err), '#dc2626');
+      btn.textContent = 'Try submitting again';
+    } finally {
+      btn.disabled = false;
+    }
   });
 
   document.getElementById('downloadBtn').addEventListener('click', () => {
     save();
-    const body = buildEmailBody();
-    const blob = new Blob([body], { type: 'text/plain;charset=utf-8' });
+    const data = snapshot();
+    const lines = ['Stato — my answers', '', 'Submitted: ' + new Date().toLocaleString(), ''];
+    for (const [key, label] of Object.entries(LABELS)) {
+      const value = (data[key] || '').trim();
+      lines.push(label + ':');
+      lines.push(value ? '  ' + value.replace(/\n/g, '\n  ') : '  (skipped)');
+      lines.push('');
+    }
+    const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -1209,7 +1242,29 @@
   form.addEventListener('input', () => { save(); refreshProgress(); });
   form.addEventListener('change', () => { save(); refreshProgress(); });
 
-  load();
+  // Mount password gate first; only show form after correct code typed.
+  // Then try to pre-fill from the latest GitHub submission so Sam sees his
+  // existing answers even on a different device.
+  mountPasswordGate(async (password) => {
+    load(); // local-storage values first (instant)
+    try {
+      const latest = await loadLatest(password);
+      if (latest && latest.answers) {
+        for (const [name, value] of Object.entries(latest.answers)) {
+          const els = form.querySelectorAll('[name="' + name + '"]');
+          els.forEach((el) => {
+            if (el.type === 'radio') el.checked = el.value === value;
+            else if (el.value === '') el.value = value;
+          });
+        }
+        refreshProgress();
+        const t = new Date(latest.submittedAt).toLocaleString();
+        setStatus('Loaded your last submission from ' + t + '. Edit anything and re-submit when ready.', '#0066cc');
+      }
+    } catch (err) {
+      console.warn('Could not pre-load existing submission:', err.message);
+    }
+  });
 })();
 </script>
 </body>
