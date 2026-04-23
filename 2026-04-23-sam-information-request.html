@@ -1152,6 +1152,28 @@
       </div>
     </section>
 
+    <!-- ─── Ask Yash a question (NEW) ─────────────────────── -->
+    <section class="card" id="askCard">
+      <h2>
+        <span class="num" style="background: #16a34a;">💬</span>
+        Ask Yash a question
+      </h2>
+      <p class="sub">
+        Need to ask something not covered in the form above? Send a quick
+        note here — Yash will see it and reply by email or WhatsApp.
+      </p>
+
+      <div id="messageHistory" style="margin: 14px 0;"></div>
+
+      <div class="field">
+        <textarea id="newMessage" placeholder="Type your question or note for Yash here…" rows="3"></textarea>
+      </div>
+      <div style="display: flex; gap: 10px; align-items: center;">
+        <button type="button" class="primary" id="sendMessageBtn" style="font: inherit; font-size: 14px; font-weight: 600; padding: 10px 18px; border-radius: 999px; border: none; background: #16a34a; color: white; cursor: pointer;">Send to Yash</button>
+        <span id="sendMessageStatus" style="font-size: 13px; color: #6e6e73;"></span>
+      </div>
+    </section>
+
     <span class="saved-hint" id="savedHint">Saved automatically</span>
 
     <div class="footer-actions">
@@ -1276,6 +1298,87 @@
     el.textContent = text;
     el.style.color = color || '#6e6e73';
   }
+
+  // ─── "Ask Yash" message panel ───────────────────────────────────────────
+  function fmtDate(iso) {
+    const d = new Date(iso);
+    return d.toLocaleString(undefined, {
+      day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit',
+    });
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, (c) => (
+      { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
+    ));
+  }
+
+  function renderMessageHistory(messages) {
+    const root = document.getElementById('messageHistory');
+    if (!messages || messages.length === 0) {
+      root.innerHTML = '<p style="color: #86868b; font-size: 13px; font-style: italic; margin: 0;">No previous messages — write your first below.</p>';
+      return;
+    }
+    // Show all messages (Sam can see what Yash posted too if Yash ever replies inline).
+    root.innerHTML = messages.map((m) => {
+      const isSam = m.from === 'sam';
+      const bg = isSam ? '#f0f9ff' : '#f0fdf4';
+      const border = isSam ? '#bae6fd' : '#bbf7d0';
+      const author = isSam ? 'You' : 'Yash';
+      const authorColor = isSam ? '#0066cc' : '#16a34a';
+      return `
+        <div style="background: ${bg}; border: 1px solid ${border}; border-radius: 12px; padding: 10px 14px; margin-bottom: 8px;">
+          <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px;">
+            <strong style="color: ${authorColor}">${author}</strong>
+            <span style="color: #86868b">${escapeHtml(fmtDate(m.timestamp))}</span>
+          </div>
+          <div style="font-size: 14px; color: #1d1d1f; white-space: pre-wrap;">${escapeHtml(m.text)}</div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  async function refreshMessages(password) {
+    try {
+      const messages = await loadMessages(password);
+      renderMessageHistory(messages);
+    } catch (err) {
+      console.warn('Could not load messages:', err.message);
+    }
+  }
+
+  function setMessageStatus(text, color) {
+    const el = document.getElementById('sendMessageStatus');
+    el.textContent = text;
+    el.style.color = color || '#6e6e73';
+  }
+
+  document.getElementById('sendMessageBtn').addEventListener('click', async () => {
+    const ta = document.getElementById('newMessage');
+    const text = (ta.value || '').trim();
+    if (!text) {
+      setMessageStatus('Please type a message first.', '#dc2626');
+      return;
+    }
+    const btn = document.getElementById('sendMessageBtn');
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+    setMessageStatus('');
+    try {
+      const password = getStoredPassword();
+      if (!password) throw new Error('Session expired — refresh and re-enter the code.');
+      await postMessage(password, 'sam', text);
+      ta.value = '';
+      setMessageStatus('✓ Sent — Yash will see it shortly.', '#16a34a');
+      await refreshMessages(password);
+    } catch (err) {
+      console.error(err);
+      setMessageStatus('Sorry, send failed: ' + (err.message || err), '#dc2626');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Send to Yash';
+    }
+  });
 
   function getPasswordOrPrompt() {
     const pw = getStoredPassword();
@@ -1409,6 +1512,7 @@
   mountPasswordGate(async (password) => {
     load(); // local-storage values first (instant)
     refreshFieldClearVisibility();
+    refreshMessages(password);
     try {
       const latest = await loadLatest(password);
       if (latest && latest.answers) {

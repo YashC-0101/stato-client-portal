@@ -117,6 +117,12 @@
   <div id="errBox" class="err-box" style="display: none;"></div>
   <div id="content"></div>
 
+  <!-- ─── Messages from Sam ─── -->
+  <section class="card" id="messagesCard" style="margin-top: 20px;">
+    <h2>💬 Notes / questions from Sam</h2>
+    <div id="messagesList" style="margin-top: 10px;"></div>
+  </section>
+
 </div>
 
 <script src="lib.js"></script>
@@ -272,17 +278,45 @@
     box.textContent = msg;
   }
 
+  function renderMessages(messages) {
+    const root = document.getElementById('messagesList');
+    if (!messages || messages.length === 0) {
+      root.innerHTML = '<p style="color: #86868b; font-size: 13px; font-style: italic; margin: 0;">Sam hasn\'t sent any messages yet.</p>';
+      return;
+    }
+    // Reverse so latest is on top.
+    const sorted = [...messages].reverse();
+    root.innerHTML = sorted.map((m) => {
+      const isSam = m.from === 'sam';
+      const bg = isSam ? '#f0f9ff' : '#f0fdf4';
+      const border = isSam ? '#bae6fd' : '#bbf7d0';
+      const author = isSam ? 'Sam' : 'You (Yash)';
+      const authorColor = isSam ? '#0066cc' : '#16a34a';
+      const dt = new Date(m.timestamp).toLocaleString();
+      return `
+        <div style="background: ${bg}; border: 1px solid ${border}; border-radius: 12px; padding: 12px 14px; margin-bottom: 10px;">
+          <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px;">
+            <strong style="color: ${authorColor}">${author}</strong>
+            <span style="color: #86868b">${escape(dt)}</span>
+          </div>
+          <div style="font-size: 14px; color: #1d1d1f; white-space: pre-wrap;">${escape(m.text)}</div>
+        </div>
+      `;
+    }).join('');
+  }
+
   async function load() {
     document.getElementById('errBox').style.display = 'none';
     try {
       const password = getStoredPassword();
       if (!password) throw new Error('No password — refresh and re-enter.');
-      const submission = await loadLatest(password);
-      if (!submission) {
-        renderEmpty();
-        return;
-      }
-      render(submission);
+      const [submission, messages] = await Promise.all([
+        loadLatest(password),
+        loadMessages(password),
+      ]);
+      if (!submission) renderEmpty();
+      else render(submission);
+      renderMessages(messages);
     } catch (err) {
       console.error(err);
       showError('Could not load submission: ' + (err.message || err));

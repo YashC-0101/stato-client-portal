@@ -270,9 +270,10 @@ function mountPasswordGate(onUnlock) {
 // ─── GitHub Contents API ────────────────────────────────────────────────────
 
 const GITHUB_API = 'https://api.github.com';
+const MESSAGES_FILE = 'messages.json';
 
-async function fetchSubmission() {
-  const url = `${GITHUB_API}/repos/${CONFIG.repo}/contents/${CONFIG.file}?ref=${CONFIG.branch}`;
+async function fetchFile(path) {
+  const url = `${GITHUB_API}/repos/${CONFIG.repo}/contents/${path}?ref=${CONFIG.branch}`;
   const res = await fetch(url, {
     headers: {
       Accept: 'application/vnd.github+json',
@@ -283,20 +284,19 @@ async function fetchSubmission() {
   if (res.status === 404) return { sha: null, blob: null };
   if (!res.ok) throw new Error(`GitHub fetch failed: ${res.status}`);
   const data = await res.json();
-  // Decode base64 → JSON object (the encrypted blob)
   const jsonText = decodeURIComponent(escape(atob(data.content.replace(/\n/g, ''))));
   const blob = JSON.parse(jsonText);
   return { sha: data.sha, blob };
 }
 
-async function writeSubmission(blob, prevSha) {
+async function writeFile(path, blob, prevSha, commitMessage) {
   if (!CONFIG.token || CONFIG.token.startsWith('PASTE_')) {
     throw new Error('GitHub token not configured. Edit lib.js → CONFIG.token before going live.');
   }
-  const url = `${GITHUB_API}/repos/${CONFIG.repo}/contents/${CONFIG.file}`;
+  const url = `${GITHUB_API}/repos/${CONFIG.repo}/contents/${path}`;
   const content = btoa(unescape(encodeURIComponent(JSON.stringify(blob, null, 2))));
   const body = {
-    message: prevSha ? 'Update submission' : 'Initial submission',
+    message: commitMessage || (prevSha ? `Update ${path}` : `Create ${path}`),
     content,
     branch: CONFIG.branch,
   };
@@ -319,12 +319,12 @@ async function writeSubmission(blob, prevSha) {
   return res.json();
 }
 
-// ─── High-level submit / load ───────────────────────────────────────────────
+// Backwards-compat shims
+async function fetchSubmission() { return fetchFile(CONFIG.file); }
+async function writeSubmission(blob, prevSha) { return writeFile(CONFIG.file, blob, prevSha, prevSha ? 'Update submission' : 'Initial submission'); }
 
-/**
- * Submit form data: encrypt with password, fetch existing file's SHA (if any),
- * write to GitHub. Returns the commit info on success.
- */
+// ─── High-level: Sam's form submission ──────────────────────────────────────
+
 async function submitToGitHub(password, formData) {
   const payload = {
     submittedAt: new Date().toISOString(),
@@ -332,29 +332,74 @@ async function submitToGitHub(password, formData) {
     answers: formData,
   };
   const cipher = await encryptJson(password, payload);
+  const envelope = { v: 1, encrypted: true, lastUpdated: payload.submittedAt, data: cipher };
+  const { sha } = await fetchFile(CONFIG.file);
+  return writeFile(CONFIG.file, envelope, sha, sha ? 'Update submission' : 'Initial submission');
+}
 
-  // Outer envelope: stays as plain JSON so anyone visiting the file can see
-  // it's encrypted (and what version), but the actual answers are inside `data`.
-  const envelope = {
-    v: 1,
-    encrypted: true,
-    lastUpdated: payload.submittedAt,
-    data: cipher,
-  };
+async function loadLatest(password) {
+  const { blob } = await fetchFile(CONFIG.file);
+  if (!blob) return null;
+  if (!blob.encrypted || !blob.data) return blob;
+  return decryptJson(password, blob.data);
+}
 
-  const { sha } = await fetchSubmission();
-  return writeSubmission(envelope, sha);
+// ─── High-level: two-way message thread (Sam ↔ Yash) ───────────────────────
+
+/**
+ * Load + decrypt the full message thread. Returns an array of messages
+ * (oldest first). Empty array if no messages yet.
+ *
+ * Each message: { id, timestamp, from: 'sam'|'yash', text }
+ */
+async function loadMessages(password) {
+  const { blob } = await fetchFile(MESSAGES_FILE);
+  if (!blob) return [];
+  if (!blob.encrypted || !blob.data) return [];
+  try {
+    const decrypted = await decryptJson(password, blob.data);
+    return Array.isArray(decrypted.messages) ? decrypted.messages : [];
+  } catch {
+    return [];
+  }
 }
 
 /**
- * Load and decrypt the latest submission. Returns null if no submission yet.
+ * Append a new message to the thread. Loads current thread, appends, encrypts
+ * the whole thing, writes back. Each call = one git commit, so history is
+ * preserved automatically.
+ *
+ * @param {string} password — gate / encryption password
+ * @param {'sam'|'yash'} from — who posted the message
+ * @param {string} text — message body
  */
-async function loadLatest(password) {
-  const { blob } = await fetchSubmission();
-  if (!blob) return null;
-  if (!blob.encrypted || !blob.data) {
-    // Plaintext fallback (shouldn't happen, but be safe)
-    return blob;
-  }
-  return decryptJson(password, blob.data);
+async function postMessage(password, from, text) {
+  if (!text || !text.trim()) throw new Error('Message is empty');
+
+  const existing = await loadMessages(password);
+  const newMsg = {
+    id: Date.now().toString(36) + Math.random().toString(36).slice(2, 8),
+    timestamp: new Date().toISOString(),
+    from,
+    text: text.trim(),
+  };
+  const updated = [...existing, newMsg];
+
+  const cipher = await encryptJson(password, { messages: updated });
+  const envelope = {
+    v: 1,
+    encrypted: true,
+    lastUpdated: newMsg.timestamp,
+    messageCount: updated.length,
+    data: cipher,
+  };
+
+  const { sha } = await fetchFile(MESSAGES_FILE);
+  await writeFile(
+    MESSAGES_FILE,
+    envelope,
+    sha,
+    sha ? `Message from ${from}` : `Initial message from ${from}`,
+  );
+  return newMsg;
 }
