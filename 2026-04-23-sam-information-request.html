@@ -1,0 +1,1216 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Stato — Information Request for Sam</title>
+<style>
+  :root {
+    --ink: #1d1d1f;
+    --muted: #6e6e73;
+    --line: #e8e8ed;
+    --bg: #fafafa;
+    --card: #ffffff;
+    --blue: #0066cc;
+    --green: #16a34a;
+    --amber: #d97706;
+    --red: #dc2626;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 32px 20px 80px; }
+
+  header.cover {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 36px 32px;
+    margin-bottom: 24px;
+  }
+  header.cover .eyebrow {
+    color: var(--blue);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin: 0 0 6px 0;
+  }
+  header.cover h1 {
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 0 0 10px 0;
+  }
+  header.cover .lede {
+    color: var(--muted);
+    font-size: 15px;
+    margin: 0 0 20px 0;
+  }
+  header.cover .meta {
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    gap: 6px 16px;
+    font-size: 13px;
+    color: var(--muted);
+    border-top: 1px solid var(--line);
+    padding-top: 16px;
+  }
+  header.cover .meta strong { color: var(--ink); font-weight: 600; }
+
+  /* ── Status snapshot ── */
+  .snapshot {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 24px;
+  }
+  .snapshot h2 {
+    margin: 0 0 6px 0;
+    font-size: 19px;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+  }
+  .snapshot .sub {
+    color: var(--muted);
+    font-size: 14px;
+    margin: 0 0 22px 0;
+  }
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 22px;
+  }
+  .stat {
+    text-align: center;
+    padding: 14px 8px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: #fafafa;
+  }
+  .stat .num {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+  .stat .num.green { color: var(--green); }
+  .stat .num.amber { color: var(--amber); }
+  .stat .lab {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-weight: 600;
+  }
+
+  .check-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 14px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .check-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 13.5px;
+    line-height: 1.5;
+    padding: 6px 0;
+  }
+  .check-list .ic {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    margin-top: 1px;
+  }
+  .check-list .ic.done { background: #d1fae5; color: var(--green); }
+  .check-list .ic.wait { background: #fef3c7; color: var(--amber); }
+
+  /* ── Real vs mock table ── */
+  .data-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin: 12px 0;
+    font-size: 13.5px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .data-table thead {
+    background: #fafafa;
+  }
+  .data-table th {
+    text-align: left;
+    padding: 10px 14px;
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    border-bottom: 1px solid var(--line);
+  }
+  .data-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  .data-table tbody tr:last-child td { border-bottom: none; }
+  .pill {
+    display: inline-block;
+    padding: 2px 9px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .pill.real { background: #d1fae5; color: #065f46; }
+  .pill.mock { background: #fef3c7; color: #92400e; }
+  .pill.partial { background: #dbeafe; color: #1e40af; }
+  .pill.hidden { background: #f3f4f6; color: #4b5563; }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin-top: 12px;
+  }
+  .two-col .col {
+    background: #fafafa;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 16px 18px;
+  }
+  .two-col .col h4 {
+    margin: 0 0 10px 0;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+    font-weight: 700;
+  }
+  .two-col ul {
+    margin: 0;
+    padding-left: 0;
+    list-style: none;
+  }
+  .two-col li {
+    padding: 5px 0;
+    font-size: 13px;
+    line-height: 1.45;
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+  }
+  .two-col li::before {
+    content: "•";
+    color: var(--blue);
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  @media (max-width: 600px) {
+    .two-col { grid-template-columns: 1fr; }
+  }
+
+  details.expander {
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin: 14px 0;
+    background: #fafafa;
+  }
+  details.expander summary {
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    list-style: none;
+    color: var(--ink);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  details.expander summary::-webkit-details-marker { display: none; }
+  details.expander summary::after {
+    content: "▼";
+    font-size: 10px;
+    color: var(--muted);
+    transition: transform 200ms ease;
+  }
+  details.expander[open] summary::after { transform: rotate(180deg); }
+  details.expander > *:not(summary) { margin-top: 12px; }
+
+  .section-divider {
+    text-align: center;
+    margin: 32px 0 20px 0;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    position: relative;
+  }
+  .section-divider::before,
+  .section-divider::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 30%;
+    height: 1px;
+    background: var(--line);
+  }
+  .section-divider::before { left: 5%; }
+  .section-divider::after { right: 5%; }
+
+  @media (max-width: 600px) {
+    .stat-grid { grid-template-columns: repeat(2, 1fr); }
+    .check-list { grid-template-columns: 1fr; }
+  }
+
+  .progress {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    position: sticky;
+    top: 12px;
+    z-index: 10;
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    background: rgba(255, 255, 255, 0.92);
+  }
+  .progress .bar {
+    flex: 1;
+    height: 6px;
+    background: var(--line);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .progress .bar > div {
+    height: 100%;
+    background: var(--blue);
+    width: 0%;
+    transition: width 220ms ease;
+    border-radius: 999px;
+  }
+  .progress .label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    min-width: 64px;
+    text-align: right;
+  }
+
+  section.card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 18px;
+  }
+  section.card h2 {
+    margin: 0 0 6px 0;
+    font-size: 19px;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  section.card h2 .num {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: var(--blue);
+    color: white;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  section.card h2.urgent .num { background: var(--red); }
+  section.card h2.warning .num { background: var(--amber); }
+  section.card .sub {
+    color: var(--muted);
+    font-size: 14px;
+    margin: 0 0 18px 38px;
+  }
+
+  .field { margin: 18px 0; }
+  .field label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .field .help {
+    font-size: 13px;
+    color: var(--muted);
+    margin: 0 0 8px 0;
+    line-height: 1.5;
+  }
+  .field input[type="text"],
+  .field input[type="email"],
+  .field input[type="url"],
+  .field input[type="password"],
+  .field textarea,
+  .field select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    font: inherit;
+    font-size: 14px;
+    color: var(--ink);
+    background: white;
+    outline: none;
+    transition: border-color 120ms ease, box-shadow 120ms ease;
+  }
+  .field input:focus,
+  .field textarea:focus,
+  .field select:focus {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.15);
+  }
+  .field textarea { min-height: 90px; resize: vertical; }
+  .field .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  .radio-group { display: flex; flex-direction: column; gap: 8px; }
+  .radio-group label {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 14px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 400;
+    transition: border-color 120ms ease, background 120ms ease;
+  }
+  .radio-group label:hover { border-color: var(--blue); background: #f5faff; }
+  .radio-group input[type="radio"] { margin-top: 2px; }
+  .radio-group .opt-title { font-weight: 600; font-size: 14px; }
+  .radio-group .opt-desc { font-size: 13px; color: var(--muted); }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-left: auto;
+  }
+  .badge.urgent { background: #fee2e2; color: var(--red); }
+  .badge.warning { background: #fef3c7; color: var(--amber); }
+  .badge.info { background: #dbeafe; color: var(--blue); }
+
+  .callout {
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 13px;
+    margin: 10px 0;
+    line-height: 1.5;
+  }
+  .callout.urgent { background: #fef2f2; border: 1px solid #fecaca; color: #7f1d1d; }
+  .callout.info { background: #f0f9ff; border: 1px solid #bae6fd; color: #075985; }
+
+  .footer-actions {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 28px;
+    text-align: center;
+    margin-top: 24px;
+  }
+  .footer-actions p {
+    color: var(--muted);
+    font-size: 14px;
+    margin: 0 0 18px 0;
+  }
+  .button-row {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  button {
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 12px 22px;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: transform 80ms ease, background 120ms ease;
+  }
+  button.primary { background: var(--blue); color: white; }
+  button.primary:hover { background: #0058b3; }
+  button.secondary { background: white; color: var(--ink); border-color: var(--line); }
+  button.secondary:hover { border-color: var(--ink); }
+  button:active { transform: scale(0.98); }
+
+  .saved-hint {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--green);
+    font-size: 12px;
+    font-weight: 600;
+    margin-top: 14px;
+    opacity: 0;
+    transition: opacity 200ms ease;
+  }
+  .saved-hint.visible { opacity: 1; }
+  .saved-hint::before {
+    content: "✓";
+    width: 14px;
+    height: 14px;
+    background: var(--green);
+    color: white;
+    border-radius: 50%;
+    font-size: 9px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  @media print {
+    body { background: white; }
+    .progress, .footer-actions { display: none; }
+    section.card, header.cover { border: none; box-shadow: none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="cover">
+    <p class="eyebrow">Stato · Information Request</p>
+    <h1>A few things we need from you to go live</h1>
+    <p class="lede">
+      Hi Sam — instead of working through the status doc, just fill in what
+      you can below. Your answers save automatically as you go. When you're
+      done, hit Submit at the bottom and your email client will open with
+      everything ready to send back to Yash.
+    </p>
+    <div class="meta">
+      <strong>Date</strong><span>23 April 2026</span>
+      <strong>For</strong><span>Sam — leadgeneration.io</span>
+      <strong>From</strong><span>Yash Chavan (yash.c@octogle.com)</span>
+      <strong>Time needed</strong><span>~10 minutes</span>
+    </div>
+  </header>
+
+  <!-- ─── What we've done since last update ─── -->
+  <section class="snapshot">
+    <h2>Where we are right now</h2>
+    <p class="sub">
+      Quick snapshot of what's built and live, so you know where the project
+      stands. Detailed report is in the PDF — this is the headline version.
+    </p>
+
+    <div class="stat-grid">
+      <div class="stat">
+        <div class="num green">5</div>
+        <div class="lab">Integrations live</div>
+      </div>
+      <div class="stat">
+        <div class="num green">383</div>
+        <div class="lab">Tests passing</div>
+      </div>
+      <div class="stat">
+        <div class="num">26</div>
+        <div class="lab">Database tables</div>
+      </div>
+      <div class="stat">
+        <div class="num amber">3</div>
+        <div class="lab">Awaiting you</div>
+      </div>
+    </div>
+
+    <h3 style="font-size: 14px; font-weight: 700; margin: 0 0 10px 0; color: var(--ink); text-transform: uppercase; letter-spacing: 0.04em;">
+      Live and working
+    </h3>
+    <ul class="check-list">
+      <li><span class="ic done">✓</span><div><strong>Xero</strong> — invoices push to your real accounting tenant as drafts</div></li>
+      <li><span class="ic done">✓</span><div><strong>Endole</strong> — credit checks pull live company data</div></li>
+      <li><span class="ic done">✓</span><div><strong>Resend</strong> — automated emails sending (test email confirmed)</div></li>
+      <li><span class="ic done">✓</span><div><strong>SignNow</strong> — agreement envelopes sent and tracked</div></li>
+      <li><span class="ic done">✓</span><div><strong>Catchr</strong> — ad-spend syncing every hour</div></li>
+      <li><span class="ic done">✓</span><div><strong>Invoices</strong> — list, create, push to Xero</div></li>
+      <li><span class="ic done">✓</span><div><strong>Clients & credit checks</strong> — full CRUD, history kept</div></li>
+      <li><span class="ic done">✓</span><div><strong>Tasks, SOPs, Staff/HR</strong> — moved off mock data, real DB-backed</div></li>
+      <li><span class="ic done">✓</span><div><strong>Workflows</strong> — chase-overdue runs daily 9 AM automatically</div></li>
+      <li><span class="ic done">✓</span><div><strong>Client portal</strong> — security fix done, each client only sees their own data</div></li>
+      <li><span class="ic done">✓</span><div><strong>Auth & roles</strong> — owner / finance / ops / readonly / client all working</div></li>
+      <li><span class="ic done">✓</span><div><strong>Deploy runbook</strong> — full step-by-step ready for production</div></li>
+    </ul>
+
+    <h3 style="font-size: 14px; font-weight: 700; margin: 22px 0 10px 0; color: var(--ink); text-transform: uppercase; letter-spacing: 0.04em;">
+      Just in — being actioned by us
+    </h3>
+    <ul class="check-list">
+      <li><span class="ic done">✓</span><div><strong>GoDaddy DNS invites received</strong> — reviewing the setup; will flag if anything's missing or broken</div></li>
+    </ul>
+
+    <h3 style="font-size: 14px; font-weight: 700; margin: 22px 0 10px 0; color: var(--ink); text-transform: uppercase; letter-spacing: 0.04em;">
+      Waiting on you (covered in the form below)
+    </h3>
+    <ul class="check-list">
+      <li><span class="ic wait">!</span><div><strong>SignNow paid plan</strong> — trial expires 29 April</div></li>
+      <li><span class="ic wait">!</span><div><strong>LeadByte API key</strong> — currently mock data</div></li>
+      <li><span class="ic wait">!</span><div><strong>Cloudflare R2 card</strong> — for file storage</div></li>
+      <li><span class="ic wait">!</span><div><strong>Email domain verification</strong> — for branded "from" address (we'll handle now we've got GoDaddy access)</div></li>
+    </ul>
+
+
+    <!-- ─── Real vs mock per page (collapsible) ─── -->
+    <details class="expander" open>
+      <summary>Page-by-page: which screens show real data, which still show test data</summary>
+
+      <p style="font-size: 13px; color: var(--muted); margin: 0 0 8px 0;">
+        Plain English: <strong>"Real"</strong> means live data from your accounts.
+        <strong>"Test data"</strong> means we're showing placeholder figures
+        until a credential or upgrade arrives.
+        <strong>"Sandbox"</strong> means real API but a test environment.
+      </p>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>What you see</th>
+            <th>Status</th>
+            <th>Why</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Invoices</strong> + Push to Xero</td>
+            <td><span class="pill real">Real</span></td>
+            <td>Drafts appear in your real Xero account</td>
+          </tr>
+          <tr>
+            <td><strong>Clients</strong> list & detail</td>
+            <td><span class="pill real">Real</span></td>
+            <td>Backed by Postgres; revenue summed from paid invoices</td>
+          </tr>
+          <tr>
+            <td><strong>Credit checks</strong></td>
+            <td><span class="pill partial">Sandbox</span></td>
+            <td>Real Endole API but in test mode — flip when you confirm billing</td>
+          </tr>
+          <tr>
+            <td><strong>Agreements</strong> (SignNow)</td>
+            <td><span class="pill real">Real</span></td>
+            <td>Envelopes really send and track. Trial expires 29 April</td>
+          </tr>
+          <tr>
+            <td><strong>Email notifications</strong></td>
+            <td><span class="pill partial">Real, generic from-address</span></td>
+            <td>Sending live but from <code>onboarding@resend.dev</code></td>
+          </tr>
+          <tr>
+            <td><strong>Campaigns</strong> + leads</td>
+            <td><span class="pill mock">Test data</span></td>
+            <td>Waiting on your LeadByte API key — flips automatically once added</td>
+          </tr>
+          <tr>
+            <td><strong>Traffic sources</strong> per campaign</td>
+            <td><span class="pill mock">Test data</span></td>
+            <td>Same as campaigns — needs LeadByte key</td>
+          </tr>
+          <tr>
+            <td><strong>Ad spend</strong> (Catchr)</td>
+            <td><span class="pill real">Real</span></td>
+            <td>Syncing every hour from your Catchr account</td>
+          </tr>
+          <tr>
+            <td><strong>Tasks</strong></td>
+            <td><span class="pill real">Real (DB)</span></td>
+            <td>Empty list — fills as you and the team create tasks</td>
+          </tr>
+          <tr>
+            <td><strong>SOPs</strong></td>
+            <td><span class="pill real">Real (DB)</span></td>
+            <td>Empty until you upload your procedures</td>
+          </tr>
+          <tr>
+            <td><strong>Staff & HR</strong></td>
+            <td><span class="pill real">Real (DB)</span></td>
+            <td>Empty until you add staff records</td>
+          </tr>
+          <tr>
+            <td><strong>Workflows</strong></td>
+            <td><span class="pill real">Real (DB)</span></td>
+            <td>"Chase overdue" workflow is wired — others are scaffolds</td>
+          </tr>
+          <tr>
+            <td><strong>Client Portal</strong></td>
+            <td><span class="pill real">Real (scoped)</span></td>
+            <td>Each client login only sees their own data — security fixed</td>
+          </tr>
+          <tr>
+            <td><strong>Reports</strong></td>
+            <td><span class="pill partial">Real backend, sparse data</span></td>
+            <td>Numbers will populate once LeadByte sync is live</td>
+          </tr>
+          <tr>
+            <td><strong>File uploads</strong></td>
+            <td><span class="pill mock">Test mode</span></td>
+            <td>Uploads return placeholder URLs until R2 card is added</td>
+          </tr>
+          <tr>
+            <td><strong>Subscriptions page</strong></td>
+            <td><span class="pill hidden">UI only</span></td>
+            <td>Just a mockup — no backend yet. We'll build if you want it</td>
+          </tr>
+          <tr>
+            <td><strong>Cron jobs</strong> (chase, sync)</td>
+            <td><span class="pill real">Real</span></td>
+            <td>Run on schedule — chase emails, LeadByte sync (when key set), Catchr sync</td>
+          </tr>
+        </tbody>
+      </table>
+    </details>
+
+    <!-- ─── Backend / Frontend split (collapsible) ─── -->
+    <details class="expander">
+      <summary>Backend vs frontend — what's done, what's left on our side</summary>
+
+      <div class="two-col">
+        <div class="col">
+          <h4>Backend ✓ Done</h4>
+          <ul>
+            <li>All 8 third-party integrations built</li>
+            <li>26 database tables, 6 migrations applied locally</li>
+            <li>Auth, roles, JWT refresh tokens</li>
+            <li>Real DB queries replacing every mock array (SOPs, Tasks, Staff, Workflows, Traffic Sources)</li>
+            <li>Background jobs (BullMQ + Redis) for chase emails and data syncs</li>
+            <li>Webhook receivers for SignNow events</li>
+            <li>Production env hardening + preflight check</li>
+            <li>383 / 383 automated tests passing</li>
+          </ul>
+        </div>
+        <div class="col">
+          <h4>Backend ⏳ Pending on us</h4>
+          <ul>
+            <li><strong>Reviewing GoDaddy DNS access</strong> — required before we can point a subdomain at the production server</li>
+            <li>Set up DNS records: <code>app.leadgeneration.io</code> (frontend), <code>api.leadgeneration.io</code> (backend), plus SPF/DKIM for Resend email</li>
+            <li>Open PR to <code>main</code> branch</li>
+            <li>Generate production JWT secrets</li>
+            <li>Provision Railway (Postgres + Redis)</li>
+            <li>Run migrations on production DB</li>
+            <li>Run preflight check</li>
+            <li>Wire <em>auto-invoice</em> and <em>monthly-validated</em> workflow handlers to real Xero push (currently scaffolds)</li>
+            <li>Subscriptions backend (only if you want this feature)</li>
+          </ul>
+        </div>
+
+        <div class="col">
+          <h4>Frontend ✓ Done</h4>
+          <ul>
+            <li>All pages talk to real backend via React Query</li>
+            <li>Dashboard widgets, client list, invoice flow, portal, settings</li>
+            <li>Credit alerts widget wired to real API</li>
+            <li>Holiday request form uses real staff IDs</li>
+            <li>Loading skeletons + empty states</li>
+            <li>Role-based menu (owner / finance / ops / readonly / client)</li>
+            <li>Real-time refresh for LeadByte dashboard (auto-poll every 30 s)</li>
+          </ul>
+        </div>
+        <div class="col">
+          <h4>Frontend ⏳ Pending on us</h4>
+          <ul>
+            <li>Deploy to Vercel (waiting on GoDaddy DNS to point <code>app.leadgeneration.io</code>)</li>
+            <li>Subscriptions page (currently a UI-only mockup)</li>
+            <li>Polishing: more empty-state copy where data is sparse pre-launch</li>
+            <li>Optional: dark mode (low priority)</li>
+          </ul>
+        </div>
+      </div>
+    </details>
+  </section>
+
+  <div class="section-divider">A few things we need from you</div>
+
+  <div class="progress" aria-hidden="true">
+    <div class="label" id="progressLabel">0%</div>
+    <div class="bar"><div id="progressBar"></div></div>
+    <div class="label" id="progressCount">0 / 9</div>
+  </div>
+
+  <form id="samForm">
+
+    <!-- ─── A. SignNow (URGENT) ─────────────────────────────── -->
+    <section class="card">
+      <h2 class="urgent">
+        <span class="num">1</span>
+        SignNow upgrade
+        <span class="badge urgent">By 29 April</span>
+      </h2>
+      <p class="sub">
+        We use SignNow to send and track e-signatures on client agreements.
+        We're currently on a free trial that expires on <strong>29 April 2026</strong>.
+        After that, signing breaks unless the workspace is on a paid plan.
+      </p>
+
+      <div class="callout urgent">
+        <strong>What we need:</strong> Your confirmation that you'll upgrade
+        the SignNow workspace, or that we should move you to a different plan.
+      </div>
+
+      <div class="field">
+        <label>Will you upgrade the SignNow account before 29 April?</label>
+        <div class="radio-group">
+          <label>
+            <input type="radio" name="signnow_decision" value="yes-i-will-upgrade" data-q />
+            <div>
+              <div class="opt-title">Yes — I'll upgrade myself</div>
+              <div class="opt-desc">You log into SignNow and choose a paid plan.</div>
+            </div>
+          </label>
+          <label>
+            <input type="radio" name="signnow_decision" value="yes-yash-handles" data-q />
+            <div>
+              <div class="opt-title">Yes — but please send me the link / instructions</div>
+              <div class="opt-desc">Yash will send you a step-by-step guide.</div>
+            </div>
+          </label>
+          <label>
+            <input type="radio" name="signnow_decision" value="other-provider" data-q />
+            <div>
+              <div class="opt-title">Use a different provider</div>
+              <div class="opt-desc">Tell us below who you'd prefer.</div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>If "different provider" — which one?</label>
+        <input type="text" name="signnow_alternative" placeholder="e.g. DocuSign, Adobe Sign, HelloSign" />
+      </div>
+    </section>
+
+    <!-- ─── B. LeadByte (Critical) ─────────────────────────────── -->
+    <section class="card">
+      <h2 class="warning">
+        <span class="num">2</span>
+        LeadByte API access
+        <span class="badge warning">Blocking</span>
+      </h2>
+      <p class="sub">
+        Stato pulls your live campaign and lead data from LeadByte. Right
+        now we're showing placeholder data because we don't have your
+        LeadByte API key yet.
+      </p>
+
+      <div class="field">
+        <label>LeadByte API key</label>
+        <p class="help">
+          Find it inside LeadByte under <strong>Settings → API Keys</strong>.
+          It looks like a long random string. We store it encrypted on our
+          server — it's never shown back to anyone.
+        </p>
+        <input type="password" name="leadbyte_api_key" placeholder="Paste the key here" data-q />
+      </div>
+
+      <div class="field">
+        <label>LeadByte vs Leadreports.io</label>
+        <p class="help">
+          You mentioned Leadreports.io once — should we keep using LeadByte
+          directly (which we've already built), or switch to Leadreports.io?
+        </p>
+        <div class="radio-group">
+          <label>
+            <input type="radio" name="leadreports_choice" value="keep-leadbyte" data-q />
+            <div>
+              <div class="opt-title">Keep LeadByte (already built)</div>
+              <div class="opt-desc">No rework — works today as soon as you provide the key above.</div>
+            </div>
+          </label>
+          <label>
+            <input type="radio" name="leadreports_choice" value="switch-leadreports" data-q />
+            <div>
+              <div class="opt-title">Switch to Leadreports.io</div>
+              <div class="opt-desc">We'd need to rewrite this part — adds about a week.</div>
+            </div>
+          </label>
+          <label>
+            <input type="radio" name="leadreports_choice" value="not-sure" data-q />
+            <div>
+              <div class="opt-title">Not sure — let's discuss</div>
+              <div class="opt-desc">We'll set up a 15-min call to walk through the trade-off.</div>
+            </div>
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── C. Cloudflare R2 (Storage) ───────────────────────── -->
+    <section class="card">
+      <h2 class="warning">
+        <span class="num">3</span>
+        Cloudflare R2 — file storage
+        <span class="badge warning">Blocking uploads</span>
+      </h2>
+      <p class="sub">
+        We use Cloudflare R2 to store signed agreement PDFs and any
+        attachments uploaded through Stato. Cloudflare needs a card on file
+        before they'll activate the storage product (no charge until you
+        actually use it; expected cost ~£3/month).
+      </p>
+
+      <div class="field">
+        <label>Have you added a card to Cloudflare R2?</label>
+        <div class="radio-group">
+          <label>
+            <input type="radio" name="r2_card" value="done" data-q />
+            <div>
+              <div class="opt-title">Yes — card is added</div>
+              <div class="opt-desc">Yash will activate R2 and confirm.</div>
+            </div>
+          </label>
+          <label>
+            <input type="radio" name="r2_card" value="will-do" data-q />
+            <div>
+              <div class="opt-title">Not yet — I'll do it this week</div>
+              <div class="opt-desc">Tell us roughly when so we can plan.</div>
+            </div>
+          </label>
+          <label>
+            <input type="radio" name="r2_card" value="need-link" data-q />
+            <div>
+              <div class="opt-title">Send me the exact page to add the card</div>
+              <div class="opt-desc">We'll send a one-line link.</div>
+            </div>
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── D. Email domain ───────────────────────── -->
+    <section class="card">
+      <h2 class="warning">
+        <span class="num">4</span>
+        Email "from" address
+        <span class="badge info">Cosmetic but important</span>
+      </h2>
+      <p class="sub">
+        Today, automated emails from Stato (chase reminders, notifications)
+        come from <code>onboarding@resend.dev</code>. To send from your own
+        domain (e.g. <code>notifications@leadgeneration.io</code>), your dev
+        team needs to add a couple of DNS records.
+      </p>
+
+      <div class="field">
+        <label>What "from" address should automated emails use?</label>
+        <input type="email" name="from_email" placeholder="e.g. notifications@leadgeneration.io" data-q />
+      </div>
+
+      <div class="field">
+        <label>Has your dev finished verifying the domain in Resend?</label>
+        <div class="radio-group">
+          <label>
+            <input type="radio" name="resend_dns" value="done" data-q />
+            <div>
+              <div class="opt-title">Yes — done</div>
+              <div class="opt-desc">Yash will switch the from-address and test.</div>
+            </div>
+          </label>
+          <label>
+            <input type="radio" name="resend_dns" value="in-progress" data-q />
+            <div>
+              <div class="opt-title">In progress</div>
+              <div class="opt-desc">Tell us roughly when below.</div>
+            </div>
+          </label>
+          <label>
+            <input type="radio" name="resend_dns" value="need-help" data-q />
+            <div>
+              <div class="opt-title">Need help — please send the DNS records</div>
+              <div class="opt-desc">We'll forward the SPF / DKIM records your dev needs to add.</div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Anything else on the email side? (optional)</label>
+        <textarea name="email_notes" placeholder="e.g. specific people to CC, branded email templates, etc."></textarea>
+      </div>
+    </section>
+
+    <!-- ─── E. Domains / DNS (NEW) ───────────────────────── -->
+    <section class="card">
+      <h2 class="warning">
+        <span class="num">5</span>
+        Domain & subdomains
+        <span class="badge info">GoDaddy access received</span>
+      </h2>
+      <p class="sub">
+        Thanks for sending the GoDaddy invites — we've got them. Before we
+        deploy, just confirm what you'd like the production URLs to be.
+        Defaults below are sensible; tick if you're happy or tell us what to change.
+      </p>
+
+      <div class="callout info">
+        Production deployment is <strong>paused on this</strong>. Once you
+        confirm + we point the DNS in GoDaddy, we can go live the same day.
+      </div>
+
+      <div class="field">
+        <label>Frontend (the app your team uses)</label>
+        <p class="help">
+          The URL you'll type into the browser. Default suggestion:
+          <code>app.leadgeneration.io</code>
+        </p>
+        <input type="text" name="frontend_subdomain" placeholder="app.leadgeneration.io" data-q />
+      </div>
+
+      <div class="field">
+        <label>Backend / API (technical, not user-facing)</label>
+        <p class="help">
+          Internal endpoint the frontend talks to. Default suggestion:
+          <code>api.leadgeneration.io</code>
+        </p>
+        <input type="text" name="api_subdomain" placeholder="api.leadgeneration.io" data-q />
+      </div>
+
+      <div class="field">
+        <label>Client portal — same domain or separate?</label>
+        <div class="radio-group">
+          <label>
+            <input type="radio" name="portal_domain" value="same" data-q />
+            <div>
+              <div class="opt-title">Same as the app — clients log in at <code>app.leadgeneration.io</code></div>
+              <div class="opt-desc">Simpler. Login screen routes them to /portal automatically.</div>
+            </div>
+          </label>
+          <label>
+            <input type="radio" name="portal_domain" value="separate" data-q />
+            <div>
+              <div class="opt-title">Separate — e.g. <code>portal.leadgeneration.io</code></div>
+              <div class="opt-desc">Cleaner branding for clients. Adds 5-10 mins of DNS work.</div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Anything else on the domain side? (optional)</label>
+        <textarea name="domain_notes" placeholder="e.g. specific subdomain you want to keep free, redirects from old site, etc."></textarea>
+      </div>
+    </section>
+
+    <!-- ─── F. Demo / launch ───────────────────────── -->
+    <section class="card">
+      <h2>
+        <span class="num">6</span>
+        Live demo + launch readiness
+      </h2>
+      <p class="sub">
+        Stato is now functionally complete. We'd like to walk you through it
+        live before going to production with real data.
+      </p>
+
+      <div class="field">
+        <label>When would suit for a 30-minute demo this week?</label>
+        <div class="row">
+          <input type="text" name="demo_day" placeholder="Day (e.g. Thursday 24 April)" />
+          <input type="text" name="demo_time" placeholder="Time (e.g. 10:00 AM UK)" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Anything specific you want covered in the demo?</label>
+        <textarea name="demo_focus" placeholder="e.g. invoice flow, client portal, credit checks, reporting…"></textarea>
+      </div>
+    </section>
+
+    <!-- ─── G. Open questions / extras ───────────────────────── -->
+    <section class="card">
+      <h2>
+        <span class="num">7</span>
+        Anything else?
+      </h2>
+      <p class="sub">
+        Open box for anything you've noticed in the status doc or want
+        Yash to know — feature requests, concerns, missing pieces, etc.
+      </p>
+
+      <div class="field">
+        <textarea name="open_questions" placeholder="Type freely — no need to format anything." rows="6"></textarea>
+      </div>
+    </section>
+
+    <span class="saved-hint" id="savedHint">Saved automatically</span>
+
+    <div class="footer-actions">
+      <p>
+        Click Submit and your email client will open with all answers
+        pre-filled. Just hit Send.
+      </p>
+      <div class="button-row">
+        <button type="button" class="secondary" id="downloadBtn">Download answers as text</button>
+        <button type="button" class="primary" id="submitBtn">Submit by email</button>
+      </div>
+      <div style="margin-top: 12px;"><span class="saved-hint visible">Your answers are saved on this device</span></div>
+    </div>
+  </form>
+</div>
+
+<script>
+(function () {
+  const form = document.getElementById('samForm');
+  const STORAGE_KEY = 'stato-sam-form-2026-04-23';
+  const TO_EMAIL = 'yash.c@octogle.com';
+  const SUBJECT = 'Stato — my answers (Sam, leadgeneration.io)';
+
+  const LABELS = {
+    signnow_decision: 'SignNow decision',
+    signnow_alternative: 'Alternative provider',
+    leadbyte_api_key: 'LeadByte API key',
+    leadreports_choice: 'LeadByte vs Leadreports',
+    r2_card: 'Cloudflare R2 card',
+    from_email: 'Preferred from-email',
+    resend_dns: 'Resend DNS status',
+    email_notes: 'Email notes',
+    frontend_subdomain: 'Frontend subdomain',
+    api_subdomain: 'Backend / API subdomain',
+    portal_domain: 'Client portal domain',
+    domain_notes: 'Domain notes',
+    demo_day: 'Demo day',
+    demo_time: 'Demo time',
+    demo_focus: 'Demo focus areas',
+    open_questions: 'Open questions',
+  };
+
+  function load() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return;
+      const data = JSON.parse(raw);
+      for (const [name, value] of Object.entries(data)) {
+        const els = form.querySelectorAll('[name="' + name + '"]');
+        els.forEach((el) => {
+          if (el.type === 'radio') el.checked = el.value === value;
+          else el.value = value;
+        });
+      }
+    } catch (e) {
+      console.warn('load failed', e);
+    }
+    refreshProgress();
+  }
+
+  function snapshot() {
+    const data = {};
+    new FormData(form).forEach((v, k) => { data[k] = v; });
+    return data;
+  }
+
+  function save() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot()));
+    flashSaved();
+  }
+
+  let saveTimer;
+  function flashSaved() {
+    const hint = document.getElementById('savedHint');
+    hint.classList.add('visible');
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(() => hint.classList.remove('visible'), 1400);
+  }
+
+  function refreshProgress() {
+    const required = form.querySelectorAll('[data-q]');
+    const seen = new Set();
+    let answered = 0;
+    let total = 0;
+    required.forEach((el) => {
+      const key = el.name;
+      if (seen.has(key)) return;
+      seen.add(key);
+      total += 1;
+      if (el.type === 'radio') {
+        const any = form.querySelector('[name="' + key + '"]:checked');
+        if (any) answered += 1;
+      } else if (el.value && el.value.trim().length) {
+        answered += 1;
+      }
+    });
+    const pct = total ? Math.round((answered / total) * 100) : 0;
+    document.getElementById('progressBar').style.width = pct + '%';
+    document.getElementById('progressLabel').textContent = pct + '%';
+    document.getElementById('progressCount').textContent = answered + ' / ' + total;
+  }
+
+  function buildEmailBody() {
+    const data = snapshot();
+    const lines = ['Hi Yash,', '', 'Here are my answers:', ''];
+    for (const [key, label] of Object.entries(LABELS)) {
+      const value = (data[key] || '').trim();
+      lines.push(label + ':');
+      lines.push(value ? '  ' + value.replace(/\n/g, '\n  ') : '  (skipped)');
+      lines.push('');
+    }
+    lines.push('Thanks,', 'Sam');
+    return lines.join('\n');
+  }
+
+  document.getElementById('submitBtn').addEventListener('click', () => {
+    save();
+    const body = buildEmailBody();
+    const url = 'mailto:' + encodeURIComponent(TO_EMAIL)
+      + '?subject=' + encodeURIComponent(SUBJECT)
+      + '&body=' + encodeURIComponent(body);
+    window.location.href = url;
+  });
+
+  document.getElementById('downloadBtn').addEventListener('click', () => {
+    save();
+    const body = buildEmailBody();
+    const blob = new Blob([body], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'stato-sam-answers-' + new Date().toISOString().slice(0, 10) + '.txt';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 100);
+  });
+
+  form.addEventListener('input', () => { save(); refreshProgress(); });
+  form.addEventListener('change', () => { save(); refreshProgress(); });
+
+  load();
+})();
+</script>
+</body>
+</html>

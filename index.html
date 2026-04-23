@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Stato — Client Portal</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Arial, sans-serif;
+    background: #fafafa; color: #1d1d1f;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+  }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 56px 20px; }
+  h1 {
+    font-size: 32px; font-weight: 700; letter-spacing: -0.02em;
+    margin: 0 0 8px 0;
+  }
+  .lede {
+    color: #6e6e73; font-size: 16px; margin: 0 0 36px 0;
+  }
+  .card {
+    display: block;
+    background: #fff;
+    border: 1px solid #e8e8ed;
+    border-radius: 16px;
+    padding: 24px 26px;
+    margin-bottom: 14px;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 120ms ease, transform 120ms ease, box-shadow 120ms ease;
+  }
+  .card:hover {
+    border-color: #0066cc;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px -10px rgba(0, 102, 204, 0.25);
+  }
+  .card .row {
+    display: flex; align-items: center; gap: 16px;
+  }
+  .ic {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    background: #f0f7ff;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-size: 20px;
+  }
+  .ic.pdf { background: #fef2f2; }
+  .card h2 {
+    font-size: 17px; font-weight: 600; margin: 0 0 4px 0;
+  }
+  .card p {
+    font-size: 14px; color: #6e6e73; margin: 0;
+  }
+  .arrow { color: #6e6e73; font-size: 18px; margin-left: auto; }
+  footer {
+    margin-top: 40px; padding-top: 18px;
+    border-top: 1px solid #e8e8ed;
+    color: #86868b; font-size: 12px; text-align: center;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Stato — Client Portal</h1>
+  <p class="lede">
+    Hi Sam — two documents below. Form first if you've got 10 minutes,
+    PDF if you'd rather read.
+  </p>
+
+  <a class="card" href="2026-04-23-sam-information-request.html">
+    <div class="row">
+      <div class="ic">📝</div>
+      <div>
+        <h2>What we need from you</h2>
+        <p>Quick form — auto-saves as you type, submits by email when done</p>
+      </div>
+      <div class="arrow">›</div>
+    </div>
+  </a>
+
+  <a class="card" href="2026-04-23-stato-status-report.pdf">
+    <div class="row">
+      <div class="ic pdf">📄</div>
+      <div>
+        <h2>Project status report</h2>
+        <p>Detailed PDF — what's done, what's live, what's pending</p>
+      </div>
+      <div class="arrow">›</div>
+    </div>
+  </a>
+
+  <footer>
+    Updated 23 April 2026 · Stato · leadgeneration.io
+  </footer>
+</div>
+</body>
+</html>
