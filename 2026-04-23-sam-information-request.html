@@ -1078,6 +1078,7 @@
         update at any time.
       </p>
       <div class="button-row">
+        <button type="button" class="secondary" id="clearBtn" style="color: #dc2626; border-color: #fecaca;">Clear all answers</button>
         <button type="button" class="secondary" id="downloadBtn">Download a copy</button>
         <button type="button" class="primary" id="submitBtn">Submit answers</button>
       </div>
@@ -1217,6 +1218,27 @@
     } finally {
       btn.disabled = false;
     }
+  });
+
+  document.getElementById('clearBtn').addEventListener('click', () => {
+    const ok = confirm(
+      'Clear all your answers?\n\n' +
+      'This will empty every field on this page on this device. ' +
+      'Anything you have already submitted to Yash stays with him.\n\n' +
+      'You can re-fill the form and submit again to update.'
+    );
+    if (!ok) return;
+
+    // Wipe localStorage + reset form fields.
+    localStorage.removeItem(STORAGE_KEY);
+    form.reset();
+    // Manually clear radios (form.reset only clears to default checked state).
+    form.querySelectorAll('input[type="radio"]').forEach((el) => { el.checked = false; });
+    refreshProgress();
+
+    setStatus('Cleared. You can start fresh — answers are not removed from Yash\'s side.', '#6e6e73');
+    document.getElementById('submitBtn').textContent = 'Submit answers';
+    document.getElementById('samForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
 
   document.getElementById('downloadBtn').addEventListener('click', () => {
