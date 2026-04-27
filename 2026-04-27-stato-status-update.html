@@ -23,9 +23,7 @@
     font-size: 34px; font-weight: 700; letter-spacing: -0.02em;
     margin: 0 0 6px 0;
   }
-  .meta {
-    color: #6e6e73; font-size: 14px; margin: 0 0 36px 0;
-  }
+  .meta { color: #6e6e73; font-size: 14px; margin: 0 0 36px 0; }
   h2 {
     font-size: 24px; font-weight: 700; letter-spacing: -0.01em;
     margin: 48px 0 14px 0;
@@ -36,26 +34,20 @@
     padding: 4px 10px; border-radius: 999px;
     text-transform: uppercase; letter-spacing: 0.04em;
   }
-  h2 .pill.done { background: #e6f7ec; color: #1d7a3a; }
-  h2 .pill.need { background: #fff3e0; color: #a04a00; }
-  h2 .pill.now  { background: #e8f0ff; color: #0042a3; }
+  h2 .pill.done  { background: #e6f7ec; color: #1d7a3a; }
+  h2 .pill.need  { background: #fff3e0; color: #a04a00; }
+  h2 .pill.now   { background: #e8f0ff; color: #0042a3; }
+  h2 .pill.reply { background: #f0f7ff; color: #0066cc; }
   h3 {
     font-size: 17px; font-weight: 600; margin: 24px 0 8px 0;
     color: #1d1d1f;
   }
-  .section { margin-bottom: 8px; }
   .card {
     background: #fff; border: 1px solid #e8e8ed; border-radius: 14px;
     padding: 18px 20px; margin: 0 0 12px 0;
   }
-  .card .title {
-    display: flex; align-items: baseline; gap: 10px;
-    font-size: 15px; font-weight: 600; margin: 0 0 6px 0;
-  }
-  .card .body {
-    font-size: 14px; color: #424245; margin: 0;
-  }
-  .card .body code, code {
+  .card .body { font-size: 14px; color: #424245; margin: 0; }
+  code, .card .body code {
     font-family: 'SF Mono', Menlo, Consolas, monospace;
     font-size: 12.5px;
     background: #f0f0f3; padding: 1px 5px; border-radius: 4px;
@@ -68,10 +60,10 @@
     text-transform: uppercase; letter-spacing: 0.03em;
     margin-left: 6px;
   }
-  .badge.live { background: #e6f7ec; color: #1d7a3a; }
+  .badge.live   { background: #e6f7ec; color: #1d7a3a; }
   .badge.urgent { background: #ffe5e5; color: #b00020; }
   .badge.medium { background: #fff3e0; color: #a04a00; }
-  .badge.low { background: #f0f0f3; color: #6e6e73; }
+  .badge.low    { background: #f0f0f3; color: #6e6e73; }
   .url {
     display: block; font-family: 'SF Mono', Menlo, Consolas, monospace;
     font-size: 12.5px; color: #0066cc; word-break: break-all;
@@ -85,25 +77,16 @@
   }
   th, td {
     text-align: left; padding: 11px 14px;
-    border-bottom: 1px solid #f0f0f3;
-    vertical-align: top;
+    border-bottom: 1px solid #f0f0f3; vertical-align: top;
   }
   th { font-weight: 600; background: #f9f9fb; color: #424245; font-size: 12px; text-transform: uppercase; letter-spacing: 0.03em; }
   tr:last-child td { border-bottom: none; }
-  td.right { text-align: right; }
-  .stack { display: flex; flex-direction: column; gap: 12px; }
   ul.bare { list-style: none; padding: 0; margin: 0; }
   ul.bare li {
     padding: 9px 0; border-bottom: 1px solid #f0f0f3; font-size: 14px;
   }
   ul.bare li:last-child { border-bottom: none; }
-  ul.bare li::before {
-    content: "✓"; color: #1d7a3a; font-weight: 700;
-    margin-right: 10px;
-  }
-  ul.bare.warn li::before {
-    content: "○"; color: #a04a00;
-  }
+  ul.bare li::before { content: "✓"; color: #1d7a3a; font-weight: 700; margin-right: 10px; }
   .summary {
     background: #fff; border: 1px solid #e8e8ed; border-radius: 14px;
     padding: 22px 24px;
@@ -115,10 +98,55 @@
     border-top: 1px solid #e8e8ed;
     color: #86868b; font-size: 12px; text-align: center;
   }
-  .grid2 {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
-  }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   @media (max-width: 600px) { .grid2 { grid-template-columns: 1fr; } }
+
+  /* Reply form */
+  .field { margin-bottom: 16px; }
+  .field label {
+    display: block; font-size: 13.5px; font-weight: 600;
+    margin-bottom: 6px; color: #1d1d1f;
+  }
+  .field .hint {
+    color: #6e6e73; font-size: 12.5px; font-weight: 400;
+    margin-top: 2px;
+  }
+  .field input[type=text],
+  .field input[type=password],
+  .field textarea,
+  .field select {
+    width: 100%; padding: 10px 12px;
+    border: 1px solid #e8e8ed; border-radius: 10px;
+    background: #fff; color: #1d1d1f; font: inherit; font-size: 14px;
+    outline: none;
+    transition: border-color 120ms, box-shadow 120ms;
+  }
+  .field input:focus,
+  .field textarea:focus,
+  .field select:focus {
+    border-color: #0066cc; box-shadow: 0 0 0 3px rgba(0,102,204,0.15);
+  }
+  .field textarea { min-height: 80px; resize: vertical; }
+  .radios { display: flex; gap: 8px; flex-wrap: wrap; }
+  .radios label {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-weight: 500; font-size: 13.5px;
+    padding: 8px 14px; border: 1px solid #e8e8ed; border-radius: 999px;
+    cursor: pointer; background: #fff;
+    transition: border-color 120ms, background 120ms;
+  }
+  .radios label:hover { border-color: #0066cc; }
+  .radios input[type=radio] { accent-color: #0066cc; margin: 0; }
+  .radios label:has(input:checked) { border-color: #0066cc; background: #f0f7ff; }
+  button.primary {
+    background: #0066cc; color: #fff; border: none;
+    padding: 12px 20px; border-radius: 10px;
+    font: inherit; font-size: 14px; font-weight: 600;
+    cursor: pointer; transition: background 120ms;
+  }
+  button.primary:hover { background: #0058b3; }
+  button.primary:disabled { background: #c0c0c5; cursor: progress; }
+  #submitStatus { margin-top: 12px; font-size: 13px; min-height: 18px; }
 </style>
 </head>
 <body>
@@ -133,23 +161,19 @@
 
   <div class="summary">
     <p>
-      <strong>Stato is live in production.</strong> Both frontend and backend
-      are deployed, the database is migrated and seeded, and six third-party
-      integrations are connected and verified end-to-end (LeadByte, Cloudflare R2,
-      Xero, Endole, Resend, SignNow, Catchr).
-    </p>
-    <p>
+      <strong>Stato is live in production.</strong> Frontend, backend, database
+      and seven third-party integrations are deployed and verified end-to-end.
       You can log in right now at
       <a href="https://sato-frontend.vercel.app" style="color:#0066cc;">https://sato-frontend.vercel.app</a>
-      with <code>owner@stato.app</code> / <code>owner123</code>. Custom domains
-      (<code>app.leadgeneration.io</code>, <code>api.leadgeneration.io</code>,
-      <code>portal.leadgeneration.io</code>) will replace the Vercel/Railway
-      URLs once GoDaddy DNS is wired.
+      with <code>owner@stato.app</code> / <code>owner123</code>.
     </p>
     <p>
       <strong>One urgent item:</strong> SignNow trial expires
-      <strong>29 April 2026</strong> (in 2 days). Document signing breaks the day after
-      unless you upgrade the workspace to a paid plan.
+      <strong>29 April 2026</strong> — please upgrade the workspace to a paid plan
+      before then or document signing breaks.
+    </p>
+    <p>
+      Two smaller asks below — please reply via the form at the bottom of this page.
     </p>
   </div>
 
@@ -160,167 +184,130 @@
   <h3>1 · LeadByte integration went live</h3>
   <div class="card">
     <p class="body">
-      You sent the LeadByte API key in the morning. Within an hour the backend
-      was pulling <strong>28 real campaigns</strong> from your
-      <code>clinical.leadbyte.co.uk</code> tenant — Solar Panels UK,
-      Hearing Aids (IE/CH/PL), Will Writing, Lasting Power of Attorney,
-      Conservatory Upgrades, and 23 more. Last-month report shows real
-      revenue figures (Hearing Aids PL: £38,850.06 across 3,380 leads, etc).
+      Wired your LeadByte API key into the backend.
+      <strong>28 real campaigns</strong> from <code>clinical.leadbyte.co.uk</code> are now syncing
+      every 2 minutes — Solar Panels UK, Hearing Aids (IE/CH/PL), Will Writing,
+      Lasting Power of Attorney, Conservatory Upgrades, and 23 more. Last-month
+      report shows real revenue (Hearing Aids PL: £38,850 across 3,380 leads).
     </p>
     <p class="body" style="margin-top:8px;">
-      Three pre-existing client-side bugs surfaced once the real data flowed
-      and were fixed in commit <code>f1211ea</code>: report-envelope shape
-      (<code>{data: […]}</code> not <code>{report: […]}</code>),
-      campaign-as-object reference flattening, and currency normalisation
-      ("Britain (United Kingdom), Pounds" → ISO <code>GBP</code>).
-      Test suite grew from 48 to 52 LeadByte cases, all green.
+      Three pre-existing client-side bugs surfaced once real data flowed and
+      were fixed (report-envelope shape, campaign-as-object refs, currency
+      normalisation). The client now also surfaces real API errors instead of
+      silently falling back to mock data — so any future credential issue is
+      visible immediately.
     </p>
   </div>
 
   <h3>2 · Cloudflare R2 file storage went live</h3>
   <div class="card">
     <p class="body">
-      You created the <code>stato-production</code> bucket and an API token
-      with Object Read &amp; Write access. End-to-end smoke test passed:
-      upload a 48-byte test file, generate a signed download URL, fetch via
-      HTTP (200 OK, byte-identical content), delete. Took 1.9s upload,
-      66ms signed URL, 198ms delete.
+      <code>stato-production</code> bucket created with an Object-scoped API
+      token. Backend client uses AWS SDK v3 with a Cloudflare-compatibility
+      tweak (auto-checksum disabled — caused signature mismatches on browser
+      uploads). CORS configured to allow the live and staging frontend origins.
     </p>
     <p class="body" style="margin-top:8px;">
-      Five upload folders are wired: <code>invoices</code>,
-      <code>agreements</code>, <code>creatives</code>,
-      <code>landing-pages</code>, <code>misc</code>. The frontend's
-      <code>&lt;FileUpload&gt;</code> component is now placed on the
-      Client Detail "Documents" tab — clients can attach due-diligence
-      docs which persist to R2 with download links that auto-refresh
-      hourly. 5 unit tests cover the component end-to-end.
+      Five upload folders are wired across the app:
     </p>
+    <ul class="bare" style="margin-top:8px;">
+      <li><strong>Client documents</strong> — Clients → any client → "Documents" tab</li>
+      <li><strong>Invoice attachments</strong> — Invoices → any invoice → "Attachments" card (receipts, proof of payment)</li>
+      <li><strong>Staff documents</strong> — Staff → "Documents" tab → pick member (contracts, NDAs, payslips)</li>
+      <li><strong>Campaign creatives</strong> — Campaigns → any campaign → "Creatives" card (ad images, videos, copy). These show up automatically in the client's portal Compliance tab.</li>
+      <li><strong>Agreement source PDFs</strong> — the SignNow Send dialog now uploads to R2 first, lifting the previous 10 MB API body cap to 50 MB.</li>
+    </ul>
   </div>
 
-  <h3>3 · Production deployment to Railway + Vercel</h3>
+  <h3>3 · Production deployed to Railway + Vercel</h3>
   <div class="card">
     <p class="body">
-      Railway backend live at:
+      Backend on Railway:
       <span class="url">https://sato-backend-production.up.railway.app</span>
-      Watching the <code>main</code> branch — auto-rebuilds on every push.
-      Container running <strong>Express 5 / Node 22</strong> behind Railway's
-      proxy with trust-proxy enabled, multi-origin CORS allow-list,
-      production-grade JWT secrets generated via <code>openssl rand</code>.
+      Auto-rebuilds on every push to <code>main</code>.
     </p>
     <p class="body" style="margin-top:8px;">
-      Vercel frontend live at:
+      Frontend on Vercel:
       <span class="url">https://sato-frontend.vercel.app</span>
-      Deployed from the <code>main</code> branch. <code>VITE_API_URL</code>
-      env var baked into the bundle pointing at the Railway backend.
     </p>
     <p class="body" style="margin-top:8px;">
-      PostgreSQL on Railway: <strong>26 tables migrated</strong>
-      (migrations 0000→0005), 4 internal users seeded
-      (<code>owner</code>, <code>finance_admin</code>,
-      <code>ops_manager</code>, <code>readonly</code>), Redis live and
-      queued for BullMQ jobs.
+      PostgreSQL: <strong>26 tables migrated</strong> (0000 → 0006), 4 internal
+      users seeded plus the demo client <code>Apex Media Ltd</code>.
+      Redis live for BullMQ jobs. JWT secrets generated to production strength,
+      CORS allow-list multi-origin, refresh-on-page works (SPA rewrite added
+      this evening).
     </p>
   </div>
 
-  <h3>4 · Branching strategy formalised</h3>
+  <h3>4 · Workflow engine wired to real Xero / Resend</h3>
   <div class="card">
     <p class="body">
-      Both repos now have a <code>BRANCHING.md</code> at root explicitly
-      documenting the convention: <strong><code>main</code> = production</strong>
-      (auto-deploys to live URLs), <strong><code>Development</code> = staging</strong>
-      (where new commits land first). Promotion is fast-forward only —
-      <code>main</code> can never be ahead of <code>Development</code>.
+      Two BullMQ handlers now do real work, not stubs:
+    </p>
+    <ul class="bare" style="margin-top:8px;">
+      <li><strong>Auto-invoice</strong> — for each active <em>weekly_auto</em> client, sums lead deliveries from the last 7 days, builds a single-line invoice, creates the row in the DB, and pushes a draft ACCREC invoice to Xero. Per-client errors don't fail the batch.</li>
+      <li><strong>Monthly-validated</strong> — for each <em>monthly_validated</em> client, sums lead deliveries for the prior calendar month, builds an HTML revenue table, queues an email to <code>owner@stato.app</code> via Resend so you can request sign-off before invoicing.</li>
+    </ul>
+    <p class="body" style="margin-top:8px;">
+      Both are reachable from the Workflows page → "Run Now". The chase-overdue
+      cron job continues to run daily at 9:00 UTC.
     </p>
   </div>
 
   <h3>5 · Code health</h3>
   <div class="card">
     <p class="body">
-      Backend: <strong>384/387 tests passing</strong> (3 pre-existing portal
-      flakes unrelated to this sprint), <strong>0 TypeScript errors</strong>.
-      Frontend: <strong>88/88 tests passing</strong>, 0 TypeScript errors.
-      Eight commits today across both repos, all on <code>Development</code>
-      and promoted to <code>main</code>.
+      Backend: <strong>387 / 387 tests passing</strong>, <strong>0 TypeScript errors</strong>.
+      Frontend: <strong>88 / 88 tests passing</strong>. 12 commits pushed to
+      <code>main</code> across both repos this evening, all promoted via the
+      <code>BRANCHING.md</code> Development → main workflow we documented.
     </p>
   </div>
 
   <!-- ============================================================ -->
 
-  <h2><span class="pill need">From you</span> What we need next</h2>
+  <h2><span class="pill need">From you</span> Three asks</h2>
 
   <table>
     <thead>
-      <tr><th>Item</th><th>Why</th><th>Effort</th><th>Urgency</th></tr>
+      <tr><th style="width:30%">Ask</th><th>Why</th><th style="width:18%">Urgency</th></tr>
     </thead>
     <tbody>
       <tr>
         <td><strong>SignNow paid-plan upgrade</strong></td>
-        <td>Trial expires 29 April 2026. Same env vars, no new creds — just upgrade in your SignNow dashboard. Document signing breaks the day after expiry.</td>
-        <td>~3 minutes</td>
+        <td>
+          Free trial expires <strong>29 April 2026</strong>. Same env vars
+          and creds — just upgrade the workspace plan in your SignNow
+          dashboard. Document signing breaks the day after expiry otherwise.
+        </td>
         <td><span class="badge urgent">By 29 Apr</span></td>
       </tr>
       <tr>
         <td><strong>Vercel GitHub App on <code>Leadgenerationio</code> org</strong></td>
         <td>
-          Frontend doesn't auto-deploy on push because Vercel's GitHub App is on
-          <code>LeadgenerationioTeams</code>, not <code>Leadgenerationio</code>.
-          Open
-          <code>https://github.com/apps/vercel/installations/new</code>,
-          pick <code>Leadgenerationio</code>, "Only select repositories" →
-          tick <code>Sato-Frontend</code> and <code>Sato-Backend</code> →
-          Install. Or bump my GitHub role from Member to Owner so I can do it.
+          Frontend doesn't auto-deploy on git push because Vercel's GitHub App
+          is currently only on <code>LeadgenerationioTeams</code>, not the
+          <code>Leadgenerationio</code> org where Sato-Frontend lives. Open
+          <code>https://github.com/apps/vercel/installations/new</code>, pick
+          <strong>Leadgenerationio</strong>, choose "Only select repositories"
+          and tick <code>Sato-Frontend</code> + <code>Sato-Backend</code> →
+          <strong>Install</strong>. Takes 30 seconds.
+          Until then I'm running <code>vercel --prod</code> by hand after every
+          frontend code change.
         </td>
-        <td>~1 minute</td>
         <td><span class="badge medium">This week</span></td>
-      </tr>
-      <tr>
-        <td><strong>Railway: delete orphan <code>Postgres-W3n2</code></strong></td>
-        <td>
-          Created accidentally during initial click-fumble. Costs ~$5/month
-          idle. Only workspace admins can delete — that's you.
-          Click into the tile → Settings → Danger Zone → Remove Service.
-        </td>
-        <td>~30 sec</td>
-        <td><span class="badge low">Cleanup</span></td>
       </tr>
       <tr>
         <td><strong>LeadByte API key permissions</strong></td>
         <td>
           The newer key you sent
-          (<code>ea27e3356c8bc1ad2fba1dc978d0b960</code>) lacks
-          <em>Campaign read</em> permission and falls back to mocks.
-          Until you grant Campaign / Lead / Report / Supplier read perms
-          on it from the LeadByte admin panel, we're using the previous
-          key (<code>4c9a49a3…b4c3</code>) which has full access.
+          (<code>ea27e3356c8bc1ad2fba1dc978d0b960</code>) authenticates fine
+          but lacks <em>Campaign read</em>. So we're using the previous key
+          (<code>4c9a49a3…b4c3</code>) which has full access. When you have a
+          minute, grant Campaign / Lead / Report / Supplier read on the new
+          one in the LeadByte admin panel and we'll swap.
         </td>
-        <td>~2 minutes</td>
         <td><span class="badge medium">When convenient</span></td>
-      </tr>
-      <tr>
-        <td><strong>Resend domain verification (<code>stato.tech</code>)</strong></td>
-        <td>
-          You said your other dev would handle SPF/DKIM for
-          <code>stato.tech</code> so we can switch the from-address to
-          <code>notifications@stato.tech</code>. Currently sending from
-          Resend's shared domain.
-        </td>
-        <td>Their work</td>
-        <td><span class="badge low">Polish</span></td>
-      </tr>
-      <tr>
-        <td><strong>GoDaddy DNS (whenever you're ready)</strong></td>
-        <td>
-          Three CNAMEs on <code>leadgeneration.io</code>:
-          <code>api</code> (→ Railway), <code>app</code> (→ Vercel),
-          <code>portal</code> (→ Vercel). I have the GoDaddy access you
-          mentioned — once we wire the DNS, I swap the env vars and
-          production runs on
-          <code>app.leadgeneration.io</code> /
-          <code>api.leadgeneration.io</code> instead of the auto-generated
-          URLs.
-        </td>
-        <td>~10 min joint</td>
-        <td><span class="badge low">Post-demo</span></td>
       </tr>
     </tbody>
   </table>
@@ -331,18 +318,14 @@
 
   <div class="grid2">
     <div class="card">
-      <div class="title">Frontend (Vercel)</div>
-      <p class="body">
-        <span class="url">https://sato-frontend.vercel.app</span>
-        Branch: <code>main</code> · Auto: <span class="badge medium">Manual until GitHub App installed</span>
-      </p>
+      <div style="font-size:15px;font-weight:600;margin-bottom:6px;">Frontend (Vercel)</div>
+      <span class="url">https://sato-frontend.vercel.app</span>
+      <p class="body" style="margin-top:8px;">Branch: <code>main</code> · Deploys: manual until Vercel App is installed (see ask above).</p>
     </div>
     <div class="card">
-      <div class="title">Backend (Railway)</div>
-      <p class="body">
-        <span class="url">https://sato-backend-production.up.railway.app</span>
-        Branch: <code>main</code> · Auto: <span class="badge live">Auto on push</span>
-      </p>
+      <div style="font-size:15px;font-weight:600;margin-bottom:6px;">Backend (Railway)</div>
+      <span class="url">https://sato-backend-production.up.railway.app</span>
+      <p class="body" style="margin-top:8px;">Branch: <code>main</code> · <span class="badge live">Auto on push</span></p>
     </div>
   </div>
 
@@ -353,46 +336,96 @@
       <tr><td><code>owner@stato.app</code></td><td><code>owner123</code></td><td>Owner — full access, Settings, Billing, Integrations</td></tr>
       <tr><td><code>finance@stato.app</code></td><td><code>finance123</code></td><td>Finance Admin — Invoices, Banking, VAT, Reports</td></tr>
       <tr><td><code>ops@stato.app</code></td><td><code>ops123</code></td><td>Ops Manager — Campaigns, Workflows, Tasks</td></tr>
-      <tr><td><code>client@stato.app</code></td><td><code>client123</code></td><td>Client Portal — read-only client view</td></tr>
+      <tr><td><code>client@stato.app</code></td><td><code>client123</code></td><td>Client Portal — read-only client view (Apex Media Ltd)</td></tr>
       <tr><td><code>readonly@stato.app</code></td><td><code>readonly123</code></td><td>Read-only — Reports + dashboards only</td></tr>
     </tbody>
   </table>
 
   <h3>Integrations live in production</h3>
   <ul class="bare">
-    <li><strong>LeadByte</strong> — 28 real campaigns syncing every 2 minutes from your <code>clinical.leadbyte.co.uk</code> tenant</li>
-    <li><strong>Cloudflare R2</strong> — file storage in <code>stato-production</code> bucket; signed-URL upload/download wired into the Client Detail "Documents" tab</li>
+    <li><strong>LeadByte</strong> — 28 real campaigns syncing every 2 minutes</li>
+    <li><strong>Cloudflare R2</strong> — file storage in <code>stato-production</code> bucket; uploads working browser-side</li>
     <li><strong>Xero</strong> — Custom Connection on Clinical Marketing Solutions Ltd; first real draft invoice <code>INV-0377</code> already pushed</li>
-    <li><strong>Endole</strong> — credit checks (sandbox active; flip to production billing whenever you're ready)</li>
-    <li><strong>Resend</strong> — transactional email working from <code>onboarding@resend.dev</code> (will move to <code>notifications@stato.tech</code> once DNS verifies)</li>
-    <li><strong>SignNow</strong> — live envelope already sent (id <code>18f793bf…ef7</code>); needs paid-plan upgrade by 29 April</li>
+    <li><strong>Endole</strong> — credit checks (sandbox active; just confirmed working — Apex Media Ltd score: 38)</li>
+    <li><strong>Resend</strong> — transactional email working from <code>onboarding@resend.dev</code></li>
+    <li><strong>SignNow</strong> — live envelope already sent (id <code>18f793bf…ef7</code>)</li>
     <li><strong>Catchr</strong> — ad-spend MCP, hourly sync</li>
-  </ul>
-
-  <h3>What's verified</h3>
-  <ul class="bare">
-    <li>Frontend reachable (HTTP 200)</li>
-    <li>Backend <code>/health</code> endpoint returning OK</li>
-    <li>CORS allow-list accepts requests from the Vercel origin</li>
-    <li>Login flow works end-to-end (owner credentials, JWT, refresh token)</li>
-    <li>Frontend bundle has correct backend URL baked in (no <code>localhost:3001</code> leakage)</li>
-    <li>Database has 26 tables, all migrations applied, 4 seeded users</li>
-    <li>Branches in sync: <code>main</code> ≡ <code>Development</code> at the same commit</li>
-  </ul>
-
-  <h3>What's pending in code (lower priority, not blocking go-live)</h3>
-  <ul class="bare warn">
-    <li>3 pre-existing portal test failures (auth scope edge cases) — fix before next release</li>
-    <li>LeadByte client silently falls back to mocks on API errors — should propagate or log loudly</li>
-    <li><code>&lt;FileUpload&gt;</code> placement on 4 more pages: agreements, invoice-detail, admin creatives, staff/HR</li>
-    <li>BullMQ <code>auto-invoice</code> + <code>monthly-validated</code> handlers wired to real Xero push</li>
-    <li>Optional: separate Railway "development" environment for staging tests</li>
   </ul>
 
   <!-- ============================================================ -->
 
+  <h2><span class="pill reply">Reply</span> Confirm + ask</h2>
+
+  <div class="card" style="padding: 24px 26px;">
+    <p class="body" style="margin-bottom: 18px;">
+      Submit confirms each item, the same way the earlier form worked — answers are encrypted in your browser and stored securely. Everything optional. Re-open this page anytime to update.
+    </p>
+
+    <form id="samReply">
+
+      <div class="field">
+        <label for="signnowStatus">SignNow upgrade status</label>
+        <div class="hint" style="margin-bottom:8px;">Have you upgraded the SignNow workspace yet?</div>
+        <div class="radios">
+          <label><input type="radio" name="signnow_status" value="not-yet" /> Not yet</label>
+          <label><input type="radio" name="signnow_status" value="will-do-today" /> Will do today</label>
+          <label><input type="radio" name="signnow_status" value="upgraded" /> Upgraded ✓</label>
+          <label><input type="radio" name="signnow_status" value="changed-provider" /> Changed provider — see notes</label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="signnow_notes">SignNow notes (optional)</label>
+        <textarea id="signnow_notes" name="signnow_notes" placeholder="e.g. plan name, billing email, anything that affects the integration."></textarea>
+      </div>
+
+      <div class="field">
+        <label>Vercel GitHub App on <code>Leadgenerationio</code> org</label>
+        <div class="hint" style="margin-bottom:8px;">Did you install Vercel's GitHub App on the Leadgenerationio org?</div>
+        <div class="radios">
+          <label><input type="radio" name="vercel_app_status" value="not-yet" /> Not yet</label>
+          <label><input type="radio" name="vercel_app_status" value="will-do-today" /> Will do today</label>
+          <label><input type="radio" name="vercel_app_status" value="installed" /> Installed ✓</label>
+          <label><input type="radio" name="vercel_app_status" value="prefer-bump-yash-role" /> Prefer to bump Yash to Owner instead</label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="vercel_notes">Vercel notes (optional)</label>
+        <textarea id="vercel_notes" name="vercel_notes" placeholder="e.g. if you'd rather restrict to specific repos, or have a different GitHub username for the install."></textarea>
+      </div>
+
+      <div class="field">
+        <label>LeadByte key permissions</label>
+        <div class="hint" style="margin-bottom:8px;">Have you granted Campaign / Lead / Report / Supplier read on the new key?</div>
+        <div class="radios">
+          <label><input type="radio" name="leadbyte_perms_status" value="not-yet" /> Not yet</label>
+          <label><input type="radio" name="leadbyte_perms_status" value="will-do-today" /> Will do today</label>
+          <label><input type="radio" name="leadbyte_perms_status" value="granted" /> Granted ✓</label>
+          <label><input type="radio" name="leadbyte_perms_status" value="keep-old-key" /> Keep using the old key</label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="leadbyte_notes">LeadByte notes (optional)</label>
+        <textarea id="leadbyte_notes" name="leadbyte_notes" placeholder="e.g. if you generated a fresh key, paste it here."></textarea>
+      </div>
+
+      <div class="field">
+        <label for="open_questions">Anything else for the Octogle team</label>
+        <textarea id="open_questions" name="open_questions" rows="5" placeholder="Bugs you noticed during the demo, questions, additional creds you want to share, scope changes — anything."></textarea>
+      </div>
+
+      <button type="button" class="primary" id="submitReplyBtn">Submit reply</button>
+      <div id="submitStatus"></div>
+
+    </form>
+  </div>
+
+  <!-- ============================================================ -->
+
   <footer>
-    Updated 27 April 2026 · Stato · Octogle Technologies for leadgeneration.io
+    Updated 27 April 2026 (evening) · Stato · Octogle Technologies for leadgeneration.io
   </footer>
 
 </div>
@@ -400,7 +433,70 @@
 <script src="lib.js"></script>
 <script>
   // Page is gated — content is hidden until access code is entered.
-  mountPasswordGate(() => {});
+  mountPasswordGate(async (password) => {
+    // Prefill any existing reply (so Sam can come back and edit).
+    try {
+      const latest = await loadLatest(password);
+      const a = latest && latest.answers ? latest.answers : null;
+      if (a) {
+        const form = document.getElementById('samReply');
+        Object.entries(a).forEach(([key, value]) => {
+          if (typeof value !== 'string') return;
+          const fieldByName = form.querySelectorAll('[name="' + key + '"]');
+          fieldByName.forEach((el) => {
+            if (el.type === 'radio') {
+              if (el.value === value) el.checked = true;
+            } else {
+              el.value = value;
+            }
+          });
+          const fieldById = document.getElementById(key);
+          if (fieldById && fieldById.tagName === 'TEXTAREA') fieldById.value = value;
+        });
+      }
+    } catch (err) {
+      console.warn('Could not preload existing reply:', err);
+    }
+
+    function snapshot() {
+      const form = document.getElementById('samReply');
+      const data = {};
+      const fields = form.querySelectorAll('input[name], textarea[name]');
+      fields.forEach((el) => {
+        if (el.type === 'radio') {
+          if (el.checked) data[el.name] = el.value;
+        } else if (el.value) {
+          data[el.name] = el.value;
+        }
+      });
+      return data;
+    }
+
+    function setStatus(msg, color) {
+      const el = document.getElementById('submitStatus');
+      el.textContent = msg;
+      if (color) el.style.color = color;
+    }
+
+    document.getElementById('submitReplyBtn').addEventListener('click', async () => {
+      const btn = document.getElementById('submitReplyBtn');
+      btn.disabled = true;
+      btn.textContent = 'Submitting…';
+      setStatus('');
+      try {
+        const data = snapshot();
+        await submitToGitHub(password, data);
+        setStatus('✓ Submitted — the Octogle Team will see your reply shortly. Re-open this page anytime to update.', '#16a34a');
+        btn.textContent = 'Update reply';
+      } catch (err) {
+        console.error(err);
+        setStatus('Sorry, submission failed: ' + (err.message || err), '#dc2626');
+        btn.textContent = 'Try submitting again';
+      } finally {
+        btn.disabled = false;
+      }
+    });
+  });
 </script>
 </body>
 </html>
