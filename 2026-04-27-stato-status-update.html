@@ -346,11 +346,93 @@
     <li><strong>LeadByte</strong> — 28 real campaigns syncing every 2 minutes</li>
     <li><strong>Cloudflare R2</strong> — file storage in <code>stato-production</code> bucket; uploads working browser-side</li>
     <li><strong>Xero</strong> — Custom Connection on Clinical Marketing Solutions Ltd; first real draft invoice <code>INV-0377</code> already pushed</li>
-    <li><strong>Endole</strong> — credit checks (sandbox active; just confirmed working — Apex Media Ltd score: 38)</li>
+    <li><strong>Endole</strong> — credit checks (sandbox active; just confirmed working — Apex Media Ltd (for demo) score: 38)</li>
     <li><strong>Resend</strong> — transactional email working from <code>onboarding@resend.dev</code></li>
     <li><strong>SignNow</strong> — live envelope already sent (id <code>18f793bf…ef7</code>)</li>
     <li><strong>Catchr</strong> — ad-spend MCP, hourly sync</li>
   </ul>
+
+  <!-- ============================================================ -->
+
+  <h2><span class="pill" style="background:#f5f5f7;color:#6e6e73;">Still mock</span> 3 widgets + 1 page still showing demo numbers</h2>
+
+  <p style="font-size:14px;color:#424245;margin-bottom:14px;">
+    Most of the app is now real — clients, invoices, campaigns, credit checks,
+    file uploads, notifications, overdue invoices all pull from live data. A
+    few surfaces still show placeholder numbers because the backend service
+    that would feed them hasn't been built yet. Each one is unblocked the
+    moment we have a) the data source and b) your input on how it should be
+    aggregated. Details below.
+  </p>
+
+  <table>
+    <thead>
+      <tr><th style="width:24%">What</th><th>Why it's still mock</th><th style="width:32%">What we need from you</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Dashboard ▸ Bank balances</strong></td>
+        <td>
+          No banking integration wired yet. The original plan said "via Xero
+          bank feed" — Xero exposes the connected bank accounts and recent
+          balances, so we can read them once you confirm which account(s) to
+          show. Alternative is direct Open Banking (TrueLayer / Plaid), which
+          would need a separate consent flow.
+        </td>
+        <td>
+          Confirm: <strong>Xero bank feed</strong> (we wire it, no extra creds), or
+          <strong>direct Open Banking</strong> (you connect via TrueLayer/Plaid)?
+          And which bank accounts should appear on the dashboard?
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Dashboard ▸ VAT liability</strong></td>
+        <td>
+          No VAT calculation service. Needs to aggregate output VAT (collected
+          on invoices) minus input VAT (paid on costs) per quarter, plus a
+          "VAT reserve" target so the widget can show surplus / shortfall.
+        </td>
+        <td>
+          Are leadgeneration.io's businesses on <strong>cash basis</strong> or
+          <strong>accrual basis</strong> VAT?
+          What's your target VAT reserve as a % of collected VAT?
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Dashboard ▸ Profit &amp; Loss</strong></td>
+        <td>
+          No P&amp;L aggregator. Revenue is easy (sum of paid invoices). Cost
+          side is the question — should it be just LeadByte payouts +
+          Catchr ad spend? Or also salaries, rent, software subscriptions,
+          tax accruals? Without that decision the widget shows fake numbers.
+        </td>
+        <td>
+          A <strong>business costs spreadsheet</strong> (rent, salaries, software,
+          tax) for the costs we don't already get from LeadByte/Catchr.
+          Plus your call on what the dashboard P&amp;L should treat as "cost".
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Finance ▸ Subscriptions page</strong></td>
+        <td>
+          No <code>subscriptions</code> DB table yet, so the page shows a
+          hardcoded sample list. Phase-2 feature in the original FigJam mind
+          map.
+        </td>
+        <td>
+          A list of the recurring software/services you'd like to track —
+          one per line, ideally:
+          <code>Name | Vendor | Monthly £ | Renewal date | Notes</code>.
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p style="font-size:13px;color:#6e6e73;margin-top:14px;">
+    None of these block today's demo — every other dashboard tile (stat
+    cards, charts, recent invoices, recent activity) is real. We can light
+    these up in a small follow-on sprint as soon as the answers below land.
+  </p>
 
   <!-- ============================================================ -->
 
@@ -410,6 +492,67 @@
         <label for="leadbyte_notes">LeadByte notes (optional)</label>
         <textarea id="leadbyte_notes" name="leadbyte_notes" placeholder="e.g. if you generated a fresh key, paste it here."></textarea>
       </div>
+
+      <h3 style="margin-top:32px;">Light up the still-mock widgets (optional)</h3>
+
+      <div class="field">
+        <label>Bank balances widget — data source</label>
+        <div class="hint" style="margin-bottom:8px;">How should the dashboard get bank balances?</div>
+        <div class="radios">
+          <label><input type="radio" name="bank_source" value="xero-bank-feed" /> Xero bank feed (we wire it)</label>
+          <label><input type="radio" name="bank_source" value="open-banking" /> Open Banking (TrueLayer/Plaid — you connect)</label>
+          <label><input type="radio" name="bank_source" value="manual-entry" /> Manual balance entry for now</label>
+          <label><input type="radio" name="bank_source" value="not-needed-yet" /> Skip — not needed yet</label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="bank_notes">Bank notes (optional)</label>
+        <textarea id="bank_notes" name="bank_notes" placeholder="Which bank accounts should appear on the dashboard? Account labels, bank name, currency, etc."></textarea>
+      </div>
+
+      <div class="field">
+        <label>VAT scheme</label>
+        <div class="hint" style="margin-bottom:8px;">Which VAT basis are leadgeneration.io's UK businesses on?</div>
+        <div class="radios">
+          <label><input type="radio" name="vat_scheme" value="cash" /> Cash basis</label>
+          <label><input type="radio" name="vat_scheme" value="accrual" /> Accrual basis</label>
+          <label><input type="radio" name="vat_scheme" value="flat-rate" /> Flat rate</label>
+          <label><input type="radio" name="vat_scheme" value="not-vat-registered" /> Not VAT registered</label>
+          <label><input type="radio" name="vat_scheme" value="not-sure" /> Not sure — ask my accountant</label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="vat_reserve">VAT reserve target (% of collected VAT)</label>
+        <div class="hint" style="margin-bottom:8px;">What % of collected VAT do you want held aside? Common: 100% (full coverage), 110% (10% buffer).</div>
+        <input type="text" id="vat_reserve" name="vat_reserve" placeholder="e.g. 110" />
+      </div>
+
+      <div class="field">
+        <label for="pnl_costs">P&L — what counts as "cost"</label>
+        <div class="hint" style="margin-bottom:8px;">Tick everything you'd want included on the P&amp;L widget (free-text, just say what to include).</div>
+        <textarea id="pnl_costs" name="pnl_costs" rows="3" placeholder="e.g. LeadByte payouts + Catchr ad spend + Octogle services + rent + salaries + software subs + UK CT accrual"></textarea>
+      </div>
+
+      <div class="field">
+        <label for="business_costs">Business costs spreadsheet (optional)</label>
+        <div class="hint" style="margin-bottom:8px;">Recurring costs to feed the P&L. One per line: <code>Name | Monthly £ | Category</code>.</div>
+        <textarea id="business_costs" name="business_costs" rows="5" placeholder="Office rent | 2400 | Rent
+Yash + May salaries | 8000 | Salaries
+Stato Railway hosting | 25 | Software
+Resend | 20 | Software"></textarea>
+      </div>
+
+      <div class="field">
+        <label for="subscriptions_list">Subscriptions to track (optional)</label>
+        <div class="hint" style="margin-bottom:8px;">Software/services you want listed on the Subscriptions page. One per line: <code>Name | Vendor | Monthly £ | Renewal date | Notes</code>.</div>
+        <textarea id="subscriptions_list" name="subscriptions_list" rows="5" placeholder="Slack | Slack | 60 | 1 May 2026 | 5 seats
+Notion | Notion | 40 | 12 May 2026 | Team plan
+SignNow | airSlate | 50 | 27 Apr 2026 | Annual paid plan (urgent — see top of page)"></textarea>
+      </div>
+
+      <h3 style="margin-top:32px;">Other</h3>
 
       <div class="field">
         <label for="real_users">Real users for testing (optional)</label>
