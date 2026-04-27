@@ -746,32 +746,63 @@ Joe Ops | joe@leadgeneration.io | ops_manager | Joe!2026"></textarea>
       form.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
 
-    // Download
+    // Download — wrapped in visible feedback so we can see if the click
+    // even reaches the handler (some browsers silently block JS-triggered
+    // downloads; some users hit Download before scripts have wired up).
     const dlBtn = document.getElementById('downloadReplyBtn');
     if (dlBtn) dlBtn.addEventListener('click', (ev) => {
       ev.preventDefault();
+      const originalText = dlBtn.textContent;
+      dlBtn.textContent = 'Preparing…';
+      dlBtn.disabled = true;
+      setStatus('Preparing your download…', '#0066cc');
       try {
         saveLocal();
         const data = snapshot();
-        const lines = ['Stato — my reply', '', 'Generated: ' + new Date().toLocaleString(), ''];
+        const filledCount = Object.keys(data).length;
+        const lines = [
+          'Stato — my reply',
+          '',
+          'Generated: ' + new Date().toLocaleString(),
+          'Filled fields: ' + filledCount,
+          '',
+        ];
         for (const [key, label] of Object.entries(LABELS)) {
           const value = (data[key] || '').toString().trim();
           lines.push(label + ':');
           lines.push(value ? '  ' + value.replace(/\n/g, '\n  ') : '  (skipped)');
           lines.push('');
         }
-        const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'stato-sam-reply-' + new Date().toISOString().slice(0, 10) + '.txt';
-        document.body.appendChild(a);
-        a.click();
-        setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 200);
-        setStatus('Downloaded a copy.', '#16a34a');
+        const text = lines.join('\n');
+        const filename = 'stato-sam-reply-' + new Date().toISOString().slice(0, 10) + '.txt';
+
+        // Path 1 — modern browsers: Blob + temporary <a download>.
+        try {
+          const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = filename;
+          a.rel = 'noopener';
+          document.body.appendChild(a);
+          a.click();
+          setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 500);
+        } catch (downloadErr) {
+          // Path 2 — fallback: open a data: URL in a new tab. User can
+          // right-click → Save as.
+          console.warn('Blob download failed, trying data URL fallback:', downloadErr);
+          const dataUrl = 'data:text/plain;charset=utf-8,' + encodeURIComponent(text);
+          window.open(dataUrl, '_blank');
+        }
+
+        dlBtn.textContent = '✓ Downloaded';
+        setStatus('Downloaded ' + filename + ' (' + filledCount + ' fields filled).', '#16a34a');
+        setTimeout(() => { dlBtn.textContent = originalText; dlBtn.disabled = false; }, 2000);
       } catch (err) {
         console.error('Download failed:', err);
-        setStatus('Download failed: ' + (err && err.message ? err.message : err), '#dc2626');
+        dlBtn.textContent = originalText;
+        dlBtn.disabled = false;
+        setStatus('Download failed: ' + (err && err.message ? err.message : String(err)), '#dc2626');
       }
     });
 
