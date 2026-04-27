@@ -650,90 +650,86 @@ Joe Ops | joe@leadgeneration.io | ops_manager | Joe!2026"></textarea>
     open_questions:      'Anything else',
   };
 
-  // Page is gated — content is hidden until access code is entered.
-  mountPasswordGate(async (password) => {
+  function setStatus(msg, color) {
+    const el = document.getElementById('submitStatus');
+    if (!el) return;
+    el.textContent = msg;
+    if (color) el.style.color = color;
+  }
+
+  function snapshot() {
     const form = document.getElementById('samReply');
+    const data = {};
+    if (!form) return data;
+    form.querySelectorAll('input[name], textarea[name]').forEach((el) => {
+      if (el.type === 'radio') { if (el.checked) data[el.name] = el.value; }
+      else if (el.value) { data[el.name] = el.value; }
+    });
+    return data;
+  }
 
-    function snapshot() {
-      const data = {};
-      const fields = form.querySelectorAll('input[name], textarea[name]');
-      fields.forEach((el) => {
-        if (el.type === 'radio') {
-          if (el.checked) data[el.name] = el.value;
-        } else if (el.value) {
-          data[el.name] = el.value;
-        }
-      });
-      return data;
+  function applyData(a) {
+    const form = document.getElementById('samReply');
+    if (!form || !a) return;
+    Object.entries(a).forEach(([key, value]) => {
+      if (typeof value !== 'string') return;
+      const radios = form.querySelectorAll('input[type="radio"][name="' + key + '"]');
+      if (radios.length) { radios.forEach((r) => { r.checked = (r.value === value); }); return; }
+      const text = form.querySelector('[name="' + key + '"]');
+      if (text) text.value = value;
+    });
+  }
+
+  function saveLocal() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot())); } catch (e) { /* ignore */ }
+  }
+
+  function loadLocal() {
+    try { const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : null; }
+    catch { return null; }
+  }
+
+  // Wire all UI handlers. Done as a separate function so we never lose them
+  // to an unhandled error during pre-fill — if loadLatest() fails (e.g. no
+  // GitHub token configured), the buttons still work.
+  function wireForm(password) {
+    const form = document.getElementById('samReply');
+    if (!form) {
+      setStatus('Form failed to mount — please refresh.', '#dc2626');
+      console.error('No #samReply form found in DOM');
+      return;
     }
 
-    function applyData(a) {
-      if (!a) return;
-      Object.entries(a).forEach(([key, value]) => {
-        if (typeof value !== 'string') return;
-        const radios = form.querySelectorAll('input[type="radio"][name="' + key + '"]');
-        if (radios.length) {
-          radios.forEach((r) => { r.checked = (r.value === value); });
-          return;
-        }
-        const text = form.querySelector('[name="' + key + '"]');
-        if (text) text.value = value;
-      });
-    }
-
-    function saveLocal() {
-      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot())); } catch {}
-    }
-
-    function loadLocal() {
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        return raw ? JSON.parse(raw) : null;
-      } catch { return null; }
-    }
-
-    function setStatus(msg, color) {
-      const el = document.getElementById('submitStatus');
-      el.textContent = msg;
-      if (color) el.style.color = color;
-    }
-
-    // Pre-fill: server first (cross-device), then merge with local if newer.
-    try {
-      const latest = await loadLatest(password);
-      if (latest && latest.answers) applyData(latest.answers);
-    } catch (err) {
-      console.warn('Could not preload server reply:', err);
-    }
-    const local = loadLocal();
-    if (local) applyData(local);
-
-    // Auto-save on every change.
+    // Auto-save
     form.addEventListener('input', saveLocal);
     form.addEventListener('change', saveLocal);
 
     // Submit
-    document.getElementById('submitReplyBtn').addEventListener('click', async () => {
-      const btn = document.getElementById('submitReplyBtn');
-      btn.disabled = true;
-      btn.textContent = 'Submitting…';
+    const submitBtn = document.getElementById('submitReplyBtn');
+    if (submitBtn) submitBtn.addEventListener('click', async (ev) => {
+      ev.preventDefault();
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Submitting…';
       setStatus('');
       try {
         const data = snapshot();
+        if (!password) throw new Error('Session expired — refresh and re-enter access code.');
         await submitToGitHub(password, data);
         setStatus('✓ Submitted — the Octogle Team will see your reply shortly. Re-open this page anytime to update.', '#16a34a');
-        btn.textContent = 'Update answers';
+        submitBtn.textContent = 'Update answers';
       } catch (err) {
-        console.error(err);
-        setStatus('Sorry, submission failed: ' + (err.message || err), '#dc2626');
-        btn.textContent = 'Try submitting again';
+        console.error('Submit failed:', err);
+        setStatus('Sorry, submission failed: ' + (err && err.message ? err.message : err), '#dc2626');
+        submitBtn.textContent = 'Try submitting again';
       } finally {
-        btn.disabled = false;
+        submitBtn.disabled = false;
       }
     });
 
-    // Clear all answers
-    document.getElementById('clearReplyBtn').addEventListener('click', () => {
+    // Clear
+    const clearBtn = document.getElementById('clearReplyBtn');
+    if (clearBtn) clearBtn.addEventListener('click', (ev) => {
+      ev.preventDefault();
       const ok = confirm(
         'Clear all your answers?\n\n' +
         'This empties every field on this page on this device. ' +
@@ -741,39 +737,65 @@ Joe Ops | joe@leadgeneration.io | ops_manager | Joe!2026"></textarea>
         'You can re-fill the form and submit again to update.'
       );
       if (!ok) return;
-      try { localStorage.removeItem(STORAGE_KEY); } catch {}
+      try { localStorage.removeItem(STORAGE_KEY); } catch (e) { /* ignore */ }
       form.reset();
       form.querySelectorAll('input[type="radio"]').forEach((el) => { el.checked = false; });
       setStatus('Cleared. You can start fresh — answers are not removed from our side.', '#6e6e73');
-      document.getElementById('submitReplyBtn').textContent = 'Submit answers';
+      const sb = document.getElementById('submitReplyBtn');
+      if (sb) sb.textContent = 'Submit answers';
       form.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
 
-    // Download a copy (plain text — readable for Sam's records / email)
-    document.getElementById('downloadReplyBtn').addEventListener('click', () => {
-      saveLocal();
-      const data = snapshot();
-      const lines = [
-        'Stato — my reply',
-        '',
-        'Generated: ' + new Date().toLocaleString(),
-        '',
-      ];
-      for (const [key, label] of Object.entries(LABELS)) {
-        const value = (data[key] || '').toString().trim();
-        lines.push(label + ':');
-        lines.push(value ? '  ' + value.replace(/\n/g, '\n  ') : '  (skipped)');
-        lines.push('');
+    // Download
+    const dlBtn = document.getElementById('downloadReplyBtn');
+    if (dlBtn) dlBtn.addEventListener('click', (ev) => {
+      ev.preventDefault();
+      try {
+        saveLocal();
+        const data = snapshot();
+        const lines = ['Stato — my reply', '', 'Generated: ' + new Date().toLocaleString(), ''];
+        for (const [key, label] of Object.entries(LABELS)) {
+          const value = (data[key] || '').toString().trim();
+          lines.push(label + ':');
+          lines.push(value ? '  ' + value.replace(/\n/g, '\n  ') : '  (skipped)');
+          lines.push('');
+        }
+        const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'stato-sam-reply-' + new Date().toISOString().slice(0, 10) + '.txt';
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 200);
+        setStatus('Downloaded a copy.', '#16a34a');
+      } catch (err) {
+        console.error('Download failed:', err);
+        setStatus('Download failed: ' + (err && err.message ? err.message : err), '#dc2626');
       }
-      const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'stato-sam-reply-' + new Date().toISOString().slice(0, 10) + '.txt';
-      document.body.appendChild(a);
-      a.click();
-      setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 100);
     });
+
+    console.log('Stato reply form wired — submit/clear/download ready.');
+  }
+
+  // Page is gated — content is hidden until access code is entered.
+  mountPasswordGate(async (password) => {
+    // Wire UI first so buttons always work, even if pre-fill fails.
+    wireForm(password);
+
+    // Pre-fill from localStorage (instant) then attempt server (best-effort).
+    const local = loadLocal();
+    if (local) applyData(local);
+
+    try {
+      const latest = await loadLatest(password);
+      if (latest && latest.answers) applyData(latest.answers);
+    } catch (err) {
+      // Likely 'GitHub token not configured' until the PAT is pasted into
+      // lib.js. Buttons are already wired so submit will surface the error
+      // visibly on click; pre-fill is best-effort and silent on failure.
+      console.warn('Pre-fill from server skipped:', err && err.message ? err.message : err);
+    }
   });
 </script>
 </body>
