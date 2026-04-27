@@ -29,7 +29,7 @@ const CONFIG = {
   //   - Repository access: Only `stato-client-portal`
   //   - Permissions → Repository → Contents → Read and write
   // Worst case if leaked: someone vandalises submissions.json. Easy to revert.
-  token: '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',
+  token: 'PASTE_GITHUB_FINE_GRAINED_TOKEN_HERE',
 
   // SHA-256 hex of the access password.
   // Default password is "stato2026". To change it:
