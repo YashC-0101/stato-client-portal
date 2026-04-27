@@ -138,15 +138,45 @@
   .radios label:hover { border-color: #0066cc; }
   .radios input[type=radio] { accent-color: #0066cc; margin: 0; }
   .radios label:has(input:checked) { border-color: #0066cc; background: #f0f7ff; }
-  button.primary {
-    background: #0066cc; color: #fff; border: none;
-    padding: 12px 20px; border-radius: 10px;
+  button.primary,
+  button.secondary {
+    padding: 12px 22px; border-radius: 999px;
     font: inherit; font-size: 14px; font-weight: 600;
-    cursor: pointer; transition: background 120ms;
+    cursor: pointer; transition: background 120ms, border-color 120ms;
   }
-  button.primary:hover { background: #0058b3; }
-  button.primary:disabled { background: #c0c0c5; cursor: progress; }
-  #submitStatus { margin-top: 12px; font-size: 13px; min-height: 18px; }
+  button.primary {
+    background: #0066cc; color: #fff; border: 1px solid #0066cc;
+  }
+  button.primary:hover { background: #0058b3; border-color: #0058b3; }
+  button.primary:disabled { background: #c0c0c5; border-color: #c0c0c5; cursor: progress; }
+  button.secondary {
+    background: #fff; color: #1d1d1f; border: 1px solid #e8e8ed;
+  }
+  button.secondary:hover { border-color: #1d1d1f; }
+  button.secondary.danger { color: #dc2626; border-color: #fecaca; }
+  button.secondary.danger:hover { border-color: #dc2626; background: #fff5f5; }
+
+  .footer-actions {
+    margin-top: 24px;
+    padding-top: 20px; border-top: 1px solid #e8e8ed;
+    text-align: center;
+  }
+  .footer-actions p {
+    color: #6e6e73; font-size: 13.5px; line-height: 1.5;
+    margin: 0 0 16px 0;
+  }
+  .button-row {
+    display: flex; justify-content: center; gap: 12px;
+    flex-wrap: wrap;
+  }
+  #submitStatus { margin-top: 14px; font-size: 13px; min-height: 18px; }
+  .saved-hint {
+    display: inline-block; font-size: 12px; color: #16a34a;
+    margin-top: 10px;
+    opacity: 0; transition: opacity 200ms;
+  }
+  .saved-hint.visible { opacity: 1; }
+  .saved-hint::before { content: "✓ "; }
 </style>
 </head>
 <body>
@@ -571,8 +601,20 @@ Joe Ops | joe@leadgeneration.io | ops_manager | Joe!2026"></textarea>
         <textarea id="open_questions" name="open_questions" rows="5" placeholder="Bugs you noticed during the demo, questions, additional creds you want to share, scope changes — anything."></textarea>
       </div>
 
-      <button type="button" class="primary" id="submitReplyBtn">Submit reply</button>
-      <div id="submitStatus"></div>
+      <div class="footer-actions">
+        <p>
+          Click Submit when you're ready. Your answers are saved securely —
+          the Octogle Team will see them right away. You can come back and
+          update at any time.
+        </p>
+        <div class="button-row">
+          <button type="button" class="secondary danger" id="clearReplyBtn">Clear all answers</button>
+          <button type="button" class="secondary" id="downloadReplyBtn">Download a copy</button>
+          <button type="button" class="primary" id="submitReplyBtn">Submit answers</button>
+        </div>
+        <div id="submitStatus"></div>
+        <div><span class="saved-hint visible">Your answers are saved on this device as you type</span></div>
+      </div>
 
     </form>
   </div>
@@ -587,34 +629,32 @@ Joe Ops | joe@leadgeneration.io | ops_manager | Joe!2026"></textarea>
 
 <script src="lib.js"></script>
 <script>
+  const STORAGE_KEY = 'stato-2026-04-27-reply';
+
+  // Human-readable labels for the Download button (text export).
+  const LABELS = {
+    signnow_status:      'SignNow upgrade status',
+    signnow_notes:       'SignNow notes',
+    vercel_app_status:   'Vercel GitHub App on Leadgenerationio org',
+    vercel_notes:        'Vercel notes',
+    leadbyte_perms_status: 'LeadByte API key permissions',
+    leadbyte_notes:      'LeadByte notes',
+    bank_source:         'Bank balances widget — data source',
+    bank_notes:          'Bank notes',
+    vat_scheme:          'VAT scheme',
+    vat_reserve:         'VAT reserve target (% of collected VAT)',
+    pnl_costs:           'P&L — what counts as "cost"',
+    business_costs:      'Business costs spreadsheet',
+    subscriptions_list:  'Subscriptions to track',
+    real_users:          'Real users for testing',
+    open_questions:      'Anything else',
+  };
+
   // Page is gated — content is hidden until access code is entered.
   mountPasswordGate(async (password) => {
-    // Prefill any existing reply (so Sam can come back and edit).
-    try {
-      const latest = await loadLatest(password);
-      const a = latest && latest.answers ? latest.answers : null;
-      if (a) {
-        const form = document.getElementById('samReply');
-        Object.entries(a).forEach(([key, value]) => {
-          if (typeof value !== 'string') return;
-          const fieldByName = form.querySelectorAll('[name="' + key + '"]');
-          fieldByName.forEach((el) => {
-            if (el.type === 'radio') {
-              if (el.value === value) el.checked = true;
-            } else {
-              el.value = value;
-            }
-          });
-          const fieldById = document.getElementById(key);
-          if (fieldById && fieldById.tagName === 'TEXTAREA') fieldById.value = value;
-        });
-      }
-    } catch (err) {
-      console.warn('Could not preload existing reply:', err);
-    }
+    const form = document.getElementById('samReply');
 
     function snapshot() {
-      const form = document.getElementById('samReply');
       const data = {};
       const fields = form.querySelectorAll('input[name], textarea[name]');
       fields.forEach((el) => {
@@ -627,12 +667,52 @@ Joe Ops | joe@leadgeneration.io | ops_manager | Joe!2026"></textarea>
       return data;
     }
 
+    function applyData(a) {
+      if (!a) return;
+      Object.entries(a).forEach(([key, value]) => {
+        if (typeof value !== 'string') return;
+        const radios = form.querySelectorAll('input[type="radio"][name="' + key + '"]');
+        if (radios.length) {
+          radios.forEach((r) => { r.checked = (r.value === value); });
+          return;
+        }
+        const text = form.querySelector('[name="' + key + '"]');
+        if (text) text.value = value;
+      });
+    }
+
+    function saveLocal() {
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot())); } catch {}
+    }
+
+    function loadLocal() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        return raw ? JSON.parse(raw) : null;
+      } catch { return null; }
+    }
+
     function setStatus(msg, color) {
       const el = document.getElementById('submitStatus');
       el.textContent = msg;
       if (color) el.style.color = color;
     }
 
+    // Pre-fill: server first (cross-device), then merge with local if newer.
+    try {
+      const latest = await loadLatest(password);
+      if (latest && latest.answers) applyData(latest.answers);
+    } catch (err) {
+      console.warn('Could not preload server reply:', err);
+    }
+    const local = loadLocal();
+    if (local) applyData(local);
+
+    // Auto-save on every change.
+    form.addEventListener('input', saveLocal);
+    form.addEventListener('change', saveLocal);
+
+    // Submit
     document.getElementById('submitReplyBtn').addEventListener('click', async () => {
       const btn = document.getElementById('submitReplyBtn');
       btn.disabled = true;
@@ -642,7 +722,7 @@ Joe Ops | joe@leadgeneration.io | ops_manager | Joe!2026"></textarea>
         const data = snapshot();
         await submitToGitHub(password, data);
         setStatus('✓ Submitted — the Octogle Team will see your reply shortly. Re-open this page anytime to update.', '#16a34a');
-        btn.textContent = 'Update reply';
+        btn.textContent = 'Update answers';
       } catch (err) {
         console.error(err);
         setStatus('Sorry, submission failed: ' + (err.message || err), '#dc2626');
@@ -650,6 +730,49 @@ Joe Ops | joe@leadgeneration.io | ops_manager | Joe!2026"></textarea>
       } finally {
         btn.disabled = false;
       }
+    });
+
+    // Clear all answers
+    document.getElementById('clearReplyBtn').addEventListener('click', () => {
+      const ok = confirm(
+        'Clear all your answers?\n\n' +
+        'This empties every field on this page on this device. ' +
+        'Anything you have already submitted to the Octogle Team stays on our side.\n\n' +
+        'You can re-fill the form and submit again to update.'
+      );
+      if (!ok) return;
+      try { localStorage.removeItem(STORAGE_KEY); } catch {}
+      form.reset();
+      form.querySelectorAll('input[type="radio"]').forEach((el) => { el.checked = false; });
+      setStatus('Cleared. You can start fresh — answers are not removed from our side.', '#6e6e73');
+      document.getElementById('submitReplyBtn').textContent = 'Submit answers';
+      form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    // Download a copy (plain text — readable for Sam's records / email)
+    document.getElementById('downloadReplyBtn').addEventListener('click', () => {
+      saveLocal();
+      const data = snapshot();
+      const lines = [
+        'Stato — my reply',
+        '',
+        'Generated: ' + new Date().toLocaleString(),
+        '',
+      ];
+      for (const [key, label] of Object.entries(LABELS)) {
+        const value = (data[key] || '').toString().trim();
+        lines.push(label + ':');
+        lines.push(value ? '  ' + value.replace(/\n/g, '\n  ') : '  (skipped)');
+        lines.push('');
+      }
+      const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'stato-sam-reply-' + new Date().toISOString().slice(0, 10) + '.txt';
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 100);
     });
   });
 </script>

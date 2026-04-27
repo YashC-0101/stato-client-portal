@@ -110,6 +110,8 @@
     <div class="actions">
       <button class="primary" id="refreshBtn">↻ Refresh</button>
       <button id="copyBtn">Copy as text</button>
+      <button id="downloadTextBtn">Download .txt</button>
+      <button id="downloadJsonBtn">Download .json</button>
       <button id="lockBtn">Lock</button>
     </div>
   </header>
@@ -128,6 +130,72 @@
 <script src="lib.js"></script>
 <script>
 (function () {
+  // Section definitions for the 27 April status-update reply form.
+  // (When the older 23 April form's submission is loaded, fields fall through
+  // to the legacy SECTION_ORDER below.)
+  const SECTION_ORDER_2026_04_27 = [
+    {
+      title: '1. SignNow upgrade',
+      fields: [
+        ['signnow_status', 'Status'],
+        ['signnow_notes', 'Notes'],
+      ],
+    },
+    {
+      title: '2. Vercel GitHub App',
+      fields: [
+        ['vercel_app_status', 'Status'],
+        ['vercel_notes', 'Notes'],
+      ],
+    },
+    {
+      title: '3. LeadByte API key permissions',
+      fields: [
+        ['leadbyte_perms_status', 'Status'],
+        ['leadbyte_notes', 'Notes'],
+      ],
+    },
+    {
+      title: '4. Bank balances widget',
+      fields: [
+        ['bank_source', 'Data source'],
+        ['bank_notes', 'Notes'],
+      ],
+    },
+    {
+      title: '5. VAT widget',
+      fields: [
+        ['vat_scheme', 'VAT scheme'],
+        ['vat_reserve', 'Reserve target (%)'],
+      ],
+    },
+    {
+      title: '6. P&L widget',
+      fields: [
+        ['pnl_costs', 'What counts as cost'],
+        ['business_costs', 'Business costs spreadsheet'],
+      ],
+    },
+    {
+      title: '7. Subscriptions to track',
+      fields: [
+        ['subscriptions_list', 'Subscriptions list'],
+      ],
+    },
+    {
+      title: '8. Real users for testing',
+      fields: [
+        ['real_users', 'User list'],
+      ],
+    },
+    {
+      title: '9. Anything else',
+      fields: [
+        ['open_questions', 'Open questions / feedback'],
+      ],
+    },
+  ];
+
   const SECTION_ORDER = [
     {
       title: '1. SignNow upgrade',
@@ -190,6 +258,7 @@
   ];
 
   const RADIO_LABELS = {
+    // 23 April form
     'yes-i-will-upgrade': 'Yes — I will upgrade myself',
     'yes-yash-handles': 'Yes — Octogle Team to send instructions',
     'other-provider': 'Use a different provider',
@@ -206,6 +275,23 @@
     'yes-sent': 'Yes — already sent',
     'will-send-today': 'Not yet — sending today',
     'dont-have-railway': "Doesn't have Railway account yet",
+    // 27 April status-update reply form
+    'not-yet': 'Not yet',
+    'will-do-today': 'Will do today',
+    'upgraded': 'Upgraded ✓',
+    'changed-provider': 'Changed provider — see notes',
+    'installed': 'Installed ✓',
+    'prefer-bump-yash-role': 'Prefer to bump Yash to Owner instead',
+    'granted': 'Granted ✓',
+    'keep-old-key': 'Keep using the old key',
+    'xero-bank-feed': 'Xero bank feed (we wire it)',
+    'open-banking': 'Open Banking (TrueLayer/Plaid — you connect)',
+    'manual-entry': 'Manual balance entry for now',
+    'not-needed-yet': 'Skip — not needed yet',
+    'cash': 'Cash basis',
+    'accrual': 'Accrual basis',
+    'flat-rate': 'Flat rate',
+    'not-vat-registered': 'Not VAT registered',
   };
 
   function pretty(field, value) {
@@ -229,6 +315,13 @@
     }[c]));
   }
 
+  // Detect which form's data this is (a few heuristic field names suffice).
+  function pickSchema(answers) {
+    const NEW_FORM_KEYS = ['signnow_status', 'vercel_app_status', 'leadbyte_perms_status', 'bank_source', 'vat_scheme'];
+    const isNew = NEW_FORM_KEYS.some((k) => Object.prototype.hasOwnProperty.call(answers, k));
+    return isNew ? SECTION_ORDER_2026_04_27 : SECTION_ORDER;
+  }
+
   function render(submission) {
     const fr = freshness(submission.submittedAt);
     document.getElementById('freshness').textContent = fr.text;
@@ -239,8 +332,11 @@
     const root = document.getElementById('content');
     root.innerHTML = '';
     const a = submission.answers || {};
+    const schema = pickSchema(a);
+    const known = new Set();
+    schema.forEach((s) => s.fields.forEach(([k]) => known.add(k)));
 
-    for (const section of SECTION_ORDER) {
+    for (const section of schema) {
       const card = document.createElement('section');
       card.className = 'card';
       card.innerHTML = '<h2>' + escape(section.title) + '</h2>';
@@ -250,10 +346,26 @@
         row.className = 'row';
         row.innerHTML = '<div class="label">' + escape(label) + '</div>'
           + (value
-              ? '<div class="value">' + escape(value) + '</div>'
+              ? '<div class="value">' + escape(value).replace(/\n/g, '<br/>') + '</div>'
               : '<div class="value empty">— not answered —</div>');
         card.appendChild(row);
       }
+      root.appendChild(card);
+    }
+
+    // Show any unmapped fields (so we never silently drop data).
+    const unknown = Object.entries(a).filter(([k, v]) => !known.has(k) && v);
+    if (unknown.length) {
+      const card = document.createElement('section');
+      card.className = 'card';
+      card.innerHTML = '<h2>Other answers</h2>';
+      unknown.forEach(([k, v]) => {
+        const row = document.createElement('div');
+        row.className = 'row';
+        row.innerHTML = '<div class="label">' + escape(k) + '</div>'
+          + '<div class="value">' + escape(String(v)).replace(/\n/g, '<br/>') + '</div>';
+        card.appendChild(row);
+      });
       root.appendChild(card);
     }
   }
@@ -314,6 +426,7 @@
         loadLatest(password),
         loadMessages(password),
       ]);
+      lastSubmissionForDownload = submission;
       if (!submission) renderEmpty();
       else render(submission);
       renderMessages(messages);
@@ -323,23 +436,58 @@
     }
   }
 
-  function copyAsText() {
-    const a = document.querySelectorAll('.row');
+  function rowsAsText() {
+    const a = document.querySelectorAll('section.card');
     const lines = ['Sam — submission ' + (document.getElementById('lastUpdated').textContent), ''];
-    for (const r of a) {
-      const label = r.querySelector('.label').textContent;
-      const value = r.querySelector('.value').textContent;
-      lines.push(label + ': ' + value);
-    }
-    navigator.clipboard.writeText(lines.join('\n'));
+    a.forEach((card) => {
+      const h = card.querySelector('h2');
+      if (h) lines.push('## ' + h.textContent);
+      card.querySelectorAll('.row').forEach((r) => {
+        const label = r.querySelector('.label').textContent;
+        const value = r.querySelector('.value').textContent;
+        lines.push(label + ': ' + value);
+      });
+      lines.push('');
+    });
+    return lines.join('\n');
+  }
+
+  function copyAsText() {
+    navigator.clipboard.writeText(rowsAsText());
     const b = document.getElementById('copyBtn');
     const t = b.textContent;
     b.textContent = '✓ Copied';
     setTimeout(() => { b.textContent = t; }, 1500);
   }
 
+  let lastSubmissionForDownload = null;
+
+  function triggerDownload(blob, filename) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click();
+    setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 100);
+  }
+
+  function downloadText() {
+    const blob = new Blob([rowsAsText()], { type: 'text/plain;charset=utf-8' });
+    triggerDownload(blob, 'sam-submission-' + new Date().toISOString().slice(0, 10) + '.txt');
+  }
+
+  function downloadJson() {
+    if (!lastSubmissionForDownload) return;
+    const blob = new Blob(
+      [JSON.stringify(lastSubmissionForDownload, null, 2)],
+      { type: 'application/json;charset=utf-8' },
+    );
+    triggerDownload(blob, 'sam-submission-' + new Date().toISOString().slice(0, 10) + '.json');
+  }
+
   document.getElementById('refreshBtn').addEventListener('click', load);
   document.getElementById('copyBtn').addEventListener('click', copyAsText);
+  document.getElementById('downloadTextBtn').addEventListener('click', downloadText);
+  document.getElementById('downloadJsonBtn').addEventListener('click', downloadJson);
   document.getElementById('lockBtn').addEventListener('click', () => {
     clearVerified();
     location.reload();
