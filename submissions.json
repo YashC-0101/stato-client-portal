@@ -1,0 +1,11 @@
+{
+  "v": 1,
+  "encrypted": true,
+  "lastUpdated": "2026-04-27T15:54:07.406Z",
+  "data": {
+    "v": 1,
+    "salt": "83rJwBttUng634g3uzQWQw==",
+    "iv": "fB2Yl9YY6Z5+4in8",
+    "ct": "UASI8c0JQGfInMU3sIYfDrz0bNuU++/CBaiC2fnqPsYer8chWSbPHJQQlBfiufzmL99pzOXLCGWGGx1A19AXPgJnFUZwubEV6e4HlaWp0N5l9KvHA2O0636dQQ=="
+  }
+}
