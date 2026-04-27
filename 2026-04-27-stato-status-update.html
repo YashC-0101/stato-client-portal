@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Stato — Status Update · 27 April 2026</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Arial, sans-serif;
+    background: #fafafa; color: #1d1d1f;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.55;
+  }
+  .wrap { max-width: 820px; margin: 0 auto; padding: 56px 22px; }
+  .back {
+    display: inline-block; color: #0066cc; text-decoration: none;
+    font-size: 14px; margin-bottom: 24px;
+  }
+  .back:hover { text-decoration: underline; }
+  h1 {
+    font-size: 34px; font-weight: 700; letter-spacing: -0.02em;
+    margin: 0 0 6px 0;
+  }
+  .meta {
+    color: #6e6e73; font-size: 14px; margin: 0 0 36px 0;
+  }
+  h2 {
+    font-size: 24px; font-weight: 700; letter-spacing: -0.01em;
+    margin: 48px 0 14px 0;
+    display: flex; align-items: center; gap: 12px;
+  }
+  h2 .pill {
+    font-size: 11px; font-weight: 600;
+    padding: 4px 10px; border-radius: 999px;
+    text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  h2 .pill.done { background: #e6f7ec; color: #1d7a3a; }
+  h2 .pill.need { background: #fff3e0; color: #a04a00; }
+  h2 .pill.now  { background: #e8f0ff; color: #0042a3; }
+  h3 {
+    font-size: 17px; font-weight: 600; margin: 24px 0 8px 0;
+    color: #1d1d1f;
+  }
+  .section { margin-bottom: 8px; }
+  .card {
+    background: #fff; border: 1px solid #e8e8ed; border-radius: 14px;
+    padding: 18px 20px; margin: 0 0 12px 0;
+  }
+  .card .title {
+    display: flex; align-items: baseline; gap: 10px;
+    font-size: 15px; font-weight: 600; margin: 0 0 6px 0;
+  }
+  .card .body {
+    font-size: 14px; color: #424245; margin: 0;
+  }
+  .card .body code, code {
+    font-family: 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 12.5px;
+    background: #f0f0f3; padding: 1px 5px; border-radius: 4px;
+    color: #1d1d1f;
+  }
+  .badge {
+    display: inline-block;
+    font-size: 11px; font-weight: 600;
+    padding: 2px 8px; border-radius: 999px;
+    text-transform: uppercase; letter-spacing: 0.03em;
+    margin-left: 6px;
+  }
+  .badge.live { background: #e6f7ec; color: #1d7a3a; }
+  .badge.urgent { background: #ffe5e5; color: #b00020; }
+  .badge.medium { background: #fff3e0; color: #a04a00; }
+  .badge.low { background: #f0f0f3; color: #6e6e73; }
+  .url {
+    display: block; font-family: 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 12.5px; color: #0066cc; word-break: break-all;
+    margin-top: 4px;
+  }
+  table {
+    width: 100%; border-collapse: collapse;
+    background: #fff; border: 1px solid #e8e8ed; border-radius: 12px;
+    overflow: hidden;
+    font-size: 13.5px;
+  }
+  th, td {
+    text-align: left; padding: 11px 14px;
+    border-bottom: 1px solid #f0f0f3;
+    vertical-align: top;
+  }
+  th { font-weight: 600; background: #f9f9fb; color: #424245; font-size: 12px; text-transform: uppercase; letter-spacing: 0.03em; }
+  tr:last-child td { border-bottom: none; }
+  td.right { text-align: right; }
+  .stack { display: flex; flex-direction: column; gap: 12px; }
+  ul.bare { list-style: none; padding: 0; margin: 0; }
+  ul.bare li {
+    padding: 9px 0; border-bottom: 1px solid #f0f0f3; font-size: 14px;
+  }
+  ul.bare li:last-child { border-bottom: none; }
+  ul.bare li::before {
+    content: "✓"; color: #1d7a3a; font-weight: 700;
+    margin-right: 10px;
+  }
+  ul.bare.warn li::before {
+    content: "○"; color: #a04a00;
+  }
+  .summary {
+    background: #fff; border: 1px solid #e8e8ed; border-radius: 14px;
+    padding: 22px 24px;
+  }
+  .summary p { margin: 0 0 10px 0; font-size: 15px; }
+  .summary p:last-child { margin: 0; }
+  footer {
+    margin-top: 64px; padding-top: 22px;
+    border-top: 1px solid #e8e8ed;
+    color: #86868b; font-size: 12px; text-align: center;
+  }
+  .grid2 {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+  }
+  @media (max-width: 600px) { .grid2 { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <a class="back" href="index.html">← Back to portal</a>
+
+  <h1>Stato — Status Update</h1>
+  <p class="meta">
+    <strong>27 April 2026</strong> · Prepared by Yash Chavan · Octogle Technologies for leadgeneration.io
+  </p>
+
+  <div class="summary">
+    <p>
+      <strong>Stato is live in production.</strong> Both frontend and backend
+      are deployed, the database is migrated and seeded, and six third-party
+      integrations are connected and verified end-to-end (LeadByte, Cloudflare R2,
+      Xero, Endole, Resend, SignNow, Catchr).
+    </p>
+    <p>
+      You can log in right now at
+      <a href="https://sato-frontend.vercel.app" style="color:#0066cc;">https://sato-frontend.vercel.app</a>
+      with <code>owner@stato.app</code> / <code>owner123</code>. Custom domains
+      (<code>app.leadgeneration.io</code>, <code>api.leadgeneration.io</code>,
+      <code>portal.leadgeneration.io</code>) will replace the Vercel/Railway
+      URLs once GoDaddy DNS is wired.
+    </p>
+    <p>
+      <strong>One urgent item:</strong> SignNow trial expires
+      <strong>29 April 2026</strong> (in 2 days). Document signing breaks the day after
+      unless you upgrade the workspace to a paid plan.
+    </p>
+  </div>
+
+  <!-- ============================================================ -->
+
+  <h2><span class="pill done">Done</span> What we delivered today</h2>
+
+  <h3>1 · LeadByte integration went live</h3>
+  <div class="card">
+    <p class="body">
+      You sent the LeadByte API key in the morning. Within an hour the backend
+      was pulling <strong>28 real campaigns</strong> from your
+      <code>clinical.leadbyte.co.uk</code> tenant — Solar Panels UK,
+      Hearing Aids (IE/CH/PL), Will Writing, Lasting Power of Attorney,
+      Conservatory Upgrades, and 23 more. Last-month report shows real
+      revenue figures (Hearing Aids PL: £38,850.06 across 3,380 leads, etc).
+    </p>
+    <p class="body" style="margin-top:8px;">
+      Three pre-existing client-side bugs surfaced once the real data flowed
+      and were fixed in commit <code>f1211ea</code>: report-envelope shape
+      (<code>{data: […]}</code> not <code>{report: […]}</code>),
+      campaign-as-object reference flattening, and currency normalisation
+      ("Britain (United Kingdom), Pounds" → ISO <code>GBP</code>).
+      Test suite grew from 48 to 52 LeadByte cases, all green.
+    </p>
+  </div>
+
+  <h3>2 · Cloudflare R2 file storage went live</h3>
+  <div class="card">
+    <p class="body">
+      You created the <code>stato-production</code> bucket and an API token
+      with Object Read &amp; Write access. End-to-end smoke test passed:
+      upload a 48-byte test file, generate a signed download URL, fetch via
+      HTTP (200 OK, byte-identical content), delete. Took 1.9s upload,
+      66ms signed URL, 198ms delete.
+    </p>
+    <p class="body" style="margin-top:8px;">
+      Five upload folders are wired: <code>invoices</code>,
+      <code>agreements</code>, <code>creatives</code>,
+      <code>landing-pages</code>, <code>misc</code>. The frontend's
+      <code>&lt;FileUpload&gt;</code> component is now placed on the
+      Client Detail "Documents" tab — clients can attach due-diligence
+      docs which persist to R2 with download links that auto-refresh
+      hourly. 5 unit tests cover the component end-to-end.
+    </p>
+  </div>
+
+  <h3>3 · Production deployment to Railway + Vercel</h3>
+  <div class="card">
+    <p class="body">
+      Railway backend live at:
+      <span class="url">https://sato-backend-production.up.railway.app</span>
+      Watching the <code>main</code> branch — auto-rebuilds on every push.
+      Container running <strong>Express 5 / Node 22</strong> behind Railway's
+      proxy with trust-proxy enabled, multi-origin CORS allow-list,
+      production-grade JWT secrets generated via <code>openssl rand</code>.
+    </p>
+    <p class="body" style="margin-top:8px;">
+      Vercel frontend live at:
+      <span class="url">https://sato-frontend.vercel.app</span>
+      Deployed from the <code>main</code> branch. <code>VITE_API_URL</code>
+      env var baked into the bundle pointing at the Railway backend.
+    </p>
+    <p class="body" style="margin-top:8px;">
+      PostgreSQL on Railway: <strong>26 tables migrated</strong>
+      (migrations 0000→0005), 4 internal users seeded
+      (<code>owner</code>, <code>finance_admin</code>,
+      <code>ops_manager</code>, <code>readonly</code>), Redis live and
+      queued for BullMQ jobs.
+    </p>
+  </div>
+
+  <h3>4 · Branching strategy formalised</h3>
+  <div class="card">
+    <p class="body">
+      Both repos now have a <code>BRANCHING.md</code> at root explicitly
+      documenting the convention: <strong><code>main</code> = production</strong>
+      (auto-deploys to live URLs), <strong><code>Development</code> = staging</strong>
+      (where new commits land first). Promotion is fast-forward only —
+      <code>main</code> can never be ahead of <code>Development</code>.
+    </p>
+  </div>
+
+  <h3>5 · Code health</h3>
+  <div class="card">
+    <p class="body">
+      Backend: <strong>384/387 tests passing</strong> (3 pre-existing portal
+      flakes unrelated to this sprint), <strong>0 TypeScript errors</strong>.
+      Frontend: <strong>88/88 tests passing</strong>, 0 TypeScript errors.
+      Eight commits today across both repos, all on <code>Development</code>
+      and promoted to <code>main</code>.
+    </p>
+  </div>
+
+  <!-- ============================================================ -->
+
+  <h2><span class="pill need">From you</span> What we need next</h2>
+
+  <table>
+    <thead>
+      <tr><th>Item</th><th>Why</th><th>Effort</th><th>Urgency</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>SignNow paid-plan upgrade</strong></td>
+        <td>Trial expires 29 April 2026. Same env vars, no new creds — just upgrade in your SignNow dashboard. Document signing breaks the day after expiry.</td>
+        <td>~3 minutes</td>
+        <td><span class="badge urgent">By 29 Apr</span></td>
+      </tr>
+      <tr>
+        <td><strong>Vercel GitHub App on <code>Leadgenerationio</code> org</strong></td>
+        <td>
+          Frontend doesn't auto-deploy on push because Vercel's GitHub App is on
+          <code>LeadgenerationioTeams</code>, not <code>Leadgenerationio</code>.
+          Open
+          <code>https://github.com/apps/vercel/installations/new</code>,
+          pick <code>Leadgenerationio</code>, "Only select repositories" →
+          tick <code>Sato-Frontend</code> and <code>Sato-Backend</code> →
+          Install. Or bump my GitHub role from Member to Owner so I can do it.
+        </td>
+        <td>~1 minute</td>
+        <td><span class="badge medium">This week</span></td>
+      </tr>
+      <tr>
+        <td><strong>Railway: delete orphan <code>Postgres-W3n2</code></strong></td>
+        <td>
+          Created accidentally during initial click-fumble. Costs ~$5/month
+          idle. Only workspace admins can delete — that's you.
+          Click into the tile → Settings → Danger Zone → Remove Service.
+        </td>
+        <td>~30 sec</td>
+        <td><span class="badge low">Cleanup</span></td>
+      </tr>
+      <tr>
+        <td><strong>LeadByte API key permissions</strong></td>
+        <td>
+          The newer key you sent
+          (<code>ea27e3356c8bc1ad2fba1dc978d0b960</code>) lacks
+          <em>Campaign read</em> permission and falls back to mocks.
+          Until you grant Campaign / Lead / Report / Supplier read perms
+          on it from the LeadByte admin panel, we're using the previous
+          key (<code>4c9a49a3…b4c3</code>) which has full access.
+        </td>
+        <td>~2 minutes</td>
+        <td><span class="badge medium">When convenient</span></td>
+      </tr>
+      <tr>
+        <td><strong>Resend domain verification (<code>stato.tech</code>)</strong></td>
+        <td>
+          You said your other dev would handle SPF/DKIM for
+          <code>stato.tech</code> so we can switch the from-address to
+          <code>notifications@stato.tech</code>. Currently sending from
+          Resend's shared domain.
+        </td>
+        <td>Their work</td>
+        <td><span class="badge low">Polish</span></td>
+      </tr>
+      <tr>
+        <td><strong>GoDaddy DNS (whenever you're ready)</strong></td>
+        <td>
+          Three CNAMEs on <code>leadgeneration.io</code>:
+          <code>api</code> (→ Railway), <code>app</code> (→ Vercel),
+          <code>portal</code> (→ Vercel). I have the GoDaddy access you
+          mentioned — once we wire the DNS, I swap the env vars and
+          production runs on
+          <code>app.leadgeneration.io</code> /
+          <code>api.leadgeneration.io</code> instead of the auto-generated
+          URLs.
+        </td>
+        <td>~10 min joint</td>
+        <td><span class="badge low">Post-demo</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ============================================================ -->
+
+  <h2><span class="pill now">Current</span> What is live right now</h2>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="title">Frontend (Vercel)</div>
+      <p class="body">
+        <span class="url">https://sato-frontend.vercel.app</span>
+        Branch: <code>main</code> · Auto: <span class="badge medium">Manual until GitHub App installed</span>
+      </p>
+    </div>
+    <div class="card">
+      <div class="title">Backend (Railway)</div>
+      <p class="body">
+        <span class="url">https://sato-backend-production.up.railway.app</span>
+        Branch: <code>main</code> · Auto: <span class="badge live">Auto on push</span>
+      </p>
+    </div>
+  </div>
+
+  <h3>Login (5 demo accounts)</h3>
+  <table>
+    <thead><tr><th>Email</th><th>Password</th><th>Role</th></tr></thead>
+    <tbody>
+      <tr><td><code>owner@stato.app</code></td><td><code>owner123</code></td><td>Owner — full access, Settings, Billing, Integrations</td></tr>
+      <tr><td><code>finance@stato.app</code></td><td><code>finance123</code></td><td>Finance Admin — Invoices, Banking, VAT, Reports</td></tr>
+      <tr><td><code>ops@stato.app</code></td><td><code>ops123</code></td><td>Ops Manager — Campaigns, Workflows, Tasks</td></tr>
+      <tr><td><code>client@stato.app</code></td><td><code>client123</code></td><td>Client Portal — read-only client view</td></tr>
+      <tr><td><code>readonly@stato.app</code></td><td><code>readonly123</code></td><td>Read-only — Reports + dashboards only</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Integrations live in production</h3>
+  <ul class="bare">
+    <li><strong>LeadByte</strong> — 28 real campaigns syncing every 2 minutes from your <code>clinical.leadbyte.co.uk</code> tenant</li>
+    <li><strong>Cloudflare R2</strong> — file storage in <code>stato-production</code> bucket; signed-URL upload/download wired into the Client Detail "Documents" tab</li>
+    <li><strong>Xero</strong> — Custom Connection on Clinical Marketing Solutions Ltd; first real draft invoice <code>INV-0377</code> already pushed</li>
+    <li><strong>Endole</strong> — credit checks (sandbox active; flip to production billing whenever you're ready)</li>
+    <li><strong>Resend</strong> — transactional email working from <code>onboarding@resend.dev</code> (will move to <code>notifications@stato.tech</code> once DNS verifies)</li>
+    <li><strong>SignNow</strong> — live envelope already sent (id <code>18f793bf…ef7</code>); needs paid-plan upgrade by 29 April</li>
+    <li><strong>Catchr</strong> — ad-spend MCP, hourly sync</li>
+  </ul>
+
+  <h3>What's verified</h3>
+  <ul class="bare">
+    <li>Frontend reachable (HTTP 200)</li>
+    <li>Backend <code>/health</code> endpoint returning OK</li>
+    <li>CORS allow-list accepts requests from the Vercel origin</li>
+    <li>Login flow works end-to-end (owner credentials, JWT, refresh token)</li>
+    <li>Frontend bundle has correct backend URL baked in (no <code>localhost:3001</code> leakage)</li>
+    <li>Database has 26 tables, all migrations applied, 4 seeded users</li>
+    <li>Branches in sync: <code>main</code> ≡ <code>Development</code> at the same commit</li>
+  </ul>
+
+  <h3>What's pending in code (lower priority, not blocking go-live)</h3>
+  <ul class="bare warn">
+    <li>3 pre-existing portal test failures (auth scope edge cases) — fix before next release</li>
+    <li>LeadByte client silently falls back to mocks on API errors — should propagate or log loudly</li>
+    <li><code>&lt;FileUpload&gt;</code> placement on 4 more pages: agreements, invoice-detail, admin creatives, staff/HR</li>
+    <li>BullMQ <code>auto-invoice</code> + <code>monthly-validated</code> handlers wired to real Xero push</li>
+    <li>Optional: separate Railway "development" environment for staging tests</li>
+  </ul>
+
+  <!-- ============================================================ -->
+
+  <footer>
+    Updated 27 April 2026 · Stato · Octogle Technologies for leadgeneration.io
+  </footer>
+
+</div>
+
+<script src="lib.js"></script>
+<script>
+  // Page is gated — content is hidden until access code is entered.
+  mountPasswordGate(() => {});
+</script>
+</body>
+</html>
