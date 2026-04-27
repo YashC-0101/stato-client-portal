@@ -29,7 +29,7 @@ const CONFIG = {
   //   - Repository access: Only `stato-client-portal`
   //   - Permissions → Repository → Contents → Read and write
   // Worst case if leaked: someone vandalises submissions.json. Easy to revert.
-  token: 'PASTE_GITHUB_FINE_GRAINED_TOKEN_HERE',
+  token: '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',
 
   // SHA-256 hex of the access password.
   // Default password is "stato2026". To change it:
@@ -117,12 +117,12 @@ async function decryptJson(password, blob) {
 
 // ─── Password gate ──────────────────────────────────────────────────────────
 
-const STORAGE_KEY = 'stato-portal-verified-v1';
+const VERIFIED_KEY = 'stato-portal-verified-v1';
 const PASSWORD_KEY = 'stato-portal-password-v1';
 
 function isVerified() {
   try {
-    const v = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+    const v = JSON.parse(localStorage.getItem(VERIFIED_KEY) || 'null');
     if (!v || !v.expiresAt) return false;
     return Date.now() < v.expiresAt;
   } catch {
@@ -139,14 +139,14 @@ function getStoredPassword() {
 }
 
 function setVerified(password) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify({ expiresAt: Date.now() + CONFIG.rememberMs }));
+  localStorage.setItem(VERIFIED_KEY, JSON.stringify({ expiresAt: Date.now() + CONFIG.rememberMs }));
   // Password held in sessionStorage (cleared when tab closes) — used for
   // encrypt/decrypt on this tab without re-prompting.
   sessionStorage.setItem(PASSWORD_KEY, password);
 }
 
 function clearVerified() {
-  localStorage.removeItem(STORAGE_KEY);
+  localStorage.removeItem(VERIFIED_KEY);
   sessionStorage.removeItem(PASSWORD_KEY);
 }
 
