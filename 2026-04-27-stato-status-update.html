@@ -412,6 +412,18 @@
       </div>
 
       <div class="field">
+        <label for="real_users">Real users for testing (optional)</label>
+        <div class="hint" style="margin-bottom:8px;">
+          Right now the app has 5 fixed demo accounts. If you'd like real people on your team to log in and try Stato (still as test users — we move them to a proper DB-backed signup later), list them below.
+          Format: <code>Name | Email | Role | Suggested password</code> — one per line.
+          <br/>Roles: <code>owner</code> · <code>finance_admin</code> · <code>ops_manager</code> · <code>readonly</code> · <code>client</code> (portal only).
+        </div>
+        <textarea id="real_users" name="real_users" rows="6" placeholder="Sam Smith | sam@leadgeneration.io | owner | Sam!2026
+May Walters | may@leadgeneration.io | finance_admin | May!2026
+Joe Ops | joe@leadgeneration.io | ops_manager | Joe!2026"></textarea>
+      </div>
+
+      <div class="field">
         <label for="open_questions">Anything else for the Octogle team</label>
         <textarea id="open_questions" name="open_questions" rows="5" placeholder="Bugs you noticed during the demo, questions, additional creds you want to share, scope changes — anything."></textarea>
       </div>
