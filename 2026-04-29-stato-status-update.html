@@ -609,6 +609,124 @@
 
   <!-- ============================================================ -->
 
+  <h2 style="margin-top:56px;"><span class="pill done">Verify</span> How to test each third-party integration</h2>
+
+  <p style="color:#6e6e73;font-size:13.5px;">
+    Seven integrations live in production. Click any one to see the exact path
+    on the platform that proves it's working. If any step shows wrong data
+    or an error, type it in the textareas at the bottom and download as text.
+  </p>
+
+  <details>
+    <summary>1 · LeadByte — campaigns, buyers, deliveries, reports</summary>
+    <div class="content">
+      <p><strong>Where to click:</strong></p>
+      <ol>
+        <li>Sidebar → <strong>Campaigns</strong> — should list all 28 campaigns with real today / week / month / YTD numbers (Solar Panels (UK) showing ~24,400 YTD, etc.)</li>
+        <li>Sidebar → <strong>LeadByte → Dashboard</strong> — campaign report for today / yesterday / this week / this month / last month / YTD with real lead counts + revenue</li>
+        <li>Sidebar → <strong>LeadByte → Buyers</strong> — should list 52 real buyers from your LeadByte account</li>
+        <li>Sidebar → <strong>LeadByte → Deliveries</strong> — should show your delivery routes</li>
+        <li>Settings → <strong>Integrations</strong> tab → LeadByte tile should say <code>Last sync: a few minutes ago</code></li>
+      </ol>
+      <p><strong>What "working" looks like:</strong> real numbers, no zeros, last-sync timestamp updates every 2 min.</p>
+      <p><strong>If broken:</strong> "Couldn't load" error or all-zeros = report it.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>2 · Xero — bank feed, VAT, invoice push, contacts</summary>
+    <div class="content">
+      <p><strong>Where to click:</strong></p>
+      <ol>
+        <li>Sidebar → <strong>Finance → Bank Feed</strong> — should show ~25 real transactions from Clinical Marketing Solutions Ltd (Facebook Advertising -£686, etc.)</li>
+        <li>Dashboard → <strong>VAT widget</strong> — should show current quarter VAT liability pulled from Xero TaxSummary report</li>
+        <li>Sidebar → <strong>Finance → Invoices → Create</strong> → fill in client + amount + due date → "Push to Xero" — should create draft ACCREC invoice in Xero (visible at <code>go.xero.com</code>)</li>
+        <li>Sidebar → <strong>Clients</strong> → any client → check <strong>External System IDs</strong> card — Xero Contact ID populates automatically when an agreement is signed</li>
+        <li>Settings → Integrations → Xero tile should say <code>Connected to Clinical Marketing Solutions Ltd</code></li>
+      </ol>
+      <p><strong>What "working" looks like:</strong> real bank txs flowing, VAT figure matches your Xero, invoice shows up in Xero after push.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>3 · SignNow — e-signature for agreements</summary>
+    <div class="content">
+      <p><strong>Where to click:</strong></p>
+      <ol>
+        <li>Sidebar → <strong>Clients</strong> → click any client → top-right <strong>"Create Agreement"</strong> button</li>
+        <li>Dialog opens with name + email + contact prefilled — upload a test PDF → <strong>Send envelope</strong></li>
+        <li>Sidebar → <strong>Agreements</strong> — should now show your envelope with status <em>sent</em></li>
+        <li>Open the email at the signer's address → click "Sign" → walk through SignNow → finish</li>
+        <li>Back to Stato → Agreements page → status auto-updates to <em>completed</em> within ~30 sec (webhook) — signed PDF link appears in the row</li>
+        <li>The same client's profile → External System IDs → <strong>Xero Contact ID</strong> auto-populates ✅</li>
+        <li>Settings → Integrations → SignNow tile should say <code>username: yash@…com</code> · <code>sandbox: false</code> (production)</li>
+      </ol>
+      <p><strong>What "working" looks like:</strong> envelope sent, email arrives, status flips automatically post-sign, signed PDF is in R2.</p>
+      <p><strong>Note:</strong> free-tier envelope cap means a small number per month — see ask #6 to upgrade.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>4 · Endole — UK company credit checks</summary>
+    <div class="content">
+      <p><strong>Where to click:</strong></p>
+      <ol>
+        <li>Sidebar → <strong>Clients</strong> → click any client with a <code>companyNumber</code> set</li>
+        <li><strong>Credit tab</strong> → "Run Credit Check" button (only fires manually if needed; auto-triggers on client creation if the company number is provided)</li>
+        <li>Wait ~3-5 seconds → score, risk rating, CCJ count appear with a timestamp</li>
+        <li>Below: <strong>Credit history</strong> shows the timeline with score deltas (+/- vs last check)</li>
+        <li>Dashboard → <strong>Credit Alerts widget</strong> — flags any score drop ≥10 points (test fixture currently shows Apex Media Ltd score 38 risk: high)</li>
+        <li>Settings → Integrations → Credit Check tile should say <code>provider: endole</code></li>
+      </ol>
+      <p><strong>What "working" looks like:</strong> click button, real score appears within seconds.</p>
+      <p><strong>Auto-trigger test:</strong> Sidebar → Clients → Create new client → fill company number → submit — credit check runs in background, score appears on detail page within ~5 sec.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>5 · Cloudflare R2 — file storage</summary>
+    <div class="content">
+      <p><strong>Where to click (5 upload paths to test):</strong></p>
+      <ol>
+        <li>Sidebar → Clients → any client → <strong>Documents</strong> tab → drag a PDF / image — uploads with progress bar, signed URL appears</li>
+        <li>Sidebar → Finance → Invoices → any invoice → <strong>Attachments</strong> card → upload a receipt</li>
+        <li>Sidebar → Staff → any staff member → <strong>Documents</strong> tab → upload a contract</li>
+        <li>Sidebar → Campaigns → any campaign → <strong>Creatives</strong> card → upload an ad image (these auto-show in the client portal Compliance tab)</li>
+        <li>Click "Create Agreement" anywhere → upload PDF — that PDF goes to R2 first (lifts the 10 MB API body cap)</li>
+      </ol>
+      <p>Settings → Integrations → R2 tile should say <code>bucket: stato-production</code> · <code>configured: true</code></p>
+      <p><strong>What "working" looks like:</strong> uploads complete, files are downloadable via the signed URL (private — not public).</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>6 · Resend — transactional email</summary>
+    <div class="content">
+      <p><strong>Where to test:</strong></p>
+      <ol>
+        <li>Sidebar → Workflows → <strong>Monthly-validated</strong> workflow → "Run Now" — queues a sign-off email to <code>owner@stato.app</code> with a HTML revenue table</li>
+        <li>Sidebar → Workflows → <strong>Auto-invoice</strong> → "Run Now" — for each weekly_auto client, creates invoices + can email clients (currently sends to <code>billing+{clientId}@stato.local</code> as a placeholder)</li>
+        <li>Sidebar → Finance → Invoices → mark one as <em>sent</em> + due date in past → daily 9:00 UTC cron will send overdue chase email next morning</li>
+        <li>Settings → Integrations → Resend tile shows <code>from: onboarding@resend.dev</code> (placeholder until your DNS records — see ask #4)</li>
+      </ol>
+      <p><strong>What "working" looks like:</strong> email arrives in inbox (or spam since the sender is still Resend's test domain — fixed once you add DNS).</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>7 · Catchr — multi-platform ad-spend (Google Ads / Facebook / etc.)</summary>
+    <div class="content">
+      <p><strong>Where to click:</strong></p>
+      <ol>
+        <li>Sidebar → Reports → <strong>Ad Spend</strong> — should list spend by platform / account / campaign / date</li>
+        <li>Filter by date range or platform — supports Google Ads, Facebook Ads, LinkedIn, Bing, TikTok</li>
+        <li>Backend hourly cron pulls fresh spend at minute 5 of every hour</li>
+        <li>Settings → Integrations → Catchr tile should say <code>configured: true</code> · <code>mcpUrl: https://api.catchr.io/mcp</code> · <code>lastSyncAt</code> timestamp</li>
+      </ol>
+      <p><strong>What "working" looks like:</strong> spend rows match what you see in your Catchr dashboard (https://app.catchr.io/).</p>
+    </div>
+  </details>
+
   <h2 style="margin-top:56px;"><span class="pill done">Test it</span> Try the whole platform yourself</h2>
 
   <div class="summary" style="background: #f0f7ff; border-color: #cfe3ff;">
