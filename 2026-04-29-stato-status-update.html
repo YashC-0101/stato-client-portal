@@ -1,0 +1,506 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Stato — Status Update · 29 April 2026</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Arial, sans-serif;
+    background: #fafafa; color: #1d1d1f;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.55;
+  }
+  .wrap { max-width: 820px; margin: 0 auto; padding: 56px 22px; }
+  .back {
+    display: inline-block; color: #0066cc; text-decoration: none;
+    font-size: 14px; margin-bottom: 24px;
+  }
+  .back:hover { text-decoration: underline; }
+  h1 {
+    font-size: 34px; font-weight: 700; letter-spacing: -0.02em;
+    margin: 0 0 6px 0;
+  }
+  .meta { color: #6e6e73; font-size: 14px; margin: 0 0 36px 0; }
+  h2 {
+    font-size: 24px; font-weight: 700; letter-spacing: -0.01em;
+    margin: 48px 0 14px 0;
+    display: flex; align-items: center; gap: 12px;
+  }
+  h2 .pill {
+    font-size: 11px; font-weight: 600;
+    padding: 4px 10px; border-radius: 999px;
+    text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  h2 .pill.done   { background: #e6f7ec; color: #1d7a3a; }
+  h2 .pill.need   { background: #fff3e0; color: #a04a00; }
+  h2 .pill.fix    { background: #e8f0ff; color: #0042a3; }
+  h2 .pill.policy { background: #f0e8ff; color: #5b1d9c; }
+  h2 .pill.perf   { background: #ffe8f0; color: #9c1d5b; }
+  h3 {
+    font-size: 17px; font-weight: 600; margin: 24px 0 8px 0;
+    color: #1d1d1f;
+  }
+  .card {
+    background: #fff; border: 1px solid #e8e8ed; border-radius: 14px;
+    padding: 18px 20px; margin: 0 0 12px 0;
+  }
+  .card .body { font-size: 14px; color: #424245; margin: 0; }
+  code, .card .body code {
+    font-family: 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 12.5px;
+    background: #f0f0f3; padding: 1px 5px; border-radius: 4px;
+    color: #1d1d1f;
+  }
+  .badge {
+    display: inline-block;
+    font-size: 11px; font-weight: 600;
+    padding: 2px 8px; border-radius: 999px;
+    text-transform: uppercase; letter-spacing: 0.03em;
+    margin-left: 6px;
+  }
+  .badge.live   { background: #e6f7ec; color: #1d7a3a; }
+  .badge.urgent { background: #ffe5e5; color: #b00020; }
+  .badge.medium { background: #fff3e0; color: #a04a00; }
+  .badge.low    { background: #f0f0f3; color: #6e6e73; }
+  .url {
+    display: block; font-family: 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 12.5px; color: #0066cc; word-break: break-all;
+    margin-top: 4px;
+  }
+  table {
+    width: 100%; border-collapse: collapse;
+    background: #fff; border: 1px solid #e8e8ed; border-radius: 12px;
+    overflow: hidden;
+    font-size: 13.5px;
+  }
+  th, td {
+    text-align: left; padding: 11px 14px;
+    border-bottom: 1px solid #f0f0f3; vertical-align: top;
+  }
+  th { font-weight: 600; background: #f9f9fb; color: #424245; font-size: 12px; text-transform: uppercase; letter-spacing: 0.03em; }
+  tr:last-child td { border-bottom: none; }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; font-family: 'SF Mono', Menlo, Consolas, monospace; }
+  ul.bare { list-style: none; padding: 0; margin: 0; }
+  ul.bare li {
+    padding: 9px 0; border-bottom: 1px solid #f0f0f3; font-size: 14px;
+  }
+  ul.bare li:last-child { border-bottom: none; }
+  ul.bare li::before { content: "✓"; color: #1d7a3a; font-weight: 700; margin-right: 10px; }
+  ul.before-after { list-style: none; padding: 0; margin: 0; }
+  ul.before-after li {
+    padding: 12px 0; border-bottom: 1px solid #f0f0f3; font-size: 14px;
+  }
+  ul.before-after li:last-child { border-bottom: none; }
+  .summary {
+    background: #fff; border: 1px solid #e8e8ed; border-radius: 14px;
+    padding: 22px 24px;
+  }
+  .summary p { margin: 0 0 10px 0; font-size: 15px; }
+  .summary p:last-child { margin: 0; }
+  .stat-row {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+    margin: 16px 0 0 0;
+  }
+  @media (max-width: 600px) { .stat-row { grid-template-columns: repeat(2, 1fr); } }
+  .stat {
+    background: #fafafa; border: 1px solid #e8e8ed; border-radius: 12px;
+    padding: 14px;
+  }
+  .stat .num {
+    font-size: 22px; font-weight: 700; color: #1d1d1f;
+    font-variant-numeric: tabular-nums;
+    font-family: 'SF Mono', Menlo, Consolas, monospace;
+  }
+  .stat .lbl {
+    font-size: 11px; color: #6e6e73;
+    text-transform: uppercase; letter-spacing: 0.04em;
+    margin-top: 4px;
+  }
+  .arrow-from-to {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 13px;
+  }
+  .arrow-from-to .from { color: #b00020; text-decoration: line-through; }
+  .arrow-from-to .to { color: #1d7a3a; font-weight: 600; }
+  details {
+    background: #fff; border: 1px solid #e8e8ed; border-radius: 14px;
+    padding: 0; margin: 0 0 12px 0; overflow: hidden;
+  }
+  details summary {
+    padding: 14px 18px; cursor: pointer; list-style: none;
+    font-size: 14px; font-weight: 600;
+    display: flex; align-items: center; gap: 10px;
+  }
+  details summary::-webkit-details-marker { display: none; }
+  details summary::after {
+    content: "›"; margin-left: auto; color: #6e6e73; font-size: 18px;
+    transition: transform 150ms;
+  }
+  details[open] summary::after { transform: rotate(90deg); }
+  details summary:hover { background: #f9f9fb; }
+  details .content { padding: 4px 18px 16px 18px; font-size: 14px; color: #424245; border-top: 1px solid #f0f0f3; }
+  details .content p { margin: 12px 0; }
+  details .content p:first-child { margin-top: 12px; }
+  details .content ul { margin: 8px 0; padding-left: 22px; }
+  details .content li { margin: 4px 0; }
+  footer {
+    margin-top: 64px; padding-top: 22px;
+    border-top: 1px solid #e8e8ed;
+    color: #86868b; font-size: 12px; text-align: center;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <a class="back" href="index.html">← Back to portal</a>
+
+  <h1>Stato — Status Update</h1>
+  <p class="meta">
+    <strong>29 April 2026</strong> · Prepared by Yash Chavan · Octogle Technologies for leadgeneration.io
+  </p>
+
+  <!-- TL;DR summary card -->
+  <div class="summary">
+    <p>
+      <strong>Two days of fixes and cleanup since the 27 April update.</strong>
+      Every issue you saw last meeting (campaign zeros, LeadByte dashboard error,
+      slow loads) is fixed. Dashboard shows real LeadByte numbers — Solar
+      Panels UK at <strong>24,400 YTD leads / £155k revenue</strong>, total
+      <strong>£1.16M revenue</strong> across 28 campaigns.
+    </p>
+    <p>
+      <strong>Strict no-fake-data policy now enforced.</strong> Every mock,
+      fallback, and demo generator stripped from the codebase. Where data
+      doesn't exist yet, the UI shows "No data available" — never invented
+      numbers.
+    </p>
+    <p>
+      <strong>Performance:</strong> dashboard load went from 3-5s to
+      <strong>~500ms</strong>. Lighthouse: Accessibility 100, Best Practices
+      100, SEO 100.
+    </p>
+    <p style="font-size: 13px; color: #6e6e73;">
+      Click any section title to expand · 9 things still need your action,
+      listed at the bottom.
+    </p>
+  </div>
+
+  <!-- Top-line numbers -->
+  <h2><span class="pill done">Live numbers</span> What's flowing right now</h2>
+  <div class="stat-row">
+    <div class="stat"><div class="num">28</div><div class="lbl">Active campaigns</div></div>
+    <div class="stat"><div class="num">£1.16M</div><div class="lbl">Total revenue (LeadByte)</div></div>
+    <div class="stat"><div class="num">23,827</div><div class="lbl">Leads this month</div></div>
+    <div class="stat"><div class="num">52</div><div class="lbl">Buyers synced</div></div>
+  </div>
+  <p style="color:#6e6e73;font-size:13px;margin-top:10px;">
+    Every figure above is real — pulled from LeadByte via the live API. No mock
+    or test data.
+  </p>
+
+  <!-- ============================================================ -->
+
+  <h2><span class="pill fix">Fixed</span> Bugs from your last review</h2>
+
+  <details open>
+    <summary>1 · Campaigns page was showing zeros across every column</summary>
+    <div class="content">
+      <p>
+        You called this out on the dashboard — every campaign showed 0 leads /
+        £0 revenue / 0% margin. Two root causes:
+      </p>
+      <ul>
+        <li>The LeadByte status flag normaliser only matched <code>'Yes'</code>/<code>true</code>; LeadByte was actually returning <code>'1'</code>/numeric, so live campaigns were being marked as paused.</li>
+        <li>The per-campaign delivery report was hardcoded to <code>revenue: 0, cost: 0</code> — it only reported lead counts, not money. Refactored to pull aggregates from <code>/reports/campaign</code> for four windows (today / week / month / YTD) in parallel.</li>
+      </ul>
+      <p><strong>Result now showing live:</strong></p>
+      <table>
+        <thead>
+          <tr><th>Campaign</th><th>Today</th><th>Week</th><th>Month</th><th>YTD</th><th>Revenue</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Solar Panels (UK)</td><td class="num">52</td><td class="num">505</td><td class="num">7,940</td><td class="num">24,400</td><td class="num">£155,141</td></tr>
+          <tr><td>Lasting Power of Attorney (UK)</td><td class="num">34</td><td class="num">242</td><td class="num">2,020</td><td class="num">8,544</td><td class="num">£179,531</td></tr>
+          <tr><td>Will Writing (UK)</td><td class="num">8</td><td class="num">58</td><td class="num">417</td><td class="num">1,462</td><td class="num">£32,905</td></tr>
+          <tr><td>Hearing Aids (PL)</td><td class="num">33</td><td class="num">—</td><td class="num">3,164</td><td class="num">11,257</td><td class="num">£130,709</td></tr>
+          <tr><td>INSULATION</td><td class="num">50</td><td class="num">—</td><td class="num">3,692</td><td class="num">19,624</td><td class="num">£341,180</td></tr>
+        </tbody>
+      </table>
+      <p>+23 more campaigns, all with real metrics.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>2 · "Couldn't load campaign report" on LeadByte Dashboard</summary>
+    <div class="content">
+      <p>
+        Backend response shape mismatch — <code>/api/v1/leadbyte/*</code> routes
+        returned <code>{ data: ... }</code> but the frontend expected
+        <code>{ status: 'success', data: ... }</code>. So every LeadByte route
+        silently failed in the UI even though the backend was successfully
+        fetching real data.
+      </p>
+      <p>
+        One-line fix to the <code>wrap()</code> helper in
+        <code>routes/leadbyte.routes.ts</code> — affects all routes under that
+        prefix (campaigns, leads, deliveries, buyers, responders, reports,
+        queues).
+      </p>
+    </div>
+  </details>
+
+  <details>
+    <summary>3 · Active campaigns missing on dashboard</summary>
+    <div class="content">
+      <p>
+        Solar Panels and Last Empower Attorney didn't appear under the Active
+        filter even though they were live in LeadByte. Same root cause as #1
+        — the status-flag normaliser. Now tolerates <code>'1'</code>,
+        <code>1</code>, missing flags, and defaults to <em>active</em> when
+        the flag is unset.
+      </p>
+    </div>
+  </details>
+
+  <!-- ============================================================ -->
+
+  <h2><span class="pill perf">Faster</span> Performance overhaul</h2>
+
+  <details>
+    <summary>Dashboard load: 3-5 seconds → ~500ms (5-10× faster)</summary>
+    <div class="content">
+      <p>Three layered fixes:</p>
+      <ul>
+        <li><strong>N+1 fix.</strong> The campaigns endpoint was issuing N sequential calls to LeadByte (one per campaign). 28 campaigns × ~500ms = ~14s wall time. Replaced with 4 parallel <code>/reports/campaign</code> calls (one per window). Wall time = max single call.</li>
+        <li><strong>Redis cache.</strong> 5-minute TTL on LeadByte responses; refuses to cache empty results so transient blips don't pin zeros.</li>
+        <li><strong>Cache pre-warmer.</strong> Background worker runs every 90s, refreshes the cache before TTL expires. Users never see a cold-cache hit even after long idles.</li>
+      </ul>
+      <p>Discovered along the way that the BullMQ workers weren't actually running in production — Railway's single-service deploy only runs the API. Fixed by spawning workers in the same Node process as the API. Side benefit: hourly LeadByte sync, ad-spend sync, bank-feed sync, and the daily overdue-invoice chase are all now firing for the first time.</p>
+      <ul class="before-after">
+        <li>
+          <strong>/campaigns first call:</strong>
+          <span class="arrow-from-to"><span class="from">3-5 s</span> → <span class="to">1.9 s cold / 0.5 s warm</span></span>
+        </li>
+        <li>
+          <strong>Idle &gt; 60 s, next click:</strong>
+          <span class="arrow-from-to"><span class="from">cold-miss every time</span> → <span class="to">always warm</span></span>
+        </li>
+        <li>
+          <strong>Last-sync timestamp on /integrations/leadbyte/status:</strong>
+          <span class="arrow-from-to"><span class="from">null (never ran)</span> → <span class="to">populated, refreshes every 2 min</span></span>
+        </li>
+      </ul>
+    </div>
+  </details>
+
+  <details>
+    <summary>Frontend: route-level code-splitting + preconnect + cache prefetch</summary>
+    <div class="content">
+      <p>Initial JS bundle dropped from <strong>~500 KB to 71 KB gzip</strong> for first-time users. Each route loads its own chunk on demand. Recharts (95 KB gzip) only loads on chart pages.</p>
+      <ul>
+        <li><code>&lt;link rel=preconnect&gt;</code> to backend in <code>index.html</code> — saves ~150-300ms on first API call by warming TCP+TLS during HTML parse.</li>
+        <li>Login success fires parallel prefetch of dashboard endpoints — backend Redis is already warm by the time React renders the dashboard.</li>
+        <li>React Query <code>staleTime</code> aligned to backend cache TTL (5 min) so re-navigations don't force re-fetches.</li>
+        <li>Vercel region pinned to <code>pdx1</code> to match Railway's US-West fleet — eliminates cross-continent FE→BE hop.</li>
+      </ul>
+    </div>
+  </details>
+
+  <details>
+    <summary>Lighthouse score: 100 / 100 / 100 on Accessibility, Best Practices, SEO</summary>
+    <div class="content">
+      <p>Audit caught and fixed:</p>
+      <ul>
+        <li><strong>button-name (a11y, was 0):</strong> password show/hide toggle had no accessible name. Added <code>aria-label</code> that swaps "Show password" / "Hide password".</li>
+        <li><strong>landmark-one-main (a11y, was 0):</strong> no <code>&lt;main&gt;</code> element. Wrapped the right panel.</li>
+        <li><strong>color-contrast (a11y, was 0):</strong> footer text was <code>text-neutral-400</code> on a near-white background — failed WCAG AA. Bumped to <code>text-neutral-600</code>.</li>
+        <li><strong>meta-description (SEO):</strong> added a proper description tag.</li>
+      </ul>
+      <p>Performance: 82 (mostly Speed Index drag from the animated hero on the login). Real metrics: FCP 1.5s, TTI 1.6s, CLS 0, TBT 10ms — all green.</p>
+    </div>
+  </details>
+
+  <!-- ============================================================ -->
+
+  <h2><span class="pill policy">Policy</span> Strict no-fake-data enforced</h2>
+
+  <details>
+    <summary>Every mock array, fallback, and demo generator stripped</summary>
+    <div class="content">
+      <p>You said: no dummy data anywhere. Done.</p>
+      <ul>
+        <li><strong>Backend mock arrays</strong> in <code>leadbyte-client.ts</code> — <code>MOCK_CAMPAIGNS</code>, <code>MOCK_BUYERS</code>, <code>MOCK_DELIVERIES</code>, <code>MOCK_SUPPLIERS</code>, <code>MOCK_RESPONDERS</code> all emptied to <code>[]</code>. When the API key isn't set, the integration returns empty arrays — UI shows "No data available".</li>
+        <li><strong>Mock generators in report.service.ts</strong> — the four <code>generate*Report</code> functions (~250 lines of fake-data generators) deleted entirely. Reports now run real DB / LeadByte queries and return <code>[]</code> when there's no data.</li>
+        <li><strong>Frontend dashboard fallbacks</strong> — <code>FALLBACK_REVENUE</code> was £18,500 Jan, £22,300 Feb… realistic-looking fake numbers shown when the financial-overview API returned empty. Replaced with zero-filled rows so charts render flat-and-honest.</li>
+        <li><strong>Mock activity feed</strong> — was a hardcoded list of 5 fake events. Replaced with a real merged feed of recent invoices, agreements, and credit checks.</li>
+        <li><strong>Seed file</strong> — <code>SEED_DEMO_DATA</code> defaults OFF everywhere. Must be opt-in via explicit env var.</li>
+      </ul>
+      <p>The only "demo" item still on the live platform is the test client <code>Apex Media Ltd (for demo)</code> — backs the <code>client@stato.app</code> portal login. Once you tell me which real buyer to use as the prototype, I'll swap that out.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>Empty states: every page shows "No data available" instead of fake content</summary>
+    <div class="content">
+      <p>Verified on every dashboard widget and report page. When a query returns no data:</p>
+      <ul>
+        <li>Charts render a flat zero-line (clearly empty, not invented monthly figures)</li>
+        <li>Tables show "No data in this window" or a full empty-state card with explanation</li>
+        <li>All loading states use shadcn Skeleton placeholders (best practice — preserves layout, prevents flash-of-spinner)</li>
+      </ul>
+    </div>
+  </details>
+
+  <!-- ============================================================ -->
+
+  <h2><span class="pill done">New</span> Features added since 27 April</h2>
+
+  <details>
+    <summary>Buyer → Create Agreement CTA with prefill</summary>
+    <div class="content">
+      <p>One-click on every client/buyer profile. Opens the Send dialog with company name, contact name, and contact email pre-filled from the client record; client selector locked. Upload PDF → SignNow envelope sent → status auto-updates via webhook → on signing, signed PDF auto-archives to R2.</p>
+      <p>The <em>full contract field set</em> (lead price, payment terms, jurisdiction, caps, exclusivity, etc.) is waiting on your field list — see asks below.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>Auto-trigger credit check (Endole) on buyer creation</summary>
+    <div class="content">
+      <p>When a new client is created with a Companies House number, the credit check runs automatically in the background — staff don't need to remember. Score lands within ~5 s on the client detail page. Skips silently if no company number is provided.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>Auto-create Xero contact when an agreement is signed</summary>
+    <div class="content">
+      <p>You said: <em>"ultimately we're creating like the contact in regards to Xero. So that'd be linked to Xero."</em> Done.</p>
+      <p>On agreement signing (both SignNow webhook and the polling fallback), if the client doesn't already have a <code>xeroContactId</code>, we POST to <code>/api.xro/2.0/Contacts</code> with name / first / last / email / phone / address derived from the buyer record. Idempotent — skips if already linked. Result: by the time the agreement is signed, the client is ready for invoicing without manual data entry.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>Lead deliveries page: date pickers + presets + delivery breakdown</summary>
+    <div class="content">
+      <p>Custom from/to date filter on the portal Leads page, plus four preset buttons (7d, 30d, 90d, YTD). Backend accepts <code>?from=&amp;to=</code> query params with malformed-input fallback (typo → default window) and reverse-range swap (user picks dates backwards → swap don't error). 4 new tests cover the variants.</p>
+      <p>The <em>multi-delivery breakdown</em> (Audiology Dublin / Cork / Clare lead counts per location) is waiting on a data-model question — see asks below.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>Removed Responders + Campaigns from client portal</summary>
+    <div class="content">
+      <p>Both items you asked to clean up. Responders gone from the admin LeadByte sidebar, Campaigns removed from the client portal nav + route + page (managed clients now see only Dashboard, Leads, Invoices, Compliance, Agreement).</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>Catchr ad-spend integration — status endpoint added</summary>
+    <div class="content">
+      <p>Catchr was the only integration without a Settings → Integrations status indicator. Added <code>GET /api/v1/integrations/catchr/status</code> returning <code>{ configured, mcpUrl, lastSyncAt }</code>. The Settings page can now show all 8 integrations consistently.</p>
+    </div>
+  </details>
+
+  <!-- ============================================================ -->
+
+  <h2><span class="pill need">From you</span> Nine asks (priority order)</h2>
+
+  <p style="color:#6e6e73;font-size:13.5px;">
+    Items 1-3 unblock specific features. Items 4-9 are housekeeping that
+    affects production polish.
+  </p>
+
+  <table>
+    <thead>
+      <tr><th style="width:36px;">#</th><th>What</th><th>Why</th><th>Effort</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>1</strong></td>
+        <td>List of fields for the buyer agreement form</td>
+        <td>Unblocks contract auto-population (you mentioned this last meeting)</td>
+        <td>~10 min</td>
+      </tr>
+      <tr>
+        <td><strong>2</strong></td>
+        <td>Asset approval direction sign-off</td>
+        <td>Native Stato build (recommended) vs Google Drive. G Drive can't tie IP+timestamp to portal user identity, which the solicitor firm needs.</td>
+        <td>~5 min</td>
+      </tr>
+      <tr>
+        <td><strong>3</strong></td>
+        <td>Confirm portal-user → LeadByte BID mapping</td>
+        <td>Unblocks the Audiology multi-delivery breakdown. Two yes/no questions.</td>
+        <td>~5 min</td>
+      </tr>
+      <tr>
+        <td><strong>4</strong></td>
+        <td>Install Vercel GitHub App on <code>Leadgenerationio</code> org</td>
+        <td>Auto-deploy on push (today I run <code>vercel --prod</code> manually each time)</td>
+        <td>~30 sec</td>
+      </tr>
+      <tr>
+        <td><strong>5</strong></td>
+        <td>Resend DNS records on the domain</td>
+        <td>Currently sending from <code>onboarding@resend.dev</code> placeholder. With your DNS, swap to <code>noreply@leadgeneration.io</code>.</td>
+        <td>~5 min</td>
+      </tr>
+      <tr>
+        <td><strong>6</strong></td>
+        <td>GoDaddy CNAMEs — <code>app.leadgeneration.io</code> / <code>portal.leadgeneration.io</code></td>
+        <td>Custom domains instead of <code>*.vercel.app</code></td>
+        <td>~10 min</td>
+      </tr>
+      <tr>
+        <td><strong>7</strong></td>
+        <td>SignNow paid plan upgrade</td>
+        <td>Free tier envelope limits will hit in production volume</td>
+        <td>~5 min</td>
+      </tr>
+      <tr>
+        <td><strong>8</strong></td>
+        <td>Delete Postgres orphan on Railway</td>
+        <td>~£4/mo wasted on unused service. Only you can delete (org admin)</td>
+        <td>~30 sec</td>
+      </tr>
+      <tr>
+        <td><strong>9</strong></td>
+        <td>LeadByte API permissions bump</td>
+        <td>Some write endpoints partial; quick chat with LeadByte support</td>
+        <td>~10 min</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ============================================================ -->
+
+  <h2><span class="pill done">Live</span> Production state right now</h2>
+
+  <table>
+    <tbody>
+      <tr><td><strong>Frontend</strong></td><td><span class="url">https://sato-frontend.vercel.app</span></td></tr>
+      <tr><td><strong>Backend</strong></td><td><span class="url">https://sato-backend-production.up.railway.app</span></td></tr>
+      <tr><td><strong>Admin login</strong></td><td><code>owner@stato.app</code> / <code>owner123</code></td></tr>
+      <tr><td><strong>Client portal</strong></td><td><code>client@stato.app</code> / <code>client123</code></td></tr>
+      <tr><td><strong>BE tests</strong></td><td>374 / 374 passing</td></tr>
+      <tr><td><strong>FE tests</strong></td><td>84 / 84 passing</td></tr>
+      <tr><td><strong>Integrations live</strong></td><td>LeadByte · Xero · SignNow · Endole · Cloudflare R2 · Resend · Catchr</td></tr>
+    </tbody>
+  </table>
+
+  <p style="margin-top:32px;color:#6e6e73;font-size:14px;">
+    Next live review meeting: <strong>Tuesday 5 May 2026</strong>. Loom or
+    WhatsApp anytime before that if you want a walkthrough of any of the
+    items above.
+  </p>
+
+  <footer>
+    Updated 29 April 2026 · Stato · Octogle Technologies for leadgeneration.io
+  </footer>
+</div>
+</body>
+</html>
