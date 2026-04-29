@@ -407,74 +407,41 @@
 
   <!-- ============================================================ -->
 
-  <h2><span class="pill need">From you</span> Nine asks (priority order)</h2>
+  <h2><span class="pill need">From you</span> Eight asks (type your response below each)</h2>
 
   <p style="color:#6e6e73;font-size:13.5px;">
-    Items 1-3 unblock specific features. Items 4-9 are housekeeping that
-    affects production polish.
+    Items 1-3 unblock specific features. Items 4-8 are housekeeping that
+    affects production polish. Type your answer / status under each — once
+    you're done, click <strong>"Download my answers as text"</strong> at the
+    bottom to save a single <code>.txt</code> file you can send back to me on
+    WhatsApp.
   </p>
 
-  <table>
-    <thead>
-      <tr><th style="width:36px;">#</th><th>What</th><th>Why</th><th>Effort</th></tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><strong>1</strong></td>
-        <td>List of fields for the buyer agreement form</td>
-        <td>Unblocks contract auto-population (you mentioned this last meeting)</td>
-        <td>~10 min</td>
-      </tr>
-      <tr>
-        <td><strong>2</strong></td>
-        <td>Asset approval direction sign-off</td>
-        <td>Native Stato build (recommended) vs Google Drive. G Drive can't tie IP+timestamp to portal user identity, which the solicitor firm needs.</td>
-        <td>~5 min</td>
-      </tr>
-      <tr>
-        <td><strong>3</strong></td>
-        <td>Confirm portal-user → LeadByte BID mapping</td>
-        <td>Unblocks the Audiology multi-delivery breakdown. Two yes/no questions.</td>
-        <td>~5 min</td>
-      </tr>
-      <tr>
-        <td><strong>4</strong></td>
-        <td>Install Vercel GitHub App on <code>Leadgenerationio</code> org</td>
-        <td>Auto-deploy on push (today I run <code>vercel --prod</code> manually each time)</td>
-        <td>~30 sec</td>
-      </tr>
-      <tr>
-        <td><strong>5</strong></td>
-        <td>Resend DNS records on the domain</td>
-        <td>Currently sending from <code>onboarding@resend.dev</code> placeholder. With your DNS, swap to <code>noreply@leadgeneration.io</code>.</td>
-        <td>~5 min</td>
-      </tr>
-      <tr>
-        <td><strong>6</strong></td>
-        <td>GoDaddy CNAMEs — <code>app.leadgeneration.io</code> / <code>portal.leadgeneration.io</code></td>
-        <td>Custom domains instead of <code>*.vercel.app</code></td>
-        <td>~10 min</td>
-      </tr>
-      <tr>
-        <td><strong>7</strong></td>
-        <td>SignNow paid plan upgrade</td>
-        <td>Free tier envelope limits will hit in production volume</td>
-        <td>~5 min</td>
-      </tr>
-      <tr>
-        <td><strong>8</strong></td>
-        <td>Delete Postgres orphan on Railway</td>
-        <td>~£4/mo wasted on unused service. Only you can delete (org admin)</td>
-        <td>~30 sec</td>
-      </tr>
-      <tr>
-        <td><strong>9</strong></td>
-        <td>LeadByte API permissions bump</td>
-        <td>Some write endpoints partial; quick chat with LeadByte support</td>
-        <td>~10 min</td>
-      </tr>
-    </tbody>
-  </table>
+  <div id="ask-cards">
+    <!-- Cards auto-rendered by JS — see <script> at bottom. Pre-rendered
+         here as a no-JS fallback so the asks are still visible if JS fails. -->
+    <noscript>
+      <ol>
+        <li>List of fields for the buyer agreement form</li>
+        <li>Asset approval direction sign-off (native vs Google Drive)</li>
+        <li>Confirm portal-user → LeadByte BID mapping</li>
+        <li>Install Vercel GitHub App on <code>Leadgenerationio</code> org</li>
+        <li>Resend DNS records on <code>leadgeneration.io</code></li>
+        <li>SignNow paid plan upgrade</li>
+        <li>Delete Postgres orphan on Railway</li>
+        <li>LeadByte API permissions bump</li>
+      </ol>
+    </noscript>
+  </div>
+
+  <div style="margin-top: 20px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+    <button id="download-btn" type="button" style="padding: 12px 22px; border-radius: 999px; background: #0066cc; color: #fff; border: 1px solid #0066cc; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer;">
+      ⬇ Download my answers as text
+    </button>
+    <span id="download-hint" style="color: #6e6e73; font-size: 13px;">
+      Saves a single <code>.txt</code> with everything you typed above.
+    </span>
+  </div>
 
   <!-- ============================================================ -->
 
@@ -502,5 +469,230 @@
     Updated 29 April 2026 · Stato · Octogle Technologies for leadgeneration.io
   </footer>
 </div>
+
+<!-- Style for ask cards + textareas, kept here so the rest of the file's
+     style block stays focused on the document chrome. -->
+<style>
+  .ask-card {
+    background: #fff; border: 1px solid #e8e8ed; border-radius: 14px;
+    padding: 18px 20px; margin: 0 0 14px 0;
+  }
+  .ask-card .ask-head {
+    display: flex; align-items: baseline; gap: 10px; margin-bottom: 6px;
+  }
+  .ask-card .ask-num {
+    font-size: 13px; font-weight: 700; color: #0066cc;
+    background: #f0f7ff; padding: 2px 8px; border-radius: 999px;
+    min-width: 28px; text-align: center;
+  }
+  .ask-card .ask-title {
+    font-size: 15.5px; font-weight: 600; color: #1d1d1f; flex: 1;
+  }
+  .ask-card .ask-effort {
+    font-size: 12px; color: #6e6e73;
+    background: #f0f0f3; padding: 2px 8px; border-radius: 999px;
+    white-space: nowrap;
+  }
+  .ask-card .ask-why {
+    font-size: 13.5px; color: #6e6e73; margin: 0 0 12px 36px;
+    line-height: 1.5;
+  }
+  .ask-card textarea {
+    width: 100%; padding: 10px 12px;
+    border: 1px solid #e8e8ed; border-radius: 10px;
+    background: #fafafa; color: #1d1d1f; font: inherit; font-size: 14px;
+    outline: none; min-height: 70px; resize: vertical;
+    transition: border-color 120ms, background 120ms, box-shadow 120ms;
+  }
+  .ask-card textarea:focus {
+    border-color: #0066cc; background: #fff;
+    box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.12);
+  }
+  .ask-card textarea::placeholder { color: #a0a0a8; }
+  #download-btn:hover { background: #0058b3; border-color: #0058b3; }
+  #download-btn:active { transform: translateY(1px); }
+  .saved-pill {
+    display: inline-block; font-size: 12px; color: #16a34a;
+    margin-left: 10px; opacity: 0; transition: opacity 200ms;
+  }
+  .saved-pill.visible { opacity: 1; }
+</style>
+
+<script src="lib.js"></script>
+<script>
+  // The 8 asks for Sam (GoDaddy CNAMEs intentionally removed — handled
+  // separately). Order matches the priority list in the page above.
+  const ASKS = [
+    {
+      id: 'agreement-fields',
+      title: 'List of fields for the buyer agreement form',
+      why: "Unblocks contract auto-population. You mentioned this last meeting — examples: lead price, payment terms, caps (daily / weekly / monthly), vertical, delivery method, exclusivity, return terms, jurisdiction, auto-renew clause.",
+      effort: '~10 min',
+      placeholder: 'Paste or list the fields you want on the buyer contract here…',
+    },
+    {
+      id: 'asset-approval-direction',
+      title: 'Asset approval direction sign-off',
+      why: "Native Stato build (recommended) vs Google Drive. G Drive can't tie IP+timestamp to a portal user identity, which the solicitor firm needs for legal audit. Confirm which way you'd like, file types allowed (image / PDF / video / Word?), and audit format (in-portal JSON vs downloadable PDF).",
+      effort: '~5 min',
+      placeholder: 'e.g. "Native build, allow image + PDF + video, downloadable PDF audit trail"…',
+    },
+    {
+      id: 'bid-mapping',
+      title: 'Confirm portal-user → LeadByte BID mapping',
+      why: 'Unblocks the Audiology multi-delivery breakdown (Dublin / Cork / Clare per-location lead counts). Two yes/no questions: (1) Are portal logins meant to map 1:1 with LeadByte buyer IDs? (2) OK to do a small schema migration to cache that mapping?',
+      effort: '~5 min',
+      placeholder: 'Yes / no for each — or describe how you actually use BIDs vs portal logins…',
+    },
+    {
+      id: 'vercel-github-app',
+      title: "Install Vercel GitHub App on the 'Leadgenerationio' org",
+      why: 'Enables auto-deploy on push. Today I run `vercel --prod` manually each frontend release. Install link: https://github.com/apps/vercel/installations/new — pick the Leadgenerationio org, allow access to Sato-Frontend + Sato-Backend repos.',
+      effort: '~30 sec',
+      placeholder: 'Status — done / not yet / question…',
+    },
+    {
+      id: 'resend-dns',
+      title: 'Resend DNS records on leadgeneration.io',
+      why: "Currently sending from onboarding@resend.dev (Resend's test domain). With SPF / DKIM / DMARC records on your domain, we swap to noreply@leadgeneration.io and emails stop landing in spam. I'll send the exact 3 records when you're ready.",
+      effort: '~5 min',
+      placeholder: 'When can you add DNS records? (or paste any blockers)',
+    },
+    {
+      id: 'signnow-upgrade',
+      title: 'SignNow paid plan upgrade',
+      why: "Free tier has a hard cap on envelopes per month. At production volume — every new buyer signs an agreement — you'll exhaust that limit in days, and every subsequent agreement will fail to send.",
+      effort: '~5 min',
+      placeholder: 'Status — upgraded / planned / question…',
+    },
+    {
+      id: 'postgres-orphan',
+      title: 'Delete Postgres orphan on Railway',
+      why: "There's an unused 'Postgres-W3n2' service in the Railway project costing ~£4/mo for nothing. I'm a 'member', not 'admin', on the workspace — only you can delete services.",
+      effort: '~30 sec',
+      placeholder: 'Status — deleted / planned / not sure which one…',
+    },
+    {
+      id: 'leadbyte-perms',
+      title: 'LeadByte API permissions bump',
+      why: 'The current API key has partial permissions — read endpoints work, but some buyer / delivery write operations may return 403 in production. Quick email to LeadByte support to upgrade the key.',
+      effort: '~10 min',
+      placeholder: 'Status — opened ticket / done / question…',
+    },
+  ];
+
+  // Storage key — cleared after a successful download (so the next session starts fresh).
+  const RESPONSE_KEY = 'stato-2026-04-29-responses';
+
+  function loadStoredResponses() {
+    try {
+      const raw = localStorage.getItem(RESPONSE_KEY);
+      return raw ? JSON.parse(raw) : {};
+    } catch {
+      return {};
+    }
+  }
+
+  function saveResponses(map) {
+    try {
+      localStorage.setItem(RESPONSE_KEY, JSON.stringify(map));
+    } catch {
+      /* localStorage full or disabled — no-op, response still in DOM. */
+    }
+  }
+
+  function renderAskCards() {
+    const container = document.getElementById('ask-cards');
+    if (!container) return;
+    container.innerHTML = '';
+    const stored = loadStoredResponses();
+
+    ASKS.forEach((ask, i) => {
+      const card = document.createElement('div');
+      card.className = 'ask-card';
+      const num = i + 1;
+      const tid = `ask-${ask.id}`;
+      card.innerHTML = `
+        <div class="ask-head">
+          <span class="ask-num">${num}</span>
+          <span class="ask-title">${ask.title}</span>
+          <span class="ask-effort">${ask.effort}</span>
+        </div>
+        <p class="ask-why">${ask.why}</p>
+        <textarea
+          id="${tid}"
+          data-ask-id="${ask.id}"
+          rows="3"
+          placeholder="${ask.placeholder}"></textarea>
+        <span class="saved-pill" id="${tid}-saved">Saved locally</span>
+      `;
+      container.appendChild(card);
+
+      const ta = card.querySelector('textarea');
+      const saved = card.querySelector('.saved-pill');
+      ta.value = stored[ask.id] || '';
+      let savedTimer = null;
+      ta.addEventListener('input', () => {
+        const map = loadStoredResponses();
+        map[ask.id] = ta.value;
+        saveResponses(map);
+        // Brief "Saved locally" hint that fades away.
+        saved.classList.add('visible');
+        clearTimeout(savedTimer);
+        savedTimer = setTimeout(() => saved.classList.remove('visible'), 1200);
+      });
+    });
+  }
+
+  function downloadAsText() {
+    const stored = loadStoredResponses();
+    const lines = [];
+    lines.push('Stato — Sam\'s responses to the 29 April 2026 update');
+    lines.push('Saved at: ' + new Date().toISOString());
+    lines.push('');
+    lines.push('═══════════════════════════════════════════════════════');
+    lines.push('');
+
+    ASKS.forEach((ask, i) => {
+      const num = i + 1;
+      const answer = (stored[ask.id] || '').trim();
+      lines.push(`${num}. ${ask.title}  (${ask.effort})`);
+      lines.push('   Why: ' + ask.why);
+      lines.push('');
+      if (answer) {
+        // Indent multi-line answers for readability.
+        lines.push('   Sam:');
+        answer.split('\n').forEach((l) => lines.push('     ' + l));
+      } else {
+        lines.push('   Sam: (no answer provided)');
+      }
+      lines.push('');
+      lines.push('───────────────────────────────────────────────────────');
+      lines.push('');
+    });
+
+    lines.push('— End of responses —');
+
+    const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const stamp = new Date().toISOString().slice(0, 10);
+    a.href = url;
+    a.download = `stato-sam-responses-${stamp}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  // Wire up the password gate. Once unlocked, render the ask cards.
+  // The lib's mountPasswordGate auto-unlocks if the user already authenticated
+  // earlier (within the 7-day window) and has the password in sessionStorage.
+  mountPasswordGate(() => {
+    renderAskCards();
+    const btn = document.getElementById('download-btn');
+    if (btn) btn.addEventListener('click', downloadAsText);
+  });
+</script>
 </body>
 </html>
