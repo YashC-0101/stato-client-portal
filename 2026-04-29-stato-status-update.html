@@ -407,6 +407,148 @@
 
   <!-- ============================================================ -->
 
+  <!-- ============================================================ -->
+
+  <h2><span class="pill done">Built</span> Platform modules — beyond the integrations</h2>
+
+  <p style="color:#6e6e73;font-size:13.5px;">
+    The seven third-party integrations (LeadByte, Xero, SignNow, Endole, R2,
+    Resend, Catchr) are the data plumbing. <strong>Everything below is the
+    application built on top</strong> — the actual product Sam's staff and
+    clients use day-to-day. Each module is live in production, role-gated,
+    and tested end-to-end.
+  </p>
+
+  <details>
+    <summary>Authentication + 5-role RBAC</summary>
+    <div class="content">
+      <p>JWT in HTTP-only cookies, refresh-token rotation, page-load session restore. Five roles enforced at route level (owner, finance_admin, ops_manager, readonly, client). Each route declares which roles can hit it; tests assert every endpoint × every role in a matrix.</p>
+      <p><strong>How it works:</strong> User logs in → backend issues access + refresh tokens → React Query holds them in memory → role determines which sidebar items + pages are visible. <code>client</code> role gets a separate layout (the portal) and can't see admin pages even by typing the URL.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>Clients (CRM) — list, detail, credit history, onboarding, documents</summary>
+    <div class="content">
+      <p>Tabs on each client: Overview, Campaigns, Invoices, Credit, Onboarding, Documents. Credit tab shows score history with trend arrows + CCJ flags. Onboarding tab tracks the 4-step pipeline (pending → documents_received → agreement_signed → active). Documents tab uploads to R2 with signed URLs.</p>
+      <p><strong>How it works:</strong> Clients page lists all of Sam's clients with status filter + search. Click any client → tabbed detail page. "Run Credit Check" button hits Endole; "Create Agreement" button hits the SignNow flow with prefilled buyer details.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>Campaigns — synced from LeadByte, with metrics + drilldowns</summary>
+    <div class="content">
+      <p>28 active campaigns synced from LeadByte every 2 minutes. Filters by status (active / paused / inactive) and type (PPL / Managed / Internal). Per-campaign detail page shows daily delivery breakdown, traffic sources (suppliers), and lead-flow charts.</p>
+      <p><strong>How it works:</strong> Hourly worker pulls campaigns + reports from LeadByte → caches in Redis (5 min TTL, prewarmed every 90s) → frontend reads via <code>/api/v1/campaigns</code>. Real numbers shown — Solar Panels (UK) £155k, Lasting Power £179k, etc.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>Invoices — list, detail, create, push to Xero</summary>
+    <div class="content">
+      <p>Full invoice lifecycle. Status pipeline: draft → sent → paid / overdue. Daily cron job at 9:00 UTC chases overdue invoices via email. Create form validates client + amount + due date with React Hook Form + Zod, then POSTs to backend which inserts in DB and pushes a draft <code>ACCREC</code> invoice to Xero.</p>
+      <p><strong>How it works:</strong> Invoice list filterable by status. Click any invoice → detail page with line items + R2-stored attachments (receipts / proof of payment). "Push to Xero" button is idempotent — won't double-push.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>Bank Feed — Xero-synced transactions with categorization</summary>
+    <div class="content">
+      <p>25 real bank transactions flowing in from Xero. Manual + auto categorization with vendor rules (e.g. "Facebook = Marketing", remembered + auto-applied to past + future txs). Three cost buckets: fixed costs, one-off costs, ad spend.</p>
+      <p><strong>How it works:</strong> Hourly Xero sync pulls last 90 days. Owner / Finance can categorize via inline dropdown; clicking "Remember + apply to past" creates a vendor rule. The P&L summary widget on the dashboard reads from this.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>Workflows — visual builder + execution log</summary>
+    <div class="content">
+      <p>Step-based workflow engine running on BullMQ. Each workflow has ordered steps (data_fetch / api_call / computation / notification / wait / approval / action). Workflows page lists all workflows with last-run status. Detail page shows step-by-step execution timeline with output per step.</p>
+      <p><strong>How it works:</strong> Two production handlers wired so far: <em>Auto-invoice</em> (sums weekly lead deliveries, creates invoice, pushes to Xero) and <em>Monthly-validated</em> (queues a sign-off email to owner with HTML revenue table). "Run Now" button on Workflows page triggers immediately. Daily overdue-invoice chase runs on a 9:00 UTC cron.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>Tasks — assignment, status, comments</summary>
+    <div class="content">
+      <p>Lightweight task tracker. Status transitions: todo → in_progress → done. Each task has assignee, due date, priority, comments thread. Tasks summary widget on the dashboard shows what's due this week per role.</p>
+      <p><strong>How it works:</strong> Create task on /tasks/create → assign to a staff member → they see it on their dashboard. Comment thread is real-time (polls every 30s).</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>SOPs — internal runbooks</summary>
+    <div class="content">
+      <p>Markdown-based standard operating procedures. Categories (Onboarding / Finance / Compliance / Operations). Each SOP has a slug, version, last-updated date.</p>
+      <p><strong>How it works:</strong> /sops lists all procedures, /sops/:id renders the markdown. Owner / ops_manager can create + edit; everyone else read-only. Used so Sam's team has a single source for "how do we do X".</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>Staff / HR — list, detail, org chart, holiday requests</summary>
+    <div class="content">
+      <p>Per-staff page with employment details, contracts (R2 stored), holiday balance, job postings tracker. Org chart visualises reporting structure.</p>
+      <p><strong>How it works:</strong> /staff lists all staff with role + status filter. Click any staff member → tabbed detail. Holiday requests have a status (pending / approved / rejected) + start/end dates.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>Reports — 5 dedicated reports</summary>
+    <div class="content">
+      <p>Reports hub at /reports links to: <strong>Campaign Performance</strong> (per-campaign leads / revenue / margin), <strong>Client P&L</strong> (per-client per-month profit), <strong>Supplier Performance</strong> (Google Ads / Facebook etc spend + leads + CPL), <strong>Financial Overview</strong> (12-month revenue + expenses + profit), <strong>Ad-Spend</strong> (Catchr-aggregated spend by platform).</p>
+      <p><strong>How it works:</strong> Each report has a date-window selector + CSV export. Real DB / LeadByte / Catchr queries — empty state if no data, never fabricated numbers.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>Notifications — alerts feed + severity</summary>
+    <div class="content">
+      <p>Persistent notifications with severity (info / warning / critical) + read state. Bell icon in header shows unread count. Auto-generated from triggers: invoice overdue, credit score drop, workflow completion, agreement signed, integration error.</p>
+      <p><strong>How it works:</strong> Backend writes to <code>notifications</code> table on trigger events. Frontend polls every 30s. Click a notification → mark read + navigate to the linked page (e.g. credit alert → that client's credit tab).</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>Client Portal — separate layout for buyer-facing role</summary>
+    <div class="content">
+      <p>Branded portal at <code>/portal</code> with own nav (Dashboard, Leads, Invoices, Compliance, Agreement). Different from admin — managed clients can see their leads, invoices, signed agreement, and compliance assets, without seeing admin tools.</p>
+      <p><strong>How it works:</strong> <code>client@stato.app</code> logs in → routed to <code>/portal</code>. Backend scopes every query to that client's <code>client_id</code> automatically — no chance of cross-client data leakage. Date filter on Leads page (custom from/to + 7d / 30d / 90d / YTD presets).</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>Agreements — SignNow flow + R2 archive + Xero linkback</summary>
+    <div class="content">
+      <p>End-to-end e-signature pipeline. From any buyer profile → "Create Agreement" → upload PDF → SignNow envelope sent → status auto-updates via webhook → on signing, signed PDF archives to R2 + Xero contact auto-creates so finance can invoice immediately.</p>
+      <p><strong>How it works:</strong> Tested live. Buyer's contact details prefill the form. SignNow envelope IDs link back to our agreements table; status flips on webhook events. Polling fallback if a webhook misses.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>Compliance — asset upload + per-campaign creatives</summary>
+    <div class="content">
+      <p>Each campaign has a Creatives section — upload images / videos / PDFs / copy. Files go to R2 with signed download URLs. Clients see their campaign's creatives in the portal Compliance tab.</p>
+      <p><strong>How it works:</strong> Today read-only on the client side. The full <strong>approve / reject with IP+timestamp audit trail</strong> for the solicitor firm is the next big build — design proposal in the docs (3-day spec). Waiting on your sign-off (ask #2 below).</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>Settings — Integrations status + profile + business config</summary>
+    <div class="content">
+      <p>Owner-only Settings → Integrations tab shows live status for all 8 third-party services (Xero, LeadByte, Endole, Creditsafe, Resend, SignNow, R2, Catchr) with per-service connect / refresh / disconnect buttons. Profile tab: name, email, password change. Business tab: company details, currency, payment terms.</p>
+      <p><strong>How it works:</strong> Each integration card hits its <code>/api/v1/integrations/{name}/status</code> endpoint (added Catchr's earlier this session). Shows last-sync timestamps, configured / connected state, account identifiers (masked).</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>Dashboard widgets — Bank · Overdue · VAT · P&L · Credit · Notifications · Tasks</summary>
+    <div class="content">
+      <p>Seven side-bar widgets on the main admin dashboard, each with its own data source: Bank balances (Xero), Overdue invoices, VAT liability (HMRC quarter, Xero data), P&L three-bucket summary (revenue – fixed costs – one-offs – ad spend), Credit alerts (Endole), Notification feed, Task summary.</p>
+      <p><strong>How it works:</strong> Widgets load in parallel — each is its own React Query subscription with independent cache. The whole dashboard renders progressively as data arrives.</p>
+    </div>
+  </details>
+
+  <!-- ============================================================ -->
+
   <h2><span class="pill need">From you</span> Eight asks (type your response below each)</h2>
 
   <p style="color:#6e6e73;font-size:13.5px;">
@@ -464,6 +606,49 @@
     WhatsApp anytime before that if you want a walkthrough of any of the
     items above.
   </p>
+
+  <!-- ============================================================ -->
+
+  <h2 style="margin-top:56px;"><span class="pill done">Test it</span> Try the whole platform yourself</h2>
+
+  <div class="summary" style="background: #f0f7ff; border-color: #cfe3ff;">
+    <p>
+      <strong>Everything in the modules section above is live right now.</strong>
+      Please log in and click around — try every tab, run a credit check,
+      create a test invoice, send a test agreement, switch between admin and
+      client portal. The more you stress-test, the more we catch before
+      production volume hits.
+    </p>
+    <p>
+      <strong>Two logins to try both sides:</strong>
+    </p>
+    <ul class="bare" style="margin: 8px 0;">
+      <li><strong>Admin / Owner view</strong> —
+          <a href="https://sato-frontend.vercel.app" style="color:#0066cc;">https://sato-frontend.vercel.app</a> ·
+          <code>owner@stato.app</code> / <code>owner123</code></li>
+      <li><strong>Client portal view</strong> —
+          <a href="https://sato-frontend.vercel.app/portal" style="color:#0066cc;">https://sato-frontend.vercel.app/portal</a> ·
+          <code>client@stato.app</code> / <code>client123</code></li>
+    </ul>
+    <p style="margin-top: 14px;">
+      <strong>Suggested 10-minute walkthrough:</strong>
+    </p>
+    <ol style="padding-left: 22px; font-size: 14px; color: #424245; line-height: 1.7;">
+      <li>Log in as <code>owner@stato.app</code> → Dashboard → check the real numbers (revenue, leads this month, charts, recent activity).</li>
+      <li>Sidebar → <strong>Campaigns</strong> → see all 28 from LeadByte. Click "Solar Panels (UK)" → see daily delivery breakdown.</li>
+      <li>Sidebar → <strong>Clients</strong> → click "Apex Media Ltd (for demo)" → try the "Run Credit Check" button + the "Create Agreement" button.</li>
+      <li>Sidebar → <strong>Reports</strong> → open Campaign Performance + Supplier Performance — real LeadByte data.</li>
+      <li>Sidebar → <strong>Finance → Bank Feed</strong> → see 25 real Xero transactions, try categorising one.</li>
+      <li>Sidebar → <strong>LeadByte Dashboard</strong> → confirm the "Couldn't load" error is gone, all 4 windows work.</li>
+      <li>Sidebar → <strong>Settings → Integrations</strong> → all 8 integrations should show connected.</li>
+      <li>Log out → log in as <code>client@stato.app</code> → see the Client Portal — leads with date pickers, compliance, agreement.</li>
+    </ol>
+    <p style="margin-top: 14px;">
+      <strong>Anything that looks off, type it in the textareas above</strong>
+      (or use the responses form), download as text, send back to me. I'll fix
+      it before the Tuesday review.
+    </p>
+  </div>
 
   <footer>
     Updated 29 April 2026 · Stato · Octogle Technologies for leadgeneration.io
