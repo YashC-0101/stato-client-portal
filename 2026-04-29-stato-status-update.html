@@ -476,6 +476,55 @@
     </div>
   </details>
 
+  <details>
+    <summary>15 · Rate limit raised — "Too many requests" no longer fires mid-session</summary>
+    <div class="content">
+      <p>
+        From your 30-Apr test report: Bank Feed → Apply category dialog
+        showed <em>"Too many requests, please try again later"</em> mid-flow.
+        The general API cap was 100 requests per 15 minutes — too tight for
+        a normal admin session (dashboard polls + LeadByte 90 s refetches +
+        pagination + categorisation clicks easily clear 100 in a few minutes).
+      </p>
+      <p>
+        Raised general cap to <strong>1500 / 15 min</strong> (~100 rpm).
+        Login limiter stays tight at 20 / 15 min against brute-force. Limits
+        are exported as constants and pinned with tests so a future
+        tightening can't silently regress this flow.
+      </p>
+      <p><strong>Test it:</strong> Bank Feed → click rapidly through
+      transactions + Apply category — no 429 errors.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>16 · Credit Alerts widget — capped at 10 with "Show more" toggle</summary>
+    <div class="content">
+      <p>
+        From your 30-Apr test report: load-test data produced 461 flagged
+        clients which made the Credit Alerts widget scroll past every other
+        dashboard tile.
+      </p>
+      <p>
+        Now collapses to 10 by default with a <em>"Show N more"</em> button
+        to expand inline. <em>"View all clients"</em> link still anchored at
+        the bottom for the full list. Dashboard layout stays balanced even
+        when a client base has hundreds of flagged accounts.
+      </p>
+    </div>
+  </details>
+
+  <details>
+    <summary>17 · Sidebar — icons centered in collapsed mode</summary>
+    <div class="content">
+      <p>
+        When the sidebar is collapsed (icon-only), nav items now centre their
+        icons in the column instead of left-aligning. Small visual fix; makes
+        the collapsed sidebar feel intentional rather than truncated.
+      </p>
+    </div>
+  </details>
+
   <h3 style="margin-top: 28px; font-size: 16px; color: #1d1d1f;">Cache map — what's hot in Redis right now</h3>
 
   <table>
