@@ -525,6 +525,37 @@
     </div>
   </details>
 
+  <details>
+    <summary>18 · LeadByte → Buyers / Deliveries pages now load (was hanging "loading" forever)</summary>
+    <div class="content">
+      <p>
+        From your test: <em>"Sidebar → LeadByte → Buyers — the data did not
+        load after 1 min"</em>, same on Deliveries.
+      </p>
+      <p>
+        <strong>Root cause:</strong> LeadByte's list endpoints return
+        <code>{status: 'Success', message: 'OK', buyers: [...]}</code>
+        (envelope), not a bare array. Backend's <code>getBuyers()</code> was
+        blindly casting the envelope as <code>LeadByteBuyer[]</code> — so the
+        frontend received an object, tried to <code>.map()</code> over it,
+        and got stuck in a render loop with no error surfaced. Same bug hit
+        Deliveries and Responders.
+      </p>
+      <p>
+        <strong>Fix:</strong> new <code>unwrapList&lt;T&gt;(res, primaryKey)</code>
+        helper that digs into the named array key (or <code>data</code>, or
+        treats as a bare array if already so). Applied to all three list
+        functions. 4 regression tests pin the unwrapping including the
+        empty-envelope safety case.
+      </p>
+      <p>
+        <strong>Test it:</strong> Sidebar → LeadByte → Buyers should now show
+        52 buyers (The Solar Geeks, Amplifon CH, …). Sidebar → Deliveries
+        shows 94 delivery routes.
+      </p>
+    </div>
+  </details>
+
   <h3 style="margin-top: 28px; font-size: 16px; color: #1d1d1f;">Cache map — what's hot in Redis right now</h3>
 
   <table>
