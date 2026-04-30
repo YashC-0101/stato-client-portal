@@ -161,7 +161,7 @@
 
   <h1>Stato — Status Update</h1>
   <p class="meta">
-    <strong>29 April 2026</strong> · Prepared by Yash Chavan · Octogle Technologies for leadgeneration.io
+    <strong>29 &amp; 30 April 2026</strong> · Prepared by Yash Chavan · Octogle Technologies for leadgeneration.io
   </p>
 
   <!-- TL;DR summary card -->
@@ -203,6 +203,184 @@
     or test data.
   </p>
 
+  <!-- ============================================================ -->
+  <!-- 30 APRIL ADDITIONS — extending yesterday's cache + perf work across   -->
+  <!-- the rest of the LeadByte surface. Folded into this page (rather than  -->
+  <!-- a separate 30-Apr file) so Sam sees the full picture in one place.    -->
+  <!-- ============================================================ -->
+
+  <h2><span class="pill perf">30 Apr</span> Cache extended across all LeadByte surfaces</h2>
+
+  <p style="color:#6e6e73;font-size:13.5px;">
+    Yesterday: 4 windows of <code>/reports/campaign</code> stayed warm.
+    Today: every LeadByte read path the dashboard touches stays warm — the
+    whole product is consistently fast independent of which time-window
+    selector you click.
+  </p>
+
+  <details>
+    <summary>1 · All 7 time windows of /reports/campaign now prewarmed</summary>
+    <div class="content">
+      <p>
+        Yesterday the LeadByte Dashboard window selector had four cached
+        windows: <code>today</code>, <code>this_week</code>,
+        <code>this_month</code>, <code>ytd</code>. If you clicked
+        <code>yesterday</code>, <code>last_week</code>, or
+        <code>last_month</code> — those hit LeadByte live (~1.5 s wait).
+      </p>
+      <p>
+        Today the prewarmer extends to all 7 windows. Click any window in
+        the selector → ~50 ms response.
+      </p>
+      <p>
+        <strong>Test it:</strong> Sidebar → LeadByte → Dashboard → click
+        through Today / Yesterday / This Week / Last Week / This Month /
+        Last Month / Year to Date — every switch should be near-instant.
+      </p>
+    </div>
+  </details>
+
+  <details>
+    <summary>2 · Supplier Spend per window — new endpoint + cache</summary>
+    <div class="content">
+      <p>
+        New backend endpoint
+        <code>/api/v1/leadbyte/reports/supplier-spend?window=…</code> cached
+        per window (5-min TTL, prewarmed every 90 s alongside campaign reports).
+      </p>
+      <p>
+        Drives the <strong>Supplier Spend</strong> table on the LeadByte
+        Dashboard page — which suppliers brought in leads + how much was
+        spent per supplier for the selected window.
+      </p>
+    </div>
+  </details>
+
+  <details>
+    <summary>3 · Aggregated dashboard summary — new endpoint</summary>
+    <div class="content">
+      <p>
+        New endpoint
+        <code>/api/v1/leadbyte/reports/summary?window=…</code> — returns the
+        totals you see at the top of the LeadByte Dashboard (LEADS / VALID /
+        REVENUE / PAYOUT / PROFIT) in a single API call.
+      </p>
+      <p>
+        Reuses the same Redis cache key as <code>/reports/campaign</code>, so
+        the summary tiles + the campaign table + the supplier spend table all
+        load from one warm cache entry — no triple-hitting of LeadByte.
+      </p>
+    </div>
+  </details>
+
+  <details>
+    <summary>4 · Buyers + Deliveries listings now cached</summary>
+    <div class="content">
+      <p>
+        The full LeadByte Buyers list (52 entries) and Deliveries list now
+        cache to Redis on both the prewarmer and the read path. Filtered
+        queries (status / bid filters) bypass the cache so search results stay
+        live; the unfiltered listing — the common case for the index pages —
+        loads from cache.
+      </p>
+      <p>
+        <strong>Test it:</strong> Sidebar → LeadByte → Buyers — list should
+        appear instantly. Same for LeadByte → Deliveries.
+      </p>
+    </div>
+  </details>
+
+  <details>
+    <summary>5 · LeadByte sync timestamp — now updates every 90 s</summary>
+    <div class="content">
+      <p>
+        Settings → Integrations → LeadByte tile shows a <em>Last sync</em>
+        timestamp. Yesterday it only updated when the 2-min sync job ran;
+        today the prewarmer also marks a sync timestamp on every successful
+        cycle, so the tile reads "Last sync: a few seconds ago" any time the
+        platform is healthy.
+      </p>
+      <p>
+        Side benefit: if the tile ever shows a stale timestamp (10+ minutes),
+        that's an immediate signal something is wrong — the worker isn't
+        refreshing the cache.
+      </p>
+    </div>
+  </details>
+
+  <details>
+    <summary>6 · UI polish — Client detail only shows LeadByte ID when linked</summary>
+    <div class="content">
+      <p>
+        On Clients → [client] → Overview → "External System IDs" card, the
+        <strong>LeadByte Client ID</strong> row only appears when the client
+        has one. Previously it always rendered "Not linked" — misleading for
+        the typical leadgeneration.io client where linkage runs at the
+        campaign level rather than the client level.
+      </p>
+      <p>
+        <strong>Endole + Xero IDs</strong> still show "Not linked" when
+        absent, since those are expected to populate (Xero auto-creates on
+        agreement signing; Endole on credit-check trigger).
+      </p>
+    </div>
+  </details>
+
+  <h3 style="margin-top: 28px; font-size: 16px; color: #1d1d1f;">Cache map — what's hot in Redis right now</h3>
+
+  <table>
+    <thead>
+      <tr><th>Cache key</th><th>Source</th><th>TTL</th><th>Refreshed by</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>lb:campaigns</code></td>
+        <td><code>GET /campaigns</code> from LeadByte</td>
+        <td>5 min</td>
+        <td>Prewarmer (90 s)</td>
+      </tr>
+      <tr>
+        <td><code>lb:report:{window}:v5</code> (×7)</td>
+        <td><code>/reports/campaign</code> per window</td>
+        <td>5 min</td>
+        <td>Prewarmer (90 s)</td>
+      </tr>
+      <tr>
+        <td><code>lb:supplier-spend:{window}:v1</code> (×7)</td>
+        <td><code>/reports/supplier</code> per window</td>
+        <td>5 min</td>
+        <td>Prewarmer (90 s)</td>
+      </tr>
+      <tr>
+        <td><code>lb:buyers:all:v1</code></td>
+        <td><code>GET /buyers</code> (unfiltered)</td>
+        <td>5 min</td>
+        <td>Prewarmer (90 s)</td>
+      </tr>
+      <tr>
+        <td><code>lb:deliveries:all:v1</code></td>
+        <td><code>GET /deliveries</code> (unfiltered)</td>
+        <td>5 min</td>
+        <td>Prewarmer (90 s)</td>
+      </tr>
+      <tr>
+        <td><code>campaigns:type-map</code></td>
+        <td>DB join — Sato campaign metadata</td>
+        <td>10 min</td>
+        <td>On read</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p style="color:#6e6e73;font-size:13px;">
+    Total: <strong>17 cache keys</strong> kept hot by the worker. Empty
+    results never overwrite a cache (so a transient blip doesn't blank the
+    dashboard). Cache writes have a 200 ms timeout — Redis hiccups never
+    block a user response.
+  </p>
+
+  <!-- ============================================================ -->
+  <!-- END 30-APR ADDITIONS · Below: original 29-Apr content                 -->
   <!-- ============================================================ -->
 
   <h2><span class="pill fix">Fixed</span> Bugs from your last review</h2>
@@ -769,7 +947,7 @@
   </div>
 
   <footer>
-    Updated 29 April 2026 · Stato · Octogle Technologies for leadgeneration.io
+    Updated 29 &amp; 30 April 2026 · Stato · Octogle Technologies for leadgeneration.io
   </footer>
 </div>
 
