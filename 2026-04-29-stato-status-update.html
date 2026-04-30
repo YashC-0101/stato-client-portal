@@ -1259,6 +1259,130 @@
     timeouts, same as on master).
   </p>
 
+  <h2 style="margin-top:56px;"><span class="pill perf">30 Apr — afternoon</span> Three more 500s caught from your testing</h2>
+
+  <p style="color:#6e6e73;font-size:13.5px;">
+    You sent screenshots showing three errors that didn't show up in tests
+    — the kind only real-world clicking surfaces. All three fixed and
+    redeployed.
+  </p>
+
+  <details>
+    <summary>1 · Bank Feed → "Categorize" returned 500 Internal Server Error</summary>
+    <div class="content">
+      <p>
+        <strong>What was happening:</strong> clicking a category on any
+        bank transaction returned <code>{"status":"error","message":
+        "Internal server error"}</code>. The toast showed nothing useful
+        because the BE's error message was generic.
+      </p>
+      <p>
+        <strong>Root cause:</strong> the seed users (used in the
+        in-memory user list) have legacy IDs like <code>'1'</code>,
+        <code>'2'</code>, <code>'3'</code> — but the DB column
+        <code>vendor_category_rules.created_by</code> is a Postgres
+        <code>uuid</code> type. Inserting <code>'1'</code> into a uuid
+        column makes Postgres throw <em>"invalid input syntax for type
+        uuid"</em>. The error message was being swallowed.
+      </p>
+      <p>
+        <strong>Fix:</strong> new <code>uuidOrNull()</code> helper that
+        passes UUID-shaped values through and coerces anything else
+        (like <code>'1'</code>) to <code>null</code>. Applied to
+        <code>vendor_category_rules.created_by</code> (this bug) and
+        <code>creatives.uploaded_by</code> (would have hit the same
+        wall on first creative upload). Also wrapped the categorize
+        controller so future errors return a proper
+        <code>code</code> + readable message instead of generic 500.
+      </p>
+      <p>
+        <strong>Test it:</strong> Sidebar → Finance → Bank Feed → click
+        any "Uncategorised" transaction → pick a category → should now
+        save instantly and show the green tick.
+      </p>
+    </div>
+  </details>
+
+  <details>
+    <summary>2 · Campaigns → click any campaign → /sources and /creatives 500'd</summary>
+    <div class="content">
+      <p>
+        <strong>What was happening:</strong> opening a campaign detail
+        page (e.g. <code>/campaigns/2</code>) made two background
+        requests — <code>GET /campaigns/2/sources</code> and
+        <code>GET /campaigns/2/creatives</code> — both returning 500.
+        Page still rendered but the Sources and Creatives sections
+        either crashed or showed nothing.
+      </p>
+      <p>
+        <strong>Root cause:</strong> LeadByte campaigns have numeric IDs
+        (<code>"2"</code>, <code>"157"</code>, etc.) — but our local
+        <code>creatives.campaignId</code> and
+        <code>traffic_sources.campaignId</code> columns are
+        <code>uuid</code>. Querying with <code>"2"</code> threw the same
+        Postgres "invalid input syntax for type uuid" error.
+      </p>
+      <p>
+        <strong>Fix:</strong> the services now short-circuit to
+        <code>[]</code> when the campaign ID isn't UUID-shaped. These
+        LeadByte campaigns genuinely don't have any local sources or
+        creatives — the table only stores them once you upload one
+        through Stato — so empty list is the correct response. No more
+        500.
+      </p>
+      <p>
+        <strong>Test it:</strong> Sidebar → Campaigns → click any
+        campaign → no errors in the network tab, sources/creatives
+        sections show "no data yet" instead of crashing.
+      </p>
+    </div>
+  </details>
+
+  <details>
+    <summary>3 · Campaign detail page showed £0 / 0 leads even when the list showed real numbers</summary>
+    <div class="content">
+      <p>
+        <strong>What was happening:</strong> the Campaigns list showed
+        <strong>Solar Panels (UK)</strong> with 8,216 leads and
+        £156,857 revenue — correct. Click into the same campaign and
+        every stat showed <strong>£0 / 0%</strong>. Mismatch between
+        list and detail for the same campaign.
+      </p>
+      <p>
+        <strong>Root cause:</strong> two different LeadByte endpoints
+        were being used and one of them didn't return money figures.
+        The list calls <code>/reports/campaign</code> (gives revenue,
+        cost, leads). The detail page was calling
+        <code>/reports/leadactivity</code> (gives <em>only</em> lead
+        count per day — revenue/cost weren't even in the response, so
+        the code hardcoded them to 0).
+      </p>
+      <p>
+        <strong>Fix:</strong> the detail service now fetches both in
+        parallel — daily breakdown from <code>/reports/leadactivity</code>
+        for the chart, and the 4 windows of <code>/reports/campaign</code>
+        (today / week / month / YTD) for the actual totals. All four
+        report calls are already on the cache prewarmer, so the common
+        case is a 50ms Redis hit.
+      </p>
+      <p>
+        <strong>Test it:</strong> Sidebar → Campaigns → Solar Panels (UK)
+        → totals at the top should match the list view (~£156k revenue,
+        100% margin, 8,216 leads YTD), and the daily delivery chart
+        should populate.
+      </p>
+    </div>
+  </details>
+
+  <p style="color:#6e6e73;font-size:13.5px;margin-top:18px;">
+    Side benefit of the morning's controller-wrapping work: when these
+    500s did happen, the BE returned a structured error code +
+    <em>readable message</em> instead of "Internal server error" — which
+    is exactly how I was able to spot the <code>created_by: 1</code>
+    issue in the first place. Without that wrapping I would have spent
+    another hour digging through logs.
+  </p>
+
   <h2 style="margin-top:56px;"><span class="pill done">Test it</span> Try the whole platform yourself</h2>
 
   <div class="summary" style="background: #f0f7ff; border-color: #cfe3ff;">
