@@ -326,6 +326,156 @@
     </div>
   </details>
 
+  <details>
+    <summary>7 · Demo client flows fixed — Send Agreement / Create Invoice / Upload Creative</summary>
+    <div class="content">
+      <p>
+        Three flows were silently broken when run against the
+        <code>Apex Media Ltd (for demo)</code> client. Validation rejected the
+        demo seed UUID (Zod 4's strict <code>.uuid()</code> doesn't accept
+        UUIDs whose version nibble is <code>0</code>, even though Postgres
+        accepts them and they're valid identifiers).
+      </p>
+      <p>
+        Replaced with a shared lax UUID-shape check that mirrors what
+        Postgres allows. Now <strong>Send Agreement</strong>, <strong>Create
+        Invoice</strong>, and <strong>Upload Creative</strong> all work
+        against the demo client (and any other client). Added
+        <code>uuid-shape.test.ts</code> guarding all three endpoints against
+        future regressions.
+      </p>
+      <p>
+        <strong>Test it:</strong> Clients → "Apex Media Ltd (for demo)" → click
+        <em>Create Agreement</em> in header → upload a PDF → Send. Should
+        succeed (was failing with "Invalid input" before).
+      </p>
+    </div>
+  </details>
+
+  <details>
+    <summary>8 · Validation errors now show the actual failing field</summary>
+    <div class="content">
+      <p>
+        Send Agreement / other forms used to return a generic <em>"Invalid
+        input"</em> when a field failed validation — masking which field +
+        what was wrong. Backend now surfaces the failing field path + Zod's
+        explanation, so the frontend toast reads e.g. <em>"signerEmail:
+        Invalid email"</em> instead.
+      </p>
+      <p>
+        Helps you (and Sam during testing) actually see what to fix instead
+        of guessing.
+      </p>
+    </div>
+  </details>
+
+  <details>
+    <summary>9 · Endole company ID now persists on the client record</summary>
+    <div class="content">
+      <p>
+        Before: every credit check ran fresh against Endole's company-search
+        endpoint, and the resolved <code>endoleCompanyId</code> was lost
+        between calls — the External System IDs card on the client detail
+        page kept showing <em>"Not linked"</em> forever.
+      </p>
+      <p>
+        Now: first successful credit check stores the Endole company ID on
+        the client. Subsequent checks reuse it (faster, cheaper) and the
+        Settings card shows the actual identifier so you can verify the
+        client is matched to the right Companies House record.
+      </p>
+    </div>
+  </details>
+
+  <details>
+    <summary>10 · Notification bell — real unread count</summary>
+    <div class="content">
+      <p>
+        Header bell icon was hardcoded to "3" regardless of real notification
+        state. Now wired to the live unread count — bumps as new
+        notifications arrive, drops when you mark them read.
+      </p>
+    </div>
+  </details>
+
+  <details>
+    <summary>11 · Mobile hamburger toggle</summary>
+    <div class="content">
+      <p>
+        On mobile, the hamburger button in the header now opens / closes the
+        sidebar. Was broken (build-time TypeScript error fixed) — the
+        production build was actually healthy, the bug was that the toggle
+        wasn't wired to the store action.
+      </p>
+    </div>
+  </details>
+
+  <details>
+    <summary>12 · Catchr tile on Settings → Integrations</summary>
+    <div class="content">
+      <p>
+        Settings → Integrations now shows all 8 integrations (was missing
+        Catchr — the ad-spend aggregator). New tile shows configured /
+        mcpUrl / lastSyncAt, matching the other integration cards.
+      </p>
+      <p>
+        <strong>Test it:</strong> Settings → Integrations tab → scroll — Catchr
+        tile should be visible alongside Xero / LeadByte / SignNow / R2 /
+        Resend / Endole.
+      </p>
+    </div>
+  </details>
+
+  <details>
+    <summary>13 · Smaller UX fixes — invoice form, dashboard skeleton, table refetch</summary>
+    <div class="content">
+      <ul>
+        <li>
+          <strong>Invoice form leading-zero polish:</strong> typing into the Qty
+          or Unit Price field no longer leaves "010" / "0100" artefacts. Empty
+          when zero, select-on-focus.
+        </li>
+        <li>
+          <strong>Dashboard loading skeleton</strong> now aligns with the dashboard
+          grid layout (was off-grid before, caused a brief layout jump on first
+          paint).
+        </li>
+        <li>
+          <strong>Background table refetch</strong> on LeadByte pages no longer
+          blanks the rows — table stays populated while the next refresh runs in
+          the background. Refetch cadence bumped to 90 s to match the prewarmer.
+        </li>
+        <li>
+          <strong>Send Agreement dialog</strong> properly resets the form when you
+          hit Cancel or close the dialog (was retaining old values).
+        </li>
+        <li>
+          <strong>Invoice empty-state link</strong>: "Create your first invoice"
+          button on an empty list now goes to <code>/create</code> instead of
+          <code>/new</code> (which was matching the <code>:id</code> route and
+          serving "Invoice not found").
+        </li>
+      </ul>
+    </div>
+  </details>
+
+  <details>
+    <summary>14 · Auth security — verify password before disclosing account state</summary>
+    <div class="content">
+      <p>
+        Login was returning <em>"Account is disabled"</em> before validating
+        the password, so a wrong-password attempt on a disabled account would
+        leak the fact that account exists + is disabled. Reversed the order:
+        password is verified first; we only return the disabled-state message
+        after the caller has proven they hold the correct credentials.
+      </p>
+      <p>
+        Defensive fix — no real-world impact (no disabled accounts in
+        production yet) but good hygiene before that comes up.
+      </p>
+    </div>
+  </details>
+
   <h3 style="margin-top: 28px; font-size: 16px; color: #1d1d1f;">Cache map — what's hot in Redis right now</h3>
 
   <table>
