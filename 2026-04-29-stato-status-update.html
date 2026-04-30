@@ -1360,16 +1360,28 @@
       <p>
         <strong>Fix:</strong> the detail service now fetches both in
         parallel — daily breakdown from <code>/reports/leadactivity</code>
-        for the chart, and the 4 windows of <code>/reports/campaign</code>
-        (today / week / month / YTD) for the actual totals. All four
-        report calls are already on the cache prewarmer, so the common
+        for the chart, and <strong>all 7 windows</strong> of
+        <code>/reports/campaign</code> (today / yesterday / this_week /
+        last_week / this_month / last_month / ytd) for the actual totals,
+        returned to the FE as a <code>windowReports</code> block. The
+        detail page's tab selector reads from that block directly, so
+        every tab — not just YTD — shows real revenue / cost / margin.
+        All seven report calls are on the cache prewarmer, so the common
         case is a 50ms Redis hit.
+      </p>
+      <p>
+        Also hardened <code>unwrapReport()</code> to scan top-level keys
+        for an array (not just <code>data</code>/<code>report</code>) — the
+        same defensive parse means future LeadByte response-shape tweaks
+        won't silently zero out the page.
       </p>
       <p>
         <strong>Test it:</strong> Sidebar → Campaigns → Solar Panels (UK)
         → totals at the top should match the list view (~£156k revenue,
-        100% margin, 8,216 leads YTD), and the daily delivery chart
-        should populate.
+        100% margin, 8,216 leads YTD); click each tab (Today / Yesterday
+        / This Week / Last Week / This Month / Last Month / YTD) — every
+        tab should show real revenue + cost (no more £0 on the non-YTD
+        tabs), and the daily delivery chart should populate.
       </p>
     </div>
   </details>
