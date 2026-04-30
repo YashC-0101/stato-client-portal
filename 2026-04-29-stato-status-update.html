@@ -1135,6 +1135,130 @@
     </div>
   </details>
 
+  <h2 style="margin-top:56px;"><span class="pill perf">30 Apr</span> Project-wide bug-fix wave</h2>
+
+  <p style="color:#6e6e73;font-size:13.5px;">
+    After fixing the LeadByte Buyers/Deliveries hang yesterday, I ran the
+    same audit pattern across the whole codebase looking for similar issues
+    — silent error paths, missing input validation, inconsistent error
+    responses. Five categories shipped today.
+  </p>
+
+  <details>
+    <summary>1 · Hardcoded localhost fallbacks removed (P0)</summary>
+    <div class="content">
+      <p>
+        Three files (<code>auth-provider.tsx</code>, <code>users.tsx</code>,
+        <code>api.ts</code>) had a fallback that pointed the frontend at
+        <code>http://localhost:3001</code> if <code>VITE_API_URL</code> was
+        missing at build time. Production builds with a misconfigured env
+        would silently break in the browser.
+      </p>
+      <p>
+        Centralised into a single <code>lib/env.ts</code>. In dev, falls
+        back to localhost. In a production build with no
+        <code>VITE_API_URL</code> set, throws at module load —
+        <strong>misconfigured prod fails loudly, never silently</strong>.
+      </p>
+    </div>
+  </details>
+
+  <details>
+    <summary>2 · Real error UI on Dashboard / Invoices / Campaigns (P1)</summary>
+    <div class="content">
+      <p>
+        Before: when an API call failed, Dashboard charts showed zero-filled
+        fallback data with no indication something was wrong. Invoices and
+        Campaigns showed a generic "couldn't load" with no retry button.
+      </p>
+      <p>
+        Built a shared <code>ErrorState</code> component (red icon, error
+        message from server, "Try again" button that re-runs the query).
+        Wired into Dashboard, Finance → Invoices, and Campaigns. The
+        <code>useFinancialOverview</code> hook stopped silently swallowing
+        403s — it now retries up to twice for transient errors and
+        propagates auth failures cleanly.
+      </p>
+      <p>
+        <strong>Test it:</strong> kill your network, refresh the dashboard
+        — you'll see the error state with a working "Try again" button
+        instead of a flat-line chart.
+      </p>
+    </div>
+  </details>
+
+  <details>
+    <summary>3 · Zod validation added to ~20 mutation endpoints (P1)</summary>
+    <div class="content">
+      <p>
+        Most POST/PUT routes were trusting whatever the frontend sent —
+        Clients, Workflows, SOPs, Tasks, Staff, Holiday Requests, Job
+        Postings, Permissions, Users. A bad payload would either throw a
+        500 with a stack trace or write garbage into Postgres.
+      </p>
+      <p>
+        Added zod schemas to all of them. Bad input now returns a clean
+        400 with the failing field name (e.g.
+        <code>"contactEmail: Invalid email"</code>) so the FE toast tells
+        you exactly what's wrong.
+      </p>
+      <p>
+        Also caught a real bug while wiring permissions: the FE was
+        sending <code>{permission, role, newValue}</code> while the BE
+        expected <code>allowed</code>. Toggle had been silently failing.
+        Now using <code>allowed</code> on both sides.
+      </p>
+    </div>
+  </details>
+
+  <details>
+    <summary>4 · Auto credit-check failures now visible to staff (P2)</summary>
+    <div class="content">
+      <p>
+        When you create a new client with a Companies House number, Stato
+        fires a credit check in the background. Previously, if Endole
+        timed out, the failure was logged and silently swallowed — staff
+        thought the client just had no credit history.
+      </p>
+      <p>
+        Now: failures write a notification to the bell with the reason
+        and a deep link back to the client page so staff can hit "Run
+        Credit Check" manually to retry.
+      </p>
+    </div>
+  </details>
+
+  <details>
+    <summary>5 · Xero error responses classified (P2)</summary>
+    <div class="content">
+      <p>
+        Both the bank-feed sync and "push invoice to Xero" returned a
+        generic 502 with whatever raw message Xero threw. The FE couldn't
+        tell the difference between "Xero session expired", "rate
+        limited", "not connected", or a real upstream error.
+      </p>
+      <p>
+        Built a <code>classifyXeroError()</code> helper that returns a
+        structured <code>code</code> field (<code>xero_unauthorized</code>,
+        <code>xero_rate_limit</code>, <code>xero_not_connected</code>,
+        <code>xero_not_configured</code>, <code>xero_validation</code>,
+        <code>xero_api_error</code>) along with the right HTTP status.
+        The FE can now branch — show "Reconnect Xero" on auth issues
+        instead of generic "try again later".
+      </p>
+    </div>
+  </details>
+
+  <p style="color:#6e6e73;font-size:13.5px;margin-top:18px;">
+    Also reviewed and confirmed several audit findings were
+    <strong>false positives</strong> (the agents missed optional chaining
+    and existing unwrap helpers in places like
+    <code>useAgreements</code>, <code>usePortalCompliance</code>,
+    Portal Compliance/Invoices pages). No fix was needed there.
+    Backend tests still pass at 418/420 (2 pre-existing Redis-flaky
+    timeouts, same as on master).
+  </p>
+
   <h2 style="margin-top:56px;"><span class="pill done">Test it</span> Try the whole platform yourself</h2>
 
   <div class="summary" style="background: #f0f7ff; border-color: #cfe3ff;">
