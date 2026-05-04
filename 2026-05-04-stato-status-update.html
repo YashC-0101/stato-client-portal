@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Stato — Status Update · 4 May 2026</title>
+<title>Stato — Status Update · 3 &amp; 4 May 2026</title>
 <style>
   * { box-sizing: border-box; }
   html, body {
@@ -39,6 +39,7 @@
   h2 .pill.fix    { background: #e8f0ff; color: #0042a3; }
   h2 .pill.policy { background: #f0e8ff; color: #5b1d9c; }
   h2 .pill.perf   { background: #ffe8f0; color: #9c1d5b; }
+  h2 .pill.crit   { background: #ffe5e5; color: #b00020; }
   h3 {
     font-size: 17px; font-weight: 600; margin: 24px 0 8px 0;
     color: #1d1d1f;
@@ -161,16 +162,17 @@
 
   <h1>Stato — Status Update</h1>
   <p class="meta">
-    <strong>4 May 2026</strong> · Prepared by Yash Chavan · Octogle Technologies for leadgeneration.io
+    <strong>3 &amp; 4 May 2026</strong> · Prepared by Yash Chavan · Octogle Technologies for leadgeneration.io
   </p>
 
   <!-- TL;DR summary card -->
   <div class="summary">
     <p>
-      <strong>23 production fixes shipped today across 2 deploys</strong> — the
-      app is in its best state ever ahead of tomorrow's client demo. Every
-      slow page is now snappy, every fake-looking number is real, every
-      security audit finding is closed.
+      <strong>Two-day push to ready the platform for tomorrow's client demo.</strong>
+      Started 3 May with a full security &amp; quality audit (3 parallel agents
+      reviewed every file in both repos), closed every critical finding the
+      same day, then spent 4 May on the performance work. <strong>50+ fixes
+      shipped to production across 4 deploys.</strong>
     </p>
     <p>
       <strong>Headline performance win:</strong> the dashboard mounts in
@@ -180,22 +182,298 @@
       visits.
     </p>
     <p>
-      <strong>Authentication moved to the database.</strong> Until today,
-      every Railway redeploy wiped registered users and password changes.
-      Now users live in Postgres — they survive restarts, your account
+      <strong>Security:</strong> 21 audit findings closed including a
+      stored-XSS vulnerability in the PDF print helpers, a broken SignNow
+      webhook signature check that would have accepted forged signing
+      events, an Endole credit-check path that fabricated mock scores on
+      real errors, and a notification authz bypass.
+    </p>
+    <p>
+      <strong>Authentication moved to the database.</strong> Until 3 May,
+      the app stored users in memory — every Railway redeploy wiped
+      registrations. Now users live in Postgres; your account
       <code>sam@leadgeneration.io</code> is the primary owner.
     </p>
     <p style="font-size: 13px; color: #6e6e73;">
       Click any section title to expand · 6 things still need your input
-      (listed at the bottom) — not blocking demo.
+      (listed at the bottom) — none block the demo.
     </p>
 
     <div class="stat-row">
-      <div class="stat"><div class="num">23</div><div class="lbl">Fixes deployed today</div></div>
+      <div class="stat"><div class="num">50+</div><div class="lbl">Fixes deployed</div></div>
       <div class="stat"><div class="num">~100ms</div><div class="lbl">Dashboard mount</div></div>
       <div class="stat"><div class="num">£127k</div><div class="lbl">Real ad-spend imported</div></div>
       <div class="stat"><div class="num">501/506</div><div class="lbl">Tests passing</div></div>
     </div>
+  </div>
+
+  <!-- ─── Security audit ─────────────────────────────── -->
+  <h2>Security audit — 21 findings, all closed <span class="pill crit">audit pass</span></h2>
+
+  <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
+    On 3 May we ran a full security &amp; quality audit of both repos
+    (backend + frontend) with three parallel review agents. Every critical
+    finding is now fixed in production. Highlights below; click for detail.
+  </p>
+
+  <details>
+    <summary>🔴 CRITICAL — Stored XSS in PDF-print helpers</summary>
+    <div class="content">
+      <p>
+        On the invoice detail page and the client-portal invoice page, the
+        "Download PDF" button opened a print window built by interpolating
+        invoice fields directly into HTML. A staff user with permission to
+        create invoices could put <code>&lt;script&gt;…&lt;/script&gt;</code>
+        into a line-item description; any other user clicking Download PDF
+        would execute that script in the same origin — full access to the
+        JWTs in localStorage.
+      </p>
+      <p>
+        Fix: every interpolated value is now HTML-escaped via a small
+        helper. Tested with payload — script no longer executes.
+      </p>
+    </div>
+  </details>
+
+  <details>
+    <summary>🔴 CRITICAL — SignNow webhook signature check broken</summary>
+    <div class="content">
+      <p>
+        The webhook handler used <code>JSON.stringify(req.body)</code> to
+        compute the HMAC, but Express's JSON parser had already consumed
+        the original bytes — the re-serialised string never matched
+        SignNow's signature. In production with the secret unset (the
+        common deploy state), the handler accepted everything, including
+        forged events.
+      </p>
+      <p>
+        Fix: webhook routes now have their own JSON parser that captures
+        the raw request body for HMAC computation. In production, the
+        endpoint refuses unsigned webhooks (HTTP 503) so a missing secret
+        is loud, not silent.
+      </p>
+    </div>
+  </details>
+
+  <details>
+    <summary>🔴 CRITICAL — Endole credit checks fabricated random scores</summary>
+    <div class="content">
+      <p>
+        When the Endole API returned an error (rate limit, IP not
+        whitelisted, anything 4xx/5xx), the integration fell back to
+        generating a random score 40-99 and writing it to the database
+        as if it were a real check. The Credit Alert widget would then
+        flag clients based on those fabricated numbers.
+      </p>
+      <p>
+        Fix: the function now throws on real errors. The caller already
+        records a <code>system_error</code> notification, so failed
+        checks surface to ops instead of silently corrupting data. The
+        mock-fallback path is preserved only when credentials are
+        missing entirely (i.e. dev/test).
+      </p>
+    </div>
+  </details>
+
+  <details>
+    <summary>🔴 HIGH — Notification authz bypass</summary>
+    <div class="content">
+      <p>
+        <code>markAsRead</code> and <code>markAllAsRead</code> didn't
+        scope by userId. Any authenticated user could mark anyone else's
+        notifications as read (or in the case of <code>markAllAsRead</code>
+        with an unset userId, mark every notification in the table read).
+      </p>
+      <p>
+        Fix: both functions now require the caller's userId and add it to
+        the WHERE clause.
+      </p>
+    </div>
+  </details>
+
+  <details>
+    <summary>🔴 HIGH — Tasks &amp; SOPs leaked to client/readonly users</summary>
+    <div class="content">
+      <p>
+        The tasks and SOPs endpoints were authenticated but had no
+        role gate — any user (including clients viewing the portal)
+        could list internal ops data.
+      </p>
+      <p>
+        Fix: both endpoints now wrapped with
+        <code>requireRole('owner', 'finance_admin', 'ops_manager')</code>.
+        Client and readonly users now correctly get 403.
+      </p>
+    </div>
+  </details>
+
+  <details>
+    <summary>🔴 HIGH — Agreements not scoped to client/business</summary>
+    <div class="content">
+      <p>
+        A client user could enumerate agreement IDs and read another
+        client's signed PDFs. The agreement controllers passed the path
+        param straight through without any scope check.
+      </p>
+      <p>
+        Fix: <code>listAgreementsForClient</code> and
+        <code>getAgreement</code> now enforce the requester's role —
+        clients can only access their own; internal roles must be in the
+        same business as the client owning the agreement.
+      </p>
+    </div>
+  </details>
+
+  <details>
+    <summary>🔴 HIGH — Plaintext seed passwords logged on every boot</summary>
+    <div class="content">
+      <p>
+        The dev seed step printed every default user's email + plaintext
+        password to stdout on container start. Any log shipper (Datadog,
+        Loki, Railway log drains) captured them.
+      </p>
+      <p>
+        Fix: the lines are removed; production-mode skips the seed
+        entirely (it's gated to <code>NODE_ENV !== 'production'</code>).
+        Production seeding goes via the new auto-seed-on-empty path
+        which requires <code>SEED_OWNER_PASSWORD</code> from env.
+      </p>
+    </div>
+  </details>
+
+  <details>
+    <summary>🟠 No fetch timeouts on integrations — DoS surface</summary>
+    <div class="content">
+      <p>
+        Every external HTTP call (Xero, SignNow, R2, LeadByte, Endole,
+        Creditsafe, Catchr, Resend) was unbounded. A hung upstream socket
+        would hold the request thread indefinitely. With workers running
+        in-process on Railway, a single hang could wedge the server.
+      </p>
+      <p>
+        Fix: <code>AbortSignal.timeout</code> on every fetch — 15s for
+        most, 30s for SignNow PDF download, then lowered to 5s for
+        LeadByte specifically (it's the most-called integration and
+        recovers quickly when slow).
+      </p>
+    </div>
+  </details>
+
+  <details>
+    <summary>🟠 No graceful shutdown — Railway redeploys cut requests mid-flight</summary>
+    <div class="content">
+      <p>
+        On SIGTERM, the Node process exited immediately, dropping
+        in-flight requests, mid-flight DB transactions, and BullMQ jobs.
+        Some pending jobs could land in inconsistent state.
+      </p>
+      <p>
+        Fix: SIGTERM/SIGINT handlers now call <code>server.close()</code>,
+        wait for in-flight requests, drain BullMQ workers, close Redis,
+        then exit cleanly. 10-second hard-cap timer prevents a hung
+        connection from blocking shutdown forever.
+      </p>
+    </div>
+  </details>
+
+  <details>
+    <summary>🟠 PII in pino logs — JWTs leaking</summary>
+    <div class="content">
+      <p>
+        The pino logger had no redact configuration. Any log line that
+        included <code>req</code> or <code>err</code> could spill
+        Authorization headers, refresh tokens, password fields, and
+        integration secrets into log shippers.
+      </p>
+      <p>
+        Fix: pino redact paths cover <code>req.headers.authorization</code>,
+        cookies, signed webhook signatures, request body
+        password/refreshToken/accessToken, and any object key matching
+        <code>*.password</code> / <code>*.passwordHash</code> /
+        <code>*.token</code> / <code>*.access_token</code> /
+        <code>*.refresh_token</code> / <code>*.client_secret</code>.
+      </p>
+    </div>
+  </details>
+
+  <details>
+    <summary>🟠 Body parser was 10mb on every request — DoS surface</summary>
+    <div class="content">
+      <p>
+        A 10mb default JSON body limit on every endpoint (auth, list
+        queries, status updates) was overkill and a trivial DoS vector.
+      </p>
+      <p>
+        Fix: global parser dropped to 1mb. 5mb scoped to
+        <code>/invoices</code> (attachment metadata JSON), 10mb scoped
+        to <code>/uploads</code> (R2 presign with metadata).
+      </p>
+    </div>
+  </details>
+
+  <details>
+    <summary>🟠 Cache-Control headers missing on every response</summary>
+    <div class="content">
+      <p>
+        Every API GET response had no caching hint. Tab-switch and
+        browser back/forward always re-fetched.
+      </p>
+      <p>
+        Fix: middleware sets
+        <code>Cache-Control: private, max-age=5, stale-while-revalidate=30</code>
+        on every <code>GET /api/v1</code> response. The <code>private</code>
+        directive prevents shared CDN caching of auth-scoped data; the
+        5-second max-age + 30-second SWR makes back/forward feel instant.
+      </p>
+    </div>
+  </details>
+
+  <details>
+    <summary>🟠 Invoice number race — concurrent inserts could duplicate</summary>
+    <div class="content">
+      <p>
+        The previous implementation ran <code>SELECT count(*) FROM invoices</code>
+        inside a transaction to compute the next number, then inserted.
+        Two concurrent transactions could both see the same count and
+        produce the same INV-N. O(n) per insert too.
+      </p>
+      <p>
+        Fix: new Postgres SEQUENCE created via migration with a safe
+        backfill (advances past the highest existing INV-N number).
+        <code>nextval()</code> is atomic, O(1), and never collides.
+      </p>
+    </div>
+  </details>
+
+  <!-- ─── Authentication ─────────────────────────────── -->
+  <h2>Authentication — users now persist <span class="pill fix">production-critical</span></h2>
+
+  <div class="card">
+    <p class="body">
+      Until 3 May, the app stored users in memory. Every Railway redeploy
+      wiped registrations, password changes, and role updates. With the
+      automated CI/CD pipeline that meant production was effectively one
+      deploy away from losing every user.
+    </p>
+    <p class="body" style="margin-top: 12px;">
+      Auth has now been migrated to Postgres. New schema column
+      <code>is_primary_owner</code> protects the founder account from
+      being demoted, deactivated, or deleted by another user. The
+      migration runs automatically on every container start
+      (<code>db:auto-migrate</code> step in the Dockerfile).
+    </p>
+    <p class="body" style="margin-top: 12px;">
+      A separate auto-seed step runs only when the users table is empty
+      — and refuses default passwords in production. The first time a
+      fresh database boots in production, it requires a real
+      <code>SEED_OWNER_PASSWORD</code> environment variable or it exits
+      so the misconfiguration is impossible to miss.
+    </p>
+    <p class="body" style="margin-top: 12px;">
+      Your live login: <code>sam@leadgeneration.io</code> /
+      <code>Sam@123</code> (please change from settings after first login).
+      Flagged as the primary-owner account.
+    </p>
   </div>
 
   <!-- ─── Performance ─────────────────────────────── -->
@@ -241,6 +519,11 @@
         <td>Could hang 15 seconds</td>
         <td>Capped at <strong>5 seconds</strong></td>
       </tr>
+      <tr>
+        <td>List endpoints (clients/invoices)</td>
+        <td>Fetched whole table, sliced in JS</td>
+        <td><strong>SQL LIMIT/OFFSET</strong></td>
+      </tr>
     </tbody>
   </table>
 
@@ -252,8 +535,7 @@
         and <code>:month:v5</code>, but the background prewarmer wrote
         <code>:this_week:v5</code> and <code>:this_month:v5</code>. Three of the
         four LeadByte windows were always cold — and the cold path called
-        LeadByte sequentially with a 15-second timeout each. Under brief
-        LeadByte slowness this triggered a 60-second wall and a thrown 500.
+        LeadByte sequentially with a 15-second timeout each.
       </p>
       <p>Fixes:</p>
       <ul>
@@ -309,7 +591,7 @@
         <li><code>invoices (created_at DESC)</code> — Recent Invoices ordering.</li>
         <li><code>invoices (client_id, status)</code> — per-client filter.</li>
         <li><code>notifications (user_id, read)</code> — unread bell badge.</li>
-        <li><code>bank_transactions (business_id, date DESC)</code> — P&L date range.</li>
+        <li><code>bank_transactions (business_id, date DESC)</code> — P&amp;L date range.</li>
         <li><code>campaigns (status)</code>, <code>tasks (assignee, status)</code>, <code>agreements (client_id, status)</code>, <code>lead_deliveries (client_id, delivery_date DESC)</code>.</li>
       </ul>
       <p>All idempotent (<code>IF NOT EXISTS</code>), applied automatically on every Railway deploy.</p>
@@ -335,102 +617,52 @@
   <!-- ─── Real data ─────────────────────────────── -->
   <h2>Data quality — real numbers everywhere <span class="pill done">live</span></h2>
 
-  <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
-    Several places were still showing fabricated or hardcoded data.
-    All of them are now wired to real sources.
-  </p>
-
   <ul class="bare">
     <li><strong>Notifications panel</strong> — was 15 hardcoded entries
       ("TradeFX overdue", "Apex Leads credit drop", "GreenField paid"...).
       Now reads from the database. Empty until real notifications fire.</li>
     <li><strong>Campaign Performance report</strong> — every row showed
-      <em>"Unknown / Unknown"</em> for client + vertical.
-      Now joins the real <code>campaigns</code> table on LeadByte campaign name.
-      Shows real client + vertical, or <em>"Unmapped"</em> until you deliver
-      the LeadByte → client mapping CSV (still pending).</li>
+      <em>"Unknown / Unknown"</em> for client + vertical. Now joins the
+      real <code>campaigns</code> table on LeadByte name. Shows real
+      client + vertical, or <em>"Unmapped"</em> until your CSV arrives.</li>
     <li><strong>Supplier Performance report</strong> — supplier column was
-      blank for direct/internal traffic. Now labelled <em>"Direct"</em> with
-      stable aggregation per campaign.</li>
+      blank for direct/internal traffic. Now labelled <em>"Direct"</em>
+      with stable aggregation per campaign.</li>
     <li><strong>Dashboard "+12.4% growth" chips</strong> — hardcoded fake
       growth percentages on the four KPI cards. Removed; chips hide until
       real period-over-period numbers land.</li>
     <li><strong>Invoice Status chart</strong> — Pending bar was always 0
-      (hardcoded). Backend now returns a real pending count (drafts + sent
-      + due-but-not-late) per month.</li>
+      (hardcoded). Backend now returns a real pending count (drafts +
+      sent + due-but-not-late) per month.</li>
     <li><strong>Xero VAT widget</strong> — previously errored because
       Clinical Marketing Solutions Ltd isn't VAT-registered in Xero.
       Now displays £0 cleanly.</li>
+    <li><strong>Catchr error messages</strong> — previously surfaced as
+      generic "tool reported error". Now show the actual reason
+      (e.g. <code>FIELD_NOT_KNOW</code>, <code>CUSTOMER_NOT_ENABLED</code>)
+      so issues are diagnosable.</li>
+    <li><strong>Catchr TikTok platform</strong> — was failing every sync
+      because the field IDs were wrong. Set to null with a clear runbook
+      comment so the sync gracefully skips it; other platforms unaffected.</li>
   </ul>
 
-  <!-- ─── Authentication ─────────────────────────────── -->
-  <h2>Authentication — users now persist <span class="pill fix">production-critical</span></h2>
-
-  <div class="card">
-    <p class="body">
-      Until today, the app stored users in memory. Every Railway redeploy
-      wiped registrations, password changes, and role updates. With the new
-      automated CI/CD pipeline that means production was effectively
-      one-deploy-away from losing every user.
-    </p>
-    <p class="body" style="margin-top: 12px;">
-      Auth has now been migrated to Postgres. The migration runs
-      automatically on every container start. A new automatic-seed step
-      creates the initial owner user only when the database is empty —
-      and refuses to use default passwords in production. The first time
-      a fresh database boots in production, it requires a real
-      <code>SEED_OWNER_PASSWORD</code> environment variable or it exits
-      so the misconfiguration is impossible to miss.
-    </p>
-    <p class="body" style="margin-top: 12px;">
-      Your live login: <code>sam@leadgeneration.io</code> /
-      <code>Sam@123</code> (please change this from settings after first
-      login). It's flagged as the primary-owner account so it can never be
-      demoted, deactivated, or deleted by another user.
-    </p>
-  </div>
-
-  <!-- ─── Security ─────────────────────────────── -->
-  <h2>Security — audit findings closed <span class="pill fix">hardened</span></h2>
+  <!-- ─── New endpoints / API surface ─────────────────────────────── -->
+  <h2>New API surface <span class="pill fix">added</span></h2>
 
   <ul class="bare">
-    <li><strong>Stored XSS in invoice + portal print-PDF helpers</strong> —
-      every interpolated value now HTML-escaped. A malicious line-item
-      description can no longer execute scripts in the print window.</li>
-    <li><strong>SignNow webhook signature verification fixed</strong> —
-      was using <code>JSON.stringify(req.body)</code> (which never matches
-      the original bytes); now captures raw body. Production refuses
-      unsigned webhooks if the secret is missing.</li>
-    <li><strong>Endole no longer fabricates credit scores on errors</strong>
-      — was returning random mock scores when the API failed. Now throws
-      cleanly so the system records a notification instead.</li>
-    <li><strong>Notification scope check</strong> — mark-as-read now
-      requires the calling user own the notification. Previously a stale
-      authz path let users mark anyone's notifications.</li>
-    <li><strong>Tasks + SOPs locked to internal roles</strong> — clients
-      and read-only users now get 403 (was 200, exposing internal ops
-      data).</li>
-    <li><strong>Agreements scoped per-business</strong> — clients can no
-      longer guess UUIDs to read another client's signed PDFs.</li>
-    <li><strong>15-second AbortSignal on every external integration</strong>
-      — Xero, SignNow, R2, LeadByte, Endole, Creditsafe, Catchr, Resend.
-      No more hung sockets stalling the worker.</li>
-    <li><strong>Graceful shutdown</strong> on SIGTERM — drains in-flight
-      requests, closes Redis, then exits. Prevents corrupted writes
-      during Railway redeploys.</li>
-    <li><strong>PII redaction in logs</strong> — JWTs, refresh tokens,
-      passwords, integration secrets — all redacted before anything
-      reaches Datadog/Loki/Railway log drains.</li>
-    <li><strong>Cache-Control headers</strong> on every API GET response —
-      browser back/forward feels instant; CDN-private so auth-scoped data
-      never leaks across users.</li>
-    <li><strong>Body-parser limits tightened</strong> — global default
-      dropped from 10mb to 1mb; 5mb scoped to invoices, 10mb scoped to
-      uploads. Reduces DoS surface on the bulk of requests.</li>
-    <li><strong>Invoice number race fixed</strong> — was using
-      <code>count(*)</code> inside a transaction; now a Postgres SEQUENCE
-      via <code>nextval()</code>. Atomic, O(1), no concurrent-write
-      duplicates.</li>
+    <li><code>POST /api/v1/auth/logout</code> — idempotent best-effort
+      logout (used by the FE to clear server-side session state on
+      sign-out).</li>
+    <li><code>POST /api/v1/tasks/from-template</code> — alias matching
+      what the FE was calling (the previous route name was
+      <code>/templates/:id/create</code>; both work now).</li>
+    <li><code>GET /api/v1/dashboard/stats</code> — aggregate KPIs
+      (revenue / cost / profit / margin / active clients / active
+      campaigns / leads-this-month) in a single round-trip.</li>
+    <li><strong>Error response shape</strong> now includes
+      <code>code</code>, <code>errors[]</code>, and <code>issues[]</code>
+      from validation/Xero error classifications. Frontend now shows
+      per-field error messages instead of a generic toast.</li>
   </ul>
 
   <!-- ─── UI polish ─────────────────────────────── -->
@@ -443,18 +675,51 @@
     <li><strong>Search inputs debounced</strong> 300ms across Clients,
       Campaigns, Invoices, SOPs, Bank-feed pages. One request per pause
       instead of one per keystroke.</li>
-    <li><strong>Logout clears React Query cache</strong> + calls a new
+    <li><strong>Logout clears React Query cache</strong> + calls the new
       <code>POST /auth/logout</code> endpoint. Switching users on the
       same browser no longer briefly shows the previous user's data.</li>
-    <li><strong>Stable line-item keys on invoice create</strong> — text in
-      one row no longer shifts to another when you delete a row above it.</li>
+    <li><strong>Auth token initialised synchronously</strong> on app boot
+      so synchronous renders that fire a request between mount and the
+      AuthProvider effect resolving don't hit 401 → refresh → retry.</li>
+    <li><strong>Stable line-item keys on invoice create</strong> — text
+      in one row no longer shifts to another when you delete a row above it.</li>
+    <li><strong>Invoice <code>dueDate</code> field actually saved</strong>
+      — the date picker on Create Invoice was previously dropped on
+      submit; now the value reaches the database.</li>
     <li><strong>Dead "Onboarding" tab</strong> on the Clients page removed
       (it mapped to a status that never existed and was always empty).</li>
     <li><strong>Validation errors</strong> from the backend now surface to
       the user with the exact field path. No more generic "Validation
       failed" toasts.</li>
-    <li><strong>Vite port 5174 added to CORS dev allow-list</strong>.</li>
+    <li><strong>Compliance link guard</strong> — the portal compliance
+      page validates landing-page URLs (only http/https) before rendering
+      them as clickable, defence-in-depth against open-redirect.</li>
+    <li><strong>Vite port 5174 added to CORS dev allow-list</strong>
+      so local development against an alternate port doesn't get blocked.</li>
   </ul>
+
+  <!-- ─── Deploy automation ─────────────────────────────── -->
+  <h2>Deploy automation — first-boot safe <span class="pill fix">infra</span></h2>
+
+  <div class="card">
+    <p class="body">
+      The Dockerfile now runs a 3-step boot chain on every Railway
+      deploy: <code>db:auto-migrate</code> → <code>db:seed-if-empty</code>
+      → start the API. Migrations are idempotent (tolerate "already
+      exists" so re-running never breaks). The seed step only fires if
+      the users table is empty — existing users are never touched on
+      subsequent deploys. In production, the seed refuses to run with
+      default passwords and exits non-zero so the operator sees the
+      misconfiguration instead of a working but unsafe deploy.
+    </p>
+    <p class="body" style="margin-top: 12px;">
+      Boot-time fail-fast checks added: <code>DATABASE_URL</code>,
+      <code>JWT_SECRET</code> ≥ 32 chars and not the dev default,
+      <code>CORS_ORIGINS</code>. If any are missing or invalid, the
+      container exits with a clear error message instead of starting
+      a broken server.
+    </p>
+  </div>
 
   <!-- ─── Production URLs ─────────────────────────────── -->
   <h2>For tomorrow's demo <span class="pill done">live</span></h2>
@@ -476,8 +741,8 @@
 
   <h3>Suggested 5-minute walkthrough</h3>
   <ol style="font-size: 14px; color: #424245; padding-left: 22px;">
-    <li>Open the dashboard — should mount in ~100ms; bank balances and VAT
-      widgets show real Xero data; no fake "+12.4%" chips anywhere.</li>
+    <li>Open the dashboard — should mount in ~100ms; bank balances and
+      VAT widgets show real Xero data; no fake "+12.4%" chips anywhere.</li>
     <li>Click <strong>Campaigns</strong> — first load takes a few seconds
       while the cache warms; subsequent visits are instant.</li>
     <li>Click <strong>Reports → Ad Spend</strong> — see £127,311 across 9
@@ -514,7 +779,7 @@
       </tr>
       <tr>
         <td><strong>LeadByte → Stato client mapping</strong> (CSV)</td>
-        <td>Campaign report shows "Unmapped" for client+vertical; per-client P&L is empty</td>
+        <td>Campaign report shows "Unmapped" for client+vertical; per-client P&amp;L is empty</td>
         <td><span class="badge medium">Medium</span></td>
       </tr>
       <tr>
