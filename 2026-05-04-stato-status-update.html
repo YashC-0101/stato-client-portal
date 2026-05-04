@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Stato — Status Update · 3 &amp; 4 May 2026</title>
+<title>Stato — Status Update · 4 May 2026</title>
 <style>
   * { box-sizing: border-box; }
   html, body {
@@ -162,17 +162,17 @@
 
   <h1>Stato — Status Update</h1>
   <p class="meta">
-    <strong>3 &amp; 4 May 2026</strong> · Prepared by Yash Chavan · Octogle Technologies for leadgeneration.io
+    <strong>4 May 2026</strong> · Prepared by Yash Chavan · Octogle Technologies for leadgeneration.io
   </p>
 
   <!-- TL;DR summary card -->
   <div class="summary">
     <p>
-      <strong>Two-day push to ready the platform for tomorrow's client demo.</strong>
-      Started 3 May with a full security &amp; quality audit (3 parallel agents
-      reviewed every file in both repos), closed every critical finding the
-      same day, then spent 4 May on the performance work. <strong>50+ fixes
-      shipped to production across 4 deploys.</strong>
+      <strong>Full-day push to ready the platform for tomorrow's client demo.</strong>
+      Started with a full security &amp; quality audit (3 parallel agents
+      reviewed every file in both repos), closed every critical finding,
+      then moved straight on to the performance work.
+      <strong>50+ fixes shipped to production across 4 deploys today.</strong>
     </p>
     <p>
       <strong>Headline performance win:</strong> the dashboard mounts in
@@ -189,7 +189,7 @@
       real errors, and a notification authz bypass.
     </p>
     <p>
-      <strong>Authentication moved to the database.</strong> Until 3 May,
+      <strong>Authentication moved to the database.</strong> Until today,
       the app stored users in memory — every Railway redeploy wiped
       registrations. Now users live in Postgres; your account
       <code>sam@leadgeneration.io</code> is the primary owner.
@@ -211,9 +211,9 @@
   <h2>Security audit — 21 findings, all closed <span class="pill crit">audit pass</span></h2>
 
   <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
-    On 3 May we ran a full security &amp; quality audit of both repos
-    (backend + frontend) with three parallel review agents. Every critical
-    finding is now fixed in production. Highlights below; click for detail.
+    Ran a full security &amp; quality audit of both repos (backend +
+    frontend) with three parallel review agents. Every critical finding
+    is now fixed in production. Highlights below; click for detail.
   </p>
 
   <details>
@@ -450,7 +450,7 @@
 
   <div class="card">
     <p class="body">
-      Until 3 May, the app stored users in memory. Every Railway redeploy
+      Until today, the app stored users in memory. Every Railway redeploy
       wiped registrations, password changes, and role updates. With the
       automated CI/CD pipeline that meant production was effectively one
       deploy away from losing every user.
