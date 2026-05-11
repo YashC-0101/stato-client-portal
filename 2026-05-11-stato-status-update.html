@@ -609,6 +609,67 @@
       confirm the doc is still there (proof: no localStorage).</li>
   </ol>
 
+  <!-- ─── THIS WEEK — PENDING + IN PROCESS ─────────────────────────────── -->
+  <h2>This week — pending + in process <span class="pill fix">in flight</span></h2>
+
+  <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
+    Today's shipment closed the three priority items from your Looms.
+    Here's what stays on the burner this week — split into things I'm
+    actively building, things queued for next, and things parked waiting
+    on your decisions.
+  </p>
+
+  <h3>⏳ In progress (live in dev, shipping later this week)</h3>
+  <ul class="bare">
+    <li><strong>Tasks revamp — Day 1</strong> · DB schema for comments,
+      subtasks, attachments, and the activity-log table. Migration drafted,
+      not yet pushed</li>
+    <li><strong>Smoke test on real Xero / LeadByte / Catchr</strong>
+      against the three verification items above (bank balance, VAT
+      periods, LeadByte buyer dropdown). Waiting on your eyes on prod;
+      I follow up immediately if anything's off</li>
+    <li><strong>SOPs polish</strong> — paste a Loom link → AI generates
+      the SOP outline. Spec drafted, build starts mid-week</li>
+  </ul>
+
+  <h3>📋 Pending — queued, kicks off this week</h3>
+  <ul class="bare">
+    <li><strong>Tasks revamp — Days 2–6</strong> · CRUD backend for
+      comments / subtasks / attachments · frontend rebuild of the task
+      detail page · org-wide task view · recurring tasks · time-block
+      buckets (1hr / 2hr) · linked SOPs · SOS-help WhatsApp escalation</li>
+    <li><strong>Agreement PDF editor</strong> — drag signature + date
+      boxes onto the PDF before send. Bigger build, scheduled to start
+      next week so it doesn't compete with Tasks for attention</li>
+    <li><strong>Attio bulk import</strong> — pick companies from your
+      Attio CRM to migrate into Stato in one go. Needs your Attio API
+      token to start</li>
+  </ul>
+
+  <h3>🅿️ Parked — waiting on your input</h3>
+  <ul class="bare">
+    <li><strong>Status terminology rename</strong> — the "prospects, not
+      prospects" thing from your Loom. Need your exact label preference
+      (see textarea below)</li>
+    <li><strong>Asset placement</strong> — Campaign or per Client. Currently
+      defaulted to Campaign; flip is one PR if you want it</li>
+    <li><strong>Stage-pipeline drag UI + full activity feed</strong> on
+      the Client Overview tab. MVP shipped today (the 4-step Onboarding
+      view). The deeper version waits until you tell me whether to
+      prioritise it ahead of Tasks</li>
+  </ul>
+
+  <h3>🚫 Deferred / dropped</h3>
+  <ul class="bare">
+    <li><strong>Slice 4 backend cleanup</strong> — removing the 5 old
+      report endpoints. Skipped because the dashboard still hits one of
+      them; safer to leave</li>
+    <li><strong>Client P&amp;L and Financial Overview report pages</strong>
+      — deleted per the work-split plan since their data is folded into
+      the unified report. Bring back if you miss the per-month trend
+      view</li>
+  </ul>
+
   <!-- ─── STILL PENDING ─────────────────────────────── -->
   <h2>Still need from you <span class="pill need">4 items</span></h2>
 
