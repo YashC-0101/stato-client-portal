@@ -165,6 +165,22 @@
     <strong>11 May 2026</strong> · Prepared by Yash Chavan · Octogle Technologies for leadgeneration.io
   </p>
 
+  <!-- Tight intro card — small + sweet -->
+  <div class="card" style="background:#f0f7ff; border-color:#cfe2ff; margin-bottom: 14px;">
+    <p class="body" style="font-size: 15px; color: #1d1d1f;">
+      <strong>Why two updates this week?</strong> After your two Loom
+      videos I broke the complaints into a written plan and split the
+      work between me and Hari (parallel tracks, no overlap). This page
+      is <strong>my side, shipped today</strong>. Hari's track is
+      ongoing — dashboard polish + SOPs Loom-to-AI + integration cleanups.
+    </p>
+    <p class="body" style="margin-top: 10px; color: #424245;">
+      <strong>In short:</strong> Done — one client end-to-end, campaigns
+      inverted, 5 reports → 1, dashboard bank/VAT fixed. In progress —
+      tasks revamp + agreement PDF editor + Attio bulk import.
+    </p>
+  </div>
+
   <!-- TL;DR summary card -->
   <div class="summary">
     <p>
@@ -600,36 +616,34 @@
   <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
     Everything in your Looms is addressed except these four — each is
     blocked on a decision or credential I can't make on your behalf.
-    Replying to any of them unblocks the next iteration.
+    Type your answer in the box under each item; it saves automatically
+    in your browser as you type. When you're done, hit the download
+    button at the bottom and WhatsApp the file back.
   </p>
 
-  <table>
-    <thead>
-      <tr><th>Item</th><th>Effect today</th><th>Priority</th></tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><strong>Endole production API key</strong></td>
-        <td>Credit checks return random scores ~38 because we're still in sandbox / mock mode. Drop the key into Railway env vars and we're done.</td>
-        <td><span class="badge urgent">High</span></td>
-      </tr>
-      <tr>
-        <td><strong>Status terminology</strong> — your Loom said <em>"let's state it's prospects, not prospects"</em></td>
-        <td>Current default is "prospect". What did you want the label renamed to? Need the exact word so I can update both the database enum and UI copy.</td>
-        <td><span class="badge medium">Medium</span></td>
-      </tr>
-      <tr>
-        <td><strong>Creative asset placement</strong></td>
-        <td>You said both "into a campaign, not a client" and "this should be underneath the client". Defaulted to <em>on Campaign</em> (matches leadreports.io). Confirm or flip — both are easy.</td>
-        <td><span class="badge medium">Medium</span></td>
-      </tr>
-      <tr>
-        <td><strong>"Spend for Poland"</strong> on the report</td>
-        <td>Was that test data or a real Polish Catchr account leaking through? If real, looks like a tenant-isolation bug to investigate.</td>
-        <td><span class="badge low">Low</span></td>
-      </tr>
-    </tbody>
-  </table>
+  <div id="ask-cards">
+    <noscript>
+      <p style="color:#b00020;font-size:14px;">
+        JavaScript is disabled — fall back to the WhatsApp/email reply.
+        The four items are:
+      </p>
+      <ol style="color:#424245;font-size:14px;line-height:1.7;">
+        <li>Endole production API key</li>
+        <li>Status terminology — what should "prospects" actually say?</li>
+        <li>Creative asset placement — Campaign or per Client?</li>
+        <li>"Spend for Poland" on the report — real or test data?</li>
+      </ol>
+    </noscript>
+  </div>
+
+  <div style="margin-top: 20px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+    <button id="download-btn" type="button" style="padding: 12px 22px; border-radius: 999px; background: #0066cc; color: #fff; border: 1px solid #0066cc; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer;">
+      ⬇ Download my answers as text
+    </button>
+    <span id="download-hint" style="color: #6e6e73; font-size: 13px;">
+      Saves a single <code>.txt</code> with everything you typed above — WhatsApp it back to Yash.
+    </span>
+  </div>
 
   <!-- ─── NEXT ─────────────────────────────── -->
   <h2>Coming next <span class="pill fix">scheduled</span></h2>
@@ -654,5 +668,200 @@
   </footer>
 
 </div>
+
+<!-- Style for ask cards + textareas — same pattern as 29 April update. -->
+<style>
+  .ask-card {
+    background: #fff; border: 1px solid #e8e8ed; border-radius: 14px;
+    padding: 18px 20px; margin: 0 0 14px 0;
+  }
+  .ask-card .ask-head {
+    display: flex; align-items: baseline; gap: 10px; margin-bottom: 6px;
+  }
+  .ask-card .ask-num {
+    font-size: 13px; font-weight: 700; color: #0066cc;
+    background: #f0f7ff; padding: 2px 8px; border-radius: 999px;
+    min-width: 28px; text-align: center;
+  }
+  .ask-card .ask-title {
+    font-size: 15.5px; font-weight: 600; color: #1d1d1f; flex: 1;
+  }
+  .ask-card .ask-effort {
+    font-size: 12px; color: #6e6e73;
+    background: #f0f0f3; padding: 2px 8px; border-radius: 999px;
+    white-space: nowrap;
+  }
+  .ask-card .ask-why {
+    font-size: 13.5px; color: #6e6e73; margin: 0 0 12px 36px;
+    line-height: 1.5;
+  }
+  .ask-card textarea {
+    width: 100%; padding: 10px 12px;
+    border: 1px solid #e8e8ed; border-radius: 10px;
+    background: #fafafa; color: #1d1d1f; font: inherit; font-size: 14px;
+    outline: none; min-height: 70px; resize: vertical;
+    transition: border-color 120ms, background 120ms, box-shadow 120ms;
+  }
+  .ask-card textarea:focus {
+    border-color: #0066cc; background: #fff;
+    box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.12);
+  }
+  .ask-card textarea::placeholder { color: #a0a0a8; }
+  #download-btn:hover { background: #0058b3; border-color: #0058b3; }
+  #download-btn:active { transform: translateY(1px); }
+  .saved-pill {
+    display: inline-block; font-size: 12px; color: #16a34a;
+    margin-left: 10px; opacity: 0; transition: opacity 200ms;
+  }
+  .saved-pill.visible { opacity: 1; }
+</style>
+
+<script src="lib.js"></script>
+<script>
+  // Four asks for Sam — match the priority order in the page above.
+  const ASKS = [
+    {
+      id: 'endole-key',
+      title: 'Endole production API key',
+      why: "Credit checks return random scores ~38 because we're still in sandbox / mock mode. Two env vars (ENDOLE_APP_ID + ENDOLE_APP_KEY) into Railway and we're done.",
+      effort: '~5 min',
+      placeholder: 'Paste the App ID and App Key here (or "still requesting from Endole")…',
+    },
+    {
+      id: 'status-label',
+      title: 'Status terminology — your Loom said "prospects, not prospects"',
+      why: "Current default is 'prospect'. What did you want the label renamed to? Need the exact word so I can update both the database enum and UI copy.",
+      effort: '~30 sec',
+      placeholder: 'e.g. "rename to Lead" or "rename to New Buyer"…',
+    },
+    {
+      id: 'asset-placement',
+      title: 'Creative asset placement — Campaign or per Client?',
+      why: 'You said both "into a campaign, not a client" and "this should be underneath the client" in the same sentence. Defaulted to on Campaign (matches leadreports.io). Confirm or flip — both are easy.',
+      effort: '~30 sec',
+      placeholder: 'Pick one — "keep on Campaign" or "move to Client"…',
+    },
+    {
+      id: 'poland-spend',
+      title: '"Spend for Poland" on the report — real or test data?',
+      why: 'Was that placeholder test data, or a real Polish Catchr account leaking through? If real, looks like a tenant-isolation bug to investigate immediately.',
+      effort: '~30 sec',
+      placeholder: 'Test data / real account / not sure…',
+    },
+  ];
+
+  const RESPONSE_KEY = 'stato-2026-05-11-responses';
+
+  function loadStoredResponses() {
+    try {
+      const raw = localStorage.getItem(RESPONSE_KEY);
+      return raw ? JSON.parse(raw) : {};
+    } catch {
+      return {};
+    }
+  }
+
+  function saveResponses(map) {
+    try {
+      localStorage.setItem(RESPONSE_KEY, JSON.stringify(map));
+    } catch {
+      /* localStorage full or disabled — no-op. */
+    }
+  }
+
+  function renderAskCards() {
+    const container = document.getElementById('ask-cards');
+    if (!container) return;
+    container.innerHTML = '';
+    const stored = loadStoredResponses();
+
+    ASKS.forEach((ask, i) => {
+      const card = document.createElement('div');
+      card.className = 'ask-card';
+      const num = i + 1;
+      const tid = `ask-${ask.id}`;
+      card.innerHTML = `
+        <div class="ask-head">
+          <span class="ask-num">${num}</span>
+          <span class="ask-title">${ask.title}</span>
+          <span class="ask-effort">${ask.effort}</span>
+        </div>
+        <p class="ask-why">${ask.why}</p>
+        <textarea
+          id="${tid}"
+          data-ask-id="${ask.id}"
+          rows="3"
+          placeholder="${ask.placeholder}"></textarea>
+        <span class="saved-pill" id="${tid}-saved">Saved locally</span>
+      `;
+      container.appendChild(card);
+
+      const ta = card.querySelector('textarea');
+      const saved = card.querySelector('.saved-pill');
+      ta.value = stored[ask.id] || '';
+      let savedTimer = null;
+      ta.addEventListener('input', () => {
+        const map = loadStoredResponses();
+        map[ask.id] = ta.value;
+        saveResponses(map);
+        saved.classList.add('visible');
+        clearTimeout(savedTimer);
+        savedTimer = setTimeout(() => saved.classList.remove('visible'), 1200);
+      });
+    });
+  }
+
+  function downloadAsText() {
+    const stored = loadStoredResponses();
+    const lines = [];
+    lines.push("Stato — Sam's responses to the 11 May 2026 update");
+    lines.push('Saved at: ' + new Date().toISOString());
+    lines.push('');
+    lines.push('═══════════════════════════════════════════════════════');
+    lines.push('');
+
+    ASKS.forEach((ask, i) => {
+      const num = i + 1;
+      const answer = (stored[ask.id] || '').trim();
+      lines.push(`${num}. ${ask.title}  (${ask.effort})`);
+      lines.push('   Why: ' + ask.why);
+      lines.push('');
+      if (answer) {
+        lines.push('   Sam:');
+        answer.split('\n').forEach((l) => lines.push('     ' + l));
+      } else {
+        lines.push('   Sam: (no answer provided)');
+      }
+      lines.push('');
+      lines.push('───────────────────────────────────────────────────────');
+      lines.push('');
+    });
+
+    lines.push('— End of responses —');
+
+    const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const stamp = new Date().toISOString().slice(0, 10);
+    a.href = url;
+    a.download = `stato-sam-responses-${stamp}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  // Boot. If lib.js is present (password gate), use it; otherwise render directly.
+  function boot() {
+    renderAskCards();
+    const btn = document.getElementById('download-btn');
+    if (btn) btn.addEventListener('click', downloadAsText);
+  }
+  if (typeof mountPasswordGate === 'function') {
+    mountPasswordGate(boot);
+  } else {
+    boot();
+  }
+</script>
 </body>
 </html>
