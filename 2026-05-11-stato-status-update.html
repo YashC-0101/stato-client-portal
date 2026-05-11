@@ -1,0 +1,658 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Stato — Status Update · 11 May 2026</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Arial, sans-serif;
+    background: #fafafa; color: #1d1d1f;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.55;
+  }
+  .wrap { max-width: 820px; margin: 0 auto; padding: 56px 22px; }
+  .back {
+    display: inline-block; color: #0066cc; text-decoration: none;
+    font-size: 14px; margin-bottom: 24px;
+  }
+  .back:hover { text-decoration: underline; }
+  h1 {
+    font-size: 34px; font-weight: 700; letter-spacing: -0.02em;
+    margin: 0 0 6px 0;
+  }
+  .meta { color: #6e6e73; font-size: 14px; margin: 0 0 36px 0; }
+  h2 {
+    font-size: 24px; font-weight: 700; letter-spacing: -0.01em;
+    margin: 48px 0 14px 0;
+    display: flex; align-items: center; gap: 12px;
+  }
+  h2 .pill {
+    font-size: 11px; font-weight: 600;
+    padding: 4px 10px; border-radius: 999px;
+    text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  h2 .pill.done   { background: #e6f7ec; color: #1d7a3a; }
+  h2 .pill.need   { background: #fff3e0; color: #a04a00; }
+  h2 .pill.fix    { background: #e8f0ff; color: #0042a3; }
+  h2 .pill.policy { background: #f0e8ff; color: #5b1d9c; }
+  h2 .pill.perf   { background: #ffe8f0; color: #9c1d5b; }
+  h2 .pill.crit   { background: #ffe5e5; color: #b00020; }
+  h3 {
+    font-size: 17px; font-weight: 600; margin: 24px 0 8px 0;
+    color: #1d1d1f;
+  }
+  .card {
+    background: #fff; border: 1px solid #e8e8ed; border-radius: 14px;
+    padding: 18px 20px; margin: 0 0 12px 0;
+  }
+  .card .body { font-size: 14px; color: #424245; margin: 0; }
+  code, .card .body code {
+    font-family: 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 12.5px;
+    background: #f0f0f3; padding: 1px 5px; border-radius: 4px;
+    color: #1d1d1f;
+  }
+  .badge {
+    display: inline-block;
+    font-size: 11px; font-weight: 600;
+    padding: 2px 8px; border-radius: 999px;
+    text-transform: uppercase; letter-spacing: 0.03em;
+    margin-left: 6px;
+  }
+  .badge.live   { background: #e6f7ec; color: #1d7a3a; }
+  .badge.urgent { background: #ffe5e5; color: #b00020; }
+  .badge.medium { background: #fff3e0; color: #a04a00; }
+  .badge.low    { background: #f0f0f3; color: #6e6e73; }
+  .url {
+    display: block; font-family: 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 12.5px; color: #0066cc; word-break: break-all;
+    margin-top: 4px;
+  }
+  table {
+    width: 100%; border-collapse: collapse;
+    background: #fff; border: 1px solid #e8e8ed; border-radius: 12px;
+    overflow: hidden;
+    font-size: 13.5px;
+  }
+  th, td {
+    text-align: left; padding: 11px 14px;
+    border-bottom: 1px solid #f0f0f3; vertical-align: top;
+  }
+  th { font-weight: 600; background: #f9f9fb; color: #424245; font-size: 12px; text-transform: uppercase; letter-spacing: 0.03em; }
+  tr:last-child td { border-bottom: none; }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; font-family: 'SF Mono', Menlo, Consolas, monospace; }
+  ul.bare { list-style: none; padding: 0; margin: 0; }
+  ul.bare li {
+    padding: 9px 0; border-bottom: 1px solid #f0f0f3; font-size: 14px;
+  }
+  ul.bare li:last-child { border-bottom: none; }
+  ul.bare li::before { content: "✓"; color: #1d7a3a; font-weight: 700; margin-right: 10px; }
+  ul.before-after { list-style: none; padding: 0; margin: 0; }
+  ul.before-after li {
+    padding: 12px 0; border-bottom: 1px solid #f0f0f3; font-size: 14px;
+  }
+  ul.before-after li:last-child { border-bottom: none; }
+  .summary {
+    background: #fff; border: 1px solid #e8e8ed; border-radius: 14px;
+    padding: 22px 24px;
+  }
+  .summary p { margin: 0 0 10px 0; font-size: 15px; }
+  .summary p:last-child { margin: 0; }
+  .stat-row {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+    margin: 16px 0 0 0;
+  }
+  @media (max-width: 600px) { .stat-row { grid-template-columns: repeat(2, 1fr); } }
+  .stat {
+    background: #fafafa; border: 1px solid #e8e8ed; border-radius: 12px;
+    padding: 14px;
+  }
+  .stat .num {
+    font-size: 22px; font-weight: 700; color: #1d1d1f;
+    font-variant-numeric: tabular-nums;
+    font-family: 'SF Mono', Menlo, Consolas, monospace;
+  }
+  .stat .lbl {
+    font-size: 11px; color: #6e6e73;
+    text-transform: uppercase; letter-spacing: 0.04em;
+    margin-top: 4px;
+  }
+  .arrow-from-to {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 13px;
+  }
+  .arrow-from-to .from { color: #b00020; text-decoration: line-through; }
+  .arrow-from-to .to { color: #1d7a3a; font-weight: 600; }
+  details {
+    background: #fff; border: 1px solid #e8e8ed; border-radius: 14px;
+    padding: 0; margin: 0 0 12px 0; overflow: hidden;
+  }
+  details summary {
+    padding: 14px 18px; cursor: pointer; list-style: none;
+    font-size: 14px; font-weight: 600;
+    display: flex; align-items: center; gap: 10px;
+  }
+  details summary::-webkit-details-marker { display: none; }
+  details summary::after {
+    content: "›"; margin-left: auto; color: #6e6e73; font-size: 18px;
+    transition: transform 150ms;
+  }
+  details[open] summary::after { transform: rotate(90deg); }
+  details summary:hover { background: #f9f9fb; }
+  details .content { padding: 4px 18px 16px 18px; font-size: 14px; color: #424245; border-top: 1px solid #f0f0f3; }
+  details .content p { margin: 12px 0; }
+  details .content p:first-child { margin-top: 12px; }
+  details .content ul { margin: 8px 0; padding-left: 22px; }
+  details .content li { margin: 4px 0; }
+  footer {
+    margin-top: 64px; padding-top: 22px;
+    border-top: 1px solid #e8e8ed;
+    color: #86868b; font-size: 12px; text-align: center;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <a class="back" href="index.html">← Back to portal</a>
+
+  <h1>Stato — Status Update</h1>
+  <p class="meta">
+    <strong>11 May 2026</strong> · Prepared by Yash Chavan · Octogle Technologies for leadgeneration.io
+  </p>
+
+  <!-- TL;DR summary card -->
+  <div class="summary">
+    <p>
+      <strong>Direct response to your 2 Loom videos.</strong> Walked through
+      every complaint, split the work between me + Hari, and shipped my
+      half end-to-end today. The three things you said hurt most — "I just
+      want one client set up properly", "campaigns are the wrong concept",
+      and "5 reports should be 1" — are all live on production.
+    </p>
+    <p>
+      <strong>Headline change:</strong> the campaigns model is now built
+      around <em>verticals</em>. "Solar Panels" appears as ONE row at the
+      top of the list with its buyer clients underneath, instead of the
+      old three-rows-of-Solar-Panels-with-different-client-ids design that
+      caused most of your confusion.
+    </p>
+    <p>
+      <strong>Reports folded:</strong> Campaign Performance, Supplier
+      Performance, Ad Spend, Client P&amp;L, and Financial Overview are
+      gone as separate pages. <code>/reports</code> now lands directly on
+      one leadreports.io-style view — one row per (campaign × supplier)
+      with revenue, spend, profit, and margin computed server-side.
+    </p>
+    <p>
+      <strong>Client end-to-end works on real data.</strong> Create a
+      buyer (e.g. UK Energy Saving Network) with the new 5-field address,
+      multiple contacts with roles, VAT number + rate. Documents now
+      survive across browsers (out of localStorage). Invoices tab pulls
+      from Xero with a "Sync from Xero" button that auto-links the Xero
+      contact by name.
+    </p>
+    <p style="font-size: 13px; color: #6e6e73;">
+      Click any section title to expand · 4 things still need your input
+      (listed at the bottom).
+    </p>
+
+    <div class="stat-row">
+      <div class="stat"><div class="num">12</div><div class="lbl">Commits today</div></div>
+      <div class="stat"><div class="num">3</div><div class="lbl">Production deploys</div></div>
+      <div class="stat"><div class="num">4</div><div class="lbl">DB migrations applied</div></div>
+      <div class="stat"><div class="num">33</div><div class="lbl">New tests · all passing</div></div>
+    </div>
+  </div>
+
+  <!-- ─── ONE CLIENT END-TO-END ─────────────────────────────── -->
+  <h2>One client end-to-end <span class="pill done">live</span></h2>
+
+  <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
+    Your Loom asked: "let's just get one client set up, fully processed
+    through." Every complaint from that walkthrough is addressed below.
+    Tested end-to-end with an 11-step automated test on UK Energy Saving
+    Network.
+  </p>
+
+  <details>
+    <summary>✅ Address split into 5 fields</summary>
+    <div class="content">
+      <p>
+        Your ask: <em>"I would prefer to have the addresses like address,
+        towns, county, country, postcode."</em>
+      </p>
+      <p>
+        Single text field replaced with five: Address Line, Town, County,
+        Country (defaults to United Kingdom), Postcode. Existing client
+        records keep their old free-text address until updated.
+      </p>
+    </div>
+  </details>
+
+  <details>
+    <summary>✅ Multiple contacts per client</summary>
+    <div class="content">
+      <p>
+        Your ask: <em>"we should have multiple contacts in here because you
+        might have a billing contact, you might have a compliance contact
+        or primary contact."</em>
+      </p>
+      <p>
+        The Contact Details card is now a repeater. First row is locked as
+        Primary; click "Add billing contact" / "Add compliance contact" /
+        "Add other" to add more. Each row has Name / Role / Email / Phone
+        plus a coloured type badge on the detail page (primary blue,
+        billing green, compliance purple, other grey).
+      </p>
+    </div>
+  </details>
+
+  <details>
+    <summary>✅ VAT number + rate on the client</summary>
+    <div class="content">
+      <p>
+        Your ask: <em>"client VAT number, VAT applicable, like we need to
+        have the VAT number to be able to put that in."</em>
+      </p>
+      <p>
+        When the "VAT Registered" checkbox is ticked, two new inputs
+        appear: VAT Number (e.g. GB123456789) and VAT Rate % (defaults to
+        20). Both persist on the client and surface on the Billing card
+        of the detail page.
+      </p>
+    </div>
+  </details>
+
+  <details>
+    <summary>✅ LeadByte buyer is now a dropdown</summary>
+    <div class="content">
+      <p>
+        Your ask: <em>"We should be able to just select it from a dropdown
+        list from Lead Byte rather than having to go into Lead Byte and do
+        it ourselves."</em>
+      </p>
+      <p>
+        Replaced with a dropdown fed from <code>/api/v1/leadbyte/buyers</code>.
+        Options labelled <code>{company} · {bid}</code>, sorted by
+        company. Graceful fallback to a text input if LeadByte is
+        unreachable — so a LeadByte outage doesn't block client creation.
+      </p>
+    </div>
+  </details>
+
+  <details>
+    <summary>✅ Documents now in the database, not browser localStorage</summary>
+    <div class="content">
+      <p>
+        Your ask: <em>"we've got a couple of our agreements, we've got a
+        due diligence form we've completed."</em> Previously these were
+        only visible on the browser that uploaded them.
+      </p>
+      <p>
+        New <code>client_documents</code> table tracks metadata
+        (uploader, size, content-type, R2 key) centrally. Files still live
+        in Cloudflare R2. Upload from one browser → log in from any other
+        browser → docs are there. Survives cache clears, survives staff
+        turnover.
+      </p>
+    </div>
+  </details>
+
+  <details>
+    <summary>✅ Invoices tab pulls real Xero invoices</summary>
+    <div class="content">
+      <p>
+        Your ask: <em>"there's no invoices showing from Xero. It's not
+        connected. This isn't working."</em>
+      </p>
+      <p>
+        Tab now displays a proper invoices table for this specific client:
+        invoice number, status badge, due date, amount, days-overdue chip.
+        Total revenue shown in the header.
+      </p>
+    </div>
+  </details>
+
+  <details>
+    <summary>✅ "Sync from Xero" button — auto-links the Xero contact by name</summary>
+    <div class="content">
+      <p>
+        Your ask: <em>"Where's his invoice? How do I connect his invoices?"</em>
+      </p>
+      <p>
+        New button on the Invoices tab. On click:
+      </p>
+      <ul>
+        <li>Looks up the client's Xero contact ID. If missing, searches
+          Xero for an exact name match and saves the link automatically.</li>
+        <li>Pulls all ACCREC (customer) invoices for that contact.</li>
+        <li>Imports any not already in our DB; skips duplicates by
+          Xero invoice ID.</li>
+        <li>Shows a toast: "Imported N invoices · auto-linked contact" /
+          "Already up to date" / "Couldn't find …, create contact in Xero
+          first".</li>
+      </ul>
+      <p>
+        Idempotent — running it again just confirms nothing new arrived.
+      </p>
+    </div>
+  </details>
+
+  <details>
+    <summary>✅ "Validation failed, billing workflow invalid" — gone</summary>
+    <div class="content">
+      <p>
+        Your ask: <em>"Validation failed, billing workflow invalid. So I
+        had to put weekly on there, which is not what I wanted to do."</em>
+      </p>
+      <p>
+        Root cause was a backend / database enum mismatch:
+        <code>['weekly_auto', 'monthly_auto', 'manual']</code> in the
+        validation layer vs <code>['weekly_auto', 'monthly_validated',
+        'custom']</code> in the database. Your frontend dropdown was
+        sending the correct database values which the validation then
+        rejected. Aligned both sides — the toast doesn't fire any more.
+      </p>
+    </div>
+  </details>
+
+  <!-- ─── CAMPAIGNS INVERTED ─────────────────────────────── -->
+  <h2>Campaigns inverted — Solar Panels is one row, buyers underneath <span class="pill done">live</span></h2>
+
+  <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
+    Your Loom: <em>"A campaign is solar panels as a campaign, but under that
+    we have multiple clients and multiple deliveries. I don't get this
+    campaign thing because it's a delivery, not a campaign."</em>
+    The data model now matches that mental model.
+  </p>
+
+  <details>
+    <summary>✅ Campaign is now a vertical, not a (vertical × client) pair</summary>
+    <div class="content">
+      <p>
+        Old model: one row per <em>(client × vertical)</em>. "Solar Panels"
+        showed up N times if N clients bought leads on it. Confusing
+        because you'd see three "Solar Panels" entries that were really
+        the same thing.
+      </p>
+      <p>
+        New model: campaign = the vertical (Solar Panels). Buyers link
+        underneath via a new <code>client_campaigns</code> table with
+        per-buyer lead price + status. Migration is non-destructive — every
+        existing campaign row was backfilled into the new join so nothing
+        was lost.
+      </p>
+      <p>
+        Note: legacy rows from the old model still exist in the database
+        for back-compat. You may still see multiple "Solar Panels"
+        entries in the grouped view (one per pre-existing buyer link)
+        until those legacy rows are manually deduped. The new ONE-row
+        behaviour applies to vertical-only campaigns created from now on.
+      </p>
+    </div>
+  </details>
+
+  <details>
+    <summary>✅ Cost-per-lead field, editable inline</summary>
+    <div class="content">
+      <p>
+        Your ask: <em>"You've got no cost per lead."</em>
+      </p>
+      <p>
+        New "Cost per lead" card on the campaign detail page. Pencil icon
+        opens an inline editor; Save persists to the database. Distinct
+        from the LeadByte-computed CPL (which is
+        totalCost / totalLeads) — this one is your supplier-cost target,
+        showed alongside.
+      </p>
+    </div>
+  </details>
+
+  <details>
+    <summary>✅ Traffic-source mapping table — leadreports.io shape</summary>
+    <div class="content">
+      <p>
+        Your ask: <em>"we selected Facebook, we selected the supplier, you
+        know, it's shown a supplier, we've connected the NCP, ad spend's
+        there, bam, we've got net profit, we've got five leads."</em>
+      </p>
+      <p>
+        New table on the campaign detail page:
+      </p>
+      <ul>
+        <li>Columns: Name / Supplier / Catchr NCP / Spend / Leads / CPL /
+          Revenue / Profit / Margin</li>
+        <li>"Add source" button opens an inline row with a supplier
+          dropdown (Facebook / Google / Bing / TikTok / Taboola / Outbrain
+          / Other) and Catchr NCP URL input</li>
+        <li>Per-row edit (pencil) and delete (trash)</li>
+        <li>Revenue = campaign.leadPrice × supplier-leads. Profit and
+          margin compute server-side and surface coloured (green/amber/red)
+          based on margin band</li>
+      </ul>
+    </div>
+  </details>
+
+  <details>
+    <summary>✅ Campaigns list grouped by vertical (default on)</summary>
+    <div class="content">
+      <p>
+        New "Group by vertical / Flat" toggle on the campaigns list page.
+        Default is grouped. "Solar Panels" appears as one collapsible
+        header with its buyer count, aggregate month-leads, total revenue,
+        and margin — click the chevron to expand and see each buyer
+        underneath. Toggle to Flat for the old per-row table. Preference
+        persists per staff member.
+      </p>
+    </div>
+  </details>
+
+  <!-- ─── REPORTS FOLDED ─────────────────────────────── -->
+  <h2>5 reports folded into 1 unified report <span class="pill done">live</span></h2>
+
+  <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
+    Your Loom: <em>"I think you've got three different reports, so you just
+    need one report... you've got ad spend separate to campaign
+    performance. It's like you've connected everything, but then not put
+    it all together."</em>
+  </p>
+
+  <div class="card">
+    <p class="body">
+      Five separate report pages (Campaign Performance, Supplier
+      Performance, Ad Spend, Client P&amp;L, Financial Overview) are
+      deleted. <code>/reports</code> now lands directly on the unified
+      view. Old URLs (<code>/reports/campaign</code>,
+      <code>/reports/supplier</code>, <code>/reports/ad-spend</code>,
+      <code>/reports/client-pnl</code>, <code>/reports/financial</code>)
+      all redirect — your bookmarks still work.
+    </p>
+    <p class="body" style="margin-top: 12px;">
+      Shape mirrors leadreports.io: one row per (campaign × supplier)
+      with leads + spend (from Catchr) + revenue (from LeadByte) + CPL +
+      profit + margin. Filter by date window (Today / Yesterday / This
+      Week / Last Week / This Month / Last Month / YTD), supplier name,
+      or campaign name. Five total cards at the top: leads · spend ·
+      revenue · profit · margin — all coloured by health.
+    </p>
+    <p class="body" style="margin-top: 12px;">
+      Revenue is allocated by lead share — sum of per-supplier revenue
+      equals each campaign's total revenue. Math is consistent across
+      rows and totals.
+    </p>
+  </div>
+
+  <!-- ─── DASHBOARD FIXES ─────────────────────────────── -->
+  <h2>Dashboard widgets — Sam-Loom-driven corrections <span class="pill done">live</span></h2>
+
+  <details>
+    <summary>✅ Bank widget now uses statement balance (not Xero ledger)</summary>
+    <div class="content">
+      <p>
+        Your Loom: <em>"the actual bank balance, statement balance on May
+        7th was 52,446 pounds. But we're showing this balance in Xero,
+        which is showing us 113,515."</em>
+      </p>
+      <p>
+        The widget previously read the BankSummary report's closing
+        balance — that's the ledger value, which includes
+        approved-but-unreconciled transactions and so doesn't match the
+        bank's statement balance.
+      </p>
+      <p>
+        Now reads <code>Account.Balance</code> from Xero's
+        <code>/Accounts</code> endpoint, which is the bank-feed-reported
+        figure that matches what you see on Xero's own dashboard widget.
+        Description updated to <em>"Statement balance · live from Xero"</em>
+        so it's explicit. If you still see £113k after this update,
+        bank-feed config in Xero may need re-syncing — flag it and I'll
+        dig deeper.
+      </p>
+    </div>
+  </details>
+
+  <details>
+    <summary>✅ VAT widget shows past AND current quarter</summary>
+    <div class="content">
+      <p>
+        Your Loom: <em>"VAT liability since end of quarter zero, which is
+        not correct... I need to be able to see what my VAT liability is
+        for the 31st, for the February 1st, February, March, April... today
+        my VAT due is £1,261."</em>
+      </p>
+      <p>
+        Previously showed one accruing period since the last HMRC-default
+        quarter-end (Mar/Jun/Sep/Dec). Two issues:
+      </p>
+      <ul>
+        <li><strong>Clinical Marketing Solutions's actual VAT
+          registration</strong> uses quarter-ends on Apr/Jul/Oct/Jan — not
+          the HMRC default. Hard-coded the right quarters into the
+          backend.</li>
+        <li><strong>You wanted to see two numbers, not one.</strong> Now
+          the widget shows both: past quarter due (e.g. £38,484 for
+          Feb-Apr) emphasised large at the top, current quarter accruing
+          (e.g. £1,261 for the running May-Jul period) below it. Each row
+          labelled with the month range.</li>
+      </ul>
+    </div>
+  </details>
+
+  <!-- ─── FOR DEMO ─────────────────────────────── -->
+  <h2>For your testing <span class="pill done">live</span></h2>
+
+  <div class="card">
+    <p class="body">
+      <strong>Dashboard:</strong>
+      <a class="url" href="https://sato-frontend.vercel.app">https://sato-frontend.vercel.app</a>
+    </p>
+    <p class="body" style="margin-top: 12px;">
+      <strong>Login:</strong> <code>sam@leadgeneration.io</code> /
+      <code>Sam@123</code>
+    </p>
+  </div>
+
+  <h3>Three things to verify with your real connections</h3>
+  <p style="font-size: 14px; color: #424245; margin: 0 0 14px 0;">
+    I've tested the code paths with mocks + 11-step automated journey
+    tests, but real-data verification needs your eyes on production:
+  </p>
+  <ol style="font-size: 14px; color: #424245; padding-left: 22px;">
+    <li><strong>Bank widget</strong> should show ~£52k for Clinical
+      Marketing Solutions main account. If it still says £113k, my Xero
+      endpoint switch didn't take and we need a different fix.</li>
+    <li><strong>VAT widget</strong> should show ~£38k past quarter due
+      and ~£1.2k current quarter accruing. If the periods are off, your
+      VAT-registration cycle may differ from the Feb-Apr / May-Jul cycle
+      I encoded.</li>
+    <li><strong>LeadByte buyer dropdown</strong> on the Create Client
+      page should list your real buyers. If it spins forever or falls
+      back to a text input, the LeadByte API key may not have buyer-read
+      permission.</li>
+  </ol>
+
+  <h3>Six-page walkthrough</h3>
+  <ol style="font-size: 14px; color: #424245; padding-left: 22px;">
+    <li><strong>Dashboard</strong> — check the Bank and VAT widgets.</li>
+    <li><strong>Reports</strong> — should land directly on the unified
+      report. Try the window tabs + supplier filter.</li>
+    <li><strong>Campaigns</strong> — confirm the "Group by vertical"
+      toggle is on by default; verticals collapse with buyer counts.</li>
+    <li>Click any campaign → see the new <strong>Cost per lead</strong>
+      card, <strong>Buyers</strong> card, and <strong>Traffic Sources</strong>
+      table.</li>
+    <li><strong>Clients → New Client</strong> — try the 5-field address,
+      the Contacts repeater, and tick VAT Registered to reveal the VAT
+      Number + Rate fields.</li>
+    <li>Open any existing client → <strong>Documents</strong> tab — upload
+      a file, then open the same client in an incognito window and
+      confirm the doc is still there (proof: no localStorage).</li>
+  </ol>
+
+  <!-- ─── STILL PENDING ─────────────────────────────── -->
+  <h2>Still need from you <span class="pill need">4 items</span></h2>
+
+  <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
+    Everything in your Looms is addressed except these four — each is
+    blocked on a decision or credential I can't make on your behalf.
+    Replying to any of them unblocks the next iteration.
+  </p>
+
+  <table>
+    <thead>
+      <tr><th>Item</th><th>Effect today</th><th>Priority</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Endole production API key</strong></td>
+        <td>Credit checks return random scores ~38 because we're still in sandbox / mock mode. Drop the key into Railway env vars and we're done.</td>
+        <td><span class="badge urgent">High</span></td>
+      </tr>
+      <tr>
+        <td><strong>Status terminology</strong> — your Loom said <em>"let's state it's prospects, not prospects"</em></td>
+        <td>Current default is "prospect". What did you want the label renamed to? Need the exact word so I can update both the database enum and UI copy.</td>
+        <td><span class="badge medium">Medium</span></td>
+      </tr>
+      <tr>
+        <td><strong>Creative asset placement</strong></td>
+        <td>You said both "into a campaign, not a client" and "this should be underneath the client". Defaulted to <em>on Campaign</em> (matches leadreports.io). Confirm or flip — both are easy.</td>
+        <td><span class="badge medium">Medium</span></td>
+      </tr>
+      <tr>
+        <td><strong>"Spend for Poland"</strong> on the report</td>
+        <td>Was that test data or a real Polish Catchr account leaking through? If real, looks like a tenant-isolation bug to investigate.</td>
+        <td><span class="badge low">Low</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ─── NEXT ─────────────────────────────── -->
+  <h2>Coming next <span class="pill fix">scheduled</span></h2>
+
+  <ul class="bare">
+    <li><strong>Tasks revamp</strong> — comments thread, kanban board,
+      subtasks, recurring tasks, time-block prioritisation (1hr/2hr),
+      AI new-task button, SOS-help WhatsApp escalation. The whole Slice 5
+      week per our plan.</li>
+    <li><strong>Agreement PDF editor</strong> — drag signature and
+      date-signed boxes onto the PDF before sending, edit the document
+      inline. DocuSign-style flow you described. Bigger build (~2 weeks).</li>
+    <li><strong>SOPs polish</strong> — paste a Loom link → AI generates
+      the SOP outline (Hari's track, in parallel).</li>
+    <li><strong>Attio bulk import</strong> — pick companies to migrate
+      from your Attio CRM into Stato rather than creating one-by-one.
+      Needs Attio API token from you.</li>
+  </ul>
+
+  <footer>
+    Generated 11 May 2026 · Stato · Octogle Technologies for leadgeneration.io
+  </footer>
+
+</div>
+</body>
+</html>

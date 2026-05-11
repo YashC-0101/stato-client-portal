@@ -72,11 +72,22 @@
     for reference. All pages need the access code the Octogle Team sent you.
   </p>
 
+  <a class="card" href="2026-05-11-stato-status-update.html">
+    <div class="row">
+      <div class="ic" style="background: #e6f7ec;">🎯</div>
+      <div>
+        <h2>Status update — 11 May 2026 <span style="font-size:11px;font-weight:600;background:#1d7a3a;color:#fff;padding:2px 8px;border-radius:999px;margin-left:6px;letter-spacing:0.04em;">LATEST</span></h2>
+        <p><strong>Direct response to your 2 Loom videos — shipped today.</strong> Walked through every complaint, split work with Hari, my half is live on production. Three biggest items: <strong>(1) campaigns inverted</strong> — "Solar Panels" is now ONE row at the top with buyers underneath (not three rows of Solar Panels with different client ids); <strong>(2) reports folded</strong> — 5 separate pages (Campaign Performance, Supplier Performance, Ad Spend, Client P&amp;L, Financial Overview) collapsed into one leadreports.io-style unified report at <code>/reports</code>; <strong>(3) one client end-to-end</strong> — UK Energy Saving Network now works on real data with 5-field address, multi-contacts (primary/billing/compliance), VAT number+rate, DB-backed documents, Xero invoices tab, "Sync from Xero" button, LeadByte buyer dropdown. Plus: bank widget reads statement balance (your £52k not £113k), VAT widget shows past + current quarter, "Validation failed, billing workflow invalid" toast gone. <strong>4 things still need your input — listed at the bottom.</strong></p>
+      </div>
+      <div class="arrow">›</div>
+    </div>
+  </a>
+
   <a class="card" href="2026-05-04-stato-status-update.html">
     <div class="row">
       <div class="ic" style="background: #e6f7ec;">⚡</div>
       <div>
-        <h2>Status update — 4 May 2026 <span style="font-size:11px;font-weight:600;background:#1d7a3a;color:#fff;padding:2px 8px;border-radius:999px;margin-left:6px;letter-spacing:0.04em;">LATEST</span></h2>
+        <h2>Status update — 4 May 2026</h2>
         <p><strong>50+ production fixes shipped today across 4 deploys</strong> — readying the platform for tomorrow's client demo. Morning: full security &amp; quality audit (3 parallel agents reviewed every file in both repos), closed every critical finding — including a stored-XSS vulnerability in PDF print, a broken SignNow webhook signature check, an Endole credit-check that fabricated random scores on errors, and a notification authz bypass. Authentication migrated to Postgres (no more user-loss on every Railway redeploy). Afternoon: dedicated performance work — dashboard mounts in ~100ms (was 2-5s), campaigns page no longer 500s in production (5ms warm). 8 new composite indexes, parallel cache fetches, paginated SQL, atomic invoice numbers via Postgres SEQUENCE, optimistic mark-as-read, debounced search, real notifications + real campaign labels, no more fake growth chips, fetch timeouts everywhere, graceful shutdown, PII redaction in logs, Cache-Control headers. <strong>6 things still need your input — listed at the bottom but none block the demo.</strong></p>
       </div>
       <div class="arrow">›</div>
@@ -139,7 +150,7 @@
   </a>
 
   <footer>
-    Updated 4 May 2026 · Stato · Octogle Technologies for leadgeneration.io
+    Updated 11 May 2026 · Stato · Octogle Technologies for leadgeneration.io
   </footer>
 </div>
 </body>
