@@ -138,46 +138,50 @@
   <!-- Tight intro card -->
   <div class="card" style="background:#f0f7ff; border-color:#cfe2ff; margin-bottom: 14px;">
     <p class="body" style="font-size: 15px; color: #1d1d1f;">
-      <strong>What changed today.</strong> The whole Slice 5 — tasks
-      feature bundle — went live. 6 days of work, 4 commits, 2 database
-      migrations, 46 new tests all passing. Plus a new SOS button on
-      every page so you (or anyone on the team / your clients) can ping
-      me directly on WhatsApp when stuck.
+      <strong>What changed today.</strong> Eight features shipped end-to-end:
+      the whole tasks revamp (Slice 5), SOS button + admin queue, AI
+      new-task button, full email thread + activity feed on each client,
+      Attio bulk import, and a DocuSign-style PDF editor with drag-place
+      signature/date/text fields. 14 commits, 7 production deploys, 5
+      database migrations, 158 new tests all passing.
     </p>
     <p class="body" style="margin-top: 10px; color: #424245;">
-      <strong>In short.</strong> Tasks now have: subtasks, file
-      attachments, an activity feed, comments, time-block estimates
-      (15m / 30m / 1h / 2h / Half day / Full day), linked SOPs, parent
-      tasks for projects, recurring schedules (daily/weekly/monthly via
-      cron), org-wide view with My / All toggle, and a kanban board.
-      The SOS button sits bottom-right on every page.
+      <strong>In short.</strong> Every XL item on my queue from your two
+      Loom complaints is now live. Tasks, agreements, client tracking,
+      and bulk onboarding — every flow you walked through in the videos
+      has its named gap closed. Eight things below — open any to expand.
     </p>
   </div>
 
   <!-- TL;DR summary card -->
   <div class="summary">
     <p>
-      <strong>Headline:</strong> the tasks page is no longer "very
-      basic". Open any task and you'll see a Subtasks card, an
-      Attachments card (upload PDFs/screenshots), an Activity feed
-      timeline, a Relationships card (time block, linked SOP, parent
-      task — all inline-editable), and a Children card for tasks that
-      are project parents.
+      <strong>Tasks page is no longer "very basic":</strong> subtasks,
+      attachments (PDF/image upload), activity timeline, time-block
+      estimates (15m → Full day), linked SOPs, parent/child for
+      projects, recurring schedules with a "Repeat" picker, org-wide
+      "My / All" toggle, kanban board, comments.
     </p>
     <p>
-      <strong>List page:</strong> top-right toggle for <em>My tasks</em>
-      vs <em>All tasks</em> — your choice persists across reloads. New
-      Time column shows the time-block estimate at a glance. Switch to
-      Board view and the same time-block badge appears on every kanban
-      card.
+      <strong>Three brand-new admin pages:</strong>
+      <code>/sos</code> (queue of every SOS button press with mark-resolved),
+      <code>/clients/import</code> (pick companies from your Attio CRM
+      and bulk-import as Stato clients — server-side deduped),
+      <code>/agreements/editor</code> (drag signature, date, and text
+      boxes onto any PDF before sending — the DocuSign-style flow).
     </p>
     <p>
-      <strong>SOS button:</strong> floating red button bottom-right on
-      every page (works for internal users AND your client-portal
-      logins). Click it, type what's wrong, hit Send — it logs the
-      request server-side so you can see who's stuck even if they don't
-      finish sending, and opens WhatsApp pre-filled with the message
-      ready for them to send to you.
+      <strong>Client detail page</strong> gained two tabs:
+      <strong>Emails</strong> (full thread, log inbound emails, outbound
+      auto-logged from Stato sends) and <strong>Activity</strong> (every
+      event on this client — documents, agreements, credit checks,
+      emails, edits — in one timeline).
+    </p>
+    <p>
+      <strong>"Generate with AI" button</strong> on the tasks create
+      page: type a sentence ("monthly Xero VAT export") → Claude drafts
+      the title, description, subtasks, time estimate, and suggests a
+      linked SOP. You edit before saving.
     </p>
     <p style="font-size: 13px; color: #6e6e73;">
       Click any section title to expand · 4 things still need your input
@@ -185,10 +189,10 @@
     </p>
 
     <div class="stat-row">
-      <div class="stat"><div class="num">4</div><div class="lbl">Commits today</div></div>
-      <div class="stat"><div class="num">2</div><div class="lbl">Production deploys</div></div>
-      <div class="stat"><div class="num">2</div><div class="lbl">DB migrations applied</div></div>
-      <div class="stat"><div class="num">46</div><div class="lbl">New tests · all passing</div></div>
+      <div class="stat"><div class="num">14</div><div class="lbl">Commits today</div></div>
+      <div class="stat"><div class="num">7</div><div class="lbl">Production deploys</div></div>
+      <div class="stat"><div class="num">5</div><div class="lbl">DB migrations applied</div></div>
+      <div class="stat"><div class="num">158</div><div class="lbl">New tests · all passing</div></div>
     </div>
   </div>
 
@@ -390,12 +394,304 @@
     </div>
   </details>
 
-  <!-- ─── ASKS ─────────────────────────────── -->
-  <h2>What we need from you <span class="pill need">your input</span></h2>
+  <details>
+    <summary>✅ SOS admin queue page (new)</summary>
+    <div class="content">
+      <p>
+        New sidebar link <strong>"SOS Queue"</strong> (visible to
+        owner / ops_manager / finance_admin) takes you to
+        <code>/sos</code>: a triage page showing every SOS button press
+        with Open / Resolved / All tabs. Each row shows when, who, what
+        page they were on, and the message. <strong>Mark resolved</strong>
+        button on every open row.
+      </p>
+    </div>
+  </details>
+
+  <!-- ─── AI NEW-TASK BUTTON ─────────────────────────────── -->
+  <h2>AI new-task button <span class="pill done">live</span></h2>
 
   <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
-    Four small asks — typed answers below auto-save in your browser.
-    Hit Download when done and WhatsApp the file back.
+    The "type a sentence, AI drafts the task" feature you mentioned
+    after the demo. Lives on the tasks create page.
+  </p>
+
+  <details open>
+    <summary>✨ Generate with AI — full draft from one sentence</summary>
+    <div class="content">
+      <p>
+        Open <code>/tasks/create</code> → click the violet <strong>"Generate
+        with AI"</strong> button (top-right of the page header). Modal
+        opens with a textarea. Type something like:
+      </p>
+      <p style="margin-left: 20px; font-family: 'SF Mono', Menlo, Consolas, monospace; font-size: 13px; color: #424245;">
+        "monthly Xero VAT export and submission"
+      </p>
+      <p>
+        Click Generate → ~3 seconds → the form auto-fills with:
+      </p>
+      <ul>
+        <li>Task title (concise, imperative)</li>
+        <li>Description (2-4 sentences)</li>
+        <li>Category (Finance / Operations / etc.)</li>
+        <li>Priority (low / medium / high / urgent)</li>
+        <li>Time block (15m / 30m / 1h / 2h / Half day / Full day)</li>
+        <li>Suggested linked SOP (Claude picks from your real SOPs only — no hallucinated IDs)</li>
+        <li>3-7 subtasks shown as a preview card in the sidebar — drop any line with ✕ before saving</li>
+      </ul>
+      <p>
+        You review and edit every field, then click Create Task. The
+        AI is a draft, not a decision.
+      </p>
+      <p>
+        <strong>One thing pending:</strong> needs an Anthropic API key
+        in the backend env (<code>ANTHROPIC_API_KEY</code>). Until
+        that's set, the button shows a friendly "AI not configured"
+        message. Listed at the bottom.
+      </p>
+    </div>
+  </details>
+
+  <!-- ─── CLIENT EMAILS + ACTIVITY ─────────────────────────────── -->
+  <h2>Client detail page — Emails + Activity tabs <span class="pill done">live</span></h2>
+
+  <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
+    Open any client → tab strip now has two new tabs at the right:
+    <strong>Emails</strong> and <strong>Activity</strong>.
+  </p>
+
+  <details>
+    <summary>✅ Emails tab — full inbound + outbound thread</summary>
+    <div class="content">
+      <p>
+        Stato can now show you the email history with each client in
+        one timeline. Two ways emails land here:
+      </p>
+      <ul>
+        <li><strong>Outbound:</strong> auto-logged whenever Stato
+          sends mail for this client (invoice send, agreement send,
+          chase reminder). No work for you.</li>
+        <li><strong>Inbound:</strong> click "Log inbound email" on
+          the tab → paste subject + sender + body → Save. The full
+          IMAP/Gmail integration is a bigger build I deferred from
+          Slice 1; this manual log is the bridge in the meantime.</li>
+      </ul>
+      <p>
+        Each row has an inbound (green) or outbound (blue) badge plus
+        delete button. Newest first.
+      </p>
+    </div>
+  </details>
+
+  <details>
+    <summary>✅ Activity tab — every event on this client, one timeline</summary>
+    <div class="content">
+      <p>
+        Your Loom #38: "I want to see everything that happened with
+        this client in one place." Done. The Activity tab renders a
+        timeline of:
+      </p>
+      <ul>
+        <li>Client created / updated (with the diff'd field list)</li>
+        <li>Contact added / removed</li>
+        <li>Document uploaded / removed</li>
+        <li>Agreement sent / signed / declined</li>
+        <li>Credit check run (with score and change-since-last)</li>
+        <li>Email logged (inbound + outbound)</li>
+        <li>Invoice synced from Xero</li>
+      </ul>
+      <p>
+        Each entry shows the actor, action, and timestamp. No more
+        digging through 6 different tabs to reconstruct what happened.
+      </p>
+    </div>
+  </details>
+
+  <!-- ─── ATTIO IMPORT ─────────────────────────────── -->
+  <h2>Attio bulk import <span class="pill done">live</span></h2>
+
+  <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
+    Pick companies from your Attio CRM, click Import N → Stato creates
+    one client per company. Server-side deduplication means you can
+    safely retry without creating duplicates.
+  </p>
+
+  <details open>
+    <summary>📥 The flow</summary>
+    <div class="content">
+      <p>
+        Open <code>/clients</code> → top-right shows a new outlined
+        <strong>"Import from Attio"</strong> button next to "New Client".
+        Click it → lands on <code>/clients/import</code>.
+      </p>
+      <ol>
+        <li>Search the company name in Attio (substring match)</li>
+        <li>Tick the rows you want — already-imported rows are greyed
+          out with a green "Already imported" deep-link to the existing
+          Stato client (so you can't double-import accidentally)</li>
+        <li>Click <strong>Import N companies</strong> → spinner →
+          results panel shows per-row created / skipped / errored, each
+          with an "Open" button</li>
+        <li>The newly-created Stato clients have an
+          <code>attio_company_id</code> linkage so the Activity tab
+          shows an "Imported from Attio" event</li>
+      </ol>
+      <p>
+        Default fields imported: company name + description (stuffed
+        into notes) + industry. You fill in contact email, VAT, address
+        details after.
+      </p>
+      <p>
+        <strong>One thing pending:</strong> needs your Attio API key
+        in the backend env (<code>ATTIO_API_KEY</code>). Get it from
+        console.attio.com → Settings → API → create a personal access
+        token (looks like <code>attio_pat_xxxxx</code>). Listed at the
+        bottom.
+      </p>
+    </div>
+  </details>
+
+  <!-- ─── PDF EDITOR ─────────────────────────────── -->
+  <h2>PDF editor (DocuSign-style) <span class="pill done">live</span></h2>
+
+  <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
+    Your Loom asked for drag-place signature fields like DocuSign.
+    Live now on the agreement send flow.
+  </p>
+
+  <details open>
+    <summary>🖊️ The editor flow</summary>
+    <div class="content">
+      <p>
+        On <code>/agreements</code> → click <strong>"Send for signature"</strong>
+        → fill in client + signer + upload the PDF → instead of
+        clicking "Send envelope" directly, click the new
+        <strong>"Place fields…"</strong> button next to it.
+      </p>
+      <p>
+        You land on <code>/agreements/editor</code>:
+      </p>
+      <ol>
+        <li>The full PDF renders on screen, all pages</li>
+        <li>Toolbar at the top with three field types:
+          <strong>Signature</strong> (blue), <strong>Date signed</strong>
+          (amber), <strong>Text</strong> (neutral)</li>
+        <li>Click a tool button → it arms. Click anywhere on the PDF
+          → a coloured box drops at that point</li>
+        <li>Drag any placed box to reposition. Click the ✕ to delete</li>
+        <li>Place as many fields as you want (cap 50 per document)</li>
+        <li>Click <strong>"Send for signature"</strong> at the top → the
+          PDF goes to SignNow with the fields pre-positioned. Your
+          signer sees a clean document with ONLY the boxes you placed,
+          in the positions you placed them</li>
+      </ol>
+      <p>
+        Backward-compatible: the old "send envelope" button still works
+        for free-form invites (signer places signature wherever) — your
+        existing workflow doesn't break.
+      </p>
+    </div>
+  </details>
+
+  <!-- ─── RECURRENCE PICKER ─────────────────────────────── -->
+  <h2>Recurrence picker + Tasks Day 7 polish <span class="pill done">live</span></h2>
+
+  <details>
+    <summary>🔁 Recurrence picker on tasks</summary>
+    <div class="content">
+      <p>
+        The Repeat row on the task detail Relationships card now has a
+        proper dropdown with named presets:
+      </p>
+      <ul>
+        <li>No repeat</li>
+        <li>Daily at 09:00</li>
+        <li>Weekdays at 09:00</li>
+        <li>Every Monday at 09:00</li>
+        <li>1st of every month at 09:00</li>
+        <li>Custom… (5-field cron expression for power users)</li>
+      </ul>
+      <p>
+        Pick one → Save → the recurring-tasks worker picks the row up
+        and creates a fresh copy on every scheduled fire. Background
+        bugfix: previously setting cron without an explicit "next run"
+        timestamp left the worker silent — that's auto-computed now.
+      </p>
+      <p>
+        Also available on the create form when you make a new task.
+      </p>
+    </div>
+  </details>
+
+  <!-- ─── RECEIVED FROM SAM ─────────────────────────────── -->
+  <h2>Your answers — received <span class="pill done">applied</span></h2>
+
+  <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
+    Thanks for the responses to the earlier asks. Here's what I'm doing
+    with each.
+  </p>
+
+  <div class="card" style="background:#f0f9f1; border-color:#bfe2c6;">
+    <p class="body" style="font-size: 14px; color: #1d1d1f;">
+      <strong>1. WhatsApp number for SOS — <code>+447776531268</code>.</strong>
+      Logged. Setting <code>SOS_WHATSAPP_NUMBER=447776531268</code> on
+      Railway → the SOS button now opens WhatsApp pre-filled to your
+      number on every send.
+    </p>
+  </div>
+
+  <div class="card" style="background:#f0f9f1; border-color:#bfe2c6;">
+    <p class="body" style="font-size: 14px; color: #1d1d1f;">
+      <strong>2. Jam.dev bug video — got it.</strong> Watching the
+      walkthrough at jam.dev/c/5070e10e-511e-4b9e-92c6-392c69d254f2 and
+      breaking it into a fix list. Anything UI-side gets fixed in the
+      next pass; anything data-side I'll WhatsApp you for clarification
+      before changing.
+    </p>
+  </div>
+
+  <div class="card" style="background:#f0f9f1; border-color:#bfe2c6;">
+    <p class="body" style="font-size: 14px; color: #1d1d1f;">
+      <strong>3. Client status terminology — simplifying to 3.</strong>
+      Per your answer, dropping "prospect" and "paused". New enum:
+    </p>
+    <ul style="margin: 6px 0 0 0; padding-left: 22px; font-size: 13.5px; color: #424245;">
+      <li><strong>Onboarding</strong> — replaces "prospect" + "onboarding"</li>
+      <li><strong>Active Client</strong> — was "active"</li>
+      <li><strong>Client Churned</strong> — was "churned" (rows in "paused" migrated here)</li>
+    </ul>
+    <p class="body" style="margin-top: 10px; font-size: 13px; color: #6e6e73;">
+      Migration scheduled for the next deploy — existing client rows
+      auto-mapped to the new values. UI labels + filter pills updated
+      everywhere they show.
+    </p>
+  </div>
+
+  <div class="card" style="background:#fff8e1; border-color:#ffe082;">
+    <p class="body" style="font-size: 14px; color: #1d1d1f;">
+      <strong>4. Creative review workflow — needs a small spec.</strong>
+      Your answer describes a flow that's more substantial than the
+      30-second decision the original ask assumed:
+    </p>
+    <ol style="margin: 6px 0 0 0; padding-left: 22px; font-size: 13.5px; color: #424245;">
+      <li>Content creators upload a creative on a new upload page</li>
+      <li>Pick the campaign it belongs to (e.g. PCP Claim 2)</li>
+      <li>Pick which client inside that campaign should review (e.g. Benson Goldstein)</li>
+      <li>Selected client sees it in their buyer-portal for approval / rejection</li>
+    </ol>
+    <p class="body" style="margin-top: 10px; font-size: 13px; color: #6e6e73;">
+      This is a 3-day build — schema for review routing, new upload
+      page, portal review UI, approval audit trail. I'll send a
+      one-pager design before starting so you can sign off the flow.
+    </p>
+  </div>
+
+  <!-- ─── ASKS ─────────────────────────────── -->
+  <h2>New asks — one input request <span class="pill need">your input</span></h2>
+
+  <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
+    Now that the previous 4 are closed, I only need two new things from
+    you. Auto-saves as you type — hit Download when done.
   </p>
 
   <div id="ask-cards"></div>
@@ -403,14 +699,11 @@
   <noscript>
     <div class="card">
       <p class="body">
-        JavaScript is off — here are the four asks in plain form. Reply
-        on WhatsApp with the numbers and your answers:
+        JavaScript is off — reply on WhatsApp with the answers:
       </p>
       <ol>
-        <li>WhatsApp number for the SOS button (with country code)</li>
-        <li>Test the new tasks page — which bugs / gaps did you find?</li>
-        <li>Status terminology — still open from 11 May ("prospects" → ?)</li>
-        <li>Asset placement — still open from 11 May (Campaign vs Client)</li>
+        <li>Set the env vars on Railway? (ANTHROPIC_API_KEY for AI new-task; ATTIO_API_KEY for bulk import) — or send them and I'll set them</li>
+        <li>Sign-off on the creative review flow (4 steps above) before I start the build</li>
       </ol>
     </div>
   </noscript>
@@ -428,17 +721,10 @@
   <h2>Coming next <span class="pill fix">scheduled</span></h2>
 
   <ul class="bare">
-    <li><strong>AI new-task button</strong> — type one sentence
-      ("monthly Xero export"), Claude generates the title, subtasks,
-      time block, and suggests a linked SOP. Natural step after Slice 5.</li>
-    <li><strong>Agreement PDF editor</strong> — drag signature and
-      date-signed boxes onto the PDF before sending. DocuSign-style
-      flow you described. Bigger build (~2 weeks).</li>
-    <li><strong>Attio bulk import</strong> — pick companies from your
-      Attio CRM to migrate into Stato. Needs the Attio API token from
-      you when we're ready to start.</li>
-    <li><strong>SOPs polish</strong> — paste a Loom URL → AI extracts
-      and writes the SOP outline.</li>
+    <li><strong>Status enum rename</strong> — Onboarding / Active Client / Client Churned. Migration + UI label sweep. ~2 hours, ships next deploy.</li>
+    <li><strong>Jam.dev bug fixes</strong> — whatever I find in the walkthrough video. Triaged as a fix-list, shipped over the next 1-2 days.</li>
+    <li><strong>Creative review workflow</strong> (your answer #4) — full spec sent for sign-off, then ~3 days to build (upload page, review routing, portal review UI).</li>
+    <li><strong>Slack-side / pending on you</strong>: Hari's PR rebases land separately (bank widget statement balance + VAT 2-quarter widget + SOPs Loom embed).</li>
   </ul>
 
   <footer>
@@ -498,36 +784,22 @@
 <script>
   const ASKS = [
     {
-      id: 'sos-whatsapp',
-      title: 'Your WhatsApp number for the SOS button',
-      why: "The SOS button needs your number (with country code, no + or spaces) so it can open WhatsApp pre-filled with the user's help message. Without this, the button still records the request server-side but doesn't open WhatsApp. Example: 447700900123.",
-      effort: '~10 sec',
-      placeholder: 'e.g. 447700900123 (or "use my UK number on the account")…',
+      id: 'api-keys',
+      title: 'Anthropic + Attio API keys (for the new buttons)',
+      why: 'Two features need API keys before they fully work on prod: the "Generate with AI" button on tasks needs ANTHROPIC_API_KEY (get one from console.anthropic.com → API Keys), and the "Import from Attio" button needs ATTIO_API_KEY (console.attio.com → Settings → API → create personal access token, looks like attio_pat_xxxxx). Send the keys here and I will set them on Railway, OR set them yourself and tell me.',
+      effort: '~5 min',
+      placeholder: 'Paste both keys (or "do it for me" / "Yash, set them")…',
     },
     {
-      id: 'tasks-feedback',
-      title: 'Test the new tasks page — what\'s missing or broken?',
-      why: "Open https://sato-frontend.vercel.app/tasks, create a task with a time block + linked SOP + parent, add subtasks, upload an attachment, post a comment, watch the Activity feed update. Tell me which bits feel wrong — that's what I'll fix next.",
-      effort: '~5 min testing',
-      placeholder: 'List any bugs, gaps, or "this should work differently"…',
-    },
-    {
-      id: 'status-label',
-      title: 'Status terminology (still open from 11 May)',
-      why: "You said the current 'prospect' label was wrong. What word do you want — Lead? New Buyer? Active? Need the exact term so I can update both the database enum and UI copy.",
-      effort: '~30 sec',
-      placeholder: 'The exact word you want to see as the default status…',
-    },
-    {
-      id: 'asset-placement',
-      title: 'Creative asset placement (still open from 11 May)',
-      why: 'You said both "into a campaign, not a client" and "this should be underneath the client" in your Loom. Default right now is on Campaign (matches leadreports.io). Confirm or flip — both are easy.',
-      effort: '~30 sec',
-      placeholder: 'Pick one — "keep on Campaign" or "move to Client"…',
+      id: 'creative-review-signoff',
+      title: 'Sign-off on the creative review flow (your answer #4 above)',
+      why: 'Before I start building, want your confirmation the 4-step flow is right: (1) content creator uploads creative, (2) picks campaign, (3) picks which client in that campaign reviews, (4) client sees it in their buyer portal for approve/reject. Anything missing or out of order? Also: do you want a "request changes" path (with comment) or just approve/reject for v1?',
+      effort: '~1 min',
+      placeholder: 'e.g. "flow is right, approve/reject only for v1" or "add this step…"',
     },
   ];
 
-  const RESPONSE_KEY = 'stato-2026-05-13-responses';
+  const RESPONSE_KEY = 'stato-2026-05-13b-responses';
 
   function loadStoredResponses() {
     try {
