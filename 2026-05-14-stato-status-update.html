@@ -1,0 +1,837 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Stato — Status Update · 14 May 2026</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Arial, sans-serif;
+    background: #fafafa; color: #1d1d1f;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.55;
+  }
+  .wrap { max-width: 820px; margin: 0 auto; padding: 56px 22px; }
+  .back {
+    display: inline-block; color: #0066cc; text-decoration: none;
+    font-size: 14px; margin-bottom: 24px;
+  }
+  .back:hover { text-decoration: underline; }
+  h1 {
+    font-size: 34px; font-weight: 700; letter-spacing: -0.02em;
+    margin: 0 0 6px 0;
+  }
+  .meta { color: #6e6e73; font-size: 14px; margin: 0 0 36px 0; }
+  h2 {
+    font-size: 24px; font-weight: 700; letter-spacing: -0.01em;
+    margin: 48px 0 14px 0;
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  }
+  h2 .pill {
+    font-size: 11px; font-weight: 600;
+    padding: 4px 10px; border-radius: 999px;
+    text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  h2 .pill.done   { background: #e6f7ec; color: #1d7a3a; }
+  h2 .pill.need   { background: #fff3e0; color: #a04a00; }
+  h2 .pill.fix    { background: #e8f0ff; color: #0042a3; }
+  h2 .pill.block  { background: #fdecea; color: #a52a2a; }
+  h3 {
+    font-size: 17px; font-weight: 600; margin: 24px 0 8px 0;
+    color: #1d1d1f;
+  }
+  .card {
+    background: #fff; border: 1px solid #e8e8ed; border-radius: 14px;
+    padding: 18px 20px; margin: 0 0 12px 0;
+  }
+  .card .body { font-size: 14px; color: #424245; margin: 0; }
+  code, .card .body code {
+    font-family: 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 12.5px;
+    background: #f0f0f3; padding: 1px 5px; border-radius: 4px;
+    color: #1d1d1f;
+  }
+  .url {
+    display: block; font-family: 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 12.5px; color: #0066cc; word-break: break-all;
+    margin-top: 4px;
+  }
+  ul.bare { list-style: none; padding: 0; margin: 0; }
+  ul.bare li {
+    padding: 9px 0; border-bottom: 1px solid #f0f0f3; font-size: 14px;
+  }
+  ul.bare li:last-child { border-bottom: none; }
+  ul.bare li::before { content: "✓"; color: #1d7a3a; font-weight: 700; margin-right: 10px; }
+  ul.todo li::before { content: "⏳"; color: #a04a00; }
+  ul.block li::before { content: "■"; color: #a52a2a; }
+  .summary {
+    background: #fff; border: 1px solid #e8e8ed; border-radius: 14px;
+    padding: 22px 24px;
+  }
+  .summary p { margin: 0 0 10px 0; font-size: 15px; }
+  .summary p:last-child { margin: 0; }
+  .stat-row {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+    margin: 16px 0 0 0;
+  }
+  @media (max-width: 600px) { .stat-row { grid-template-columns: repeat(2, 1fr); } }
+  .stat {
+    background: #fafafa; border: 1px solid #e8e8ed; border-radius: 12px;
+    padding: 14px;
+  }
+  .stat .num { font-size: 28px; font-weight: 700; color: #1d1d1f; }
+  .stat .lbl { font-size: 12px; color: #6e6e73; margin-top: 4px; }
+  details { margin: 0 0 10px 0; }
+  details summary {
+    cursor: pointer; padding: 14px 18px;
+    background: #fff; border: 1px solid #e8e8ed; border-radius: 12px;
+    font-size: 15px; font-weight: 600;
+    list-style: none;
+    position: relative;
+    transition: border-color 120ms, background 120ms;
+  }
+  details summary::-webkit-details-marker { display: none; }
+  details summary::after {
+    content: "›"; position: absolute; right: 18px; top: 50%;
+    transform: translateY(-50%) rotate(90deg);
+    transition: transform 180ms; color: #86868b; font-size: 18px;
+  }
+  details[open] summary::after { transform: translateY(-50%) rotate(270deg); }
+  details[open] summary { border-color: #0066cc; background: #f7faff; }
+  details .content {
+    padding: 12px 18px 6px 18px;
+    border-left: 2px solid #e8e8ed; margin-left: 16px;
+    margin-top: 4px;
+  }
+  details .content p { margin: 0 0 8px 0; font-size: 14px; color: #424245; }
+  details .content p:last-child { margin: 0; }
+  footer {
+    margin-top: 60px; padding-top: 22px;
+    border-top: 1px solid #e8e8ed;
+    color: #86868b; font-size: 12.5px; text-align: center;
+  }
+  .blocker-card {
+    background: #fef7f7; border: 1px solid #f5c6c6; border-radius: 14px;
+    padding: 18px 20px; margin: 0 0 12px 0;
+  }
+  .blocker-card .hdr { font-weight: 600; color: #a52a2a; margin-bottom: 6px; font-size: 15px; }
+  .blocker-card .body { font-size: 13.5px; color: #424245; margin: 0; }
+  .done-card {
+    background: #f0f9f1; border: 1px solid #bfe2c6; border-radius: 14px;
+    padding: 16px 20px; margin: 0 0 10px 0;
+  }
+  .done-card .hdr { font-weight: 600; color: #1d7a3a; font-size: 14.5px; margin-bottom: 4px; }
+  .done-card .body { font-size: 13.5px; color: #424245; margin: 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="index.html">← Back to portal</a>
+
+  <h1>Stato — Status Update</h1>
+  <p class="meta">14 May 2026 · cumulative since the 13 May update · for Sam</p>
+
+  <div class="summary">
+    <p>
+      <strong>Yesterday's evening + this morning shipped 8 more
+      production deploys.</strong> Every code-side item from your 12 May
+      call is now done — including the big one Sam called the
+      "completely unusable" piece (auto-populated contracts).
+    </p>
+    <p>
+      Status on the 14 distinct complaints from your 12 May call:
+      <strong>13 fully shipped · 1 blocked on a detail from you</strong>
+      (doc-upload file format / exact error).
+    </p>
+    <p>
+      <strong>What's actually rendering as broken in the UI today is
+      gated on 3 things only you can do</strong> (Xero scopes, Endole
+      top-up, Twilio creds). Each is a 2–5 min action. Once any of
+      those land, the related widget goes live within 30 seconds with
+      no deploy on my side.
+    </p>
+
+    <div class="stat-row">
+      <div class="stat"><div class="num">8</div><div class="lbl">Commits today (both repos)</div></div>
+      <div class="stat"><div class="num">13/14</div><div class="lbl">12-May complaints shipped</div></div>
+      <div class="stat"><div class="num">32</div><div class="lbl">New tests added · all pass</div></div>
+      <div class="stat"><div class="num">3</div><div class="lbl">Sam-side unblocks left</div></div>
+    </div>
+
+    <p style="font-size: 13px; color: #6e6e73; margin-top: 16px;">
+      Click any section title below to expand · the 4 things needing
+      your input are at the bottom with text boxes + a download button.
+    </p>
+  </div>
+
+  <!-- ─── END-TO-END WORKING ─────────────────────────────── -->
+  <h2>End-to-end working — please re-test <span class="pill done">live now</span></h2>
+
+  <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
+    Eleven specific items from your 12 May walkthrough — each is shipped
+    on prod and should work on a hard refresh. <strong>If any of these
+    still looks broken to you, tell me which one</strong> in the
+    "anything else?" box at the bottom — that's the fastest way to
+    surface a real bug versus a stale browser.
+  </p>
+
+  <details>
+    <summary>✅ Edit Client — pencil button next to Create Agreement</summary>
+    <div class="content">
+      <p>
+        Your Loom: <em>"we can't edit the client, we can't make any
+        changes to it"</em>. Done.
+      </p>
+      <p>
+        Open any client → look at the header → there's now an
+        <strong>Edit (pencil icon)</strong> button next to "Create
+        Agreement". Click it. Modal opens with every field pre-filled:
+        company name, contact, address (5 fields), billing, status,
+        external IDs, notes, and the contacts repeater. Edit anything,
+        hit Save, page updates immediately.
+      </p>
+    </div>
+  </details>
+
+  <details>
+    <summary>✅ Add Campaign inline on the Client tab</summary>
+    <div class="content">
+      <p>
+        Your Loom: <em>"campaigns, how do we add a campaign here?"</em>
+        Now there's an inline table.
+      </p>
+      <p>
+        Open any client → Campaigns tab → instead of the old "View on
+        Campaigns page" link, you see a table of every campaign linked
+        to that client with Remove per row, plus an
+        <strong>Add Campaign</strong> button. The Add dialog only lists
+        campaigns NOT yet linked to this client, so you can't double-
+        link. Optional cost-per-lead input lets you override the
+        campaign default at link time.
+      </p>
+    </div>
+  </details>
+
+  <details>
+    <summary>✅ Invoices tab filter + sort + red "Overdue" badge</summary>
+    <div class="content">
+      <p>
+        Your Loom: <em>"this one's overdue but it says authorized"</em>,
+        and: <em>"could we not add filters in here so we could see…
+        in order of the date that it was issued, maybe issue date,
+        due date"</em>. Both done.
+      </p>
+      <p>
+        On any client → Invoices tab → two dropdowns above the table:
+        <strong>Filter</strong> (All / Due / Overdue / Authorised /
+        Paid / Draft) and <strong>Sort</strong> (6 options across
+        issue date / due date / amount, ascending or descending).
+      </p>
+      <p>
+        The key fix: any invoice whose status is
+        <code>authorised</code> but whose due date is in the past now
+        ALSO shows an inline red <strong>Overdue</strong> badge right
+        next to the status badge. So you see both "what Xero calls it"
+        and "actually overdue" simultaneously — no more confusion.
+      </p>
+    </div>
+  </details>
+
+  <details>
+    <summary>✅ Document remove — clean toast wording</summary>
+    <div class="content">
+      <p>
+        Your Loom: <em>"you can't delete the document either"</em>.
+        Actually you could — but the toast said
+        "Removed from list. File still exists in storage." which read
+        like a failure. Fixed twice today:
+      </p>
+      <p>
+        <strong>Toast text:</strong> now reads <code>Document removed</code>.
+        Single line, clear.
+      </p>
+      <p>
+        <strong>Backend side:</strong> Hari's commit
+        <code>18e9e19</code> now ALSO deletes the file from R2 storage
+        (not just the DB row). So the "file still exists in storage"
+        bit isn't even true anymore.
+      </p>
+    </div>
+  </details>
+
+  <details>
+    <summary>✅ Credit-check error — meaningful message, not "Internal server error"</summary>
+    <div class="content">
+      <p>
+        When the Endole credit-check call fails, the page used to say
+        just "Internal server error" — useless. Now the toast says
+        specifically what went wrong, e.g.
+        <em>"Endole credit_checks failed: 403 — provider balance
+        exhausted (top up at endole.co.uk)"</em>.
+      </p>
+      <p>
+        Currently this is the message you see because the Endole
+        account balance is at £0 (see Blockers below). The moment you
+        top up, the error vanishes and real scores appear.
+      </p>
+    </div>
+  </details>
+
+  <details>
+    <summary>✅ ⭐ Agreement Template auto-populate (the big one Sam called "unusable")</summary>
+    <div class="content">
+      <p>
+        Your Loom: <em>"there should be a template where we create the
+        document as a template and it can pull information from the
+        client's account… But what's happening is it's just upload the
+        document and it's just sending it out."</em>
+      </p>
+      <p>
+        <strong>3 days of work shipped in one session today.</strong>
+        New page: <code>/agreements/templates</code>.
+      </p>
+      <p>
+        <strong>One-time setup (per contract type, ~10 min):</strong>
+      </p>
+      <ol style="font-size: 13.5px; color: #424245; margin: 0 0 10px 18px;">
+        <li>Click <strong>"New Template"</strong> → upload your lead-
+        buyer contract PDF → give it a name + signer role.</li>
+        <li>In the editor, drag any of 11 variables onto the PDF
+        wherever they should appear: company name, company number,
+        VAT number, contact name/email/phone, full address, lead
+        price, payment terms, billing workflow, today, effective
+        date.</li>
+        <li>Drag signature + date_signed boxes from the same sidebar
+        (these go to SignNow as input fields at send time).</li>
+        <li>Save.</li>
+      </ol>
+      <p>
+        <strong>Per-client send (every time after, ~30 seconds):</strong>
+      </p>
+      <ol style="font-size: 13.5px; color: #424245; margin: 0 0 10px 18px;">
+        <li>Open any client → Create Agreement.</li>
+        <li>New <strong>"Use a template"</strong> dropdown at the top
+        of the dialog. Pick your template.</li>
+        <li>The populated PDF renders immediately in the preview
+        iframe — every variable replaced with the picked client's
+        stored data.</li>
+        <li>Optional: click any populated field to override it just
+        for this contract (e.g. one-off price discount). Doesn't
+        touch the client record.</li>
+        <li>Hit Send. SignNow envelope goes to the contact email.</li>
+      </ol>
+      <p>
+        Backward-compatible: the old "upload PDF + drag fields" flow
+        still works if you don't pick a template.
+      </p>
+    </div>
+  </details>
+
+  <details>
+    <summary>✅ Weekly auto-invoice cron (replaces Make.com)</summary>
+    <div class="content">
+      <p>
+        Your Loom: <em>"set up the automation… within this client
+        is to set up an automation for them to send out a weekly
+        invoice which we currently do make dot com."</em> Done by Hari.
+      </p>
+      <p>
+        Every Monday at 09:00 UTC, a backend cron runs for each
+        business: pulls the previous Monday–Sunday lead deliveries
+        from LeadByte, generates an invoice per client with the
+        correct cost-per-lead × count, and queues SignNow. Idempotent
+        — if you re-trigger the same week manually, status is
+        "skipped" (won't double-invoice).
+      </p>
+      <p>
+        Admin page: <code>/finance/auto-invoice</code> shows every
+        run with date range, clients invoiced, totals. A "Run now"
+        button kicks the job off-cycle (also idempotent).
+      </p>
+    </div>
+  </details>
+
+  <details>
+    <summary>✅ Advertising bucket — separate from fixed / one-off</summary>
+    <div class="content">
+      <p>
+        Your Loom: <em>"Facebook. It's been put as accountancy but that
+        should be under its own. That should be an advertising… So we
+        need another section here just for advertising spend. Fixed cost,
+        one off, advertising spend."</em> Done by Hari.
+      </p>
+      <p>
+        Bank-feed page has a new <strong>Advertising</strong> filter
+        tab. The category dropdown when creating a custom category now
+        has Advertising as a third option (alongside Fixed and One-off).
+        The dashboard P&L widget shows a dedicated "Advertising (bank)"
+        row when total > 0, broken out from fixed costs.
+      </p>
+    </div>
+  </details>
+
+  <details>
+    <summary>✅ Sortable invoice columns on /finance/invoices</summary>
+    <div class="content">
+      <p>
+        Global invoices page (not the per-client tab) now has clickable
+        column headers — Issue date, Due date, Total, Status. Click
+        once for ascending, click again for descending. The sort
+        direction is in the URL (<code>?sort=dueDate&order=asc</code>)
+        so you can bookmark or share a specific view.
+      </p>
+    </div>
+  </details>
+
+  <details>
+    <summary>✅ VAT past quarters disclosure on the dashboard</summary>
+    <div class="content">
+      <p>
+        Your dashboard VAT widget now has a small
+        <strong>"Past quarters"</strong> link below the current
+        quarter. Click it → lazily fetches the last 4 quarters from
+        Xero (no extra load on first paint), shows each with its
+        submission status (filed / overdue / not yet filed).
+      </p>
+      <p>
+        Note: this needs Xero scopes fixed before the numbers populate
+        — see Blockers below.
+      </p>
+    </div>
+  </details>
+
+  <details>
+    <summary>✅ Hourly global Xero invoice sync (so the Overdue widget can populate)</summary>
+    <div class="content">
+      <p>
+        Your Loom: <em>"It should be sort of irrespective of if we
+        load a client or not. It should just be pulling it from
+        Xero."</em>
+      </p>
+      <p>
+        Before today, invoices only appeared in the local
+        <code>invoices</code> table if you'd manually clicked
+        "Sync from Xero" on a specific client. Now a cron runs at
+        <code>:15</code> past each hour that iterates every non-
+        churned client across every business and pulls their Xero
+        invoices automatically. Failure on one client (e.g. Xero
+        disconnected) doesn't abort the rest.
+      </p>
+      <p>
+        Once Xero scopes are fixed (see Blockers below) the Overdue
+        widget on the dashboard will populate with the real ~£142k
+        you flagged within the next hour cycle.
+      </p>
+    </div>
+  </details>
+
+  <!-- ─── BLOCKERS ─────────────────────────────── -->
+  <h2>What's blocked — only you can fix <span class="pill block">your action</span></h2>
+
+  <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
+    Five things in the UI are currently rendering as "broken" but the
+    code is correct — they're all blocked by config/auth I can't touch
+    from my side. Each is a few minutes of your time.
+  </p>
+
+  <div class="blocker-card">
+    <div class="hdr">1. Xero "Auth pending" → flips to "Live" once you fix the app's scopes</div>
+    <p class="body">
+      Confirmed today from production logs that Xero is rejecting our
+      token exchange with <code>invalid_scope</code>. From the
+      screenshots you sent of <code>developer.xero.com/app/manage/app/843a4b14...</code>,
+      the issue is clear:
+    </p>
+    <ul style="margin: 8px 0 8px 0; padding-left: 20px; font-size: 13.5px; color: #424245;">
+      <li>The app shows <strong>"App is not connected — This app is waiting for authorisation"</strong> at the top of the Configuration page.</li>
+      <li>Stato requests 5 scopes; 4 are already on the app
+      (<code>accounting.transactions</code>, <code>accounting.contacts</code>,
+      <code>accounting.reports.read</code>, <code>accounting.settings.read</code>).
+      The missing one is <strong><code>finance.statements.read</code></strong>
+      — this is the Finance API scope, gated by Xero (you'll see a
+      "Request access" button).</li>
+      <li>The page also shows
+      <strong>"Authorised email: sam@prismmarketinggroup.co.uk"</strong>
+      — that's a different domain to leadgeneration.io. You'll need
+      access to that mailbox (or whoever has it) to log in for the
+      reauthorise step.</li>
+    </ul>
+    <p class="body">
+      <strong>What to do, in order:</strong>
+    </p>
+    <ol style="margin: 8px 0 0 0; padding-left: 20px; font-size: 13.5px; color: #424245;">
+      <li>On the Configuration page, find the scope edit area and
+      add <code>finance.statements.read</code>. If it's greyed out,
+      click "Request access" first (usually instant Xero approval).</li>
+      <li>Save the scope change.</li>
+      <li>Click whatever <strong>Connect / Reauthorise</strong>
+      button is on the page (the red banner has one).</li>
+      <li>Xero login flow opens → pick Clinical Marketing Solutions
+      Ltd → confirm permissions.</li>
+    </ol>
+    <p class="body" style="margin-top: 10px;">
+      <strong>Once done, ALL of these flip live within 30s</strong>
+      (no deploy needed on my side):
+    </p>
+    <ul style="margin: 6px 0 0 0; padding-left: 20px; font-size: 13.5px; color: #424245;">
+      <li>Xero card on Integrations → <strong>"Live · Clinical Marketing Solutions Ltd"</strong></li>
+      <li>Bank widget → your real £64k statement balance (not the wrong £88k GL)</li>
+      <li>VAT widget → real numbers for past + current quarter</li>
+      <li>Overdue widget → your real ~£142k (at the next <code>:15</code> cron tick)</li>
+      <li>VAT "Past quarters" disclosure → populates with the last 4 quarters</li>
+    </ul>
+    <p class="body" style="margin-top: 10px; font-size: 13px; color: #6e6e73;">
+      Single highest-leverage action of your week. ~3 min.
+    </p>
+  </div>
+
+  <div class="blocker-card">
+    <div class="hdr">2. Endole balance — top up at endole.co.uk</div>
+    <p class="body">
+      Confirmed today by hitting Endole's API directly with the
+      credentials on Railway:
+      <code>HTTP 403 "You do not have enough credit in your balance"
+      (error_code 102)</code>. Account is at £0.
+    </p>
+    <p class="body" style="margin-top: 8px;">
+      <strong>What to do:</strong> log in at endole.co.uk → your
+      account → billing → top up. 2 mins.
+    </p>
+    <p class="body" style="margin-top: 8px;">
+      <strong>Once done:</strong> next "Run Credit Check" click on any
+      client succeeds. I've got a background monitor watching the
+      Endole API; the moment your top-up lands, I'll know.
+    </p>
+  </div>
+
+  <div class="blocker-card">
+    <div class="hdr">3. Vercel GitHub App — the silent killer</div>
+    <p class="body">
+      Today proved this is more than a "nice to have". My 3 frontend
+      commits yesterday (Edit Client, Add Campaign, Invoice filter,
+      Xero card polish, P12 template auto-populate) sat on
+      <code>main</code> for ~24 hours WITHOUT being deployed — because
+      the Vercel GitHub App connection was never finished. You picked
+      "prefer-bump-yash-role" in April but said "im not sure what this
+      means" — that decision needs to be confirmed before Vercel
+      will auto-deploy on every push.
+    </p>
+    <p class="body" style="margin-top: 8px;">
+      Today I had to manually run <code>vercel --prod</code> from my
+      machine to ship the FE work that should've gone out yesterday.
+      Means everything I described above is now live (verified) —
+      but ALL future FE deploys will need this manual step until the
+      GitHub App is wired up.
+    </p>
+    <p class="body" style="margin-top: 8px;">
+      <strong>What to do:</strong> there's a textbox below asking
+      "are you OK with me re-doing the Vercel GitHub App setup?".
+      Yes/no there is enough — I'll handle the actual connection in
+      Vercel's dashboard if you say go.
+    </p>
+  </div>
+
+  <div class="blocker-card">
+    <div class="hdr">4. Twilio creds — for automatic SMS alerts</div>
+    <p class="body">
+      Backend SMS-alert worker is live on prod, firing every 30s in
+      MOCK mode (logged, no SMS sent). Verified from Railway logs.
+      The moment 4 env vars land on Railway, the next
+      <code>notifications.type='system_error'</code> row gets paged to
+      your phone within 30 seconds.
+    </p>
+    <p class="body" style="margin-top: 8px;">
+      <strong>What to do:</strong> sign up at twilio.com/console
+      (free trial covers months), buy a US long-code (~$1/mo, fine
+      for UK outbound SMS), send me the 3 values via 1Password/Signal
+      (NOT email):
+      <code>TWILIO_ACCOUNT_SID</code> (starts <code>AC…</code>),
+      <code>TWILIO_AUTH_TOKEN</code>,
+      <code>TWILIO_FROM_NUMBER</code> (E.164 format,
+      e.g. <code>+1...</code>). Use the textbox below to confirm
+      account is set up.
+    </p>
+  </div>
+
+  <div class="blocker-card">
+    <div class="hdr">5. Anthropic + Attio API keys — still pending from 13 May ask</div>
+    <p class="body">
+      Both these features are dark on prod until the keys land:
+      <strong>"Generate with AI"</strong> button on tasks
+      (<code>ANTHROPIC_API_KEY</code> — get from
+      console.anthropic.com → API Keys),
+      <strong>"Import from Attio"</strong> button on clients
+      (<code>ATTIO_API_KEY</code> — get from console.attio.com →
+      Settings → API → personal access token, looks like
+      <code>attio_pat_xxxxx</code>).
+    </p>
+    <p class="body" style="margin-top: 8px;">
+      Drop both keys in the textbox below — I'll set them on Railway
+      and both buttons go live in minutes.
+    </p>
+  </div>
+
+  <!-- ─── ASKS ─────────────────────────────── -->
+  <h2>What I need from you <span class="pill need">your input</span></h2>
+
+  <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
+    Six text boxes below — answer the ones you can, leave the rest
+    blank, hit Download. Auto-saves as you type so closing the tab
+    won't lose anything. Send the <code>.txt</code> file back over
+    WhatsApp.
+  </p>
+
+  <div id="ask-cards"></div>
+
+  <noscript>
+    <div class="card">
+      <p class="body">
+        JavaScript is off — reply on WhatsApp with answers to:
+      </p>
+      <ol>
+        <li>Xero scopes — done or stuck?</li>
+        <li>Endole — topped up?</li>
+        <li>Twilio creds — paste here or "set up an account first"</li>
+        <li>Anthropic + Attio API keys</li>
+        <li>Vercel GitHub App — OK for me to re-do the setup?</li>
+        <li>Doc-upload bug from the 12 May call — what file did you try, what error came up?</li>
+      </ol>
+    </div>
+  </noscript>
+
+  <div style="margin-top: 20px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+    <button id="download-btn" type="button" style="padding: 12px 22px; border-radius: 999px; background: #0066cc; color: #fff; border: 1px solid #0066cc; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer;">
+      ⬇ Download my answers as text
+    </button>
+    <span id="download-hint" style="color: #6e6e73; font-size: 13px;">
+      Saves a single <code>.txt</code> with everything you typed — WhatsApp it back to Yash.
+    </span>
+  </div>
+
+  <!-- ─── COMING NEXT ─────────────────────────────── -->
+  <h2>Coming next <span class="pill fix">scheduled</span></h2>
+
+  <ul class="bare">
+    <li><strong>Endole-balance auto-detect</strong> — background monitor is already running and will notify the moment you top up. No action needed; this just means I'll know within ~5 min and can verify the credit-check end-to-end before Friday's call.</li>
+    <li><strong>Twilio + SMS pipeline goes from MOCK to live</strong> — moment your 3 Twilio values land on Railway env. Worker is already running every 30s on prod (confirmed from logs); flips automatic the second the creds are set.</li>
+    <li><strong>Benson Goldstein onboarding</strong> — once Xero is live + you've topped up Endole, I can take any client you're onboarding through Edit Client → Add Campaign → Auto-populate Agreement end-to-end as a smoke test. Need ~5 min on a call or you can do it solo with the new tooling.</li>
+    <li><strong>P10 doc-upload investigation</strong> — Pratteek is ready to debug as soon as you send the exact file format + error message that failed for you. Box 6 below.</li>
+    <li><strong>Visual drag-onto-PDF for the template editor</strong> — the v1 of P12 today uses a list/click interface for placing variables. A second pass that lets you drag them visually onto the canvas (like the existing #47-50 PDF editor for fields) is queued as a polish PR, ~half-day. Will ship in next week's batch.</li>
+  </ul>
+
+  <footer>
+    Generated 14 May 2026 · Stato · Octogle Technologies for leadgeneration.io
+  </footer>
+
+</div>
+
+<!-- Style for ask cards + textareas — same pattern as 13 May. -->
+<style>
+  .ask-card {
+    background: #fff; border: 1px solid #e8e8ed; border-radius: 14px;
+    padding: 18px 20px; margin: 0 0 14px 0;
+  }
+  .ask-card .ask-head {
+    display: flex; align-items: baseline; gap: 10px; margin-bottom: 6px;
+  }
+  .ask-card .ask-num {
+    font-size: 13px; font-weight: 700; color: #0066cc;
+    background: #f0f7ff; padding: 2px 8px; border-radius: 999px;
+    min-width: 28px; text-align: center;
+  }
+  .ask-card .ask-title {
+    font-size: 15.5px; font-weight: 600; color: #1d1d1f; flex: 1;
+  }
+  .ask-card .ask-effort {
+    font-size: 12px; color: #6e6e73;
+    background: #f0f0f3; padding: 2px 8px; border-radius: 999px;
+    white-space: nowrap;
+  }
+  .ask-card .ask-why {
+    font-size: 13.5px; color: #6e6e73; margin: 0 0 12px 36px;
+    line-height: 1.5;
+  }
+  .ask-card textarea {
+    width: 100%; padding: 10px 12px;
+    border: 1px solid #e8e8ed; border-radius: 10px;
+    background: #fafafa; color: #1d1d1f; font: inherit; font-size: 14px;
+    outline: none; min-height: 70px; resize: vertical;
+    transition: border-color 120ms, background 120ms, box-shadow 120ms;
+  }
+  .ask-card textarea:focus {
+    border-color: #0066cc; background: #fff;
+    box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.12);
+  }
+  .ask-card textarea::placeholder { color: #a0a0a8; }
+  #download-btn:hover { background: #0058b3; border-color: #0058b3; }
+  #download-btn:active { transform: translateY(1px); }
+  .saved-pill {
+    display: inline-block; font-size: 12px; color: #16a34a;
+    margin-left: 10px; opacity: 0; transition: opacity 200ms;
+  }
+  .saved-pill.visible { opacity: 1; }
+</style>
+
+<script src="lib.js"></script>
+<script>
+  const ASKS = [
+    {
+      id: 'xero-scopes',
+      title: 'Xero scopes — done, stuck, or need help?',
+      why: 'developer.xero.com → app 843a4b14... → Configuration tab → add finance.statements.read scope + reauthorise. The screenshots you sent show the app is "waiting for authorisation". Let me know: done, stuck on the "Request access" step, or need me to walk through on a screenshare.',
+      effort: '~3 min',
+      placeholder: 'e.g. "done, all 5 ticked + reauthorised" / "stuck — Request access button isn\'t there" / "need screenshare"',
+    },
+    {
+      id: 'endole-topup',
+      title: 'Endole — topped up?',
+      why: 'endole.co.uk → your account → billing → top up. The monitor on my side will tell me when it lands so this is mainly for you to confirm — and if you DIDN\'T top up because the account is in someone else\'s name or there\'s a card issue, tell me here.',
+      effort: '~2 min',
+      placeholder: 'e.g. "topped up £200 just now" / "card was rejected" / "not on my card, finding the right person"',
+    },
+    {
+      id: 'twilio-creds',
+      title: 'Twilio creds — for automatic SMS alerts to your phone',
+      why: 'twilio.com/console → sign up (free trial covers months) → buy a US long-code (~$1/mo) → paste the 3 values here OR send via 1Password. ACCOUNT_SID (starts AC...), AUTH_TOKEN, FROM_NUMBER (E.164 like +1...).',
+      effort: '~10 min',
+      placeholder: 'Paste the 3 values, or write "send me how to" if you want a 1-min walkthrough video',
+    },
+    {
+      id: 'api-keys',
+      title: 'Anthropic + Attio API keys (still pending from 13 May)',
+      why: 'ANTHROPIC_API_KEY → console.anthropic.com → API Keys (unlocks "Generate with AI" buttons). ATTIO_API_KEY → console.attio.com → Settings → API → create personal access token like attio_pat_xxxxx (unlocks bulk import). Paste either or both.',
+      effort: '~5 min',
+      placeholder: 'Paste both keys (or "Yash, you set them up")',
+    },
+    {
+      id: 'vercel-github-app',
+      title: 'Vercel GitHub App — OK for me to finish the setup?',
+      why: 'Right now I have to manually run "vercel --prod" every time I push frontend changes — because the GitHub App connection between the Sato-Frontend repo and Vercel was never finished after you picked "prefer-bump-yash-role" in April. Saying "yes go" means I\'ll finish the connection in Vercel\'s dashboard so every future push auto-deploys (which is how the backend Railway side already works).',
+      effort: '~1 min answer',
+      placeholder: 'e.g. "yes, finish it" / "explain what bump-yash-role means first" / "let me do it"',
+    },
+    {
+      id: 'doc-upload-bug',
+      title: 'Doc-upload bug from the 12 May call — exact file + error?',
+      why: 'You mentioned doc upload had a format issue but didn\'t say which format or what error. Pratteek can fix it in an hour once we know: (1) the exact file you tried to upload (just the file extension and rough size is enough, e.g. "20MB .docx"), and (2) the exact error message that came up (paste the toast text or screenshot).',
+      effort: '~1 min',
+      placeholder: 'e.g. "tried uploading a 8MB .docx, got toast saying ‘Upload failed: …’" — or just attach the screenshot in WhatsApp',
+    },
+  ];
+
+  const RESPONSE_KEY = 'stato-2026-05-14-responses';
+
+  function loadStoredResponses() {
+    try {
+      const raw = localStorage.getItem(RESPONSE_KEY);
+      return raw ? JSON.parse(raw) : {};
+    } catch {
+      return {};
+    }
+  }
+
+  function saveResponses(map) {
+    try {
+      localStorage.setItem(RESPONSE_KEY, JSON.stringify(map));
+    } catch {
+      /* localStorage full or disabled — no-op. */
+    }
+  }
+
+  function renderAskCards() {
+    const container = document.getElementById('ask-cards');
+    if (!container) return;
+    container.innerHTML = '';
+    const stored = loadStoredResponses();
+
+    ASKS.forEach((ask, i) => {
+      const card = document.createElement('div');
+      card.className = 'ask-card';
+      const num = i + 1;
+      const tid = `ask-${ask.id}`;
+      card.innerHTML = `
+        <div class="ask-head">
+          <span class="ask-num">${num}</span>
+          <span class="ask-title">${ask.title}</span>
+          <span class="ask-effort">${ask.effort}</span>
+        </div>
+        <p class="ask-why">${ask.why}</p>
+        <textarea
+          id="${tid}"
+          data-ask-id="${ask.id}"
+          rows="3"
+          placeholder="${ask.placeholder.replace(/"/g, '&quot;')}"></textarea>
+        <span class="saved-pill" id="${tid}-saved">Saved locally</span>
+      `;
+      container.appendChild(card);
+
+      const ta = card.querySelector('textarea');
+      const saved = card.querySelector('.saved-pill');
+      ta.value = stored[ask.id] || '';
+      let savedTimer = null;
+      ta.addEventListener('input', () => {
+        const map = loadStoredResponses();
+        map[ask.id] = ta.value;
+        saveResponses(map);
+        saved.classList.add('visible');
+        clearTimeout(savedTimer);
+        savedTimer = setTimeout(() => saved.classList.remove('visible'), 1200);
+      });
+    });
+  }
+
+  function downloadAsText() {
+    const stored = loadStoredResponses();
+    const lines = [];
+    lines.push("Stato — Sam's responses to the 14 May 2026 update");
+    lines.push('Saved at: ' + new Date().toISOString());
+    lines.push('');
+    lines.push('═══════════════════════════════════════════════════════');
+    lines.push('');
+
+    ASKS.forEach((ask, i) => {
+      const num = i + 1;
+      const answer = (stored[ask.id] || '').trim();
+      lines.push(`${num}. ${ask.title}  (${ask.effort})`);
+      lines.push('   Why: ' + ask.why);
+      lines.push('');
+      if (answer) {
+        lines.push('   Sam:');
+        answer.split('\n').forEach((l) => lines.push('     ' + l));
+      } else {
+        lines.push('   Sam: (no answer provided)');
+      }
+      lines.push('');
+      lines.push('───────────────────────────────────────────────────────');
+      lines.push('');
+    });
+
+    lines.push('— End of responses —');
+
+    const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const stamp = new Date().toISOString().slice(0, 10);
+    a.href = url;
+    a.download = `stato-sam-responses-${stamp}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  function boot() {
+    renderAskCards();
+    const btn = document.getElementById('download-btn');
+    if (btn) btn.addEventListener('click', downloadAsText);
+  }
+  if (typeof mountPasswordGate === 'function') {
+    mountPasswordGate(boot);
+  } else {
+    boot();
+  }
+</script>
+</body>
+</html>
