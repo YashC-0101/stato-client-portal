@@ -135,10 +135,13 @@
 
   <div class="summary">
     <p>
-      <strong>Yesterday's evening + this morning shipped 8 more
-      production deploys.</strong> Every code-side item from your 12 May
-      call is now done — including the big one Sam called the
-      "completely unusable" piece (auto-populated contracts).
+      <strong>Yesterday's evening + this morning + this afternoon
+      shipped 10 production deploys.</strong> Every code-side item from
+      your 12 May call is now done — including the big one you called
+      the "completely unusable" piece (auto-populated contracts) — plus
+      the two screenshot asks you sent this afternoon (Send-agreement
+      signer auto-fill + Advertising in the bank-feed row dropdown) are
+      already live.
     </p>
     <p>
       Status on the 14 distinct complaints from your 12 May call:
@@ -154,9 +157,9 @@
     </p>
 
     <div class="stat-row">
-      <div class="stat"><div class="num">8</div><div class="lbl">Commits today (both repos)</div></div>
+      <div class="stat"><div class="num">10</div><div class="lbl">Commits today (both repos)</div></div>
       <div class="stat"><div class="num">13/14</div><div class="lbl">12-May complaints shipped</div></div>
-      <div class="stat"><div class="num">32</div><div class="lbl">New tests added · all pass</div></div>
+      <div class="stat"><div class="num">38</div><div class="lbl">New tests added · all pass</div></div>
       <div class="stat"><div class="num">3</div><div class="lbl">Sam-side unblocks left</div></div>
     </div>
 
@@ -263,6 +266,26 @@
     <p class="body" style="margin-bottom: 10px;"><strong>Benson Goldstein portal access</strong></p>
     <p class="body" style="font-style: italic; color: #6e6e73;">"Now I have a client now that's coming on a client called Benson Goldstein that's coming online… I would ideally like to have this usable for one of my clients, like, that's coming, that's going live."</p>
     <p class="body" style="margin-top: 8px;"><strong>→ Ready (Yash) — waiting on 4 fields:</strong> Yash will create the client row + portal-role user the moment you WhatsApp <strong>company name, company number, primary contact name, primary contact email</strong>. The script is drafted; ~5 min on Yash's side once the data lands. Box 7 below is dedicated to this. Alternatively: you create him via the new Edit Client UI on prod (now live as of today) — also takes ~5 min.</p>
+  </div>
+
+  <!-- ─── 14 MAY AFTERNOON SCREENSHOT ASKS ───────────────────────── -->
+  <h2 style="margin-top: 36px;">Your 14 May screenshots → action <span class="pill done">shipped this afternoon</span></h2>
+
+  <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
+    Two quick screenshots you sent today. Both now live in prod — no
+    deploy on your side, just refresh the page.
+  </p>
+
+  <div class="card">
+    <p class="body" style="margin-bottom: 10px;"><strong>Send-agreement modal — auto-fill signer from selected client</strong></p>
+    <p class="body" style="font-style: italic; color: #6e6e73;">"When we select the drop down, if the Signer name and email are also loaded — it would be good right?"</p>
+    <p class="body" style="margin-top: 8px;"><strong>→ Done (Yash, this afternoon):</strong> picking a client from the dropdown now pulls that client's <code>contactName</code> + <code>contactEmail</code> into the Signer name / Signer email fields. Switching to a different client overwrites them. Manual edits between selections are preserved. FE commit <code>6dced92</code> on <code>main</code>; 3 new tests cover empty-initial state, auto-fill on first selection, and overwrite on client switch.</p>
+  </div>
+
+  <div class="card">
+    <p class="body" style="margin-bottom: 10px;"><strong>Bank Feed → row category dropdown shows "Advertising"</strong></p>
+    <p class="body" style="font-style: italic; color: #6e6e73;">"I believe what he wanted was Advertisement in the drop down for entries like Facebook and Google."</p>
+    <p class="body" style="margin-top: 8px;"><strong>→ Done (Yash, this afternoon):</strong> the per-row category dropdown on <code>/finance/bank-feed</code> previously only showed Fixed-bucket categories (because no Advertising-bucket category existed yet for the business). Now every business is auto-seeded with a default <strong>"Advertising"</strong> category on first list, idempotent — so Facebook / Google / TikTok card bills can be tagged immediately without clicking "+ New category" first. Also fixed a related Zod-validation bug that was rejecting <code>bucket=advertising</code> when manually creating advertising categories via "+ New category". BE commit <code>21c6421</code> on <code>main</code>; 3 new tests cover seed-on-first-list, idempotency, and the validation fix.</p>
   </div>
 
   <!-- ─── ONE CLIENT END-TO-END FLOW ─────────────────────────────── -->
@@ -613,6 +636,7 @@
     <li>Drag variables onto template — <strong>DONE today (P12 Day 3) — list mode for v1</strong></li>
     <li>Autopopulate PDF from client data — <strong>DONE today (P12 Day 2)</strong></li>
     <li>Inline override on individual contracts — <strong>DONE today (P12 Day 3)</strong></li>
+    <li>Send-agreement modal auto-fills Signer name + email from selected client — <strong>DONE (Yash, 14 May afternoon — commit <code>6dced92</code>)</strong></li>
     <li>Full visual drag-onto-canvas (vs list mode) — <strong>IN PROGRESS — polish PR queued, ~half day</strong></li>
   </ul>
 
@@ -633,6 +657,7 @@
   <ul class="bare">
     <li>Bank widget statement balance (vs ledger balance) — <strong>DONE (Hari, code) — BLOCKED on Xero finance.statements.read scope</strong></li>
     <li>Bank-feed page Advertising filter tab — <strong>DONE (Hari)</strong></li>
+    <li>Default "Advertising" category seeded in row dropdown (so Facebook/Google can be tagged immediately) + advertising-bucket validation fix — <strong>DONE (Yash, 14 May afternoon — commit <code>21c6421</code>)</strong></li>
     <li>P&L Advertising row (separate from Fixed/One-off) — <strong>DONE (Hari)</strong></li>
     <li>VAT widget (current + previous quarter with stagger) — <strong>DONE (Hari) — BLOCKED on Xero scopes for live numbers</strong></li>
     <li>VAT Past Quarters disclosure (lazy-fetched) — <strong>DONE (Hari)</strong></li>
