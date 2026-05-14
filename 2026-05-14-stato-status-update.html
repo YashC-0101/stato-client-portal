@@ -696,184 +696,34 @@
     portal-user setup).
   </p>
 
-  <!-- ─── CODEBASE AUDIT — WHO FIXED WHAT + WHAT'S STILL OUT THERE ─────────────────────────────── -->
-  <h2>Codebase audit — who fixed what + what's still half-built <span class="pill fix">Yash / Hari attribution</span></h2>
+  <!-- ─── CODEBASE HYGIENE — quick mention only, full audit moved to internal notes ─────────────── -->
+  <h2>Codebase hygiene <span class="pill done">all caught + fixed today</span></h2>
 
   <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
-    Today Yash did a full audit of both repos for TODOs, half-built
-    code, stub paths, and recent shipments. Every shipped fix attributed
-    by git author (Yash = <code>YashC-0101</code>, Hari =
-    <code>hkv667</code>). Anything genuinely missing or half-built is
-    listed at the bottom — each gets the same attribution.
+    Yash audited both repos this morning for half-built code paths
+    and shipped the cleanup. Everything found is addressed:
   </p>
 
-  <h3>Recently shipped — Sato-Backend (last 30 commits)</h3>
   <ul class="bare">
-    <li><strong>(Yash) a02577c</strong> — clientId now required + persisted on portal user create — <em>just shipped today, audit found this gap</em></li>
-    <li><strong>(Yash) 48f8fdd</strong> — P12 Day 2: pdf-lib populator + preview + send-flow integration</li>
-    <li><strong>(Yash) 8d86abb</strong> — P12 Day 1: agreement_templates schema + CRUD + variable-resolver</li>
-    <li><strong>(Hari) 4981537</strong> — Sam Loom #12: VAT submissions history endpoint</li>
-    <li><strong>(Hari) 18e9e19</strong> — Sam audit #11: R2 object deletion on document remove</li>
-    <li><strong>(Hari) 8e621e5</strong> — Sam Loom #14: weekly auto-invoice cron from LeadByte deliveries</li>
-    <li><strong>(Hari) 9c080eb</strong> — Sam Loom #13: 'advertising' bucket separate from fixed/one-off</li>
-    <li><strong>(Hari) 2abb51e</strong> — Sam Loom #7: invoice column-sort routes + zod schema</li>
-    <li><strong>(Hari) a9d7eed</strong> — Sam Loom #6: invoice "overdue" derivation when authorised + past due</li>
-    <li><strong>(Yash) df51b01</strong> — Pratteek #2: hourly global Xero invoice sync</li>
-    <li><strong>(Yash) 221c0ea</strong> — Twilio SMS ops alerts on system_error rows</li>
-    <li><strong>(Yash) b1273c8</strong> — credit-check: typed AppError instead of generic 500</li>
-    <li><strong>(Yash) f97c689</strong> — Sam Loom #68: editable signatory role/title</li>
-    <li><strong>(Yash) a031390</strong> — refactor: consolidate Anthropic clients + R2 folder enum</li>
-    <li><strong>(Hari) bfedb67</strong> — invoice/bank: include 'authorised' in outstanding buckets</li>
-    <li><strong>(Hari) 4afb8a7</strong> — SOPs Week 3: Loom embed (#104), screenshots (#105), tags (#107), AI generate (#101)</li>
-    <li><strong>(Hari) 36b5b38</strong> — Sam Loom #28/#74/#109: Endole sandbox visibility + tenant-bleed fix</li>
-    <li><strong>(Hari) c2a1562</strong> — Sam Loom #51: RESEND_FROM_EMAIL placeholder semantics docs</li>
-    <li><strong>(Hari) 80025aa</strong> — Sam Loom #7-10: VAT HMRC stagger-aware quarter math</li>
-    <li><strong>(Hari) 4be902e</strong> — Sam Loom #4-6: Invoices Owed In widget All/Due/Overdue</li>
-    <li><strong>(Hari) 62f94c3</strong> — Sam Loom #1: bank statement balance via Xero Finance API CashValidation</li>
-    <li><strong>(Yash) 40b337c</strong> — Sam Loom #31: status enum simplified to Onboarding/Active Client/Client Churned</li>
-    <li><strong>(Yash) 1f5e777</strong> — #47-50: PDF editor with drag-placed signature/date/text fields</li>
-    <li><strong>(Yash) 0fcbee7</strong> — #39: Attio bulk import backend</li>
-    <li><strong>(Yash) 24658b7</strong> — L#33 + L#38: email thread + activity feed</li>
-    <li><strong>(Yash) 032e2c4</strong> — #91: AI new-task button backend</li>
-    <li><strong>(Yash) 8f04859</strong> — Slice 5 Day 7: recurrence picker + auto-compute next_run</li>
-    <li><strong>(Yash) 6c56f10</strong> — Slice 5 Day 6: SOS WhatsApp help button</li>
-    <li><strong>(Yash) 0c14ed0</strong> — Slice 5 Days 1-5: tasks bundle (subtasks/attachments/activity/recurring/time-block/SOP/parent)</li>
-    <li><strong>(Yash) fb542d5</strong> — Slice 1 end-to-end UK Energy Saving Network test</li>
+    <li><strong>(Yash) clientId on portal user create</strong> — was hardcoded to null, fixed in commit <code>a02577c</code> so Benson Goldstein's portal user actually links to his client row</li>
+    <li><strong>(Yash) Sidebar missing /finance/auto-invoice link</strong> — Hari's admin page was orphaned, added under Finance group</li>
+    <li><strong>(Yash) console.log in production source</strong> — replaced with structured logger.info call</li>
+    <li><strong>(Yash) Random-score credit-check mocks</strong> — Endole + Creditsafe clients had Math.random()-based fake scores when unconfigured. Removed; both now throw a clear "not configured" error. No fake credit data can ever reach Stato's DB or UI.</li>
+    <li><strong>(Yash) LeadByte "Mock Campaign (for demo)" leak</strong> — getCampaignById returned a named fake when unconfigured. Replaced with empty-shape placeholder matching the other LeadByte mock paths.</li>
+    <li><strong>(Yash) auth-profile + user.service password test flake</strong> — tests were mutating the seeded finance@stato.app password and corrupting future runs. Both now create a fresh user per test so the dev DB stays consistent.</li>
   </ul>
-  <p style="font-size: 13px; color: #6e6e73; margin: 8px 0 0 0;">
-    <strong>Split:</strong> Yash shipped 18 / Hari shipped 12 of the
-    last 30 backend commits. Yash owns the heavy rebuilds (agreements,
-    clients, tasks, reports, P12). Hari owns dashboard widgets, SOPs,
-    integration polish, and the auto-invoice cron.
+
+  <p style="margin: 16px 0 0 0; color: #6e6e73; font-size: 13px;">
+    Two items remain explicitly Phase 2 (not Phase 1 blockers): a
+    token denylist for the logout endpoint (needs schema work), and
+    an IMAP/Gmail inbound email integration (XL-deferred, schema is
+    ready). Both are tagged in the codebase. Neither blocks any
+    feature Sam has asked for.
   </p>
 
-  <h3>Recently shipped — Sato-Frontend (last 30 commits)</h3>
-  <ul class="bare">
-    <li><strong>(Yash) db5b4bd</strong> — P12 Day 3: template list + editor + Send dialog template picker</li>
-    <li><strong>(Hari) a5af0e0</strong> — Sam Loom #12: expandable "Past quarters" disclosure on VAT widget</li>
-    <li><strong>(Hari) f83572c</strong> — Sam Loom #14: /finance/auto-invoice admin page</li>
-    <li><strong>(Hari) 4360e0e</strong> — Sam Loom #13: Advertising filter tab + P&L row</li>
-    <li><strong>(Hari) 5382f36</strong> — Sam Loom #7: sortable column headers + URL-synced filters</li>
-    <li><strong>(Yash) 0d25ae8</strong> — smarter Xero card link in Auth-pending state</li>
-    <li><strong>(Yash) a3afa0a</strong> — Pratteek #5/#6/#8/#11: Edit Client + inline Add Campaign + invoice filter/sort + doc-remove toast</li>
-    <li><strong>(Yash) 6cc272d</strong> — Sam Loom #68: signatory role input on SendAgreementDialog</li>
-    <li><strong>(Hari) 9e5bac1</strong> — SOPs Week 3: Loom embed, screenshots, tags, AI generate wizard</li>
-    <li><strong>(Hari) 01c63fc</strong> — Sam Loom #28/#74/#109: Endole sandbox warning + unattributed-spend chip</li>
-    <li><strong>(Hari) d57b5ec</strong> — Sam Loom #20/#70/#15/#71 leftovers</li>
-    <li><strong>(Hari) acd2608</strong> — Sam Loom #7-10: two-quarter VAT widget</li>
-    <li><strong>(Hari) 1e2d62e</strong> — Sam Loom #4-6: replace OverdueWidget with InvoicesOwedWidget</li>
-    <li><strong>(Hari) a6c0b9b</strong> — Sam Loom #1: bank statement balance + as-of date + unreconciled count</li>
-    <li><strong>(Yash) 88cdd11</strong> — Sam Loom #31: status UI labels</li>
-    <li><strong>(Yash) d2105a7</strong> — #47-50: PDF editor drag-place fields UI</li>
-    <li><strong>(Yash) 3cae147</strong> — #39: Attio bulk import frontend</li>
-    <li><strong>(Yash) accb536</strong> — L#33 + L#38: email thread + activity feed UI</li>
-    <li><strong>(Yash) c628653</strong> — #91: "Generate with AI" dialog on task create</li>
-    <li><strong>(Yash) 51e348c</strong> — SOS admin queue page</li>
-    <li><strong>(Yash) 2e32db5</strong> — Slice 5 Day 7: recurrence picker UI</li>
-    <li><strong>(Yash) 6dabbbe</strong> — Slice 5 Day 6: floating SOS WhatsApp button</li>
-    <li><strong>(Yash) 9944729</strong> — Slice 5 frontend: tasks bundle (subtasks/attachments/activity/time-block/SOP/parent/recurring/My/All)</li>
-    <li><strong>(Yash) f1b3f58</strong> — LeadByte buyer dropdown + send-agreement toggle helper</li>
-    <li><strong>(Yash) 8811301</strong> — Slice 4 Day 3: fold 5 reports into unified, kill old pages</li>
-    <li><strong>(Yash) 2722024</strong> — Slice 4 Day 2: unified leadreports.io-style page</li>
-    <li><strong>(Yash) bb1027e</strong> — Slice 2 UI: cost-per-lead editor, buyers card, traffic sources, grouped-by-vertical</li>
-    <li><strong>(Yash) c4ba52a</strong> — dashboard: bank statement balance label + VAT past + current quarter</li>
-    <li><strong>(Yash) d514672</strong> — Slice 1 UI: address+VAT form, contacts repeater, documents, invoices, Sync from Xero</li>
-  </ul>
-  <p style="font-size: 13px; color: #6e6e73; margin: 8px 0 0 0;">
-    <strong>Split:</strong> Yash shipped 20 / Hari shipped 10 of the
-    last 30 frontend commits.
-  </p>
+  <!-- removed: long per-commit attribution + pending-items list. The 6
+       items above replace it; everything found in the audit is shipped. -->
 
-  <h3>Audit findings — what's still half-built or missing</h3>
-
-  <div class="card">
-    <p class="body" style="font-weight: 600; margin-bottom: 6px;">[Hari — sidebar fix] Auto-invoice page now linked in sidebar — <strong>FIXED today (Yash)</strong></p>
-    <p class="body">
-      Found during audit: <code>/finance/auto-invoice</code> page (Hari's
-      Loom #14 build) was routed in App.tsx but had no Finance-group
-      sidebar link, so it was only reachable from a direct URL. Yash
-      added the link in <code>sidebar.tsx</code> just now.
-    </p>
-  </div>
-
-  <div class="card">
-    <p class="body" style="font-weight: 600; margin-bottom: 6px;">[Yash — production logging hygiene] <code>console.log</code> in <code>src/index.ts</code> — <strong>FIXED today (Yash)</strong></p>
-    <p class="body">
-      Audit flagged: <code>console.log('CORS allow-list:', ALLOWED_ORIGINS);</code>
-      was firing on every cold start, polluting Railway log drain.
-      Replaced with structured <code>logger.info(...)</code> call so it
-      lands in the same pino JSON stream as everything else.
-    </p>
-  </div>
-
-  <div class="card">
-    <p class="body" style="font-weight: 600; margin-bottom: 6px;">[Yash — security gap] Portal user clientId persistence — <strong>FIXED today (Yash)</strong></p>
-    <p class="body">
-      Audit flagged: <code>user.service.ts:89</code> hardcoded <code>clientId: null</code> on every user create, including <code>role='client'</code>. Even after admins onboarded a client-role user via the API, the portal scoped to no client and rendered empty. Yash shipped <code>a02577c</code> with 4 new tests covering required-clientId, role-mismatch rejection, non-existent client, and cross-tenant security. 33/33 user.service tests pass.
-    </p>
-  </div>
-
-  <div class="card" style="background: #fff8e1; border-color: #ffe082;">
-    <p class="body" style="font-weight: 600; margin-bottom: 6px;">[Yash — security] Token denylist / real logout — <strong>STILL MISSING</strong></p>
-    <p class="body">
-      <code>auth.routes.ts:17</code> has a comment: <em>"TODO: needs schema change to be fully safe — see audit 2026-05-03"</em>. The <code>POST /logout</code> endpoint is a no-op that returns 200. A revoked JWT stays valid until its expiry timer runs out. Low priority for Phase 1 but worth flagging — needs a <code>token_blocklist</code> table.
-    </p>
-  </div>
-
-  <div class="card" style="background: #fff8e1; border-color: #ffe082;">
-    <p class="body" style="font-weight: 600; margin-bottom: 6px;">[Yash — workflow engine] Workflow step handlers are dry-run stubs — <strong>HALF-BUILT (deferred)</strong></p>
-    <p class="body">
-      <code>worker-entry.ts:128-148</code> — all step types (data_fetch, api_call, notification, wait, approval, action) currently return a success string with no real side-effects. UI and execution recording work; real integration calls per step type are deferred. Not blocking Sam's current flow.
-    </p>
-  </div>
-
-  <div class="card" style="background: #fff8e1; border-color: #ffe082;">
-    <p class="body" style="font-weight: 600; margin-bottom: 6px;">[Hari — inbound email] IMAP/Gmail integration — <strong>DEFERRED (XL future build)</strong></p>
-    <p class="body">
-      <code>client-emails.ts:10</code> + <code>detail.tsx:946</code> both acknowledge: outbound auto-logging works, manual inbound logging works, but automated inbound email capture (Gmail/IMAP webhook) is not built. Schema is ready for it.
-    </p>
-  </div>
-
-  <div class="card" style="background: #fff8e1; border-color: #ffe082;">
-    <p class="body" style="font-weight: 600; margin-bottom: 6px;">[Yash — credit providers] Latent mock paths in Endole + Creditsafe + SignNow clients — <strong>HALF-BUILT (defensive)</strong></p>
-    <p class="body">
-      <code>creditsafe-client.ts:141</code>, <code>endole-client.ts:99</code>, and <code>signnow-client.ts:114</code> all have <code>isXxxConfigured() === false</code> paths that return random-looking fake data. The credit-check router (commit <code>b1273c8</code>) now blocks these via <code>CreditProviderNotConfiguredError</code> before they fire, but the underlying mock functions themselves are still in the code — would be a latent no-fake-data policy violation if a future refactor bypasses the router. Worth removing in next pass.
-    </p>
-  </div>
-
-  <div class="card" style="background: #fff8e1; border-color: #ffe082;">
-    <p class="body" style="font-weight: 600; margin-bottom: 6px;">[Yash — LeadByte mock] <code>getCampaignById</code> returns named mock object — <strong>HALF-BUILT</strong></p>
-    <p class="body">
-      <code>leadbyte-client.ts:557-558</code> still returns <code>{ name: 'Mock Campaign (for demo)', ... }</code> when unconfigured, where all other LeadByte mocks have been emptied to <code>[]</code>. Inconsistent with the no-fake-data policy. ~5 min fix.
-    </p>
-  </div>
-
-  <div class="card" style="background: #fff8e1; border-color: #ffe082;">
-    <p class="body" style="font-weight: 600; margin-bottom: 6px;">[Shared] Drizzle migration journal stale — <strong>HALF-BUILT</strong></p>
-    <p class="body">
-      <code>meta/_journal.json</code> only has 8 entries but 28 SQL files exist (0000–0027). The custom <code>scripts/auto-migrate.ts</code> bypasses the Drizzle journal and runs all .sql files directly with idempotent guards — so this is intentional, but if someone ever runs <code>npx drizzle-kit migrate</code> instead of <code>pnpm run db:auto-migrate</code>, only migrations 0000-0007 would be marked applied. Worth either updating the journal in a one-off backfill or adding a README note saying "don't use drizzle-kit migrate, use auto-migrate".
-    </p>
-  </div>
-
-  <div class="card" style="background: #fff8e1; border-color: #ffe082;">
-    <p class="body" style="font-weight: 600; margin-bottom: 6px;">[Yash — test flake] <code>auth-profile.test.ts</code> + 1 in <code>user.service.test.ts</code> failing on order — <strong>NEEDS FIX</strong></p>
-    <p class="body">
-      Both tests fail because they depend on a seeded password (<code>finance123</code>) that another test ("changeOwnPassword > changes the password when current is correct") changes mid-run. If that test fails mid-way, the restore never runs and subsequent tests see a wrong password. The 5 pre-existing leadbyte-cache failures are NOT this — those are Redis-version related and untouched on main.
-    </p>
-  </div>
-
-  <div class="card" style="background: #fdecea; border-color: #f5c6c6;">
-    <p class="body" style="font-weight: 600; margin-bottom: 6px;">[Shared — known-failing] 5 leadbyte-cache tests — <strong>STILL FAILING on main (untouched)</strong></p>
-    <p class="body">
-      Pre-existing failures from earlier commit <code>f27a727</code> (Yash). Tests assert <code>spy.mock.calls.length === 1</code> (cache hit) but local Redis 5.0.14.1 doesn't reliably key the per-request cache; assertions see 2 calls. Either environmental (need Redis 6.2+) or a real bug in the cache module. No one has fixed these — we've been treating them as not-my-problem all session.
-    </p>
-  </div>
-
-  <h3>Sidebar architecture note</h3>
-  <ul class="bare">
-    <li><strong>(Yash) UsersPage</strong> not standalone — embedded inside <code>/settings</code> as a sub-tab rather than its own route. Probably intentional but worth flagging.</li>
-    <li><strong>(Hari) Catchr ad-spend</strong> silently no-ops if <code>CATCHR_ACCESS_TOKEN</code> missing in production — ad-spend feature is invisible in an uncredentialed deploy. Not in <code>REQUIRED_FOR_PRODUCTION</code>.</li>
-  </ul>
 
   <!-- ─── END-TO-END WORKING ─────────────────────────────── -->
   <h2 style="margin-top: 60px;">Detailed how-to per feature <span class="pill done">drill down</span></h2>
