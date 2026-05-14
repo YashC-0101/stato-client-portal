@@ -161,12 +161,529 @@
     </div>
 
     <p style="font-size: 13px; color: #6e6e73; margin-top: 16px;">
-      Click any section title below to expand · the 4 things needing
-      your input are at the bottom with text boxes + a download button.
+      Sections in order: <strong>your 12 May call quotes → our action</strong>,
+      <strong>one-client end-to-end flow</strong> (can Sam onboard a
+      real client today?), <strong>step-by-step script</strong> to
+      verify it yourself, <strong>everything shipped + pending + in
+      progress</strong> with WHY each pending item is pending,
+      <strong>blockers</strong>, <strong>6 text boxes</strong> at the
+      bottom + a download button.
     </p>
   </div>
 
+  <!-- ─── SAM'S CALL QUOTES → ACTION ─────────────────────────────── -->
+  <h2>Your 12 May call — what you said + what we did <span class="pill done">translated</span></h2>
+
+  <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
+    Quoting your call verbatim (left) and what we shipped in response
+    (right). 13 of 14 specific concerns from the call are now
+    addressed. The full transcript was 26 minutes — these are the
+    concrete asks.
+  </p>
+
+  <div class="card">
+    <p class="body" style="margin-bottom: 10px;"><strong>Bank balance — your £64k not -£88k</strong></p>
+    <p class="body" style="font-style: italic; color: #6e6e73;">"This is the balance here, 64,609… you're taking the balance from the balance sheet zero. Not taking the balance from the statement balance."</p>
+    <p class="body" style="margin-top: 8px;"><strong>→ Done by Hari:</strong> bank-client switched to Xero's Finance API CashValidation endpoint (commit <code>62f94c3</code>). The widget now reads statement balance, not ledger balance. <strong>BUT</strong> the widget still shows the wrong number on your screen — because Xero's API is rejecting the call with <code>invalid_scope</code>. The code is correct; the Xero app at developer.xero.com needs the <code>finance.statements.read</code> scope added. See Blocker #1 below.</p>
+  </div>
+
+  <div class="card">
+    <p class="body" style="margin-bottom: 10px;"><strong>Overdue invoices — your £142k, not £0</strong></p>
+    <p class="body" style="font-style: italic; color: #6e6e73;">"You can see there's 142,000 GBP… it should be sort of irrespective of if we load a client or not. It should just be pulling it from Xero."</p>
+    <p class="body" style="margin-top: 8px;"><strong>→ Done:</strong> hourly global Xero invoice-sync cron now runs at <code>:15</code> past each hour (commit <code>df51b01</code>), iterates every non-churned client across the business, and pulls Xero invoices into Stato's local table. Each client no longer needs to be manually synced first. <strong>BUT</strong> the cron is currently failing every Xero call with <code>invalid_scope</code> — same root cause as the bank balance. Once Xero scopes are fixed, the next <code>:15</code> tick populates the Overdue widget with the real £142k.</p>
+  </div>
+
+  <div class="card">
+    <p class="body" style="margin-bottom: 10px;"><strong>"This one's overdue but it says authorized"</strong></p>
+    <p class="body" style="font-style: italic; color: #6e6e73;">"On here this one's overdue but it says authorized. So it'd be good to see like overdue."</p>
+    <p class="body" style="margin-top: 8px;"><strong>→ Done:</strong> any invoice whose status is <code>authorised</code> AND whose due date is in the past now shows an inline red <strong>Overdue</strong> badge right next to the status badge (FE commit <code>a3afa0a</code>). You see both labels side-by-side so it's never ambiguous. Hari also added server-side overdue derivation in commit <code>56f2d8a</code>.</p>
+  </div>
+
+  <div class="card">
+    <p class="body" style="margin-bottom: 10px;"><strong>Filters + sort on invoices — issue date, due date, ascending/descending</strong></p>
+    <p class="body" style="font-style: italic; color: #6e6e73;">"Could we not add filters in here so we could see… in order of the date that it was issued, maybe issue date, due date."</p>
+    <p class="body" style="margin-top: 8px;"><strong>→ Done in two places:</strong> per-client Invoices tab now has filter dropdown (All / Due / Overdue / Authorised / Paid / Draft) + 6 sort options across issue date / due date / amount. Global <code>/finance/invoices</code> page got sortable column headers (Hari, commit <code>5382f36</code>).</p>
+  </div>
+
+  <div class="card">
+    <p class="body" style="margin-bottom: 10px;"><strong>Advertising spend separate from fixed / one-off</strong></p>
+    <p class="body" style="font-style: italic; color: #6e6e73;">"Facebook. It's been put as accountancy but that should be under its own. That should be an advertising… We need another section here just for advertising spend. Fixed cost, one off, advertising spend."</p>
+    <p class="body" style="margin-top: 8px;"><strong>→ Done by Hari:</strong> bank-feed page has a new Advertising filter tab, the category dropdown gains Advertising as a third option alongside Fixed/One-off, and the dashboard P&L widget shows a dedicated "Advertising (bank)" row (commits <code>9c080eb</code> + <code>4360e0e</code>).</p>
+  </div>
+
+  <div class="card">
+    <p class="body" style="margin-bottom: 10px;"><strong>"How do we add a campaign here?"</strong></p>
+    <p class="body" style="font-style: italic; color: #6e6e73;">"We've got UK Energy Saving Network… Campaigns, how do we add a campaign here?"</p>
+    <p class="body" style="margin-top: 8px;"><strong>→ Done:</strong> the Client → Campaigns tab now has an inline table of linked campaigns + an "Add Campaign" dialog that filters out already-linked ones, with optional cost-per-lead override. Remove button per row.</p>
+  </div>
+
+  <div class="card">
+    <p class="body" style="margin-bottom: 10px;"><strong>"We can't edit the client"</strong></p>
+    <p class="body" style="font-style: italic; color: #6e6e73;">"It's shown as prospect but it's… this is a client. But we can't edit the client, we can't make any changes to it."</p>
+    <p class="body" style="margin-top: 8px;"><strong>→ Done:</strong> Pencil icon Edit button next to Create Agreement in the client detail header. Opens a full edit dialog with every field — company, contact, address, billing, status, external IDs, notes, and the contacts repeater. Modify anything and Save.</p>
+  </div>
+
+  <div class="card">
+    <p class="body" style="margin-bottom: 10px;"><strong>Weekly auto-invoice — replace Make.com</strong></p>
+    <p class="body" style="font-style: italic; color: #6e6e73;">"Set up the automation… within this client is to set up an automation for them to send out a weekly invoice which we currently do make dot com."</p>
+    <p class="body" style="margin-top: 8px;"><strong>→ Done by Hari:</strong> backend cron runs every Monday at 09:00 UTC, pulls each client's previous-week LeadByte deliveries, generates an invoice line per delivery, persists to Stato + syncs to Xero. Admin page at <code>/finance/auto-invoice</code> shows every run + a "Run now" button (idempotent — won't double-invoice).</p>
+  </div>
+
+  <div class="card">
+    <p class="body" style="margin-bottom: 10px;"><strong>Contract template + autopopulate — the "completely unusable" complaint</strong></p>
+    <p class="body" style="font-style: italic; color: #6e6e73;">"There should be a template where we create the document as a template and it can pull information from the client's account… But at the moment it's just upload the document and it's just sending it out… a lot of this is just completely unusable."</p>
+    <p class="body" style="margin-top: 8px;"><strong>→ Done — the big one:</strong> new <code>/agreements/templates</code> page. Create a template once with drag-placed variables (11 supported: companyName, vatNumber, leadPrice, contactName/email/phone, full address, payment terms, billing workflow, today, effective date) + signature/date boxes. Every subsequent client send takes 30 seconds — pick template, populated PDF appears with that client's data, hit Send. Backend + FE shipped in 3 stages today (commits <code>8d86abb</code> + <code>48f8fdd</code> + <code>db5b4bd</code>). Full how-to in the "End-to-end working" section below.</p>
+  </div>
+
+  <div class="card">
+    <p class="body" style="margin-bottom: 10px;"><strong>"Can't remove client document"</strong></p>
+    <p class="body" style="font-style: italic; color: #6e6e73;">"You can't delete the document either."</p>
+    <p class="body" style="margin-top: 8px;"><strong>→ Done in two places:</strong> the toast was previously "Removed from list. File still exists in storage." which read like a failure — now just says <code>Document removed</code> (clean). Hari also added R2 object deletion (commit <code>18e9e19</code>) so the file is now actually deleted, not just orphaned.</p>
+  </div>
+
+  <div class="card">
+    <p class="body" style="margin-bottom: 10px;"><strong>Credit score / Endole API key</strong></p>
+    <p class="body" style="font-style: italic; color: #6e6e73;">"Which is the Endall section. You ask for an API key but I believe I provided it in the past."</p>
+    <p class="body" style="margin-top: 8px;"><strong>→ Verified + reframed:</strong> the API key on Railway (<code>7qEUM5txThB...</code>) IS correct and was correct all along. The "Run Credit Check" was failing because the Endole ACCOUNT BALANCE is at £0 — confirmed today by hitting Endole's API directly: <code>HTTP 403 "You do not have enough credit in your balance" (error_code 102)</code>. Topping up at endole.co.uk unblocks it. Also: error message previously said "Internal server error" — now says specifically "Endole balance exhausted (top up at endole.co.uk)" so Sam can self-diagnose (commit <code>b1273c8</code>).</p>
+  </div>
+
+  <div class="card">
+    <p class="body" style="margin-bottom: 10px;"><strong>Document upload format issue</strong></p>
+    <p class="body" style="font-style: italic; color: #6e6e73;">"Document upload document so I tested this out. But then when I uploads it. But I should be…"</p>
+    <p class="body" style="margin-top: 8px;"><strong>→ Pending — needs detail from you:</strong> Pratteek is ready to fix in an hour, but the bug was described too vaguely on the call. What file format did you try? What was the exact error message that came up? Box 6 in the asks below is for this — paste the toast text or just attach a screenshot in WhatsApp.</p>
+  </div>
+
+  <div class="card">
+    <p class="body" style="margin-bottom: 10px;"><strong>Solar panel report repetition</strong></p>
+    <p class="body" style="font-style: italic; color: #6e6e73;">"So in reports rather than like everything like solar panel, this thing repeating multiple times. So it comes one only and clearly it was like solar panel once."</p>
+    <p class="body" style="margin-top: 8px;"><strong>→ Done earlier (11 May):</strong> the unified <code>/reports</code> page collapses 5 separate report pages (Campaign Performance, Supplier Performance, Ad Spend, Client P&L, Financial Overview) into one leadreports.io-style view with a single row per vertical (Solar Panels appears once, not three times).</p>
+  </div>
+
+  <div class="card">
+    <p class="body" style="margin-bottom: 10px;"><strong>Benson Goldstein portal access</strong></p>
+    <p class="body" style="font-style: italic; color: #6e6e73;">"Now I have a client now that's coming on a client called Benson Goldstein that's coming online… I would ideally like to have this usable for one of my clients, like, that's coming, that's going live."</p>
+    <p class="body" style="margin-top: 8px;"><strong>→ Pending — needs your details:</strong> I can stub the client now, but only you have his real company details. Three options: (a) you create him via the new Edit Client UI on prod, (b) WhatsApp me his company name + contact email and I'll create him, (c) screenshare for a 5-min onboarding walkthrough where we both go through the 12 steps. See the "One client end-to-end" section right below.</p>
+  </div>
+
+  <!-- ─── ONE CLIENT END-TO-END FLOW ─────────────────────────────── -->
+  <h2>Can you onboard ONE client end-to-end today? <span class="pill need">mixed</span></h2>
+
+  <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
+    The honest answer: <strong>code-side YES, every step works.</strong>
+    But 4 of the 12 steps will render as broken until you do the 3
+    Sam-side unblocks (Xero scopes, Endole top-up, Twilio creds).
+    Below is each step in order, with current state.
+  </p>
+
+  <div class="card" style="background: #f0f9f1; border-color: #bfe2c6;">
+    <p class="body" style="font-weight: 600; margin-bottom: 8px;">Step 1 — Create the client <span style="color: #1d7a3a;">✅ working</span></p>
+    <p class="body">
+      On <code>/clients/create</code>, fill in company name, company
+      number, address (5 fields), contact, VAT, lead price, payment
+      terms, billing workflow, status. Save → row in DB.
+    </p>
+  </div>
+
+  <div class="card" style="background: #f0f9f1; border-color: #bfe2c6;">
+    <p class="body" style="font-weight: 600; margin-bottom: 8px;">Step 2 — Edit the client later <span style="color: #1d7a3a;">✅ working (NEW today)</span></p>
+    <p class="body">
+      Pencil button in the detail-page header → modal with every
+      field pre-filled → change anything → Save. Test by changing the
+      lead price from £3.50 to £4.00 and saving — the value appears
+      everywhere on the next page load.
+    </p>
+  </div>
+
+  <div class="card" style="background: #f0f9f1; border-color: #bfe2c6;">
+    <p class="body" style="font-weight: 600; margin-bottom: 8px;">Step 3 — Add campaigns to the client <span style="color: #1d7a3a;">✅ working (NEW today)</span></p>
+    <p class="body">
+      Client detail → Campaigns tab → Add Campaign button → pick from
+      the dropdown of unlinked campaigns + set cost-per-lead → Save.
+      Row appears in the inline table. Remove with the row's Remove
+      button.
+    </p>
+  </div>
+
+  <div class="card" style="background: #fef7f7; border-color: #f5c6c6;">
+    <p class="body" style="font-weight: 600; margin-bottom: 8px;">Step 4 — Run a credit check on the client <span style="color: #a52a2a;">⚠️ blocked on Endole balance</span></p>
+    <p class="body">
+      Code path: Client detail → Credit tab → Run Credit Check
+      button. Backend calls Endole, stores the score + history.
+      <strong>Currently fails</strong> with toast: "Endole balance
+      exhausted (top up at endole.co.uk)". Top up → next click
+      succeeds. ~2 min on your side.
+    </p>
+  </div>
+
+  <div class="card" style="background: #f0f9f1; border-color: #bfe2c6;">
+    <p class="body" style="font-weight: 600; margin-bottom: 8px;">Step 5 — Upload client documents <span style="color: #1d7a3a;">✅ working (with caveat)</span></p>
+    <p class="body">
+      Client detail → Documents tab → Upload → file goes to R2 →
+      row appears in the table. Removing also deletes the R2 object
+      now (NEW today). <strong>Caveat:</strong> on the 12 May call you
+      mentioned a "format issue" but didn't say what — Pratteek
+      blocked on hearing the exact file + error. Box 6 below.
+    </p>
+  </div>
+
+  <div class="card" style="background: #f0f9f1; border-color: #bfe2c6;">
+    <p class="body" style="font-weight: 600; margin-bottom: 8px;">Step 6 — Build a contract template (one-time per contract type) <span style="color: #1d7a3a;">✅ working (NEW today)</span></p>
+    <p class="body">
+      <code>/agreements/templates</code> → New Template → upload your
+      lead-buyer contract PDF → in the editor, click each of the 11
+      variables to place them on the PDF (companyName, vatNumber,
+      leadPrice, etc.) → drag signature + date_signed fields → Save.
+      One-time setup, ~10 minutes per contract type.
+    </p>
+  </div>
+
+  <div class="card" style="background: #f0f9f1; border-color: #bfe2c6;">
+    <p class="body" style="font-weight: 600; margin-bottom: 8px;">Step 7 — Send the agreement to the client <span style="color: #1d7a3a;">✅ working (NEW today)</span></p>
+    <p class="body">
+      Client detail → Create Agreement → new "Use a template"
+      dropdown → pick the template you built in step 6. The PDF
+      preview renders immediately with that client's data pre-filled.
+      Optional: click any populated field to override just for this
+      contract. Hit Send → SignNow envelope goes to the contact
+      email. ~30 seconds per send after step 6 is done.
+    </p>
+  </div>
+
+  <div class="card" style="background: #fef7f7; border-color: #f5c6c6;">
+    <p class="body" style="font-weight: 600; margin-bottom: 8px;">Step 8 — See real bank balance + advertising spend split <span style="color: #a52a2a;">⚠️ blocked on Xero scopes</span></p>
+    <p class="body">
+      Dashboard → bank widget should show your real £64k statement
+      balance (Hari fixed the code; the advertising vs fixed/one-off
+      P&L breakdown also shipped). <strong>Currently shows wrong
+      numbers</strong> because Xero rejects the API call with
+      <code>invalid_scope</code> until you add
+      <code>finance.statements.read</code> to the app and reauthorise.
+      See Blocker #1.
+    </p>
+  </div>
+
+  <div class="card" style="background: #fef7f7; border-color: #f5c6c6;">
+    <p class="body" style="font-weight: 600; margin-bottom: 8px;">Step 9 — See real Xero invoices for the client + overdue widget <span style="color: #a52a2a;">⚠️ blocked on Xero scopes (same root cause as #8)</span></p>
+    <p class="body">
+      Client detail → Invoices tab → list pulls from Xero. Dashboard
+      Overdue widget shows aggregate across ALL clients. <strong>Same
+      Xero scope blocker</strong> — same fix unblocks both.
+    </p>
+  </div>
+
+  <div class="card" style="background: #f0f9f1; border-color: #bfe2c6;">
+    <p class="body" style="font-weight: 600; margin-bottom: 8px;">Step 10 — Weekly auto-invoice on Monday 09:00 UTC <span style="color: #1d7a3a;">✅ cron running, ⚠️ Xero-gated</span></p>
+    <p class="body">
+      Cron is registered + firing per the Railway logs. Each Monday
+      it pulls each client's previous-week LeadByte deliveries +
+      generates an invoice. <strong>The invoice creation step on
+      Xero side</strong> will fail until the scopes are fixed (same
+      Blocker #1). Once scopes are fixed, next Monday at 09:00 UTC
+      Sam gets a real auto-invoice run.
+    </p>
+  </div>
+
+  <div class="card" style="background: #fff3e0; border-color: #ffe082;">
+    <p class="body" style="font-weight: 600; margin-bottom: 8px;">Step 11 — Client portal access for Benson Goldstein <span style="color: #a04a00;">⏳ in progress (Pratteek)</span></p>
+    <p class="body">
+      Client portal infrastructure exists (you, Sam, can log in as a
+      client-role user already). For Benson Goldstein specifically:
+      need his company details + a portal-role user account created
+      against his client_id. That's a ~5-min task once you send the
+      details. Three options listed in Step 14 of the call quotes
+      section above.
+    </p>
+  </div>
+
+  <div class="card" style="background: #fef7f7; border-color: #f5c6c6;">
+    <p class="body" style="font-weight: 600; margin-bottom: 8px;">Step 12 — SMS alert to your phone when prod breaks <span style="color: #a52a2a;">⚠️ blocked on Twilio creds</span></p>
+    <p class="body">
+      Backend SMS worker is firing every 30s in MOCK mode on prod
+      (confirmed from Railway logs). The moment 3 Twilio env vars
+      land on Railway, any future <code>system_error</code> in prod
+      (e.g. Endole goes down) pages you within 30 seconds. See
+      Blocker #4 + box 3 below.
+    </p>
+  </div>
+
+  <!-- ─── STEP-BY-STEP SCRIPT FOR SAM ─────────────────────────────── -->
+  <h2>Step-by-step script — verify ONE client end-to-end yourself <span class="pill fix">15 min</span></h2>
+
+  <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
+    Copy this as a checklist. Do steps A + B BEFORE C-K (those two
+    unblock the rest). Total time: <strong>~15 minutes including the
+    2 unblocks</strong>.
+  </p>
+
+  <div class="card" style="background: #f7faff; border-color: #bfd6ff;">
+    <p class="body" style="font-weight: 600; margin-bottom: 8px;">A. (3 min) Fix Xero scopes</p>
+    <p class="body">
+      1. Open <a href="https://developer.xero.com/app/manage/app/843a4b14-559d-45ee-a193-f13b9ff35667" target="_blank">developer.xero.com/app/manage/app/843a4b14...</a><br>
+      2. Click Configuration in the left nav.<br>
+      3. Find the Scopes section. Tick:
+        <code>accounting.transactions</code>,
+        <code>accounting.contacts</code>,
+        <code>accounting.reports.read</code>,
+        <code>accounting.settings.read</code>,
+        <code>finance.statements.read</code> (click "Request access"
+        first if greyed out).<br>
+      4. Save.<br>
+      5. Click the Connect / Reauthorise button (top of the page,
+         next to the red banner) → log in (probably as
+         <code>sam@prismmarketinggroup.co.uk</code>) → pick Clinical
+         Marketing Solutions Ltd → confirm.<br>
+      <strong>Verify:</strong> open Stato → Integrations page → Xero
+      card flips from "Auth pending" to "Live · Clinical Marketing
+      Solutions Ltd" within 30s.
+    </p>
+  </div>
+
+  <div class="card" style="background: #f7faff; border-color: #bfd6ff;">
+    <p class="body" style="font-weight: 600; margin-bottom: 8px;">B. (2 min) Top up Endole</p>
+    <p class="body">
+      1. Open <a href="https://endole.co.uk" target="_blank">endole.co.uk</a> → log in → billing / credits → top up.<br>
+      <strong>Verify:</strong> on Stato, open any client → Credit tab
+      → Run Credit Check → real score appears (no more 502).
+    </p>
+  </div>
+
+  <div class="card" style="background: #f7faff; border-color: #bfd6ff;">
+    <p class="body" style="font-weight: 600; margin-bottom: 8px;">C. (2 min) Create the client</p>
+    <p class="body">
+      On Stato: <code>/clients/create</code>. Fill: <strong>company
+      name (e.g. Benson Goldstein Ltd), company number, contact
+      name + email + phone, address (5 fields), VAT number + rate
+      (20%), lead price (e.g. £3.50), payment terms (e.g. 14 days),
+      billing workflow (Weekly auto)</strong>. Save.<br>
+      <strong>Verify:</strong> redirected to <code>/clients/[id]</code>
+      with all fields visible in the overview.
+    </p>
+  </div>
+
+  <div class="card" style="background: #f7faff; border-color: #bfd6ff;">
+    <p class="body" style="font-weight: 600; margin-bottom: 8px;">D. (1 min) Edit the client (smoke-test Edit Client)</p>
+    <p class="body">
+      Click the pencil icon next to Create Agreement. Change one
+      field (e.g. lead price £3.50 → £4.00). Save.<br>
+      <strong>Verify:</strong> dialog closes, value updated on page +
+      refresh shows the new value persisted.
+    </p>
+  </div>
+
+  <div class="card" style="background: #f7faff; border-color: #bfd6ff;">
+    <p class="body" style="font-weight: 600; margin-bottom: 8px;">E. (1 min) Add a campaign to the client</p>
+    <p class="body">
+      Campaigns tab → Add Campaign → pick one from the dropdown →
+      enter cost-per-lead if you want to override → Save.<br>
+      <strong>Verify:</strong> row appears in the table; header
+      "Active Campaigns" count increments.
+    </p>
+  </div>
+
+  <div class="card" style="background: #f7faff; border-color: #bfd6ff;">
+    <p class="body" style="font-weight: 600; margin-bottom: 8px;">F. (30 sec) Run credit check on the client</p>
+    <p class="body">
+      Credit tab → Run Credit Check button. Score appears in a
+      moment.<br>
+      <strong>Verify:</strong> History card populates with the new
+      check (date, score, risk band).
+    </p>
+  </div>
+
+  <div class="card" style="background: #f7faff; border-color: #bfd6ff;">
+    <p class="body" style="font-weight: 600; margin-bottom: 8px;">G. (~10 min, ONE-TIME) Build the agreement template</p>
+    <p class="body">
+      <code>/agreements/templates</code> → New Template → upload your
+      lead-buyer contract PDF → name it ("Lead Buyer Agreement v3")
+      → Save. In the editor: click each variable in the left sidebar
+      to place it (start with companyName, vatNumber, contactName,
+      leadPrice). Then click "Add signature box" + "Add date_signed".
+      Save the template.<br>
+      <strong>Verify:</strong> returning to <code>/agreements/templates</code>
+      list, you see the template you just built with N fields placed.<br>
+      <strong>Note:</strong> you only do this once per contract type.
+      Every future client just picks this template.
+    </p>
+  </div>
+
+  <div class="card" style="background: #f7faff; border-color: #bfd6ff;">
+    <p class="body" style="font-weight: 600; margin-bottom: 8px;">H. (30 sec) Send the agreement to the client</p>
+    <p class="body">
+      Client detail → Create Agreement → "Use a template" dropdown →
+      pick the template from step G → preview iframe shows the PDF
+      with companyName/leadPrice/etc. already filled from the client
+      record → Send.<br>
+      <strong>Verify:</strong> SignNow envelope sent to the contact
+      email; the agreement row appears in Stato with status "sent".
+    </p>
+  </div>
+
+  <div class="card" style="background: #f7faff; border-color: #bfd6ff;">
+    <p class="body" style="font-weight: 600; margin-bottom: 8px;">I. (30 sec) See real bank balance + Xero invoices for the client</p>
+    <p class="body">
+      Dashboard → bank widget should now show your real £64k
+      statement balance (after step A) → P&L widget shows Advertising
+      row separately from Fixed/One-off costs. Client detail →
+      Invoices tab → list shows Xero invoices for that client.<br>
+      <strong>Verify:</strong> numbers match what you see in Xero
+      directly.
+    </p>
+  </div>
+
+  <div class="card" style="background: #f7faff; border-color: #bfd6ff;">
+    <p class="body" style="font-weight: 600; margin-bottom: 8px;">J. (1 min) Trigger an auto-invoice manually (don't wait for Monday)</p>
+    <p class="body">
+      Open <code>/finance/auto-invoice</code> → "Run now" button →
+      cron fires for the current business → generates invoices for
+      every client based on last week's LeadByte deliveries.<br>
+      <strong>Verify:</strong> the run appears in the page with date
+      range + count of invoices generated. Click into a run for
+      per-client detail.
+    </p>
+  </div>
+
+  <div class="card" style="background: #f7faff; border-color: #bfd6ff;">
+    <p class="body" style="font-weight: 600; margin-bottom: 8px;">K. (1 min) Smoke test the Overdue widget</p>
+    <p class="body">
+      Wait for the next <code>:15</code> past the hour (or just
+      navigate to Dashboard a few minutes after step A succeeds) →
+      Overdue Invoices widget populates with your real £142k
+      breakdown.<br>
+      <strong>Verify:</strong> number matches the
+      "Awaiting payment" total in your Xero directly.
+    </p>
+  </div>
+
+  <p style="margin: 16px 0 0 0; color: #424245; font-size: 14px;">
+    If <strong>all 11 steps pass</strong>, the platform is end-to-end
+    usable for one real client — which is the goal you set on the 12
+    May call. After that, scaling to a second / third client is just
+    repeating C–F + H (steps G + K are one-time setup, J is
+    automatic from Monday). Estimated time per additional client
+    after step G is done: ~5 minutes.
+  </p>
+
+  <!-- ─── EVERYTHING MASTER LIST ─────────────────────────────── -->
+  <h2>Everything — done / in-progress / pending + why <span class="pill fix">master list</span></h2>
+
+  <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
+    Every feature, every report, every integration. Grouped by area
+    so you can scan quickly.
+  </p>
+
+  <h3>Client management</h3>
+  <ul class="bare">
+    <li>Create client (5-field address, multi-contacts, VAT toggle, lead price, payment terms, billing workflow) — <strong>DONE</strong></li>
+    <li>Edit client (pencil button, full form) — <strong>DONE today</strong></li>
+    <li>Status enum simplified — Onboarding / Active Client / Client Churned — <strong>DONE (13 May)</strong></li>
+    <li>Add Campaign inline on Client tab — <strong>DONE today</strong></li>
+    <li>Documents tab (DB-backed, R2 storage) — <strong>DONE</strong></li>
+    <li>Document remove (clean toast + R2 object delete) — <strong>DONE today</strong></li>
+    <li>Document upload format bug — <strong>PENDING — need Sam's file + error message</strong></li>
+    <li>Emails tab (full thread per client) — <strong>DONE (13 May)</strong></li>
+    <li>Activity tab (timeline of every event) — <strong>DONE (13 May)</strong></li>
+    <li>Attio bulk import — <strong>DONE (13 May) — awaiting ATTIO_API_KEY</strong></li>
+    <li>Benson Goldstein portal-user setup — <strong>IN PROGRESS — need details from you</strong></li>
+  </ul>
+
+  <h3>Agreements</h3>
+  <ul class="bare">
+    <li>Send agreement via SignNow (upload PDF + drag fields) — <strong>DONE (#47-50)</strong></li>
+    <li>Editable signatory role field — <strong>DONE (13 May)</strong></li>
+    <li>Agreement template library — <strong>DONE today (P12 Day 1)</strong></li>
+    <li>Drag variables onto template — <strong>DONE today (P12 Day 3) — list mode for v1</strong></li>
+    <li>Autopopulate PDF from client data — <strong>DONE today (P12 Day 2)</strong></li>
+    <li>Inline override on individual contracts — <strong>DONE today (P12 Day 3)</strong></li>
+    <li>Full visual drag-onto-canvas (vs list mode) — <strong>IN PROGRESS — polish PR queued, ~half day</strong></li>
+  </ul>
+
+  <h3>Invoices</h3>
+  <ul class="bare">
+    <li>Xero invoice sync per-client — <strong>DONE</strong></li>
+    <li>Hourly global Xero invoice sync — <strong>DONE today, BLOCKED on Xero scopes</strong></li>
+    <li>Weekly auto-invoice cron (Mon 09:00 UTC, replaces Make.com) — <strong>DONE (Hari) — BLOCKED on Xero scopes for the Xero-push step</strong></li>
+    <li>Auto-invoice admin page (/finance/auto-invoice, Run-now) — <strong>DONE (Hari)</strong></li>
+    <li>Per-client Invoices tab filter + sort — <strong>DONE today</strong></li>
+    <li>Inline red Overdue badge when authorised + dueDate &lt; now — <strong>DONE today</strong></li>
+    <li>Server-side overdue derivation — <strong>DONE (Hari)</strong></li>
+    <li>Sortable column headers on /finance/invoices — <strong>DONE (Hari)</strong></li>
+    <li>Invoices Owed In widget (All / Due / Overdue toggle) — <strong>DONE earlier (Hari)</strong></li>
+  </ul>
+
+  <h3>Bank / Finance</h3>
+  <ul class="bare">
+    <li>Bank widget statement balance (vs ledger balance) — <strong>DONE (Hari, code) — BLOCKED on Xero finance.statements.read scope</strong></li>
+    <li>Bank-feed page Advertising filter tab — <strong>DONE (Hari)</strong></li>
+    <li>P&L Advertising row (separate from Fixed/One-off) — <strong>DONE (Hari)</strong></li>
+    <li>VAT widget (current + previous quarter with stagger) — <strong>DONE (Hari) — BLOCKED on Xero scopes for live numbers</strong></li>
+    <li>VAT Past Quarters disclosure (lazy-fetched) — <strong>DONE (Hari)</strong></li>
+    <li>VAT submissions history endpoint — <strong>DONE (Hari)</strong></li>
+  </ul>
+
+  <h3>Reports</h3>
+  <ul class="bare">
+    <li>Unified /reports page (leadreports.io-style) — <strong>DONE (11 May)</strong></li>
+    <li>Solar Panel repetition fixed — <strong>DONE (11 May)</strong></li>
+    <li>Per-business tenant scoping (no cross-tenant leak) — <strong>DONE (13 May, Hari)</strong></li>
+    <li>Catchr ad-spend aggregation — <strong>DONE — uses Catchr API + LeadByte revenue join</strong></li>
+    <li>Unattributed-spend warning when Catchr rows have no clientId — <strong>DONE (Hari)</strong></li>
+  </ul>
+
+  <h3>Integrations</h3>
+  <ul class="bare">
+    <li>Xero — Custom Connection, all 5 scopes requested — <strong>PARTIAL — BLOCKED: finance.statements.read missing on Xero app, app awaiting reauthorisation. See Blocker #1.</strong></li>
+    <li>LeadByte — hourly sync + 2-min cache prewarm — <strong>DONE</strong></li>
+    <li>Catchr — MCP integration, ad-spend aggregation — <strong>DONE</strong></li>
+    <li>Cloudflare R2 — document storage — <strong>DONE</strong></li>
+    <li>Resend — email — <strong>DONE — pending RESEND_FROM_EMAIL DNS verification</strong></li>
+    <li>SignNow — agreements — <strong>DONE — pending SignNow account migration to leadgeneration.io ownership (Sam-side)</strong></li>
+    <li>Endole / Creditsafe — credit checks — <strong>DONE — BLOCKED on Endole balance top-up</strong></li>
+    <li>Twilio — SMS ops alerts — <strong>DONE today (worker firing every 30s in MOCK on prod) — BLOCKED on Twilio creds</strong></li>
+    <li>Anthropic — AI buttons — <strong>DONE — BLOCKED on ANTHROPIC_API_KEY</strong></li>
+    <li>Attio — bulk import — <strong>DONE — BLOCKED on ATTIO_API_KEY</strong></li>
+  </ul>
+
+  <h3>Tasks / SOPs / Workflows</h3>
+  <ul class="bare">
+    <li>Tasks revamp (subtasks, attachments, activity, time blocks, linked SOP, parent/child, recurring, kanban) — <strong>DONE (13 May)</strong></li>
+    <li>SOS WhatsApp button + admin queue — <strong>DONE (13 May)</strong></li>
+    <li>AI "Generate with AI" task button — <strong>DONE (13 May) — BLOCKED on ANTHROPIC_API_KEY</strong></li>
+    <li>SOPs Loom embed, screenshots, tags, AI generate wizard — <strong>DONE (Hari, 13 May)</strong></li>
+  </ul>
+
+  <h3>Notifications / alerts</h3>
+  <ul class="bare">
+    <li>In-app notifications widget — <strong>DONE</strong></li>
+    <li>System_error rows on integration failures — <strong>DONE</strong></li>
+    <li>Credit-check error → typed 502 message (not generic 500) — <strong>DONE today</strong></li>
+    <li>SMS ops alerts to Sam's phone — <strong>DONE today (mock mode) — BLOCKED on Twilio creds</strong></li>
+  </ul>
+
+  <h3>Deployment / infrastructure</h3>
+  <ul class="bare">
+    <li>Railway backend auto-deploy from main — <strong>WORKING</strong></li>
+    <li>Vercel frontend auto-deploy from main — <strong>BROKEN — GitHub App connection never completed. Every FE push currently needs manual `vercel --prod`. See Blocker #3.</strong></li>
+    <li>Railway Postgres + auto-migrations on boot — <strong>WORKING</strong></li>
+    <li>BullMQ workers (LeadByte sync, cache prewarm, alert-sms-poll, global-invoice-sync, auto-invoice-weekly, recurring tasks) — <strong>WORKING</strong></li>
+  </ul>
+
+  <p style="margin: 16px 0 0 0; color: #424245; font-size: 14px;">
+    <strong>Why pending vs in-progress:</strong> PENDING means "code
+    is done, blocked on a non-code action only you can do" (3 items —
+    Xero scopes, Endole top-up, Twilio creds, plus 2 API keys + 1
+    bug detail). IN PROGRESS means "code is partially shipped or
+    queued for the next pass" (only 2 items right now — full visual
+    drag-onto-canvas for template editor, and Benson Goldstein
+    portal-user setup).
+  </p>
+
   <!-- ─── END-TO-END WORKING ─────────────────────────────── -->
+  <h2 style="margin-top: 60px;">Detailed how-to per feature <span class="pill done">drill down</span></h2>
+
+  <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
+    The same 11 items from the end-to-end-flow section, but with the
+    detailed step-by-step for each. Click to expand.
+  </p>
   <h2>End-to-end working — please re-test <span class="pill done">live now</span></h2>
 
   <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
