@@ -1021,9 +1021,10 @@
   <h2>What's blocked — only you can fix <span class="pill block">your action</span></h2>
 
   <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
-    Five things in the UI are currently rendering as "broken" but the
-    code is correct — they're all blocked by config/auth I can't touch
-    from my side. Each is a few minutes of your time.
+    Six things in the UI / signature flow are currently rendering as
+    "broken" (or "sample-watermarked") but the code is correct — they're
+    all blocked by config/auth I can't touch from my side. Each is a
+    few minutes of your time.
   </p>
 
   <div class="blocker-card">
@@ -1163,14 +1164,41 @@
     </p>
   </div>
 
+  <div class="blocker-card">
+    <div class="hdr">6. SignNow prod migration — agreements still go out with "Sample" watermark</div>
+    <p class="body">
+      SignNow is live, but it still authenticates with my development
+      API app (created on <code>yash.c@…</code>). That means every
+      envelope sent to a client is in <strong>Development mode</strong>:
+      PDFs carry a "Sample" watermark, and the account is capped at
+      ~250 invites total before it locks. Legal sender of record is
+      currently Yash, not leadgeneration.io — blocks the solicitor
+      agreements.
+    </p>
+    <p class="body" style="margin-top: 8px;"><strong>What to do, in order:</strong></p>
+    <ol style="margin: 8px 0 0 0; padding-left: 20px; font-size: 13.5px; color: #424245;">
+      <li>Login to your SignNow → <code>&lt;/&gt;</code> API dashboard → Apps and Keys → <strong>Add Application</strong> named "Stato Production".</li>
+      <li>Upgrade SignNow to Business plan ($20–50/mo) so the "Go Live" button becomes available.</li>
+      <li>Click <strong>Go Live</strong> — airSlate approval is ~1 business day.</li>
+      <li>Set webhook URL <code>https://sato-backend-production.up.railway.app/api/v1/webhooks/signnow</code>, all signing events, HMAC secret.</li>
+      <li>Send me 5 values via 1Password / Signal (NOT email): <code>SIGNNOW_CLIENT_ID</code>, <code>SIGNNOW_CLIENT_SECRET</code>, <code>SIGNNOW_USERNAME</code>, <code>SIGNNOW_PASSWORD</code>, <code>SIGNNOW_WEBHOOK_SECRET</code>.</li>
+    </ol>
+    <p class="body" style="margin-top: 10px; font-size: 13px; color: #6e6e73;">
+      ~30 min on your side + 1 business day for the Go Live approval.
+      Box 6 below has a free-text spot to confirm timing.
+    </p>
+  </div>
+
   <!-- ─── ASKS ─────────────────────────────── -->
   <h2>What I need from you <span class="pill need">your input</span></h2>
 
   <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
-    Six text boxes below — answer the ones you can, leave the rest
-    blank, hit Download. Auto-saves as you type so closing the tab
-    won't lose anything. Send the <code>.txt</code> file back over
-    WhatsApp.
+    Seventeen text boxes below — split into <strong>high-priority
+    (1–8)</strong> that unblock features shipped this week, then
+    <strong>carry-over (9–17)</strong> that are still open from earlier
+    asks. Answer the ones you can, leave the rest blank, hit Download.
+    Auto-saves as you type so closing the tab won't lose anything. Send
+    the <code>.txt</code> file back over WhatsApp.
   </p>
 
   <div id="ask-cards"></div>
@@ -1186,7 +1214,18 @@
         <li>Twilio creds — paste here or "set up an account first"</li>
         <li>Anthropic + Attio API keys</li>
         <li>Vercel GitHub App — OK for me to re-do the setup?</li>
+        <li>SignNow prod migration — Business plan + 5 env vars timing?</li>
         <li>Doc-upload bug from the 12 May call — what file did you try, what error came up?</li>
+        <li>Benson Goldstein — 4 fields (company name, number, primary contact name + email)</li>
+        <li>Creative-review sign-off — reviewer + asset categories?</li>
+        <li>Tomic Zero managed-client data — 5 fields</li>
+        <li>Solicitor firm details — 4 fields</li>
+        <li>LeadByte → Stato client mapping CSV</li>
+        <li>Resend DNS on GoDaddy — 3 TXT records — status?</li>
+        <li>Catchr re-auth for 6 Google Ads accounts — done?</li>
+        <li>TikTok field IDs — Catchr support ticket?</li>
+        <li>Postgres-W3n2 orphan service on Railway — delete?</li>
+        <li>GoDaddy domain CNAMEs (app./api./portal.) — ready?</li>
       </ol>
     </div>
   </noscript>
@@ -1303,6 +1342,13 @@
       placeholder: 'e.g. "yes, finish it" / "explain what bump-yash-role means first" / "let me do it"',
     },
     {
+      id: 'signnow-migration',
+      title: 'SignNow prod migration — Business plan + 5 env vars timing',
+      why: 'Every signature envelope currently goes out with a "Sample" watermark on the PDF + 250-invite cap — because SignNow still authenticates with my dev API app. To migrate to leadgeneration.io ownership: register "Stato Production" in your SignNow API dashboard, upgrade to Business plan, click Go Live (~1 business day approval), set webhook to https://sato-backend-production.up.railway.app/api/v1/webhooks/signnow with HMAC secret, then send me CLIENT_ID, CLIENT_SECRET, USERNAME, PASSWORD, WEBHOOK_SECRET via 1Password/Signal. Blocks the solicitor agreements. Confirm here when you start so I can prep Railway env vars to land the moment the creds arrive.',
+      effort: '~30 min + 1 day approval',
+      placeholder: 'e.g. "Stato Production app submitted today — should approve by Thurs" / "need help with the webhook step" / "let\'s do it on a 15-min call"',
+    },
+    {
       id: 'doc-upload-bug',
       title: 'Doc-upload bug from the 12 May call — exact file + error?',
       why: 'You mentioned doc upload had a format issue but didn\'t say which format or what error. Pratteek can fix it in an hour once we know: (1) the exact file you tried to upload (just the file extension and rough size is enough, e.g. "20MB .docx"), and (2) the exact error message that came up (paste the toast text or screenshot).',
@@ -1315,6 +1361,69 @@
       why: 'On the 12 May call you said Benson Goldstein was "coming online" and you wanted Stato usable for him by month-end. Yash will create the client row + the portal-role user account against his client_id the moment you paste 4 fields here: (1) company name, (2) company number (Companies House), (3) primary contact name, (4) primary contact email. ~5 min on Yash\'s side once received. After that Benson can log in to the client portal and you can take him through the full onboarding flow.',
       effort: '~2 min',
       placeholder: 'company name: Benson Goldstein Ltd\ncompany number: 12345678\ncontact name: ...\ncontact email: ...',
+    },
+    {
+      id: 'creative-review',
+      title: 'Creative-review sign-off — reviewer + asset categories',
+      why: 'For the car-financial-claims solicitor compliance flow (yashc-0101.github.io/stato-client-portal/2026-05-13-stato-status-update.html — bottom of that page) I need 2 things to start the 3-day build: (1) who from your side reviews ad assets (single reviewer / multi-reviewer committee), (2) which asset categories you want gated (image, video, copy, landing page — pick any combo). Build starts the day after you answer.',
+      effort: '~2 min',
+      placeholder: 'reviewer: me only\ncategories: image, video, copy',
+    },
+    {
+      id: 'tomic-zero-data',
+      title: 'Tomic Zero managed-client data — 5 fields to unblock A go-live',
+      why: 'Tomic Zero is onboarded as a managed client 48hrs after I receive these 5 fields: (1) company name + company number, (2) primary contact name + email, (3) LeadByte campaign IDs for them, (4) their Xero contact ID if they already exist there, (5) a copy of the signed agreement (or "no agreement yet — use generic template").',
+      effort: '~5 min',
+      placeholder: 'company: ... (number: ...)\ncontact: ... <...@...>\nLeadByte campaign IDs: ...\nXero contact ID: ...\nagreement: ...',
+    },
+    {
+      id: 'solicitor-firm-details',
+      title: 'Solicitor firm details — 4 fields to unblock the creative-review build',
+      why: 'The car-financial-claims solicitor needs ad-asset approval with audit trail (IP + timestamp). To build the right flow I need: (1) firm name, (2) reviewer email(s), (3) asset categories you want gated (image / video / copy / landing page), (4) SLA expectation (24h / 48h / next business day). Overlaps with the creative-review ask above — fill that one and this is half-done.',
+      effort: '~3 min',
+      placeholder: 'firm: ...\nreviewer email(s): ...\ncategories: ...\nSLA: ...',
+    },
+    {
+      id: 'leadbyte-mapping-csv',
+      title: 'LeadByte → Stato client mapping CSV',
+      why: '/reports/campaign currently shows "Pending mapping" warnings on rows where a LeadByte buyer ID doesn\'t match a Stato client. Drop a CSV here (or just paste the lines) of LeadByte_buyer_id → Stato_client_name and the warning disappears. ~15 min on your side, one-time.',
+      effort: '~15 min',
+      placeholder: 'buyer_123 → Acme Ltd\nbuyer_456 → Benson Goldstein\n...',
+    },
+    {
+      id: 'resend-dns',
+      title: 'Resend DNS on GoDaddy — 3 TXT records (still pending from April)',
+      why: 'All Stato outbound email currently shows From: onboarding@resend.dev because the leadgeneration.io domain is not DNS-verified on Resend. 3 TXT records need to land in GoDaddy DNS. In April you said your other dev would handle this; still not done as of today. Confirm here: ping him again, or drop the record values into this thread and I\'ll add them myself if you give me GoDaddy access.',
+      effort: '~5 min coordination',
+      placeholder: 'e.g. "pinged him — done by Fri" / "drop the records here, I\'ll forward to GoDaddy admin" / "give me access — let me handle it"',
+    },
+    {
+      id: 'catchr-reauth',
+      title: 'Catchr re-auth for 6 Google Ads accounts',
+      why: 'Catchr dashboard banner reads "9 of 15 accounts working" — 6 Google Ads accounts are disconnected, so their ad-spend rows don\'t populate /reports. Login to Catchr → Connections → find the 6 with red dots → click Re-authenticate on each. ~5 min total.',
+      effort: '~5 min',
+      placeholder: 'e.g. "done, all 15 green" / "logged in but don\'t see the 6 — screenshot please" / "skip, we don\'t use those any more"',
+    },
+    {
+      id: 'tiktok-field-ids',
+      title: 'TikTok field IDs — Catchr support ticket',
+      why: 'Catchr returns FIELD_NOT_KNOW for the TikTok field IDs we currently request, so TikTok ad-spend doesn\'t aggregate on /reports. Catchr support needs to confirm the correct field IDs for TikTok. Low priority — TikTok isn\'t a major channel for you — but flagging.',
+      effort: '~5 min',
+      placeholder: 'e.g. "ticket opened, ref CATCHR-1234" / "skip — not using TikTok right now" / "Yash, you raise it"',
+    },
+    {
+      id: 'postgres-orphan',
+      title: 'Postgres-W3n2 orphan service on Railway',
+      why: 'Idle Postgres service on the Railway workspace, costing ~$5/mo. Members can\'t delete (only admins). You\'re the admin — Railway dashboard → stato project → Postgres-W3n2 → Settings → Delete. Confirm here it\'s safe to delete (nothing on my side uses it).',
+      effort: '~1 min',
+      placeholder: 'e.g. "deleted" / "leave it for now" / "double-check it\'s not connected to anything first"',
+    },
+    {
+      id: 'godaddy-cnames',
+      title: 'GoDaddy domain CNAMEs — app./api./portal.leadgeneration.io',
+      why: 'Custom domains pointing at Vercel + Railway. Post-demo, but flagging now so we can do it the same week we cut over from sato-frontend.vercel.app. 3 CNAMEs to add in GoDaddy: app.leadgeneration.io → Vercel, api.leadgeneration.io → Railway, portal.leadgeneration.io → Vercel. Backend CORS is already pre-allowing these so no code change needed once DNS lands.',
+      effort: '~10 min when ready',
+      placeholder: 'e.g. "ready, give me the CNAME values" / "after demo only" / "skip for now"',
     },
   ];
 
