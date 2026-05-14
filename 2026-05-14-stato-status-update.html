@@ -262,7 +262,7 @@
   <div class="card">
     <p class="body" style="margin-bottom: 10px;"><strong>Benson Goldstein portal access</strong></p>
     <p class="body" style="font-style: italic; color: #6e6e73;">"Now I have a client now that's coming on a client called Benson Goldstein that's coming online… I would ideally like to have this usable for one of my clients, like, that's coming, that's going live."</p>
-    <p class="body" style="margin-top: 8px;"><strong>→ Pending — needs your details:</strong> I can stub the client now, but only you have his real company details. Three options: (a) you create him via the new Edit Client UI on prod, (b) WhatsApp me his company name + contact email and I'll create him, (c) screenshare for a 5-min onboarding walkthrough where we both go through the 12 steps. See the "One client end-to-end" section right below.</p>
+    <p class="body" style="margin-top: 8px;"><strong>→ Ready (Yash) — waiting on 4 fields:</strong> Yash will create the client row + portal-role user the moment you WhatsApp <strong>company name, company number, primary contact name, primary contact email</strong>. The script is drafted; ~5 min on Yash's side once the data lands. Box 7 below is dedicated to this. Alternatively: you create him via the new Edit Client UI on prod (now live as of today) — also takes ~5 min.</p>
   </div>
 
   <!-- ─── ONE CLIENT END-TO-END FLOW ─────────────────────────────── -->
@@ -383,15 +383,34 @@
     </p>
   </div>
 
-  <div class="card" style="background: #fff3e0; border-color: #ffe082;">
-    <p class="body" style="font-weight: 600; margin-bottom: 8px;">Step 11 — Client portal access for Benson Goldstein <span style="color: #a04a00;">⏳ in progress (Pratteek)</span></p>
+  <div class="card" style="background: #f0f9f1; border-color: #bfe2c6;">
+    <p class="body" style="font-weight: 600; margin-bottom: 8px;">Step 11 — Client portal access for Benson Goldstein <span style="color: #1d7a3a;">✅ code-side ready (Yash, fix shipped today)</span></p>
     <p class="body">
-      Client portal infrastructure exists (you, Sam, can log in as a
-      client-role user already). For Benson Goldstein specifically:
-      need his company details + a portal-role user account created
-      against his client_id. That's a ~5-min task once you send the
-      details. Three options listed in Step 14 of the call quotes
-      section above.
+      Client portal infrastructure exists, BUT while preparing this
+      onboarding Yash audited the code and found a real backend gap:
+      <code>POST /api/v1/users</code> with <code>role: 'client'</code>
+      was silently hardcoding <code>clientId: null</code> — meaning
+      even after creating the user, the portal would render empty
+      because there'd be no linkage to a clients row. <strong>Fixed
+      in commit <code>a02577c</code> just now</strong> — the create-
+      user endpoint now requires a valid clientId for portal users,
+      enforces tenant ownership, and rejects mismatched roles. 4 new
+      tests cover the validation. Backend is auto-deploying to
+      Railway as you read this.
+    </p>
+    <p class="body" style="margin-top: 10px;">
+      Once that deploy lands (~1-2 min), onboarding Benson is a
+      2-call sequence on Yash's side, ~5 min total:
+    </p>
+    <ol style="font-size: 13.5px; color: #424245; margin: 6px 0 0 20px;">
+      <li><code>POST /api/v1/clients</code> with company name, number, contact name + email → returns the new client_id</li>
+      <li><code>POST /api/v1/users</code> with role='client' + that client_id + portal user email + temporary password → returns the new portal user</li>
+    </ol>
+    <p class="body" style="margin-top: 10px;">
+      <strong>Send 4 fields</strong> (company name, company number,
+      primary contact name, primary contact email) via Box 7 below
+      or WhatsApp. Yash runs the 2-call script. Benson gets a portal
+      login. Done.
     </p>
   </div>
 
@@ -583,7 +602,7 @@
     <li>Emails tab (full thread per client) — <strong>DONE (13 May)</strong></li>
     <li>Activity tab (timeline of every event) — <strong>DONE (13 May)</strong></li>
     <li>Attio bulk import — <strong>DONE (13 May) — awaiting ATTIO_API_KEY</strong></li>
-    <li>Benson Goldstein portal-user setup — <strong>IN PROGRESS — need details from you</strong></li>
+    <li>Benson Goldstein portal-user setup — <strong>READY (Yash) — code-side gap (clientId-on-create) discovered + fixed in commit <code>a02577c</code> today. Send 4 fields → done in 5 min.</strong></li>
   </ul>
 
   <h3>Agreements</h3>
@@ -1235,6 +1254,13 @@
       why: 'You mentioned doc upload had a format issue but didn\'t say which format or what error. Pratteek can fix it in an hour once we know: (1) the exact file you tried to upload (just the file extension and rough size is enough, e.g. "20MB .docx"), and (2) the exact error message that came up (paste the toast text or screenshot).',
       effort: '~1 min',
       placeholder: 'e.g. "tried uploading a 8MB .docx, got toast saying ‘Upload failed: …’" — or just attach the screenshot in WhatsApp',
+    },
+    {
+      id: 'benson-goldstein-details',
+      title: 'Benson Goldstein — 4 fields and Yash creates the client + portal user',
+      why: 'On the 12 May call you said Benson Goldstein was "coming online" and you wanted Stato usable for him by month-end. Yash will create the client row + the portal-role user account against his client_id the moment you paste 4 fields here: (1) company name, (2) company number (Companies House), (3) primary contact name, (4) primary contact email. ~5 min on Yash\'s side once received. After that Benson can log in to the client portal and you can take him through the full onboarding flow.',
+      effort: '~2 min',
+      placeholder: 'company name: Benson Goldstein Ltd\ncompany number: 12345678\ncontact name: ...\ncontact email: ...',
     },
   ];
 
