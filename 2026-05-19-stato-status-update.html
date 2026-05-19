@@ -142,7 +142,7 @@
   <a class="back" href="index.html">← Back to portal</a>
 
   <h1>Stato — Status Update</h1>
-  <p class="meta">19 May 2026 · cumulative since the 17 May shipment · for Sam</p>
+  <p class="meta">19 May 2026 · covers 18 + 19 May shipments · for Sam</p>
 
   <div class="summary">
     <p>
@@ -176,7 +176,7 @@
     </p>
 
     <div class="stat-row">
-      <div class="stat"><div class="num">37+</div><div class="lbl">Commits today (both repos)</div></div>
+      <div class="stat"><div class="num">73</div><div class="lbl">Commits across 18 + 19 May (both repos)</div></div>
       <div class="stat"><div class="num">£733k</div><div class="lbl">Lifetime revenue verified vs Xero</div></div>
       <div class="stat"><div class="num">£764k</div><div class="lbl">Catchr ad-spend verified upstream</div></div>
       <div class="stat"><div class="num">12,903</div><div class="lbl">Solar leads now in UKESN's account</div></div>
@@ -192,8 +192,149 @@
     </p>
   </div>
 
-  <!-- ─── SHIPPED TODAY ─────────────────────────────── -->
-  <h2>What shipped today <span class="pill done">10 major fixes</span></h2>
+  <!-- ─── SHIPPED 18 MAY ─────────────────────────────── -->
+  <h2>Yesterday — 18 May 2026 <span class="pill done">36 commits</span></h2>
+
+  <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
+    Skipped the daily report yesterday so the 18 May work sat unseen.
+    Listing it here so today's update covers both days together. 24
+    backend commits + 12 frontend.
+  </p>
+
+  <div class="card">
+    <p class="body" style="margin-bottom: 6px;"><strong>1. Creative-review v2 — schema + buyer flow (Day 1 + Day 3)</strong></p>
+    <p class="body">
+      Built the backend half of the creative-review feature: new schema
+      rows for assets + reviews + audit trail (IP + timestamp on every
+      decision), POST/GET endpoints for upload + decision, and the
+      auto-email worker that pings the buyer the moment a new asset
+      uploads. Frontend Day 2 (portal review tab + staff section radio)
+      also landed. <strong>One day of polish (Day 4) left for the
+      audit-trail page UI</strong> — listed in "Pending our side" below.
+    </p>
+  </div>
+
+  <div class="card">
+    <p class="body" style="margin-bottom: 6px;"><strong>2. Xero hardening — 429 backoff, /Reports/BankSummary fallback, VAT stale-while-revalidate</strong></p>
+    <p class="body">
+      Three separate Xero reliability fixes that together stop the
+      Bank/VAT widgets from ever flashing "fetch failed" once they've
+      shown a number. (a) Every Xero call now retries on HTTP 429 with
+      exponential backoff honoring Xero's <code>Retry-After</code> header
+      (cap 10s). (b) When the Bank widget's primary endpoint
+      (<code>/Accounts</code>) returns all-zeros, we now fall back to
+      <code>/Reports/BankSummary</code> as a Tier-2 source. (c) VAT
+      cache TTL bumped from 15min → 60min AND we never replace
+      previously-cached data with a "fetch failed" — stale data is
+      always better than an error state.
+    </p>
+  </div>
+
+  <div class="card">
+    <p class="body" style="margin-bottom: 6px;"><strong>3. Clients bootstrap on create — auto-pull every 3rd-party tile</strong></p>
+    <p class="body">
+      The moment you create a new client in Stato, the backend now
+      auto-pulls (in parallel) from Xero (contact match + invoices),
+      LeadByte (buyer record + caps), Endole (credit score, if balance
+      OK). No more "I created the client but the tabs are empty for
+      5 minutes" — populates within ~2 seconds of save. Multi-strategy
+      lookup means the Xero auto-bind tries company-number match first,
+      then exact-name, then fuzzy.
+    </p>
+  </div>
+
+  <div class="card">
+    <p class="body" style="margin-bottom: 6px;"><strong>4. Buyer portal — real data via junction table</strong></p>
+    <p class="body">
+      The client-portal login was previously showing empty pages
+      because the query was looking for <code>campaigns.client_id</code>
+      direct — but our schema uses a <code>client_campaigns</code>
+      junction table so one campaign can be sold to multiple buyers.
+      Fixed: portal now queries through the junction, so when you log
+      in as UKESN you see Solar Panels (UK) with all 12,903 leads /
+      £49k revenue rendered.
+    </p>
+  </div>
+
+  <div class="card">
+    <p class="body" style="margin-bottom: 6px;"><strong>5. Per-source profitability widget on dashboard top</strong></p>
+    <p class="body">
+      New widget at the top of <code>/dashboard</code>: ranks each
+      Catchr ad source (Facebook / Google / TikTok / Taboola, then
+      per-account) by 90-day profitability — Revenue from leads driven
+      by that source minus Catchr spend on that source. The first
+      attempt (lower in the page) was reverted because the layout
+      didn't read clearly; the top-of-dashboard placement is what
+      shipped.
+    </p>
+  </div>
+
+  <div class="card">
+    <p class="body" style="margin-bottom: 6px;"><strong>6. Reality-checked client badges + onboarding stage</strong></p>
+    <p class="body">
+      The client list previously showed "Active Client" on rows that
+      had zero documents and zero signed agreements — purely from the
+      DB enum. Fixed: the badge now derives from real state (must have
+      at least 1 signed agreement AND at least 1 document for "Active
+      Client" to show). The onboarding stage indicator on detail pages
+      now reflects reality (which steps are actually done) rather than
+      reading the enum verbatim.
+    </p>
+  </div>
+
+  <div class="card">
+    <p class="body" style="margin-bottom: 6px;"><strong>7. Campaign triple-counting fix + traffic-source LeadByte fallback</strong></p>
+    <p class="body">
+      Two correctness fixes. (a) Campaign detail was triple-counting
+      today's leads in the YTD-empty fallback (today's number got
+      added to YTD AND to the last-30 AND to the running counter).
+      (b) When a campaign's local <code>lead_deliveries</code> table
+      is empty (e.g. brand-new campaign, first sync hasn't run yet),
+      the Traffic Sources tab now falls back to LeadByte's
+      <code>/reports/campaign</code> directly so the UI never shows
+      a misleading £0.
+    </p>
+  </div>
+
+  <div class="card">
+    <p class="body" style="margin-bottom: 6px;"><strong>8. Buyer caps + multi-buyer auto-link from LeadByte</strong></p>
+    <p class="body">
+      The campaign detail page now surfaces LeadByte's daily/weekly
+      caps per buyer (taken straight from
+      <code>/reports/buyer</code>) so you can see when a buyer is
+      maxing out their delivery allowance. Plus: when LeadByte returns
+      a buyer name that fuzzy-matches an existing Stato client, the
+      auto-link now picks the best match (was throwing on collisions
+      before).
+    </p>
+  </div>
+
+  <div class="card">
+    <p class="body" style="margin-bottom: 6px;"><strong>9. Portal self-service password change + Revenue Overview caption fix</strong></p>
+    <p class="body">
+      Smaller items. Client portal users can now change their password
+      themselves from the portal Settings menu (no "ask Yash to reset
+      it" step). The Revenue Overview chart had a hardcoded "(2025)"
+      in its caption — replaced with the actual year range being
+      displayed.
+    </p>
+  </div>
+
+  <div class="card">
+    <p class="body" style="margin-bottom: 6px;"><strong>10. "No campaigns to link" bug + dev TODO leak</strong></p>
+    <p class="body">
+      Two UI papercuts. (a) On the client Campaigns tab, the
+      "Add Campaign" dialog was showing "No campaigns available to
+      link" even when 28 active campaigns existed — caused by the
+      filter excluding already-linked rows but not handling the
+      empty-junction case. Fixed. (b) Removed a <code>// TODO</code>
+      comment that was leaking into the production UI on the
+      Traffic Sources tab.
+    </p>
+  </div>
+
+  <!-- ─── SHIPPED 19 MAY ─────────────────────────────── -->
+  <h2>Today — 19 May 2026 <span class="pill done">37 commits, 10 fixes</span></h2>
 
   <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
     Each line below is something a careful auditor would have called
@@ -454,6 +595,175 @@
     machine-readable version.
   </p>
 
+  <!-- ─── DATA FLOW — what we compare, where, how ───────────────── -->
+  <h2>How each number is fetched, compared, displayed <span class="pill fix">data flow</span></h2>
+
+  <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
+    For full transparency — every tile and chart on Stato has the same
+    3-step shape: <strong>(1) pull from upstream</strong>,
+    <strong>(2) store/cache locally</strong>,
+    <strong>(3) render in the UI</strong>. Here's how that runs per
+    source so when you spot a discrepancy you know exactly where to
+    look.
+  </p>
+
+  <h3>LeadByte (leads + revenue per campaign)</h3>
+  <div class="card">
+    <p class="body">
+      <strong>Pull:</strong> hourly cron + on-demand "Sync now" hits
+      <code>/reports/leadactivity</code> (daily lead counts),
+      <code>/reports/campaign</code> (windowed totals incl. revenue +
+      payout), <code>/reports/buyer</code> (caps + buyer breakdown),
+      and <code>/deliveries</code> (individual lead rows).
+      <br><strong>Store:</strong> <code>lead_deliveries</code> table
+      (one row per campaign per day) +
+      <code>client_campaigns</code> junction. Daily revenue is
+      pro-rated from windowed totals
+      (<code>leadCount × windowRevenue / windowLeads</code>) so the
+      sum across days = the LeadByte invoice total.
+      <br><strong>Show:</strong> dashboard Leads tile, Revenue Overview
+      chart, per-campaign Revenue vs Cost chart, buyer portal lead
+      tables.
+      <br><strong>Verify:</strong> open LeadByte UI for the same
+      campaign + window. Stato should match the leads-count exactly
+      and the revenue to within rounding (we round to 2dp on the
+      per-day pro-rate).
+    </p>
+  </div>
+
+  <h3>Catchr (ad spend per platform + account)</h3>
+  <div class="card">
+    <p class="body">
+      <strong>Pull:</strong> daily cron via the Catchr MCP — for each
+      connected account (Facebook, Google Ads, TikTok, Taboola) we
+      call <code>run_api_request_json</code> with the platform's
+      normalised date field + spend metric.
+      <br><strong>Store:</strong> <code>ad_spend</code> table — one row
+      per platform/account/date. Dead accounts
+      (<code>CUSTOMER_NOT_ENABLED</code>) are tracked in-process and
+      skipped after the first failure for the rest of the run.
+      <br><strong>Show:</strong> dashboard Cost tile, per-campaign Cost
+      column (sums every <code>account_id</code> linked via Traffic
+      Sources for the last 30 days), Performance-by-source widget,
+      Profit / Margin derivations.
+      <br><strong>Verify:</strong> open Catchr UI → pick the same
+      platform + account + date range → totals should match exactly.
+      The Catchr dashboard banner ("9 of 15 accounts working") is the
+      single source of truth for which accounts are actually flowing.
+    </p>
+  </div>
+
+  <h3>Xero (revenue + invoices + bank + VAT)</h3>
+  <div class="card">
+    <p class="body">
+      <strong>Pull:</strong> Custom Connection (server-to-server OAuth,
+      no consent flow). Hourly global invoice sync at <code>:15</code>
+      iterates every non-churned client. Bank widget calls
+      <code>/Accounts</code> filtered to BANK type, falls back to
+      <code>/Reports/BankSummary</code> if zero. VAT widget calls
+      <code>/Reports/VATQuarters</code>. 429 retries with backoff +
+      stale-while-revalidate so the UI never shows "fetch failed".
+      <br><strong>Store:</strong> <code>invoices</code> table mirrors
+      Xero state (status, totals, due date). Bank balance + VAT are
+      cached in-memory with TTL (60min for VAT, 15min for bank).
+      <br><strong>Show:</strong> dashboard Outstanding/Overdue tile,
+      Bank Accounts tile, VAT Liability tile, /finance/invoices grid,
+      per-client Invoices tab.
+      <br><strong>Verify:</strong> open Xero → Business → Invoices
+      (filter same status) → sum should match Stato. The new
+      <code>/api/v1/integrations/xero/health</code> endpoint gives a
+      machine-readable diff per probe.
+    </p>
+  </div>
+
+  <!-- ─── SINGLE-CLIENT CAVEAT ──────────────────────────────────── -->
+  <h2>Honest caveat — only one client to compare against today <span class="pill need">heads-up</span></h2>
+
+  <div class="card" style="background: #fffbeb; border-color: #fde68a;">
+    <p class="body">
+      Right now Stato is talking to <strong>one Xero org</strong>
+      (Clinical Marketing Solutions Ltd) with effectively
+      <strong>one fully-wired client end-to-end</strong> (UK Energy
+      Saving Network). That means the "everything matches Xero"
+      verification above is technically true but trivially true — there's
+      only one row to reconcile.
+    </p>
+    <p class="body" style="margin-top: 10px;">
+      <strong>The real test of the platform happens when 3-5 clients
+      are linked.</strong> Once you onboard Benson Goldstein +
+      reactivate Tomic Zero + add 1-2 more, the dashboard tiles
+      become a sum across multiple Xero contacts AND multiple
+      LeadByte buyers AND multiple Catchr ad accounts —
+      and any mismatch will be visible as a delta on the comparison
+      dashboard I'm proposing below.
+    </p>
+    <p class="body" style="margin-top: 10px;">
+      <strong>What unblocks this:</strong> 4 fields per client
+      (company name, company number, primary contact name + email).
+      Box 5 below has space for the next 2-3 you want me to onboard.
+    </p>
+  </div>
+
+  <!-- ─── XERO COMPARISON DASHBOARD PROPOSAL ───────────────────── -->
+  <h2>Proposal — Xero ↔ Stato comparison dashboard <span class="pill fix">~half-day build</span></h2>
+
+  <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
+    Your idea from this morning: <em>"we need the Xero dashboard for
+    compare the values right"</em>. I agree — this should be a built-in
+    page in Stato, not a manual cross-check in your head. Here's the
+    spec I'd build.
+  </p>
+
+  <div class="card">
+    <p class="body" style="margin-bottom: 8px;"><strong>Where it lives:</strong> <code>/integrations/xero/compare</code> — a new admin-only page under the Integrations menu.</p>
+    <p class="body" style="margin-bottom: 8px;"><strong>What it shows:</strong> a table with one row per shared value, three columns: Stato's number · Xero's number · Delta. Plus a per-period filter (same options as the dashboard time-range filter).</p>
+    <p class="body"><strong>Rows on day one:</strong></p>
+    <ul style="font-size: 13.5px; color: #424245; margin: 6px 0 0 18px;">
+      <li>Total revenue (Stato lifetime sum vs Xero "Income" report)</li>
+      <li>Outstanding invoices (Stato Authorised+Overdue vs Xero "Awaiting Payment")</li>
+      <li>Overdue invoices only (Stato derivation vs Xero overdue filter)</li>
+      <li>Bank balance (Stato widget vs Xero Banking page)</li>
+      <li>VAT liability (Stato current quarter vs Xero VAT Return draft)</li>
+      <li>Per-client revenue breakdown — one row per client (Stato local sum vs Xero contact-level sum)</li>
+    </ul>
+    <p class="body" style="margin-top: 10px;"><strong>Visual:</strong> each row colored — <strong style="color:#1d7a3a;">green</strong> if exact match, <strong style="color:#a04a00;">amber</strong> if delta ≤ 1%, <strong style="color:#a52a2a;">red</strong> if delta &gt; 1% or one side missing. Click any red row → drilldown showing the underlying records on both sides.</p>
+    <p class="body" style="margin-top: 10px;"><strong>Why it's cheap:</strong> the <code>/xero/health</code> endpoint already does the Xero-side probes. This is mostly a UI page that joins Stato's existing aggregates with one new Xero <code>/Reports/ProfitAndLoss</code> call. ~half-day backend + UI.</p>
+    <p class="body" style="margin-top: 10px;"><strong>What you get:</strong> the moment any Stato tile drifts from Xero by more than 1%, you see it on this page in red — no more "wait, is the number right?". Especially useful as we onboard clients 2-5 because each new client multiplies the surfaces that could drift.</p>
+  </div>
+
+  <p style="margin: 14px 0 0 0; color: #6e6e73; font-size: 13.5px;">
+    If you say go in box 4 below, I'll cut the spec into a Linear
+    ticket today and ship the page tomorrow / Wednesday alongside
+    the supplier-CPL rollup.
+  </p>
+
+  <!-- ─── PENDING ON OUR SIDE ───────────────────────────────────── -->
+  <h2>What's pending on OUR side <span class="pill need">us, not you</span></h2>
+
+  <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
+    To be clear what's still on the dev queue vs what's on your
+    side: this is the engineering backlog as of 19 May evening.
+    Nothing here blocks the platform being usable, but each tightens
+    correctness or unlocks a specific feature you've asked for.
+  </p>
+
+  <ul class="bare todo">
+    <li><strong>Loom of today's wins</strong> — recording later tonight, will WhatsApp the link. ~30 min.</li>
+    <li><strong>Xero ↔ Stato comparison dashboard</strong> (per the proposal above) — pending your go-ahead in box 4. ~half-day.</li>
+    <li><strong>Supplier-level Catchr spend rollup</strong> — Supplier CPL chart still populates light. Spec'd, ~1-2 hr.</li>
+    <li><strong>Creative-review Day 4 + 5</strong> — audit-trail page UI (Day 4) + admin review queue polish (Day 5). Day 1-3 shipped 18 May. ~1.5 days.</li>
+    <li><strong>P2 silent-fallback cleanup (items 9-17 from this morning's full-project audit)</strong> — leftover false-zero paths, mostly defensive. ~2-4 hr.</li>
+    <li><strong>Visual drag-onto-canvas for template editor v2</strong> — current v1 is click-to-place; this lets you drag fields visually onto the PDF. ~half-day, polish PR.</li>
+    <li><strong>Multi-client onboarding script</strong> — one-shot script that takes a CSV of (company, number, contact, email) and creates client + portal user + first sync. Useful when we onboard 3-5 clients in one go. ~2 hr.</li>
+    <li><strong>2026-05-18 daily report</strong> — skipped yesterday because shipment was mid-stream; covered inline at the top of this report instead.</li>
+  </ul>
+
+  <p style="margin: 14px 0 0 0; color: #6e6e73; font-size: 13.5px;">
+    Out of scope until Phase 2: token denylist on logout (schema work),
+    IMAP/Gmail inbound email integration (XL-deferred), Postgres-W3n2
+    orphan cleanup (waiting on Sam-admin permission).
+  </p>
+
   <!-- ─── SOLAR PANELS CASE STUDY ─────────────────────── -->
   <h2>Case study — Solar Panels end-to-end <span class="pill done">walk it yourself</span></h2>
 
@@ -582,7 +892,7 @@
   <h2>What I need from you <span class="pill need">your input</span></h2>
 
   <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
-    Six boxes — answer what you can, leave the rest blank, hit
+    Eight boxes — answer what you can, leave the rest blank, hit
     Download. Auto-saves as you type. Send the
     <code>.txt</code> back over WhatsApp.
   </p>
@@ -596,9 +906,11 @@
         <li>Any tile / widget that DOESN'T match your Xero / Catchr / LeadByte directly</li>
         <li>Endole replacement — which credit provider do you want me to wire up?</li>
         <li>Vercel GitHub App — you'll do it, or "Yash do it"?</li>
+        <li>Xero ↔ Stato comparison dashboard — go-ahead to build tomorrow?</li>
+        <li>Next 2-3 clients to onboard — 4 fields each (company name, number, contact name, email)</li>
         <li>Resend DNS — give me GoDaddy access, or pinging the dev?</li>
         <li>Catchr Google Ads re-auth — done? screenshot of "all 15 green"</li>
-        <li>Anything else broken on prod when you tested it today?</li>
+        <li>Creative-review — reviewer + asset categories?</li>
       </ol>
     </div>
   </noscript>
@@ -698,6 +1010,20 @@
       why: 'You said "yes go" on this on 17 May Linear but the GitHub App still isn\'t installed on Sato-Frontend, so every FE deploy still needs me running vercel --prod by hand. Quickest unblock: open github.com/settings/installations → Vercel → configure → tick Sato-Frontend → save. ~2 min. Alternatively say "Yash do it" and I\'ll install it on your behalf via a temporary collaborator pass.',
       effort: '~2 min',
       placeholder: 'e.g. "installed it just now" / "Yash do it, send me the access request" / "explain again what this gets us"',
+    },
+    {
+      id: 'xero-compare-dashboard',
+      title: 'Xero ↔ Stato comparison dashboard — go-ahead?',
+      why: 'Your idea from this morning. A new admin-only page at /integrations/xero/compare that puts Stato\'s number side-by-side with Xero\'s number for every shared value (revenue, outstanding, overdue, bank, VAT, per-client breakdown) with a delta column + traffic-light colors. ~half-day build. Most useful once we onboard clients 2-5 because each new client multiplies the surfaces that could drift. Say go and I cut a Linear ticket today + ship tomorrow alongside the supplier-CPL rollup.',
+      effort: '~1 min answer',
+      placeholder: 'e.g. "yes go, ship tomorrow" / "yes but add per-month drilldown" / "wait until we have 3+ clients linked"',
+    },
+    {
+      id: 'more-clients-to-link',
+      title: 'More clients to link — names + 4 fields each',
+      why: 'Today\'s comparison numbers are technically right but trivially right because we have one client wired end-to-end (UKESN). The platform doesn\'t actually get stress-tested until 3-5 clients are linked. Drop me 4 fields per client (company name, company number, primary contact name, primary contact email) for the next 2-3 you want onboarded, and I\'ll provision them this week. Tomic Zero / Benson Goldstein / anyone else.',
+      effort: '~5 min',
+      placeholder: 'Client 1:\n  company: ...\n  number: ...\n  contact name: ...\n  contact email: ...\n\nClient 2:\n  ...',
     },
     {
       id: 'resend-dns',
