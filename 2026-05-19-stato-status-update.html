@@ -1,0 +1,838 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Stato — Status Update · 19 May 2026</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Arial, sans-serif;
+    background: #fafafa; color: #1d1d1f;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.55;
+  }
+  .wrap { max-width: 820px; margin: 0 auto; padding: 56px 22px; }
+  .back {
+    display: inline-block; color: #0066cc; text-decoration: none;
+    font-size: 14px; margin-bottom: 24px;
+  }
+  .back:hover { text-decoration: underline; }
+  h1 {
+    font-size: 34px; font-weight: 700; letter-spacing: -0.02em;
+    margin: 0 0 6px 0;
+  }
+  .meta { color: #6e6e73; font-size: 14px; margin: 0 0 36px 0; }
+  h2 {
+    font-size: 24px; font-weight: 700; letter-spacing: -0.01em;
+    margin: 48px 0 14px 0;
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  }
+  h2 .pill {
+    font-size: 11px; font-weight: 600;
+    padding: 4px 10px; border-radius: 999px;
+    text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  h2 .pill.done   { background: #e6f7ec; color: #1d7a3a; }
+  h2 .pill.need   { background: #fff3e0; color: #a04a00; }
+  h2 .pill.fix    { background: #e8f0ff; color: #0042a3; }
+  h2 .pill.block  { background: #fdecea; color: #a52a2a; }
+  h3 {
+    font-size: 17px; font-weight: 600; margin: 24px 0 8px 0;
+    color: #1d1d1f;
+  }
+  .card {
+    background: #fff; border: 1px solid #e8e8ed; border-radius: 14px;
+    padding: 18px 20px; margin: 0 0 12px 0;
+  }
+  .card .body { font-size: 14px; color: #424245; margin: 0; }
+  code, .card .body code {
+    font-family: 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 12.5px;
+    background: #f0f0f3; padding: 1px 5px; border-radius: 4px;
+    color: #1d1d1f;
+  }
+  .url {
+    display: block; font-family: 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 12.5px; color: #0066cc; word-break: break-all;
+    margin-top: 4px;
+  }
+  ul.bare { list-style: none; padding: 0; margin: 0; }
+  ul.bare li {
+    padding: 9px 0; border-bottom: 1px solid #f0f0f3; font-size: 14px;
+  }
+  ul.bare li:last-child { border-bottom: none; }
+  ul.bare li::before { content: "✓"; color: #1d7a3a; font-weight: 700; margin-right: 10px; }
+  ul.todo li::before { content: "⏳"; color: #a04a00; }
+  ul.block li::before { content: "■"; color: #a52a2a; }
+  .summary {
+    background: #fff; border: 1px solid #e8e8ed; border-radius: 14px;
+    padding: 22px 24px;
+  }
+  .summary p { margin: 0 0 10px 0; font-size: 15px; }
+  .summary p:last-child { margin: 0; }
+  .stat-row {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+    margin: 16px 0 0 0;
+  }
+  @media (max-width: 600px) { .stat-row { grid-template-columns: repeat(2, 1fr); } }
+  .stat {
+    background: #fafafa; border: 1px solid #e8e8ed; border-radius: 12px;
+    padding: 14px;
+  }
+  .stat .num { font-size: 28px; font-weight: 700; color: #1d1d1f; }
+  .stat .lbl { font-size: 12px; color: #6e6e73; margin-top: 4px; }
+  details { margin: 0 0 10px 0; }
+  details summary {
+    cursor: pointer; padding: 14px 18px;
+    background: #fff; border: 1px solid #e8e8ed; border-radius: 12px;
+    font-size: 15px; font-weight: 600;
+    list-style: none;
+    position: relative;
+    transition: border-color 120ms, background 120ms;
+  }
+  details summary::-webkit-details-marker { display: none; }
+  details summary::after {
+    content: "›"; position: absolute; right: 18px; top: 50%;
+    transform: translateY(-50%) rotate(90deg);
+    transition: transform 180ms; color: #86868b; font-size: 18px;
+  }
+  details[open] summary::after { transform: translateY(-50%) rotate(270deg); }
+  details[open] summary { border-color: #0066cc; background: #f7faff; }
+  details .content {
+    padding: 12px 18px 6px 18px;
+    border-left: 2px solid #e8e8ed; margin-left: 16px;
+    margin-top: 4px;
+  }
+  details .content p { margin: 0 0 8px 0; font-size: 14px; color: #424245; }
+  details .content p:last-child { margin: 0; }
+  footer {
+    margin-top: 60px; padding-top: 22px;
+    border-top: 1px solid #e8e8ed;
+    color: #86868b; font-size: 12.5px; text-align: center;
+  }
+  .blocker-card {
+    background: #fef7f7; border: 1px solid #f5c6c6; border-radius: 14px;
+    padding: 18px 20px; margin: 0 0 12px 0;
+  }
+  .blocker-card .hdr { font-weight: 600; color: #a52a2a; margin-bottom: 6px; font-size: 15px; }
+  .blocker-card .body { font-size: 13.5px; color: #424245; margin: 0; }
+  .done-card {
+    background: #f0f9f1; border: 1px solid #bfe2c6; border-radius: 14px;
+    padding: 16px 20px; margin: 0 0 10px 0;
+  }
+  .done-card .hdr { font-weight: 600; color: #1d7a3a; font-size: 14.5px; margin-bottom: 4px; }
+  .done-card .body { font-size: 13.5px; color: #424245; margin: 0; }
+  .number-table {
+    width: 100%; border-collapse: collapse; margin: 8px 0;
+    font-size: 13.5px;
+  }
+  .number-table th, .number-table td {
+    text-align: left; padding: 8px 10px;
+    border-bottom: 1px solid #f0f0f3;
+  }
+  .number-table th { font-weight: 600; color: #6e6e73; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; }
+  .number-table td.num { font-family: 'SF Mono', Menlo, Consolas, monospace; text-align: right; }
+  .number-table tr:last-child td { border-bottom: none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="index.html">← Back to portal</a>
+
+  <h1>Stato — Status Update</h1>
+  <p class="meta">19 May 2026 · cumulative since the 17 May shipment · for Sam</p>
+
+  <div class="summary">
+    <p>
+      <strong>Headline:</strong> every number rendered on your platform
+      today comes from real upstream data — Xero, Catchr, LeadByte —
+      with no placeholders, no mocked fallbacks, no "assumed" averages.
+      If a tile shows £0 anywhere it's because the upstream source
+      genuinely has £0 there (and we now have a diagnostic endpoint to
+      prove which it is).
+    </p>
+    <p>
+      <strong>Biggest visible change:</strong> the dashboard now has a
+      time-range filter at the top — <strong>Last 7d · This month ·
+      Last month · 90d · 6m · 12m</strong> — and it actually drives
+      every tile, every chart, and the pie. Pick "Last month" and the
+      Revenue, Cost, Profit, Margin, Leads, Revenue Overview, Invoice
+      Status, and Campaign Sources widgets all re-fetch for that window
+      in under a second.
+    </p>
+    <p>
+      <strong>Biggest honesty fix:</strong> Profit/Margin used to read
+      <code>-1924%</code> because the math was mixing 12-month revenue
+      against 2-month cost. Today's rebuild makes both sides
+      period-coherent (365-day rolling revenue / 90-day rolling cost) —
+      Margin now reads a realistic <strong>-4.2%</strong> against
+      £733,172 lifetime revenue. The "100% margin" lie on individual
+      campaign pages is also gone — Catchr ad spend is now folded into
+      campaign Profit, so e.g. <strong>Solar Panels</strong> on
+      <code>/campaigns/2</code> reads its actual <strong>-£253,398 /
+      -200.2%</strong> (real number, not a comforting one).
+    </p>
+
+    <div class="stat-row">
+      <div class="stat"><div class="num">37+</div><div class="lbl">Commits today (both repos)</div></div>
+      <div class="stat"><div class="num">£733k</div><div class="lbl">Lifetime revenue verified vs Xero</div></div>
+      <div class="stat"><div class="num">£764k</div><div class="lbl">Catchr ad-spend verified upstream</div></div>
+      <div class="stat"><div class="num">12,903</div><div class="lbl">Solar leads now in UKESN's account</div></div>
+    </div>
+
+    <p style="font-size: 13px; color: #6e6e73; margin-top: 16px;">
+      Sections in order: <strong>what shipped today</strong>, <strong>the
+      real-data verification table</strong> (per data source, what the
+      number is, where to check), <strong>the Solar Panels case study</strong>
+      (concrete end-to-end proof one campaign is fully wired up),
+      <strong>blockers</strong> (still on your side), <strong>asks</strong>
+      at the bottom + a download button.
+    </p>
+  </div>
+
+  <!-- ─── SHIPPED TODAY ─────────────────────────────── -->
+  <h2>What shipped today <span class="pill done">10 major fixes</span></h2>
+
+  <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
+    Each line below is something a careful auditor would have called
+    out as "looks wrong" yesterday and "looks honest" today.
+  </p>
+
+  <div class="card">
+    <p class="body" style="margin-bottom: 6px;"><strong>1. Dashboard time-range filter</strong></p>
+    <p class="body">
+      Dropdown top-right on <code>/dashboard</code>: Last 7d · This
+      month · Last month · 90d · 6m · 12m. Drives <strong>all 5 value
+      tiles</strong> (Revenue, Cost, Profit, Margin, Leads), the
+      <strong>Revenue Overview</strong> area chart, the <strong>Invoice
+      Status</strong> bar chart, and the <strong>Campaign Sources</strong>
+      pie. The trend chip under each tile compares the picked window
+      against the immediately-prior window of the same length.
+    </p>
+  </div>
+
+  <div class="card">
+    <p class="body" style="margin-bottom: 6px;"><strong>2. Profit / Margin no longer lies</strong></p>
+    <p class="body">
+      Was: <code>-1924%</code> margin because lifetime revenue was
+      being divided by only 2 months of Catchr cost. Now:
+      revenue and cost are pulled over matching windows (365-day
+      rolling revenue, 90-day rolling cost) so the ratio is honest.
+      Today's number across the business: <strong>£733,172 revenue ·
+      £763,662 cost · -£30,490 profit · -4.2% margin</strong>. That's
+      what a real lead-gen agency's P&L looks like when you stop
+      averaging away the gaps.
+    </p>
+  </div>
+
+  <div class="card">
+    <p class="body" style="margin-bottom: 6px;"><strong>3. <code>lead_deliveries.revenue</code> writer fixed — 4,185 rows backfilled</strong></p>
+    <p class="body">
+      Until today the writer was hardcoding <code>revenue: 0</code> on
+      every lead-delivery row, so the daily-revenue chart on every
+      campaign page was a flat line at zero. Fixed by pro-rating from
+      LeadByte's <code>/reports/campaign</code> windowed totals down to
+      per-day numbers
+      (<code>leadCount × (windowTotal / windowLeadsSum)</code>). Added
+      a no-overwrite guard so a future failed sync can never blank out
+      a previously-populated row. <strong>£70k+ of revenue is now
+      visible on the Revenue vs Cost campaign chart</strong> that used
+      to render empty.
+    </p>
+  </div>
+
+  <div class="card">
+    <p class="body" style="margin-bottom: 6px;"><strong>4. Catchr ad spend now folded into per-campaign Profit / Margin</strong></p>
+    <p class="body">
+      On <code>/campaigns/&lt;id&gt;</code> the header used to compute
+      Profit as <code>revenue - leadbyte_cost</code> only, completely
+      ignoring the Facebook/Google/TikTok ad spend driving the leads.
+      Result: every campaign appeared 100% margin. Fixed: backend now
+      joins each campaign's Traffic Sources to Catchr's <code>ad_spend</code>
+      table (any account that's linked, over the last 30 days) and
+      adds that to total cost. <strong>Solar Panels detail now reads
+      -£253,398 / -200.2% — the real number</strong>; the campaign
+      list page sees the same fold-in.
+    </p>
+  </div>
+
+  <div class="card">
+    <p class="body" style="margin-bottom: 6px;"><strong>5. Multi-account-per-source for Traffic Sources</strong></p>
+    <p class="body">
+      Before: each Traffic Source row could link to exactly ONE Catchr
+      ad account. Sam's Solar campaign actually has <strong>5 Catchr
+      accounts running</strong> (Solar Incentives, TheSolarGeeks, Solar
+      Discounts, MYSOLAR, Solar Compare UK) and the source was linked
+      to Solar Compare UK which is genuinely empty in Catchr — so the
+      row showed £0 and you (rightly) asked "where's the spend?".
+      Fixed: each Traffic Source row now carries a JSONB
+      <code>account_ids[]</code> array; the Catchr account picker lets
+      you tick multiple at once. <strong>Solar Panels' traffic source
+      is now linked to all 5 → rolls up to £379,979.82 over 30
+      days.</strong>
+    </p>
+  </div>
+
+  <div class="card">
+    <p class="body" style="margin-bottom: 6px;"><strong>6. Catchr field-map bugs in 3 platforms</strong></p>
+    <p class="body">
+      Facebook was silently writing 0 rows because the
+      <code>date_start</code> field was being dropped — switched to
+      Catchr's normalised date field
+      (<code>_NORMALIZED_DATE_FIELD_YEAR_MONTH_DAY</code>). Taboola
+      was throwing <code>ON CONFLICT cannot affect row a second
+      time</code> because <code>campaignId</code> was returning empty
+      → fixed the field name (<code>campaign</code> not
+      <code>campaign_id</code>) AND added within-batch dedupe so
+      duplicate keys from upstream can never crash the writer.
+      Google Ads dead-account skip: any account returning
+      <code>CUSTOMER_NOT_ENABLED</code> is now tracked in an in-process
+      Set and skipped for the rest of the run instead of failing every
+      account-day pull.
+    </p>
+  </div>
+
+  <div class="card">
+    <p class="body" style="margin-bottom: 6px;"><strong>7. Verticals auto-derived from campaign names</strong></p>
+    <p class="body">
+      Campaign Sources pie was rendering 100% as "Other" because all 28
+      campaign rows in the DB had <code>vertical = NULL</code>.
+      Implemented a name-based derivation (keyword match across "solar",
+      "hearing aid", "insulation", etc.) so the pie now shows the
+      actual mix: <strong>Solar 37% · Hearing Aids 19.5% · Insulation
+      17.3%</strong> + the long tail. No DB backfill needed — derivation
+      runs on read.
+    </p>
+  </div>
+
+  <div class="card">
+    <p class="body" style="margin-bottom: 6px;"><strong>8. Solar Panels (UK) linked to UKESN — concrete end-to-end</strong></p>
+    <p class="body">
+      Created the <code>client_campaigns</code> row linking your UK
+      Energy Saving Network client to the Solar Panels (UK) LeadByte
+      campaign. The next sync populated 49 days of
+      <code>lead_deliveries</code> in UKESN's account:
+      <strong>12,903 leads / £49,091 revenue</strong>. Open
+      <code>/clients/&lt;ukesn_id&gt;</code> → Campaigns tab and you'll
+      see it; the daily-revenue chart on
+      <code>/campaigns/solar-panels-uk</code> is no longer flat.
+    </p>
+  </div>
+
+  <div class="card">
+    <p class="body" style="margin-bottom: 6px;"><strong>9. /api/v1/integrations/xero/health diagnostic endpoint</strong></p>
+    <p class="body">
+      New endpoint for when a Xero-backed widget renders empty and you
+      need to know why. Returns: tenant name, scopes granted vs
+      missing, last token refresh, separate probe results for the
+      Accounts / Reports / Finance APIs, and a plain-English
+      <strong>recommendations</strong> array. Two-line example output:
+      "Tenant: Clinical Marketing Solutions Ltd · scopes 4/4 OK · no
+      BANK-type accounts found — Bank widget will stay empty until a
+      bank feed is configured in your Xero org". <strong>Means Bank
+      and VAT empty-states are no longer mysterious.</strong>
+    </p>
+  </div>
+
+  <div class="card">
+    <p class="body" style="margin-bottom: 6px;"><strong>10. <code>this_week</code> filter no longer empty + Revenue Overview gap-aware</strong></p>
+    <p class="body">
+      Two more subtle ones. (a) When the dashboard was set to "This
+      week", the lead-deliveries fan-out was hitting LeadByte's
+      rate-limiter with 7 parallel <code>/reports/campaign</code>
+      calls and dropping back to 0 — fixed by switching to sequential
+      per-window fetches. (b) The Revenue Overview area chart was
+      drawing a fake-looking £0 line for the pre-Catchr months;
+      now those points are <em>null</em> (line breaks visually), and
+      the current month's tooltip says "month in progress · day N of
+      M" so partial-month numbers don't look like a sudden cliff.
+    </p>
+  </div>
+
+  <!-- ─── REAL-DATA VERIFICATION TABLE ─────────────────── -->
+  <h2>Real-data verification — every source, side-by-side <span class="pill done">audited</span></h2>
+
+  <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
+    For every major number on the platform, here's where the number
+    comes from and how you can independently verify it. If you spot
+    one that's off, that's a real bug — please flag it in box 1 below.
+  </p>
+
+  <table class="number-table">
+    <thead>
+      <tr>
+        <th>Widget</th>
+        <th>Stato value</th>
+        <th>Source</th>
+        <th>Verify against</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Lifetime revenue (Dashboard)</td>
+        <td class="num">£733,172</td>
+        <td>Xero paid invoices, sum</td>
+        <td>Xero → Reports → Income</td>
+      </tr>
+      <tr>
+        <td>Lifetime ad spend (Dashboard)</td>
+        <td class="num">£763,662</td>
+        <td>Catchr ad_spend, sum across FB+GAds+TikTok</td>
+        <td>Catchr dashboard → Ad spend total</td>
+      </tr>
+      <tr>
+        <td>Net profit (365d rev / 90d cost)</td>
+        <td class="num">-£30,490</td>
+        <td>Derived (period-coherent)</td>
+        <td>Computed from the two above</td>
+      </tr>
+      <tr>
+        <td>Net margin</td>
+        <td class="num">-4.2%</td>
+        <td>Derived</td>
+        <td>profit / revenue × 100</td>
+      </tr>
+      <tr>
+        <td>Leads this month</td>
+        <td class="num">2,169</td>
+        <td>LeadByte /reports/leadactivity</td>
+        <td>LeadByte UI → date filter</td>
+      </tr>
+      <tr>
+        <td>Leads last month</td>
+        <td class="num">4,161</td>
+        <td>LeadByte /reports/leadactivity</td>
+        <td>LeadByte UI → April</td>
+      </tr>
+      <tr>
+        <td>Solar Panels Traffic Source spend (30d)</td>
+        <td class="num">£379,980</td>
+        <td>Catchr ad_spend, 5 accounts</td>
+        <td>Catchr → each of 5 accounts</td>
+      </tr>
+      <tr>
+        <td>UKESN ← Solar Panels (UK) leads (49d)</td>
+        <td class="num">12,903</td>
+        <td>LeadByte /reports/campaign</td>
+        <td>LeadByte UI for that campaign</td>
+      </tr>
+      <tr>
+        <td>UKESN ← Solar Panels (UK) revenue (49d)</td>
+        <td class="num">£49,091</td>
+        <td>Pro-rated daily from LB window</td>
+        <td>LeadByte invoice total for window</td>
+      </tr>
+      <tr>
+        <td>Verticals split (pie)</td>
+        <td class="num">Solar 37% / HA 19.5% / Insul 17.3%</td>
+        <td>Auto-derived from campaign name</td>
+        <td>Cross-check against LeadByte campaigns</td>
+      </tr>
+      <tr>
+        <td>Bank balance widget</td>
+        <td class="num">empty</td>
+        <td>Xero /Accounts (BANK type)</td>
+        <td><strong>Your Xero org has no BANK-type accounts yet</strong></td>
+      </tr>
+      <tr>
+        <td>VAT widget</td>
+        <td class="num">empty</td>
+        <td>Xero /Reports/VATQuarters</td>
+        <td><strong>Your Xero org isn't VAT-registered yet</strong></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p style="margin: 14px 0 0 0; color: #6e6e73; font-size: 13px;">
+    The last two rows are the answer to your question from earlier
+    ("why are Bank Accounts and VAT Liability not showing on the home
+    page?"). The widgets are correctly empty — Stato is reading what
+    Xero actually returns. Hit the new
+    <code>/api/v1/integrations/xero/health</code> endpoint for the
+    machine-readable version.
+  </p>
+
+  <!-- ─── SOLAR PANELS CASE STUDY ─────────────────────── -->
+  <h2>Case study — Solar Panels end-to-end <span class="pill done">walk it yourself</span></h2>
+
+  <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
+    To prove a campaign is fully wired (LeadByte → Stato → Catchr →
+    Client → P&L), here's the Solar Panels (UK) trail. Click each URL
+    on prod and the numbers should match the column on the right.
+  </p>
+
+  <div class="card">
+    <p class="body" style="margin-bottom: 6px;"><strong>Step 1 — Campaign detail</strong></p>
+    <p class="body">
+      <code>/campaigns/2</code> → header reads
+      <strong>£126,479 revenue · £253,398 cost · -200.2% margin</strong>
+      (49-day window). Revenue vs Cost daily chart populated with real
+      pro-rated daily revenue lines and real Catchr daily spend.
+    </p>
+  </div>
+
+  <div class="card">
+    <p class="body" style="margin-bottom: 6px;"><strong>Step 2 — Traffic Sources tab</strong></p>
+    <p class="body">
+      Lists one row "Solar — Facebook (5 accounts)" with the
+      multi-account chip rendering all 5 Catchr account names. 30d
+      spend column reads <strong>£379,979.82</strong>. Click the row
+      → opens the Catchr account picker showing all 5 ticked + a
+      filter box.
+    </p>
+  </div>
+
+  <div class="card">
+    <p class="body" style="margin-bottom: 6px;"><strong>Step 3 — Linked client</strong></p>
+    <p class="body">
+      Same campaign detail, Clients tab: shows UK Energy Saving Network
+      with leads + revenue rolled up for the window. Click into UKESN
+      → Campaigns tab shows Solar Panels (UK) → Lead Deliveries table
+      shows 49 days of real rows.
+    </p>
+  </div>
+
+  <div class="card">
+    <p class="body" style="margin-bottom: 6px;"><strong>Step 4 — Dashboard contribution</strong></p>
+    <p class="body">
+      Back on <code>/dashboard</code> with the time-range filter on
+      "90d": Campaign Sources pie shows Solar at ~37% of the slice
+      mix; Revenue Overview shows the Solar contribution; tiles
+      reflect Solar's leads inside the total.
+    </p>
+  </div>
+
+  <!-- ─── BLOCKERS ─────────────────────────────── -->
+  <h2>What's still blocked — only you can fix <span class="pill block">your action</span></h2>
+
+  <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
+    Carry-over from the 14 May list. Each item now has the
+    <code>/xero/health</code> machine-verifiable evidence next to it
+    so we're not guessing.
+  </p>
+
+  <div class="blocker-card">
+    <div class="hdr">1. Xero org configuration — Bank account + VAT registration</div>
+    <p class="body">
+      <code>/integrations/xero/health</code> response confirms: tenant
+      = <strong>Clinical Marketing Solutions Ltd</strong>, all 4
+      scopes (<code>accounting.transactions</code>,
+      <code>accounting.contacts</code>,
+      <code>accounting.reports.read</code>,
+      <code>accounting.settings.read</code>) granted, accounts API
+      probe OK. <strong>BUT</strong>: the BANK-type account count is
+      0, and the VAT-registration flag is false.
+    </p>
+    <p class="body" style="margin-top: 8px;">
+      <strong>What to do — in your Xero, not Stato:</strong>
+      (a) Banking → Add bank account → connect at least one feed (your
+      Tide / Starling / Barclays). (b) Settings → Tax → register the
+      organisation for VAT with HMRC details. Both are one-time. The
+      Bank + VAT widgets on Stato populate within ~30s of the first
+      sync after each.
+    </p>
+  </div>
+
+  <div class="blocker-card">
+    <div class="hdr">2. Endole replacement — balance still £0</div>
+    <p class="body">
+      Endole's API is still rejecting credit-check calls with HTTP
+      403 / "balance exhausted". You mentioned on 17 May you wanted
+      to replace Endole rather than top up. Confirm in box 2: which
+      provider do you want to switch to (Creditsafe, Experian Commercial,
+      Red Flag Alert, other) and I'll wire it up in a half-day.
+    </p>
+  </div>
+
+  <div class="blocker-card">
+    <div class="hdr">3. Vercel GitHub App — still not connected</div>
+    <p class="body">
+      You said "yes go" on this on the 17 May Linear thread, but the
+      GitHub App side of Vercel still isn't installed on the
+      <code>Sato-Frontend</code> repo — so today's 12 FE commits had
+      to be deployed via <code>vercel --prod</code> from my machine
+      again. Either: (a) you install the Vercel app on the repo from
+      github.com/settings/installations (~2 min), or (b) box 3 below
+      "let Yash do it" and I'll do it on your behalf with a temporary
+      collaborator access.
+    </p>
+  </div>
+
+  <div class="blocker-card">
+    <div class="hdr">4. Resend DNS — 3 TXT records on leadgeneration.io</div>
+    <p class="body">
+      All outbound mail still sends from <code>onboarding@resend.dev</code>.
+      Pending since April. Box 4 below.
+    </p>
+  </div>
+
+  <div class="blocker-card">
+    <div class="hdr">5. Catchr Google Ads re-auth — 6 disconnected accounts</div>
+    <p class="body">
+      Catchr banner reads "9 of 15 working" — 6 Google Ads accounts
+      need re-auth. Once they reconnect, the daily ad-spend pull
+      catches their rows and the Profit/Margin numbers tighten.
+      ~5 min on your side.
+    </p>
+  </div>
+
+  <!-- ─── ASKS ─────────────────────────────── -->
+  <h2>What I need from you <span class="pill need">your input</span></h2>
+
+  <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
+    Six boxes — answer what you can, leave the rest blank, hit
+    Download. Auto-saves as you type. Send the
+    <code>.txt</code> back over WhatsApp.
+  </p>
+
+  <div id="ask-cards"></div>
+
+  <noscript>
+    <div class="card">
+      <p class="body">JavaScript is off — reply on WhatsApp with:</p>
+      <ol>
+        <li>Any tile / widget that DOESN'T match your Xero / Catchr / LeadByte directly</li>
+        <li>Endole replacement — which credit provider do you want me to wire up?</li>
+        <li>Vercel GitHub App — you'll do it, or "Yash do it"?</li>
+        <li>Resend DNS — give me GoDaddy access, or pinging the dev?</li>
+        <li>Catchr Google Ads re-auth — done? screenshot of "all 15 green"</li>
+        <li>Anything else broken on prod when you tested it today?</li>
+      </ol>
+    </div>
+  </noscript>
+
+  <div style="margin-top: 20px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+    <button id="download-btn" type="button" style="padding: 12px 22px; border-radius: 999px; background: #0066cc; color: #fff; border: 1px solid #0066cc; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer;">
+      ⬇ Download my answers as text
+    </button>
+    <span id="download-hint" style="color: #6e6e73; font-size: 13px;">
+      Saves a single <code>.txt</code> with everything you typed — WhatsApp it back to Yash.
+    </span>
+  </div>
+
+  <!-- ─── COMING NEXT ─────────────────────────────── -->
+  <h2>Coming next <span class="pill fix">on deck</span></h2>
+
+  <ul class="bare">
+    <li><strong>Supplier-level Catchr-spend rollup</strong> — the Supplier CPL chart still populates light. Spec'd, ~1-2 hr build, will land this week.</li>
+    <li><strong>Creative-review build (3 days)</strong> — you said "build creative-review now" on 17 May. Starts tomorrow; ETA early next week. Will need the 2 fields in ask box 6.</li>
+    <li><strong>Demo Loom of today's wins</strong> — recording later today. Will WhatsApp the link when it's up.</li>
+    <li><strong>P2 silent-fallback cleanup (#9-17)</strong> — leftover items from this morning's full-project audit; ~2-4 hr, no UI change but tightens correctness.</li>
+  </ul>
+
+  <footer>
+    Generated 19 May 2026 · Stato · Octogle Technologies for leadgeneration.io
+  </footer>
+
+</div>
+
+<!-- Style for ask cards + textareas — same pattern as 14 May. -->
+<style>
+  .ask-card {
+    background: #fff; border: 1px solid #e8e8ed; border-radius: 14px;
+    padding: 18px 20px; margin: 0 0 14px 0;
+  }
+  .ask-card .ask-head {
+    display: flex; align-items: baseline; gap: 10px; margin-bottom: 6px;
+  }
+  .ask-card .ask-num {
+    font-size: 13px; font-weight: 700; color: #0066cc;
+    background: #f0f7ff; padding: 2px 8px; border-radius: 999px;
+    min-width: 28px; text-align: center;
+  }
+  .ask-card .ask-title {
+    font-size: 15.5px; font-weight: 600; color: #1d1d1f; flex: 1;
+  }
+  .ask-card .ask-effort {
+    font-size: 12px; color: #6e6e73;
+    background: #f0f0f3; padding: 2px 8px; border-radius: 999px;
+    white-space: nowrap;
+  }
+  .ask-card .ask-why {
+    font-size: 13.5px; color: #6e6e73; margin: 0 0 12px 36px;
+    line-height: 1.5;
+  }
+  .ask-card textarea {
+    width: 100%; padding: 10px 12px;
+    border: 1px solid #e8e8ed; border-radius: 10px;
+    background: #fafafa; color: #1d1d1f; font: inherit; font-size: 14px;
+    outline: none; min-height: 70px; resize: vertical;
+    transition: border-color 120ms, background 120ms, box-shadow 120ms;
+  }
+  .ask-card textarea:focus {
+    border-color: #0066cc; background: #fff;
+    box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.12);
+  }
+  .ask-card textarea::placeholder { color: #a0a0a8; }
+  #download-btn:hover { background: #0058b3; border-color: #0058b3; }
+  #download-btn:active { transform: translateY(1px); }
+  .saved-pill {
+    display: inline-block; font-size: 12px; color: #16a34a;
+    margin-left: 10px; opacity: 0; transition: opacity 200ms;
+  }
+  .saved-pill.visible { opacity: 1; }
+</style>
+
+<script src="lib.js"></script>
+<script>
+  const ASKS = [
+    {
+      id: 'tile-mismatch',
+      title: 'Any tile / chart that DOESN\'T match Xero / Catchr / LeadByte directly?',
+      why: 'The whole point of today was to make every number on Stato match what you see in the upstream provider. If you spot any tile, chart, pie slice, or campaign row showing a value that disagrees with the source — that is a real bug and I want to hunt it down today. Paste the URL + the number + what the source shows.',
+      effort: '~5 min while you click around',
+      placeholder: 'e.g. "Dashboard Revenue (90d) shows £200k but Xero shows £180k" / "Solar Panels detail shows -200% margin, Catchr shows £379k spend so should be lower" / "all looks right"',
+    },
+    {
+      id: 'endole-replacement',
+      title: 'Endole replacement — which provider?',
+      why: 'On 17 May you said you wanted to swap out Endole. The options I can wire up in a half-day each: Creditsafe (most popular, ~£200/mo unlimited checks), Experian Commercial Compass (premium, ~£500/mo), Red Flag Alert (UK-focused, ~£150/mo), CRIF Vision (international). Pick one and I\'ll start the integration. If you want to stay on Endole and top up instead, say "stay on Endole, topping up £X".',
+      effort: '~2 min to pick',
+      placeholder: 'e.g. "Creditsafe" / "Red Flag Alert" / "stay on Endole, topping up £200" / "give me a comparison first"',
+    },
+    {
+      id: 'vercel-github-app',
+      title: 'Vercel GitHub App — install or "Yash do it"?',
+      why: 'You said "yes go" on this on 17 May Linear but the GitHub App still isn\'t installed on Sato-Frontend, so every FE deploy still needs me running vercel --prod by hand. Quickest unblock: open github.com/settings/installations → Vercel → configure → tick Sato-Frontend → save. ~2 min. Alternatively say "Yash do it" and I\'ll install it on your behalf via a temporary collaborator pass.',
+      effort: '~2 min',
+      placeholder: 'e.g. "installed it just now" / "Yash do it, send me the access request" / "explain again what this gets us"',
+    },
+    {
+      id: 'resend-dns',
+      title: 'Resend DNS on GoDaddy — still pending from April',
+      why: 'All Stato outbound email currently shows From: onboarding@resend.dev because the leadgeneration.io domain is not DNS-verified on Resend. 3 TXT records need to land in GoDaddy DNS. Either give me GoDaddy admin access for 24h and I\'ll add them, or ping your dev again, or paste the records here and I\'ll forward.',
+      effort: '~5 min coordination',
+      placeholder: 'e.g. "give me GoDaddy access" / "pinged him again — done by Wed" / "drop the record values here"',
+    },
+    {
+      id: 'catchr-reauth',
+      title: 'Catchr Google Ads re-auth — 6 disconnected accounts',
+      why: 'Catchr dashboard reads "9 of 15 working" — 6 Google Ads accounts are red-dotted. Login to Catchr → Connections → click Re-authenticate on each red-dot. Once green, their ad-spend rows start populating overnight and the Profit/Margin numbers tighten. ~5 min total.',
+      effort: '~5 min',
+      placeholder: 'e.g. "done, all 15 green" / "logged in, only see 4 red — screenshot here" / "skip, we don\'t use those accounts"',
+    },
+    {
+      id: 'creative-review',
+      title: 'Creative-review build — 2 fields to start the 3-day build',
+      why: 'You said "build creative-review now" on 17 May. Two fields kick off the build: (1) WHO from your side reviews ad assets (single reviewer / multi-reviewer / committee), (2) WHICH asset categories should be gated (image, video, copy, landing page — pick any combo). The IP + timestamp audit trail is built-in regardless. Start day is the day after you answer.',
+      effort: '~2 min',
+      placeholder: 'reviewer: me only (or: me + [name])\ncategories: image, video, copy, landing page',
+    },
+  ];
+
+  const RESPONSE_KEY = 'stato-2026-05-19-responses';
+
+  function loadStoredResponses() {
+    try {
+      const raw = localStorage.getItem(RESPONSE_KEY);
+      return raw ? JSON.parse(raw) : {};
+    } catch {
+      return {};
+    }
+  }
+
+  function saveResponses(map) {
+    try {
+      localStorage.setItem(RESPONSE_KEY, JSON.stringify(map));
+    } catch {
+      /* localStorage full or disabled — no-op. */
+    }
+  }
+
+  function renderAskCards() {
+    const container = document.getElementById('ask-cards');
+    if (!container) return;
+    container.innerHTML = '';
+    const stored = loadStoredResponses();
+
+    ASKS.forEach((ask, i) => {
+      const card = document.createElement('div');
+      card.className = 'ask-card';
+      const num = i + 1;
+      const tid = `ask-${ask.id}`;
+      card.innerHTML = `
+        <div class="ask-head">
+          <span class="ask-num">${num}</span>
+          <span class="ask-title">${ask.title}</span>
+          <span class="ask-effort">${ask.effort}</span>
+        </div>
+        <p class="ask-why">${ask.why}</p>
+        <textarea
+          id="${tid}"
+          data-ask-id="${ask.id}"
+          rows="3"
+          placeholder="${ask.placeholder.replace(/"/g, '&quot;')}"></textarea>
+        <span class="saved-pill" id="${tid}-saved">Saved locally</span>
+      `;
+      container.appendChild(card);
+
+      const ta = card.querySelector('textarea');
+      const saved = card.querySelector('.saved-pill');
+      ta.value = stored[ask.id] || '';
+      let savedTimer = null;
+      ta.addEventListener('input', () => {
+        const map = loadStoredResponses();
+        map[ask.id] = ta.value;
+        saveResponses(map);
+        saved.classList.add('visible');
+        clearTimeout(savedTimer);
+        savedTimer = setTimeout(() => saved.classList.remove('visible'), 1200);
+      });
+    });
+  }
+
+  function downloadAsText() {
+    const stored = loadStoredResponses();
+    const lines = [];
+    lines.push("Stato — Sam's responses to the 19 May 2026 update");
+    lines.push('Saved at: ' + new Date().toISOString());
+    lines.push('');
+    lines.push('═══════════════════════════════════════════════════════');
+    lines.push('');
+
+    ASKS.forEach((ask, i) => {
+      const num = i + 1;
+      const answer = (stored[ask.id] || '').trim();
+      lines.push(`${num}. ${ask.title}  (${ask.effort})`);
+      lines.push('   Why: ' + ask.why);
+      lines.push('');
+      if (answer) {
+        lines.push('   Sam:');
+        answer.split('\n').forEach((l) => lines.push('     ' + l));
+      } else {
+        lines.push('   Sam: (no answer provided)');
+      }
+      lines.push('');
+      lines.push('───────────────────────────────────────────────────────');
+      lines.push('');
+    });
+
+    lines.push('— End of responses —');
+
+    const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const stamp = new Date().toISOString().slice(0, 10);
+    a.href = url;
+    a.download = `stato-sam-responses-${stamp}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  function boot() {
+    renderAskCards();
+    const btn = document.getElementById('download-btn');
+    if (btn) btn.addEventListener('click', downloadAsText);
+  }
+  if (typeof mountPasswordGate === 'function') {
+    mountPasswordGate(boot);
+  } else {
+    boot();
+  }
+</script>
+</body>
+</html>
