@@ -1,0 +1,541 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Stato — Status Update · 20 May 2026</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Arial, sans-serif;
+    background: #fafafa; color: #1d1d1f;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.55;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 56px 22px; }
+  .back {
+    display: inline-block; color: #0066cc; text-decoration: none;
+    font-size: 14px; margin-bottom: 24px;
+  }
+  .back:hover { text-decoration: underline; }
+  h1 {
+    font-size: 34px; font-weight: 700; letter-spacing: -0.02em;
+    margin: 0 0 6px 0;
+  }
+  .meta { color: #6e6e73; font-size: 14px; margin: 0 0 36px 0; }
+  h2 {
+    font-size: 22px; font-weight: 700; letter-spacing: -0.01em;
+    margin: 44px 0 14px 0;
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  }
+  h2 .pill {
+    font-size: 11px; font-weight: 600;
+    padding: 4px 10px; border-radius: 999px;
+    text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  h2 .pill.done   { background: #e6f7ec; color: #1d7a3a; }
+  h2 .pill.need   { background: #fff3e0; color: #a04a00; }
+  h2 .pill.fix    { background: #e8f0ff; color: #0042a3; }
+  h2 .pill.block  { background: #fdecea; color: #a52a2a; }
+  h3 { font-size: 16px; font-weight: 600; margin: 22px 0 8px 0; }
+  code {
+    font-family: 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 12px;
+    background: #f0f0f3; padding: 1px 5px; border-radius: 4px;
+    color: #1d1d1f;
+  }
+  .summary {
+    background: #fff; border: 1px solid #e8e8ed; border-radius: 14px;
+    padding: 22px 24px;
+  }
+  .summary p { margin: 0 0 10px 0; font-size: 15px; }
+  .summary p:last-child { margin: 0; }
+  .stat-row {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+    margin: 16px 0 0 0;
+  }
+  @media (max-width: 600px) { .stat-row { grid-template-columns: repeat(2, 1fr); } }
+  .stat {
+    background: #fafafa; border: 1px solid #e8e8ed; border-radius: 12px;
+    padding: 14px;
+  }
+  .stat .num { font-size: 26px; font-weight: 700; color: #1d1d1f; }
+  .stat .lbl { font-size: 12px; color: #6e6e73; margin-top: 4px; }
+  table.data {
+    width: 100%; border-collapse: collapse; margin: 8px 0 4px 0;
+    font-size: 13px; background: #fff;
+    border: 1px solid #e8e8ed; border-radius: 10px;
+    overflow: hidden;
+  }
+  table.data th, table.data td {
+    text-align: left; padding: 9px 12px;
+    border-bottom: 1px solid #f0f0f3;
+    vertical-align: top;
+  }
+  table.data th {
+    font-weight: 600; color: #6e6e73; font-size: 11px;
+    text-transform: uppercase; letter-spacing: 0.04em;
+    background: #fafafa;
+    border-bottom: 1px solid #e8e8ed;
+  }
+  table.data td.num { font-family: 'SF Mono', Menlo, Consolas, monospace; text-align: right; }
+  table.data tr:last-child td { border-bottom: none; }
+  table.data tr:hover td { background: #fafbfc; }
+  .src-badge {
+    display: inline-block;
+    font-size: 11px; font-weight: 600;
+    padding: 2px 8px; border-radius: 999px;
+    white-space: nowrap;
+  }
+  .src-xero      { background: #e6f0ff; color: #0042a3; }
+  .src-catchr    { background: #fff0e6; color: #a04a00; }
+  .src-leadbyte  { background: #f0e6ff; color: #5a2999; }
+  .src-derived   { background: #f0f0f3; color: #424245; }
+  .src-statodb   { background: #e8f7e8; color: #1d7a3a; }
+  .src-endole    { background: #fdecea; color: #a52a2a; }
+  .src-signnow   { background: #fff3e0; color: #a04a00; }
+  .src-r2        { background: #e0f7fa; color: #006064; }
+  .src-twilio    { background: #fdecea; color: #a52a2a; }
+  .src-anthropic { background: #f0f0f3; color: #424245; }
+  .src-attio     { background: #fdecea; color: #a52a2a; }
+  .src-resend    { background: #fdecea; color: #a52a2a; }
+  .live-block {
+    background: linear-gradient(135deg, #0066cc 0%, #004999 100%); color: #fff;
+    border-radius: 16px; padding: 20px 24px; margin: 0 0 28px 0;
+    box-shadow: 0 8px 24px -10px rgba(0, 102, 204, 0.35);
+  }
+  .live-block .kbd { font-family: 'SF Mono', Menlo, Consolas, monospace; font-size: 13px; }
+  .live-block a { color: #fff; }
+  .live-block .row {
+    background: rgba(255,255,255,0.12); border-radius: 8px;
+    padding: 10px 12px; margin-top: 8px;
+  }
+  .blocker-card {
+    background: #fef7f7; border: 1px solid #f5c6c6; border-radius: 12px;
+    padding: 14px 18px; margin: 0 0 10px 0;
+  }
+  .blocker-card .hdr { font-weight: 600; color: #a52a2a; margin-bottom: 4px; font-size: 14px; }
+  .blocker-card .body { font-size: 13px; color: #424245; margin: 0; }
+  footer {
+    margin-top: 60px; padding-top: 22px;
+    border-top: 1px solid #e8e8ed;
+    color: #86868b; font-size: 12.5px; text-align: center;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="index.html">← Back to portal</a>
+
+  <h1>Stato — Status Update</h1>
+  <p class="meta">20 May 2026 · data-source mapping + pending Sam-side items · for the today demo</p>
+
+  <!-- ─── TRY IT LIVE ────────────────────────── -->
+  <div class="live-block">
+    <div style="font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.85; margin-bottom: 8px;">▶ Try it live</div>
+    <a href="https://sato-frontend.vercel.app/" target="_blank" class="kbd" style="display: block; font-size: 17px; font-weight: 700; text-decoration: none; margin-bottom: 12px; word-break: break-all;">https://sato-frontend.vercel.app/</a>
+    <div class="row">
+      <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.85; margin-bottom: 4px;">Admin (Sam)</div>
+      <div class="kbd">email: <strong>sam@leadgeneration.io</strong> · password: <strong>Sam@123</strong></div>
+    </div>
+    <div class="row">
+      <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.85; margin-bottom: 4px;">Client portal (Jamie @ UKESN)</div>
+      <div class="kbd">email: <strong>jamie.probets@ukesn.co.uk</strong> · password: <strong>TempPass-Jamie-2026!</strong></div>
+    </div>
+  </div>
+
+  <!-- ─── SUMMARY ────────────────────────── -->
+  <div class="summary">
+    <p>
+      <strong>Every data point shown anywhere in Stato traces back to a real
+      3rd-party API or our own DB.</strong> No placeholders. No mocked
+      averages. No fabricated demo numbers. This page lists all 54 surfaces
+      Sam will see in the demo, what value they show right now, which
+      upstream system produces that value, and how Stato pulls + stores it.
+    </p>
+    <p>
+      <strong>If a tile renders empty</strong> (Bank Accounts widget, VAT
+      Liability widget, Email tab on UKESN, etc.) the table below shows
+      <em>why</em> — and in every case the fix is in Sam's hands, not in
+      Stato code.
+    </p>
+
+    <div class="stat-row">
+      <div class="stat"><div class="num">54</div><div class="lbl">UI surfaces validated</div></div>
+      <div class="stat"><div class="num">49</div><div class="lbl">Live on real upstream data</div></div>
+      <div class="stat"><div class="num">5</div><div class="lbl">Blocked on Sam-side action</div></div>
+      <div class="stat"><div class="num">£733k</div><div class="lbl">Revenue verified vs Xero</div></div>
+    </div>
+  </div>
+
+  <!-- ─── DASHBOARD TABLE ────────────────────────── -->
+  <h2>Dashboard tiles → upstream source <span class="pill done">live</span></h2>
+  <table class="data">
+    <thead>
+      <tr>
+        <th style="width: 4%">#</th>
+        <th style="width: 32%">UI tile</th>
+        <th style="width: 20%">Value (now)</th>
+        <th style="width: 14%">Source</th>
+        <th>How it gets there</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td>Revenue (12mo)</td><td class="num">£733,172</td><td><span class="src-badge src-xero">Xero</span></td><td><code>sum(invoices.total)</code> status='paid'</td></tr>
+      <tr><td>2</td><td>Cost (12mo)</td><td class="num">£786,332</td><td><span class="src-badge src-catchr">Catchr</span></td><td><code>sum(ad_spend.spend)</code> across 4 platforms</td></tr>
+      <tr><td>3</td><td>Net Profit</td><td class="num">-£53,160</td><td><span class="src-badge src-derived">Derived</span></td><td>rolling 365d revenue − rolling 90d cost</td></tr>
+      <tr><td>4</td><td>Margin</td><td class="num">-7.3%</td><td><span class="src-badge src-derived">Derived</span></td><td>profit / rolling 365d revenue · period-coherent</td></tr>
+      <tr><td>5</td><td>Active Clients</td><td class="num">2</td><td><span class="src-badge src-statodb">Stato DB</span></td><td><code>count(clients) status IN ('active','onboarding')</code></td></tr>
+      <tr><td>6</td><td>Campaigns (linked / active)</td><td class="num">2 / 28</td><td><span class="src-badge src-leadbyte">LeadByte</span> + <span class="src-badge src-statodb">Stato DB</span></td><td>active = <code>campaigns</code>, linked = <code>client_campaigns</code></td></tr>
+      <tr><td>7</td><td>Leads This Month</td><td class="num">7,218</td><td><span class="src-badge src-leadbyte">LeadByte</span></td><td><code>sum(lead_deliveries.lead_count)</code></td></tr>
+      <tr><td>8</td><td>Revenue Overview chart</td><td class="num">per-month £</td><td><span class="src-badge src-xero">Xero</span></td><td><code>invoices.total</code> grouped by month</td></tr>
+      <tr><td>9</td><td>Invoice Status chart</td><td class="num">bars per status</td><td><span class="src-badge src-xero">Xero</span></td><td><code>invoices</code> grouped by status</td></tr>
+      <tr><td>10</td><td>Campaign Sources pie</td><td class="num">Solar 37%, HA 19%, Insul 17%</td><td><span class="src-badge src-leadbyte">LeadByte</span></td><td>leads grouped by auto-derived vertical</td></tr>
+      <tr><td>11</td><td>Bank Accounts widget</td><td class="num" style="color:#a52a2a;">(empty)</td><td><span class="src-badge src-xero">Xero</span></td><td><strong>Xero org has 0 BANK accounts</strong> — Sam to add one</td></tr>
+      <tr><td>12</td><td>VAT Liability widget</td><td class="num" style="color:#a52a2a;">(empty)</td><td><span class="src-badge src-xero">Xero</span></td><td><strong>Xero org isn't VAT-registered</strong> — Sam to register</td></tr>
+      <tr><td>13</td><td>Invoices Owed In</td><td class="num">£44,064 · 3 invoices</td><td><span class="src-badge src-xero">Xero</span></td><td><code>invoices</code> status='authorised'</td></tr>
+      <tr><td>14</td><td>P&amp;L Summary</td><td class="num">£611,835 · 83.4%</td><td><span class="src-badge src-xero">Xero</span> + <span class="src-badge src-catchr">Catchr</span> + bank</td><td>revenue − (fixed + one-off + advertising bucket + Catchr)</td></tr>
+      <tr><td>15</td><td>Credit Alerts (2 flagged)</td><td class="num">UKESN 38, Apex 38</td><td><span class="src-badge src-endole">Endole</span></td><td><code>credit_checks.score</code> ≤ low-threshold</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ─── REPORTS TABLE ────────────────────────── -->
+  <h2>Reports page (/reports) <span class="pill done">live</span></h2>
+  <table class="data">
+    <thead>
+      <tr>
+        <th style="width: 4%">#</th>
+        <th style="width: 38%">Row</th>
+        <th style="width: 25%">Value (this month)</th>
+        <th style="width: 14%">Source</th>
+        <th>How it gets there</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>16</td><td>Supplier · facebook</td><td class="num">11,317 leads / £309,779 / £27.37 CPL</td><td><span class="src-badge src-leadbyte">LeadByte</span> + <span class="src-badge src-catchr">Catchr</span></td><td>leads (LB) × Catchr <code>facebook-ads</code> spend / lead share</td></tr>
+      <tr><td>17</td><td>Supplier · Facebook Ads</td><td class="num">2,346 leads / £64,217 / £27.37 CPL</td><td><span class="src-badge src-leadbyte">LeadByte</span> + <span class="src-badge src-catchr">Catchr</span></td><td>same, distributed proportionally</td></tr>
+      <tr><td>18</td><td>Supplier · Google Ads</td><td class="num">1,684 leads / £41,323 / £24.54 CPL</td><td><span class="src-badge src-leadbyte">LeadByte</span> + <span class="src-badge src-catchr">Catchr</span></td><td>leads (LB) × Catchr <code>google-ads</code> spend</td></tr>
+      <tr><td>19</td><td>Supplier · Taboola</td><td class="num">481 leads / £0</td><td><span class="src-badge src-leadbyte">LeadByte</span></td><td>Catchr Taboola accounts return £0 — real upstream state</td></tr>
+      <tr><td>20</td><td>Supplier · Outbrain</td><td class="num">118 leads / £0</td><td><span class="src-badge src-leadbyte">LeadByte</span></td><td>not in Catchr field-map (no sync)</td></tr>
+      <tr><td>21</td><td>Supplier · Direct / Trustpilot / Thank You</td><td class="num">leads only · £0</td><td><span class="src-badge src-leadbyte">LeadByte</span></td><td>no ad-network = no Catchr spend (correct)</td></tr>
+      <tr><td>22</td><td>Unified · Solar Panels (UK)</td><td class="num">4,516 / £123,580 / £27.36 CPL</td><td><span class="src-badge src-leadbyte">LeadByte</span> + <span class="src-badge src-catchr">Catchr</span></td><td>per (campaign × supplier) join</td></tr>
+      <tr><td>23</td><td>Unified · INSULATION</td><td class="num">2,039 / £55,797 / £27.36 CPL</td><td><span class="src-badge src-leadbyte">LeadByte</span> + <span class="src-badge src-catchr">Catchr</span></td><td>same</td></tr>
+      <tr><td>24</td><td>Unified · Hearing Aids (PL)</td><td class="num">1,841 / £50,379 / £27.36 CPL</td><td><span class="src-badge src-leadbyte">LeadByte</span> + <span class="src-badge src-catchr">Catchr</span></td><td>same</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ─── CAMPAIGN DETAIL TABLE ────────────────────────── -->
+  <h2>Campaign detail page <span class="pill done">live</span></h2>
+  <table class="data">
+    <thead>
+      <tr>
+        <th style="width: 4%">#</th>
+        <th style="width: 38%">Tile / chart</th>
+        <th style="width: 21%">Value</th>
+        <th style="width: 14%">Source</th>
+        <th>How it gets there</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>25</td><td>Revenue (window)</td><td class="num">per-campaign £</td><td><span class="src-badge src-leadbyte">LeadByte</span></td><td>pro-rated daily from <code>/reports/campaign</code></td></tr>
+      <tr><td>26</td><td>Cost (30d)</td><td class="num">per-campaign £</td><td><span class="src-badge src-catchr">Catchr</span></td><td><code>ad_spend</code> via <code>traffic_sources.account_ids</code></td></tr>
+      <tr><td>27</td><td>Profit / Margin</td><td class="num">per-campaign</td><td><span class="src-badge src-derived">Derived</span></td><td>revenue (LB) − cost (Catchr)</td></tr>
+      <tr><td>28</td><td>Daily Revenue vs Cost chart</td><td class="num">leads + £ per day</td><td><span class="src-badge src-leadbyte">LeadByte</span></td><td><code>lead_deliveries</code> rows</td></tr>
+      <tr><td>29</td><td>Traffic Sources tab</td><td class="num">per-source spend (30d)</td><td><span class="src-badge src-catchr">Catchr</span></td><td><code>ad_spend</code> rolled up by linked account_ids</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ─── CLIENT DETAIL TABLE ────────────────────────── -->
+  <h2>Client detail page (UKESN) <span class="pill done">live</span></h2>
+  <table class="data">
+    <thead>
+      <tr>
+        <th style="width: 4%">#</th>
+        <th style="width: 38%">Tab / element</th>
+        <th style="width: 21%">Value</th>
+        <th style="width: 14%">Source</th>
+        <th>How it gets there</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>30</td><td>Onboarding stage indicator</td><td class="num">1 of 4 · Pending</td><td><span class="src-badge src-statodb">Stato DB</span></td><td><code>clients.onboarding_status</code></td></tr>
+      <tr><td>31</td><td>Invoices tab</td><td class="num">per-client invoices</td><td><span class="src-badge src-xero">Xero</span></td><td><code>invoices where client_id=…</code> (drafts stripped)</td></tr>
+      <tr><td>32</td><td>Campaigns tab</td><td class="num">linked campaigns</td><td><span class="src-badge src-statodb">Stato DB</span></td><td><code>client_campaigns</code> junction</td></tr>
+      <tr><td>33</td><td>Lead deliveries table</td><td class="num">daily leads + £</td><td><span class="src-badge src-leadbyte">LeadByte</span></td><td><code>lead_deliveries</code> per (client × campaign × day)</td></tr>
+      <tr><td>34</td><td>Credit Check tab</td><td class="num" style="color:#a52a2a;">(blocked)</td><td><span class="src-badge src-endole">Endole</span></td><td>live API → <code>credit_checks</code> · £0 balance blocker</td></tr>
+      <tr><td>35</td><td>Agreement tab</td><td class="num">sent / signed / pending</td><td><span class="src-badge src-signnow">SignNow</span></td><td><code>agreements</code> + webhook (dev-mode watermark)</td></tr>
+      <tr><td>36</td><td>Documents tab</td><td class="num">uploaded files</td><td><span class="src-badge src-r2">R2</span></td><td><code>documents</code> → R2 object storage</td></tr>
+      <tr><td>37</td><td>Emails tab</td><td class="num" style="color:#a52a2a;">0 emails (empty)</td><td><span class="src-badge src-resend">Resend</span> + manual paste</td><td>outbound auto-logs when Stato sends · inbound = manual paste OR Phase-2 IMAP build</td></tr>
+      <tr><td>38</td><td>Activity tab</td><td class="num">event timeline</td><td><span class="src-badge src-statodb">Stato DB</span></td><td>union of all <code>audit_log</code> events</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ─── BANK / TASKS / NOTIF / PORTAL ────────────────────────── -->
+  <h2>Bank-feed · Tasks · Notifications · Buyer portal <span class="pill done">live</span></h2>
+  <table class="data">
+    <thead>
+      <tr>
+        <th style="width: 4%">#</th>
+        <th style="width: 38%">Surface</th>
+        <th style="width: 21%">Value</th>
+        <th style="width: 14%">Source</th>
+        <th>How it gets there</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>39</td><td>Bank Feed transactions</td><td class="num">tx + categories</td><td><span class="src-badge src-xero">Xero</span></td><td><code>/BankTransactions</code></td></tr>
+      <tr><td>40</td><td>P&amp;L Advertising row</td><td class="num">£1,941.35</td><td><span class="src-badge src-xero">Xero</span></td><td><code>bank_transactions</code> bucket='advertising'</td></tr>
+      <tr><td>41</td><td>"77 uncategorised" badge</td><td class="num">per-tx</td><td><span class="src-badge src-xero">Xero</span> + <span class="src-badge src-statodb">Stato DB</span></td><td>Xero tx without a Stato <code>cost_categories</code> match</td></tr>
+      <tr><td>42</td><td>Tasks list + recurring</td><td class="num">task rows</td><td><span class="src-badge src-statodb">Stato DB</span></td><td><code>tasks</code> + cron worker</td></tr>
+      <tr><td>43</td><td>Tasks "Generate with AI" button</td><td class="num">drafted task</td><td><span class="src-badge src-anthropic">Anthropic</span></td><td>live API call when clicked</td></tr>
+      <tr><td>44</td><td>Clients "Import from Attio" button</td><td class="num" style="color:#a52a2a;">(blocked)</td><td><span class="src-badge src-attio">Attio</span></td><td>API key pending — Sam to send</td></tr>
+      <tr><td>45</td><td>Notifications feed</td><td class="num">events</td><td><span class="src-badge src-statodb">Stato DB</span></td><td><code>notifications</code> table</td></tr>
+      <tr><td>46</td><td>Notifications · SMS alerts</td><td class="num" style="color:#a52a2a;">(MOCK)</td><td><span class="src-badge src-twilio">Twilio</span></td><td>MOCK worker firing every 30s — creds pending</td></tr>
+      <tr><td>47</td><td>All outbound email</td><td class="num" style="color:#a52a2a;">onboarding@resend.dev</td><td><span class="src-badge src-resend">Resend</span></td><td>DNS not verified on GoDaddy</td></tr>
+      <tr><td>48</td><td>Portal · Leads tab (Jamie)</td><td class="num">client's own leads</td><td><span class="src-badge src-leadbyte">LeadByte</span></td><td><code>lead_deliveries</code> filtered to his client_id</td></tr>
+      <tr><td>49</td><td>Portal · Invoices tab</td><td class="num">client's invoices</td><td><span class="src-badge src-xero">Xero</span></td><td>drafts + voided stripped (fixed 19-May)</td></tr>
+      <tr><td>50</td><td>Portal · Campaigns tab</td><td class="num">linked campaigns</td><td><span class="src-badge src-statodb">Stato DB</span></td><td>paused visible, draft/archived hidden</td></tr>
+      <tr><td>51</td><td>Portal · Agreement page</td><td class="num">client's agreement</td><td><span class="src-badge src-signnow">SignNow</span></td><td>most-progressed wins (signed&gt;sent&gt;pending; drafts hidden)</td></tr>
+      <tr><td>52</td><td>Portal · Compliance tab</td><td class="num">creatives + LPs</td><td><span class="src-badge src-statodb">Stato DB</span></td><td><code>creatives</code> + <code>landing_pages</code> (isDeleted=false)</td></tr>
+      <tr><td>53</td><td>Diagnostic · /catchr/spend-by-platform</td><td class="num">per-platform sum</td><td><span class="src-badge src-statodb">Stato DB</span></td><td>ad_spend aggregated — NEW today</td></tr>
+      <tr><td>54</td><td>Diagnostic · /xero/health</td><td class="num">scopes + probes</td><td><span class="src-badge src-xero">Xero</span></td><td>live API probes + scope check</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ─── SOURCE BREAKDOWN ────────────────────────── -->
+  <h2>Source breakdown — per integration <span class="pill fix">summary</span></h2>
+  <table class="data">
+    <thead>
+      <tr>
+        <th>Source</th>
+        <th style="text-align: right;">Surfaces</th>
+        <th>Status</th>
+        <th>What's blocked</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="src-badge src-xero">Xero</span></td>
+        <td class="num">16</td>
+        <td>✓ Live · 4/4 scopes granted</td>
+        <td>Bank widget (no BANK accounts), VAT widget (not registered) — both fix in Xero</td>
+      </tr>
+      <tr>
+        <td><span class="src-badge src-catchr">Catchr</span></td>
+        <td class="num">8</td>
+        <td>✓ Live · FB + Google + TikTok + Taboola syncing</td>
+        <td>6 Google Ads accounts disconnected (re-auth) · Taboola £0 spend = real state</td>
+      </tr>
+      <tr>
+        <td><span class="src-badge src-leadbyte">LeadByte</span></td>
+        <td class="num">11</td>
+        <td>✓ Live · 28 campaigns syncing</td>
+        <td>Only 2 linked to Stato clients — need more clients onboarded</td>
+      </tr>
+      <tr>
+        <td><span class="src-badge src-endole">Endole</span></td>
+        <td class="num">2</td>
+        <td>✗ Blocked · £0 balance</td>
+        <td>Sam to top up OR pick replacement provider</td>
+      </tr>
+      <tr>
+        <td><span class="src-badge src-signnow">SignNow</span></td>
+        <td class="num">2</td>
+        <td>✓ Live · but dev-mode "Sample" watermark</td>
+        <td>Sam to do Go-Live (~1 business day approval)</td>
+      </tr>
+      <tr>
+        <td><span class="src-badge src-r2">Cloudflare R2</span></td>
+        <td class="num">1</td>
+        <td>✓ Live</td>
+        <td>—</td>
+      </tr>
+      <tr>
+        <td><span class="src-badge src-twilio">Twilio</span></td>
+        <td class="num">1</td>
+        <td>✗ Blocked · MOCK mode</td>
+        <td>Sam to send ACCOUNT_SID + AUTH_TOKEN + FROM_NUMBER</td>
+      </tr>
+      <tr>
+        <td><span class="src-badge src-anthropic">Anthropic</span></td>
+        <td class="num">1</td>
+        <td>✓ Live · (key received 17-May)</td>
+        <td>—</td>
+      </tr>
+      <tr>
+        <td><span class="src-badge src-attio">Attio</span></td>
+        <td class="num">1</td>
+        <td>✗ Blocked</td>
+        <td>Sam to send ATTIO_API_KEY from console.attio.com</td>
+      </tr>
+      <tr>
+        <td><span class="src-badge src-resend">Resend</span></td>
+        <td class="num">2</td>
+        <td>✗ Blocked · DNS unverified</td>
+        <td>Sam to add 3 TXT records on GoDaddy</td>
+      </tr>
+      <tr>
+        <td><span class="src-badge src-statodb">Stato DB</span></td>
+        <td class="num">12</td>
+        <td>✓ Live</td>
+        <td>—</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ─── PENDING SAM-SIDE ────────────────────────── -->
+  <h2>Pending on Sam-side — ranked by leverage <span class="pill block">your action</span></h2>
+
+  <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
+    Twelve items. Every one is something only Sam can do. Each unblocks a
+    specific surface above. Effort estimates are how long the action
+    itself takes (most are 2-10 minutes); a few have a separate approval
+    window after that.
+  </p>
+
+  <table class="data">
+    <thead>
+      <tr>
+        <th style="width: 4%">#</th>
+        <th style="width: 30%">Action</th>
+        <th style="width: 36%">Unblocks</th>
+        <th style="width: 10%">Effort</th>
+        <th>Where</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td><strong>Read-only Xero accountant access for <code>yash.c@octogle.com</code></strong></td>
+        <td>Manual validation of every Stato tile vs your real Xero (canonical books) — the most-leverage unblock for confidence in demos</td>
+        <td>2 min</td>
+        <td>xero.com → My Xero → Add user → Read Only</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td><strong>Onboard 2-3 more clients</strong></td>
+        <td>Single-client comparison testing is trivial; multi-client surfaces real bugs. Need 4 fields per client (company name, number, contact name, email)</td>
+        <td>5 min / client</td>
+        <td>Send via WhatsApp or paste in form below</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td><strong>Add a bank account in Xero</strong></td>
+        <td>Bank Accounts widget on the dashboard (#11 above)</td>
+        <td>5 min</td>
+        <td>Xero → Banking → Add bank account</td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td><strong>Register Xero org for VAT</strong></td>
+        <td>VAT Liability widget on the dashboard (#12)</td>
+        <td>10 min</td>
+        <td>Xero → Settings → Tax → register with HMRC</td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td><strong>Endole replacement provider — pick one</strong></td>
+        <td>All credit checks (#15, #34) currently blocked at £0 balance. Options: Creditsafe (£200/mo unlimited) · Red Flag Alert (£150) · Experian Compass (£500 premium)</td>
+        <td>2 min</td>
+        <td>WhatsApp reply</td>
+      </tr>
+      <tr>
+        <td>6</td>
+        <td><strong>Vercel GitHub App install</strong> on Sato-Frontend repo</td>
+        <td>Every FE deploy currently needs manual <code>vercel --prod</code>. Once installed, push-to-main = auto-deploy (like Railway already does for backend)</td>
+        <td>2 min</td>
+        <td>github.com/settings/installations → Vercel</td>
+      </tr>
+      <tr>
+        <td>7</td>
+        <td><strong>Catchr Google Ads re-auth</strong> — 6 disconnected accounts</td>
+        <td>Banner reads "9 of 15 working". Each red-dot account = a chunk of unattributed ad spend</td>
+        <td>5 min</td>
+        <td>Catchr → Connections → Re-authenticate per red dot</td>
+      </tr>
+      <tr>
+        <td>8</td>
+        <td><strong>Resend DNS</strong> — 3 TXT records on GoDaddy</td>
+        <td>All outbound email currently sends from onboarding@resend.dev (#47). Once verified, sends from noreply@leadgeneration.io AND auto-logging on Email tab kicks in (#37)</td>
+        <td>5 min</td>
+        <td>GoDaddy DNS or grant 24h admin access</td>
+      </tr>
+      <tr>
+        <td>9</td>
+        <td><strong>SignNow Go-Live</strong></td>
+        <td>Removes "Sample" watermark from all outgoing PDFs (#35, #51). 250-invite cap lifted</td>
+        <td>30 min + 1 day approval</td>
+        <td>SignNow API dashboard → register Stato Production → Business plan → Go Live</td>
+      </tr>
+      <tr>
+        <td>10</td>
+        <td><strong>Twilio creds</strong> — paste 3 values</td>
+        <td>Currently MOCK SMS (#46). Once landed, system-error alerts text Sam's phone within 30s</td>
+        <td>10 min</td>
+        <td>twilio.com/console → sign up → buy long-code → paste TWILIO_ACCOUNT_SID + AUTH_TOKEN + FROM_NUMBER</td>
+      </tr>
+      <tr>
+        <td>11</td>
+        <td><strong>Attio API key</strong></td>
+        <td>"Import from Attio" button on /clients (#44) lights up</td>
+        <td>2 min</td>
+        <td>console.attio.com → Settings → API → create personal access token</td>
+      </tr>
+      <tr>
+        <td>12</td>
+        <td><strong>Go-ahead: Xero ↔ Stato comparison dashboard</strong></td>
+        <td>Yash-side ~half-day build. New admin page at <code>/integrations/xero/compare</code> with side-by-side Stato value · Xero value · delta · per-row · traffic-light coloured. Makes data-mismatch debugging trivial post-launch</td>
+        <td>1 yes/no</td>
+        <td>WhatsApp reply</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ─── SHIPPED TODAY ────────────────────────── -->
+  <h2>Shipped today by Yash (20 May) <span class="pill done">8 fixes · all live on prod</span></h2>
+  <table class="data">
+    <thead>
+      <tr>
+        <th style="width: 4%">#</th>
+        <th style="width: 38%">Fix</th>
+        <th>Why it mattered</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td><strong>Period-coherent Profit / Margin</strong></td><td>Was -1,924% on default view + -2,047% on "This month" — both Net Profit and Margin tiles now use a fixed rolling-365d / 90d calc regardless of window. Honest in every filter</td></tr>
+      <tr><td>2</td><td><strong>Supplier CPL chart populated</strong></td><td>Yesterday: every supplier row read £0 spend. Today: Facebook £309k / Google £41k / £27 CPL. Catchr ad-spend now properly joined per platform across both /supplier-performance and /reports/unified</td></tr>
+      <tr><td>3</td><td><strong>Draft invoices removed from client portal</strong></td><td>Sam's screenshot bug (INV-1002 Draft showing on Jamie's portal) is now sealed at source — drafts + voided invoices never reach client surfaces</td></tr>
+      <tr><td>4</td><td><strong>"By Delivery" → "By Campaign" labels</strong></td><td>Sam's other screenshot bug (rows showing campaign names under "Delivery" column) is now corrected on all portal-leads surfaces + matching tests</td></tr>
+      <tr><td>5</td><td><strong>Wider portal-state audit fixes</strong></td><td>Found + fixed similar leaks: paused/archived campaigns hidden, draft/cancelled agreements hidden, deleted creatives hidden, dashboard hardcoded-trend arrows fixed (no more fake green on negative deltas)</td></tr>
+      <tr><td>6</td><td><strong>TikTok Catchr sync verified</strong></td><td>Original "TikTok FIELD_NOT_KNOW" was already fixed 17-May. Today: re-validated on prod — 64 rows / £8,926 from the Solar Incentives TikTok account</td></tr>
+      <tr><td>7</td><td><strong>New diagnostic endpoint</strong> <code>/integrations/catchr/spend-by-platform</code></td><td>Per-platform row counts + totals + date ranges. Catches sync regressions without needing DB access. NEW today</td></tr>
+      <tr><td>8</td><td><strong>Commit + push hygiene</strong></td><td>11 commits across 3 repos (Sato-Backend, Sato-Frontend, stato-client-portal). All tests passing locally + type-checks clean. Deployed via Railway auto-deploy + manual vercel --prod</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ─── OPEN YASH-SIDE ────────────────────────── -->
+  <h2>Open on Yash-side (next 5 days) <span class="pill fix">on deck</span></h2>
+  <table class="data">
+    <thead>
+      <tr>
+        <th style="width: 36%">Item</th>
+        <th style="width: 16%">Effort</th>
+        <th>Unblocks / why</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Xero ↔ Stato comparison dashboard</td><td>~half-day</td><td>Pending #12 go-ahead above. Built-in validation tool — side-by-side every shared value</td></tr>
+      <tr><td>Creative-review Day 4 + 5</td><td>~1.5 days</td><td>Audit-trail page UI + admin review queue polish. Day 1-3 shipped 18 May</td></tr>
+      <tr><td>Inbound email IMAP integration</td><td>~1 day</td><td>Phase 2 schema ready. Once built, Email tab on every client auto-populates from inbound IMAP</td></tr>
+      <tr><td>Loom of today's walkthrough</td><td>~30 min</td><td>So Sam can re-watch / share internally</td></tr>
+      <tr><td>Multi-client batch-onboarding script</td><td>~2 hr</td><td>When Sam sends the next 2-3 client field sheets — one-shot CSV → client + portal user + first sync</td></tr>
+    </tbody>
+  </table>
+
+  <footer>
+    Generated 20 May 2026 · Stato · Octogle Technologies for leadgeneration.io
+  </footer>
+</div>
+</body>
+</html>

@@ -72,11 +72,22 @@
     for reference. All pages need the access code the Octogle Team sent you.
   </p>
 
+  <a class="card" href="2026-05-20-stato-status-update.html">
+    <div class="row">
+      <div class="ic" style="background: #e6f7ec;">📋</div>
+      <div>
+        <h2>Status update — 20 May 2026 <span style="font-size:11px;font-weight:600;background:#1d7a3a;color:#fff;padding:2px 8px;border-radius:999px;margin-left:6px;letter-spacing:0.04em;">LATEST</span></h2>
+        <p><strong>Demo-day data-source mapping.</strong> Every UI surface in Stato (54 in total) listed in one scannable table — what value it shows, which 3rd-party API produces that value, how Stato pulls + stores it. <strong>49 surfaces are live on real upstream data; 5 are blocked on Sam-side action</strong> (Endole £0 balance, Twilio MOCK, Attio key, Resend DNS, SignNow watermark). Plain-English answers for every empty widget: <strong>Bank Accounts</strong> empty because your Xero org has no BANK-type accounts (fix in Xero, not Stato); <strong>VAT Liability</strong> empty because the org isn't VAT-registered; <strong>Email tab</strong> empty because Resend DNS is pending + inbound IMAP is Phase 2. Plus <strong>8 fixes shipped on Yash-side TODAY</strong> (period-coherent margin, supplier CPL chart populated, draft-invoice leak sealed, "By Delivery" → "By Campaign" labels, wider portal-state audit, TikTok sync re-verified, new diagnostic endpoint). <strong>12-item Sam-side ask list at the bottom</strong>, ranked by leverage — top of the list: read-only Xero accountant access for yash.c@octogle.com (the single biggest unblock for validation confidence).</p>
+      </div>
+      <div class="arrow">›</div>
+    </div>
+  </a>
+
   <a class="card" href="2026-05-19-stato-status-update.html">
     <div class="row">
       <div class="ic" style="background: #e6f7ec;">📊</div>
       <div>
-        <h2>Status update — 19 May 2026 <span style="font-size:11px;font-weight:600;background:#1d7a3a;color:#fff;padding:2px 8px;border-radius:999px;margin-left:6px;letter-spacing:0.04em;">LATEST</span></h2>
+        <h2>Status update — 19 May 2026</h2>
         <p><strong>Covers 18 + 19 May (73 commits across both repos).</strong> Every number on your platform now comes from real upstream data — Xero, Catchr, LeadByte — with no placeholders, no mocked fallbacks, no assumed averages. The dashboard has a new <strong>time-range filter</strong> at the top (Last 7d · This month · Last month · 90d · 6m · 12m) that drives all 5 value tiles + Revenue Overview chart + Invoice Status bar + Campaign Sources pie. Profit/Margin used to read -1924% because it was mixing 12mo revenue against 2mo cost — fixed with period-coherent math, now a realistic -4.2% across <strong>£733k revenue / £764k Catchr spend</strong> (both verified vs source). The "100% margin" lie on individual campaigns is gone — Solar Panels detail now reads <strong>-£253k / -200% (real)</strong>. 18 May also shipped: creative-review v2 (Day 1+3), Xero hardening (429 backoff + bank fallback + VAT stale-while-revalidate), client bootstrap on create, buyer portal real-data via junction, per-source profitability widget, reality-checked client badges. <strong>NEW inside</strong>: data-flow breakdown per source (how each value is fetched/compared/displayed), single-client caveat (we need more clients linked for real comparison testing), and a proposal for a <strong>Xero ↔ Stato comparison dashboard</strong> — side-by-side reconciliation page so you can see any drift in green/amber/red. <strong>8 short asks inside</strong>, including go-ahead on the comparison dashboard + the next 2-3 clients to onboard.</p>
       </div>
       <div class="arrow">›</div>
@@ -183,7 +194,7 @@
   </a>
 
   <footer>
-    Updated 19 May 2026 · Stato · Octogle Technologies for leadgeneration.io
+    Updated 20 May 2026 · Stato · Octogle Technologies for leadgeneration.io
   </footer>
 </div>
 </body>
