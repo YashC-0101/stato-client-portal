@@ -811,8 +811,35 @@
     </tbody>
   </table>
 
+  <!-- ─── DONE TODAY ────────────────────────── -->
+  <h2>Done on dev side today <span class="pill done">2 items · live or audit complete</span></h2>
+  <table class="data">
+    <thead>
+      <tr>
+        <th style="width: 12%">Linear</th>
+        <th style="width: 36%">Item</th>
+        <th style="width: 12%">Owner</th>
+        <th>Outcome</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a href="https://linear.app/leadgenerationio/issue/OCT-40" target="_blank">OCT-40</a></td>
+        <td><strong>Catchr <code>lastSyncAt</code> not persisted</strong></td>
+        <td><span class="src-badge src-yash">Yash</span></td>
+        <td><span class="src-badge src-shipped">Shipped</span> · commit <code>e5f2e6c</code>, Railway redeployed, prod verified: <code>connected=true</code>, <code>lastSyncAt=2026-05-21 12:16:25</code>. Integrations card now reads ✓ Live</td>
+      </tr>
+      <tr>
+        <td><a href="https://linear.app/leadgenerationio/issue/OCT-39" target="_blank">OCT-39</a></td>
+        <td><strong>Multi-buyer rollup audit</strong></td>
+        <td><span class="src-badge src-yash">Yash</span></td>
+        <td><span class="src-badge src-shipped">Audit complete</span> · 5 surfaces correct by construction, 2 visually degraded for multi-buyer. Findings posted as Linear comment on OCT-39; remediation split into OCT-41 + OCT-42 below</td>
+      </tr>
+    </tbody>
+  </table>
+
   <!-- ─── OPEN ON DEV SIDE ────────────────────────── -->
-  <h2>Open on dev side <span class="pill fix">5 items · OCT-40 already shipped earlier today</span></h2>
+  <h2>Open on dev side <span class="pill fix">4 items remaining</span></h2>
   <table class="data">
     <thead>
       <tr>
@@ -839,25 +866,11 @@
         <td>External GitHub Action repo. Hari to locate the workflow, revert the template change, redeploy. Sam confirms by reply once the next scheduled run reaches the inbox</td>
       </tr>
       <tr>
-        <td><a href="https://linear.app/leadgenerationio/issue/OCT-39" target="_blank">OCT-39</a></td>
-        <td><strong>Multi-buyer rollup audit</strong> (campaigns with multiple clients)</td>
-        <td><span class="src-badge src-yash">Yash</span></td>
-        <td>~4 hr</td>
-        <td>Audit-only (not a fix). Walk every place revenue or cost maps to a campaign and document whether it unions correctly across all buyers (Sam confirmed many-to-many at meeting 06:07). Output: one follow-up ticket per page that needs fixing</td>
-      </tr>
-      <tr>
-        <td><a href="https://linear.app/leadgenerationio/issue/OCT-40" target="_blank">OCT-40</a></td>
-        <td><strong>Catchr <code>lastSyncAt</code> not persisted</strong> · <span class="src-badge src-shipped">Shipped</span></td>
-        <td><span class="src-badge src-yash">Yash</span></td>
-        <td>—</td>
-        <td>Found earlier today while pulling real values. Fixed and pushed in commit <code>e5f2e6c</code> — Railway redeployed, prod verified: <code>connected=true</code>, <code>lastSyncAt=2026-05-21 12:16:25</code></td>
-      </tr>
-      <tr>
         <td><a href="https://linear.app/leadgenerationio/issue/OCT-41" target="_blank">OCT-41</a></td>
         <td><strong>Admin campaign list — multi-buyer name collapse</strong></td>
         <td><span class="src-badge src-yash">Yash</span></td>
         <td>~2 hr</td>
-        <td>Spawned from the OCT-39 audit just now. <code>listCampaigns()</code> returns LeadByte's singular <code>clientName</code> for multi-buyer campaigns — should surface all buyers or render "Multiple (N)" with tooltip. Revenue + cost remain correct (campaign-level union)</td>
+        <td>Spawned from the OCT-39 audit. <code>listCampaigns()</code> returns LeadByte's singular <code>clientName</code> for multi-buyer campaigns — should surface all buyers or render "Multiple (N)" with tooltip. Revenue + cost remain correct (campaign-level union)</td>
       </tr>
       <tr>
         <td><a href="https://linear.app/leadgenerationio/issue/OCT-42" target="_blank">OCT-42</a></td>
