@@ -216,7 +216,7 @@
       <div class="stat"><div class="num">23</div><div class="lbl">Commits since 20-May meeting</div></div>
       <div class="stat"><div class="num">8 / 10</div><div class="lbl">Meeting tasks shipped (T1-T9 live · T10 with Hari)</div></div>
       <div class="stat"><div class="num">£733k / £819k</div><div class="lbl">Revenue / Cost — verified live just now</div></div>
-      <div class="stat"><div class="num">6</div><div class="lbl">Linear tickets (OCT-35 → OCT-40) · 2 already shipped</div></div>
+      <div class="stat"><div class="num">8</div><div class="lbl">Linear tickets (OCT-35 → OCT-42) · 3 already shipped to prod</div></div>
     </div>
   </div>
 
@@ -707,11 +707,11 @@
         <td>28 active campaigns, lead deliveries, revenue per lead</td>
         <td>Last sync at <code>2026-05-21T12:03:06Z</code> · 7,469 leads this month synced</td>
       </tr>
-      <tr class="red-row">
+      <tr>
         <td><span class="src-badge src-catchr">Catchr</span></td>
-        <td class="red-val">✗ Probe failed</td>
+        <td>✓ Live (now)</td>
         <td>Ad spend per platform / account</td>
-        <td>Live <code>/account</code> probe times out at 3s — but background sync IS working (£701k of last-30d spend synced across 4 platforms). The integrations UI still reads "disconnected" because <code>lastSyncAt</code> isn't being persisted. Filed as <a href="https://linear.app/leadgenerationio/issue/OCT-40" target="_blank">OCT-40</a> · medium · 1 point</td>
+        <td><strong>Fixed today —</strong> <a href="https://linear.app/leadgenerationio/issue/OCT-40" target="_blank">OCT-40</a> shipped to prod (commit <code>e5f2e6c</code>). <code>lastSyncAt</code> now DB-backed via <code>max(ad_spend.synced_at)</code>; integrations card flips to Live as soon as a sync lands. Verified just now: <code>connected=true</code>, <code>lastSyncAt=2026-05-21 12:16:25</code>, £702k of last-30d spend</td>
       </tr>
       <tr>
         <td><span class="src-badge src-signnow">SignNow</span></td>
@@ -812,7 +812,7 @@
   </table>
 
   <!-- ─── OPEN ON DEV SIDE ────────────────────────── -->
-  <h2>Open on dev side <span class="pill fix">4 items</span></h2>
+  <h2>Open on dev side <span class="pill fix">5 items · OCT-40 already shipped earlier today</span></h2>
   <table class="data">
     <thead>
       <tr>
@@ -847,10 +847,24 @@
       </tr>
       <tr>
         <td><a href="https://linear.app/leadgenerationio/issue/OCT-40" target="_blank">OCT-40</a></td>
-        <td><strong>Catchr <code>lastSyncAt</code> not persisted</strong> → integrations UI reads "disconnected" despite working sync</td>
+        <td><strong>Catchr <code>lastSyncAt</code> not persisted</strong> · <span class="src-badge src-shipped">Shipped</span></td>
         <td><span class="src-badge src-yash">Yash</span></td>
-        <td>1 hr</td>
-        <td>Discovered while pulling real values for this report. Sync IS healthy (£701k of spend landed), but the fallback added on 20-May (commit <code>77dee07</code>) never fires because <code>lastSyncAt</code> is being returned as <code>null</code>. Fix is one DB lookup + one comparison</td>
+        <td>—</td>
+        <td>Found earlier today while pulling real values. Fixed and pushed in commit <code>e5f2e6c</code> — Railway redeployed, prod verified: <code>connected=true</code>, <code>lastSyncAt=2026-05-21 12:16:25</code></td>
+      </tr>
+      <tr>
+        <td><a href="https://linear.app/leadgenerationio/issue/OCT-41" target="_blank">OCT-41</a></td>
+        <td><strong>Admin campaign list — multi-buyer name collapse</strong></td>
+        <td><span class="src-badge src-yash">Yash</span></td>
+        <td>~2 hr</td>
+        <td>Spawned from the OCT-39 audit just now. <code>listCampaigns()</code> returns LeadByte's singular <code>clientName</code> for multi-buyer campaigns — should surface all buyers or render "Multiple (N)" with tooltip. Revenue + cost remain correct (campaign-level union)</td>
+      </tr>
+      <tr>
+        <td><a href="https://linear.app/leadgenerationio/issue/OCT-42" target="_blank">OCT-42</a></td>
+        <td><strong>Reports/unified — multi-buyer name resolution</strong></td>
+        <td><span class="src-badge src-yash">Yash</span></td>
+        <td>~2 hr</td>
+        <td>Same pattern as OCT-41 but on the unified report (the surface Sam uses most). Picks an arbitrary buyer when multiple are linked; should surface all or "Multiple (N)"</td>
       </tr>
     </tbody>
   </table>
@@ -896,7 +910,7 @@
       <tr>
         <td><a href="https://linear.app/leadgenerationio/issue/OCT-37" target="_blank"><strong>OCT-37</strong></a></td>
         <td>T3: Responsive UI overhaul across portal + admin pages</td>
-        <td><span class="src-badge src-todo">Todo</span></td>
+        <td><span class="src-badge src-shipped">In Review</span></td>
         <td><span class="src-badge src-yash">Yash</span></td>
         <td><span class="src-badge src-improve">Improvement</span></td>
         <td>Meeting · client phones</td>
@@ -904,7 +918,7 @@
       <tr>
         <td><a href="https://linear.app/leadgenerationio/issue/OCT-38" target="_blank"><strong>OCT-38</strong></a></td>
         <td>T10: Restore previous GitHub activity report template</td>
-        <td><span class="src-badge src-todo">Todo</span></td>
+        <td><span class="src-badge src-shipped">In Review</span></td>
         <td><span class="src-badge src-hari">Hari</span></td>
         <td><span class="src-badge src-bug">Bug</span></td>
         <td>Meeting 01:11</td>
@@ -912,7 +926,7 @@
       <tr>
         <td><a href="https://linear.app/leadgenerationio/issue/OCT-39" target="_blank"><strong>OCT-39</strong></a></td>
         <td>Multi-buyer behaviour audit (campaigns with multiple clients)</td>
-        <td><span class="src-badge src-todo">Todo</span></td>
+        <td><span class="src-badge src-shipped">In Review</span></td>
         <td><span class="src-badge src-yash">Yash</span></td>
         <td><span class="src-badge src-improve">Improvement</span></td>
         <td>Meeting 06:07</td>
@@ -920,10 +934,26 @@
       <tr>
         <td><a href="https://linear.app/leadgenerationio/issue/OCT-40" target="_blank"><strong>OCT-40</strong></a></td>
         <td>Catchr integration overview shows <code>connected=false</code> despite working sync (<code>lastSyncAt</code> never set)</td>
-        <td><span class="src-badge src-todo">Todo</span></td>
+        <td><span class="src-badge src-shipped">In Review · live</span></td>
         <td><span class="src-badge src-yash">Yash</span></td>
         <td><span class="src-badge src-bug">Bug</span></td>
-        <td>Found today — real-data pull for this report</td>
+        <td>Found + shipped today</td>
+      </tr>
+      <tr>
+        <td><a href="https://linear.app/leadgenerationio/issue/OCT-41" target="_blank"><strong>OCT-41</strong></a></td>
+        <td>Admin campaign list shows single clientName for multi-buyer campaigns</td>
+        <td><span class="src-badge src-shipped">In Review</span></td>
+        <td><span class="src-badge src-yash">Yash</span></td>
+        <td><span class="src-badge src-improve">Improvement</span></td>
+        <td>Spawned from OCT-39 audit</td>
+      </tr>
+      <tr>
+        <td><a href="https://linear.app/leadgenerationio/issue/OCT-42" target="_blank"><strong>OCT-42</strong></a></td>
+        <td>Reports/unified clientName resolves arbitrarily for multi-buyer campaigns</td>
+        <td><span class="src-badge src-shipped">In Review</span></td>
+        <td><span class="src-badge src-yash">Yash</span></td>
+        <td><span class="src-badge src-improve">Improvement</span></td>
+        <td>Spawned from OCT-39 audit</td>
       </tr>
     </tbody>
   </table>
