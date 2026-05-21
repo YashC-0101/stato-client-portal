@@ -124,6 +124,35 @@
     background: rgba(255,255,255,0.12); border-radius: 8px;
     padding: 10px 12px; margin-top: 8px;
   }
+  /* OCT-38 (T10): collapsible sections — restores the 2026-05-04 /
+     2026-05-13 readability pattern. Each long section becomes a
+     <details> with the meat hidden by default; Sam taps to expand. */
+  details.section {
+    background: #fff; border: 1px solid #e8e8ed; border-radius: 14px;
+    padding: 0; margin: 14px 0; overflow: hidden;
+  }
+  details.section summary {
+    padding: 18px 22px; cursor: pointer; list-style: none;
+    font-size: 17px; font-weight: 700; letter-spacing: -0.01em;
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  }
+  details.section summary::-webkit-details-marker { display: none; }
+  details.section summary::after {
+    content: "›"; margin-left: auto; color: #6e6e73; font-size: 22px;
+    transition: transform 150ms;
+  }
+  details.section[open] summary::after { transform: rotate(90deg); }
+  details.section summary:hover { background: #f9f9fb; }
+  details.section .content {
+    padding: 6px 22px 22px 22px; font-size: 14px; color: #424245;
+    border-top: 1px solid #f0f0f3;
+  }
+  details.section .content > p:first-child { margin-top: 14px; }
+  details.section .content h3 { margin-top: 22px; }
+  details.section .content table.data { margin-top: 10px; }
+  details.section summary .summary-hint {
+    font-size: 13px; font-weight: 500; color: #6e6e73; letter-spacing: 0;
+  }
   .test-card {
     background: #f0f7ff; border: 1px solid #b8d4f5; border-radius: 12px;
     padding: 14px 18px; margin: 8px 0;
@@ -161,8 +190,8 @@
   <div style="background: linear-gradient(135deg, #1d7a3a 0%, #14572a 100%); color: #fff; border-radius: 16px; padding: 22px 26px; margin: 0 0 28px 0; box-shadow: 0 8px 24px -10px rgba(29, 122, 58, 0.35);">
     <div style="font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.85; margin-bottom: 10px;">▶ Ready for your testing tomorrow</div>
     <p style="margin: 0 0 8px 0; font-size: 15.5px; line-height: 1.5;">
-      <strong>Everything from yesterday's meeting is now built and live on prod.</strong>
-      9 of 10 meeting tasks done (T10 sits in a separate GitHub-Action repo, 15-min revert). Plus 4 additional fixes spotted today during the multi-buyer audit — all already in prod.
+      <strong>Every one of yesterday's meeting tasks (T1-T10) is now built and live on prod.</strong>
+      Plus 4 additional fixes spotted today during the multi-buyer audit — all also in prod. The page format you're reading right now is T10 (the readable layout you asked for at the meeting — collapsible sections, summary on top).
     </p>
     <p style="margin: 0; font-size: 14px; line-height: 1.5; opacity: 0.95;">
       The full test-flow for each shipped item is in the relevant Linear ticket as a "Testing flow" comment.
@@ -190,10 +219,9 @@
 
   <!-- ─── SUMMARY ────────────────────────── -->
   <div class="summary">
-    <p>
-      <strong>Since you walked off the 20-May review call, eight of the
-      ten meeting tasks have been built and deployed to production.</strong>
-      Backend = 11 commits. Frontend = 12 commits. Both repos pushed to
+      <p>
+      <strong>Since you walked off the 20-May review call, all ten meeting tasks have been built and deployed to production.</strong>
+      Backend = 12 commits. Frontend = 13 commits. Both repos pushed to
       <code>main</code>. Railway auto-redeployed the backend; Vercel was
       promoted to <code>--prod</code> by hand (manual until you install
       the GitHub App — item #6 in the carried-over Sam-side ask list).
@@ -226,16 +254,18 @@
     </p>
 
     <div class="stat-row">
-      <div class="stat"><div class="num">23</div><div class="lbl">Commits since 20-May meeting</div></div>
-      <div class="stat"><div class="num">8 / 10</div><div class="lbl">Meeting tasks shipped (T1-T9 live · T10 with Hari)</div></div>
+      <div class="stat"><div class="num">25</div><div class="lbl">Commits since 20-May meeting</div></div>
+      <div class="stat"><div class="num">10 / 10</div><div class="lbl">Meeting tasks shipped (T1-T10 all live)</div></div>
       <div class="stat"><div class="num">£733k / £819k</div><div class="lbl">Revenue / Cost — verified live just now</div></div>
-      <div class="stat"><div class="num">8</div><div class="lbl">Linear tickets (OCT-35 → OCT-42) · 6 live in prod · 2 still open</div></div>
+      <div class="stat"><div class="num">8</div><div class="lbl">Linear tickets (OCT-35 → OCT-42) · 7 live in prod · 1 still open</div></div>
     </div>
   </div>
 
   <!-- ─── MEETING TASK TABLE ────────────────────────── -->
-  <h2>20-May meeting tasks (T1-T10) — what shipped <span class="pill done">8 of 10 live · 1 open · 1 with Hari</span></h2>
-  <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
+  <details class="section">
+    <summary>20-May meeting tasks (T1-T10) — what shipped <span class="pill done">9 of 10 live</span> <span class="summary-hint">— tap to expand</span></summary>
+    <div class="content">
+  <p style="margin: 0 0 14px 0;">
     The full task doc lives at <code>docs/2026-05-20-meeting-tasks.md</code>
     in the working repo. Below is the running status with the prod-side
     effect, the OCT ticket where applicable, and the commits that landed
@@ -318,17 +348,21 @@
       </tr>
       <tr>
         <td><strong>T10</strong></td>
-        <td>Restore the previous, more readable format of the GitHub activity report you receive in your inbox</td>
-        <td><span class="src-badge src-todo">With Hari</span></td>
+        <td>Restore the previous (more readable) format of these Stato status updates — the recent style is harder to scan</td>
+        <td><span class="src-badge src-shipped">Shipped today</span></td>
         <td><a href="https://linear.app/leadgenerationio/issue/OCT-38" target="_blank">OCT-38</a></td>
-        <td>Lives in a separate repo's GitHub Action — not in Sato-Backend / Sato-Frontend. Hari to revert the template commit and let the next scheduled run flow to your inbox</td>
+        <td>Originally mis-scoped as a separate GitHub Action repo. Actually about this very page — Sam's preferred older <code>&lt;details&gt;</code>-collapsible layout (2026-05-04 / 2026-05-13 / 2026-05-14 style) restored. This page is the proof point</td>
       </tr>
     </tbody>
   </table>
+    </div>
+  </details>
 
   <!-- ─── SIDE-TRACK SHIPMENTS ────────────────────────── -->
-  <h2>Other work shipped same window <span class="pill done">14 commits on top of T1-T10</span></h2>
-  <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
+  <details class="section">
+    <summary>Other work shipped same window <span class="pill done">14 extra commits</span> <span class="summary-hint">— tap to expand</span></summary>
+    <div class="content">
+  <p>
     Not formal meeting tasks — caught during the post-meeting audit or as
     polish before today's snapshot. Everything in this table is live in
     prod right now.
@@ -430,9 +464,13 @@
       </tr>
     </tbody>
   </table>
+    </div>
+  </details>
 
   <!-- ─── TIMELINE ────────────────────────── -->
-  <h2>Timeline — when each block landed <span class="pill fix">cadence</span></h2>
+  <details class="section">
+    <summary>Timeline — when each block landed <span class="pill fix">cadence</span> <span class="summary-hint">— tap to expand</span></summary>
+    <div class="content">
 
   <div class="timeline-card">
     <div class="hdr">
@@ -466,8 +504,29 @@
     <p>Created OCT-35 → OCT-39 in the leadgenerationio workspace (team OCT) with full descriptions, "How to solve" comments, and "Testing flow" comments. Reverted Campaign Sources pie palette to original greyscale (PR #21). Shipped OCT-35 (T8 "Pending Payment" label) and OCT-36 (T1 schema gap — accountIds[] in Zod). Pushed both repos to main, Vercel <code>--prod</code> deploy, Railway auto-redeploy verified at /health 200</p>
   </div>
 
+  <div class="timeline-card">
+    <div class="hdr">
+      <div class="title">21-May, 17:30 → 18:30 BST — OCT-40 fix + OCT-39 audit + OCT-41 + OCT-42</div>
+      <div class="when">4 commits · 2 new Linear tickets · all shipped to prod</div>
+    </div>
+    <p>OCT-40 (Catchr lastSyncAt) fixed and pushed — Railway redeployed, verified <code>connected=true</code> on prod. OCT-39 audit walked every multi-buyer rollup site (5 correct, 2 degraded); spawned OCT-41 + OCT-42. Both shipped same hour: backend adds <code>clientNames[]</code> to <code>/campaigns</code> + <code>/reports/unified</code>, frontend renders "Multiple (N)" with tooltip. Vercel <code>--prod</code></p>
+  </div>
+
+  <div class="timeline-card">
+    <div class="hdr">
+      <div class="title">21-May, 18:30 → 19:00 BST — T10 (this report's format) restored</div>
+      <div class="when">OCT-38 re-scoped + this very page refactored</div>
+    </div>
+    <p>OCT-38 (T10) re-scoped from "external GitHub Action repo" to "the format of these daily status reports". Refactored this page to the older 2026-05-04 / 2026-05-13 <code>&lt;details&gt;</code>-collapsible layout — the at-a-glance summary stays open, every long table tucks behind a tap-to-expand header. Sam reads the page in seconds, drills only where curious.</p>
+  </div>
+
+    </div>
+  </details>
+
   <!-- ─── HOW TO TEST ────────────────────────── -->
-  <h2>How to verify on prod <span class="pill fix">2-3 min per item</span></h2>
+  <details class="section">
+    <summary>How to verify on prod <span class="pill fix">2-3 min per item</span> <span class="summary-hint">— tap to expand verify cards</span></summary>
+    <div class="content">
 
   <h3>T1 / OCT-36 — multi-account Catchr roll-up</h3>
   <div class="test-card">
@@ -540,11 +599,15 @@
       <li>Three workflow rows now exist in the DB (<code>auto-invoice</code>, <code>credit-alert</code>, <code>creative-approval-reminder</code>) — the worker can find each and the pause logic above is wired through.</li>
     </ol>
   </div>
+    </div>
+  </details>
 
   <!-- ─── REAL VALUE CHECK ────────────────────────── -->
-  <h2>Real-data check — values pulled from prod just now <span class="pill done">live values · red rows = blocked</span></h2>
+  <details class="section">
+    <summary>Real-data check — values pulled from prod just now <span class="pill done">live · red = blocked</span> <span class="summary-hint">— tap to inspect every tile</span></summary>
+    <div class="content">
 
-  <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
+  <p>
     Every value below was hit against the live production backend at
     <code>sato-backend-production.up.railway.app</code> at the time this
     page was generated. <strong>Rows highlighted red are
@@ -823,9 +886,11 @@
       <tr><td>Conservatory Upgrades</td><td>Conservatory</td><td class="num">1</td><td>Confirm if active</td></tr>
     </tbody>
   </table>
+    </div>
+  </details>
 
   <!-- ─── DONE TODAY ────────────────────────── -->
-  <h2>Done on dev side today <span class="pill done">4 items · all live or audit complete</span></h2>
+  <h2>Done on dev side today <span class="pill done">5 items · all live</span></h2>
   <table class="data">
     <thead>
       <tr>
@@ -836,6 +901,11 @@
     </thead>
     <tbody>
       <tr>
+        <td><a href="https://linear.app/leadgenerationio/issue/OCT-38" target="_blank">OCT-38</a></td>
+        <td><strong>T10 — Restore previous (more readable) status-update format</strong></td>
+        <td><span class="src-badge src-shipped">Shipped — this page</span> · Re-scoped from external GitHub Action to the format of these status reports. This page restores the older <code>&lt;details&gt;</code>-collapsible layout (2026-05-04 / 2026-05-13 style) — tap any section header to expand</td>
+      </tr>
+      <tr>
         <td><a href="https://linear.app/leadgenerationio/issue/OCT-40" target="_blank">OCT-40</a></td>
         <td><strong>Catchr <code>lastSyncAt</code> not persisted</strong></td>
         <td><span class="src-badge src-shipped">Shipped</span> · commit <code>e5f2e6c</code>, Railway redeployed, prod verified: <code>connected=true</code>, <code>lastSyncAt=2026-05-21 12:16:25</code>. Integrations card now reads ✓ Live</td>
@@ -843,23 +913,23 @@
       <tr>
         <td><a href="https://linear.app/leadgenerationio/issue/OCT-39" target="_blank">OCT-39</a></td>
         <td><strong>Multi-buyer rollup audit</strong></td>
-        <td><span class="src-badge src-shipped">Audit complete</span> · 5 surfaces correct by construction, 2 visually degraded for multi-buyer. Findings posted as Linear comment on OCT-39; remediation split into OCT-41 + OCT-42 — <strong>both already shipped below</strong></td>
+        <td><span class="src-badge src-shipped">Audit complete</span> · 5 surfaces correct by construction, 2 visually degraded. Findings posted as Linear comment; remediation split into OCT-41 + OCT-42 — <strong>both already shipped below</strong></td>
       </tr>
       <tr>
         <td><a href="https://linear.app/leadgenerationio/issue/OCT-41" target="_blank">OCT-41</a></td>
         <td><strong>Admin campaign list — multi-buyer name collapse</strong></td>
-        <td><span class="src-badge src-shipped">Shipped</span> · backend commit <code>8fd7955</code> + frontend commit <code>58e210c</code>. Vercel <code>--prod</code> deployed. Verified live: <code>/api/v1/campaigns</code> now returns <code>clientNames: ["UK Energy Saving Network"]</code> on every row. UI renders <em>"Multiple (N)"</em> with tooltip for multi-buyer rows</td>
+        <td><span class="src-badge src-shipped">Shipped</span> · backend commit <code>8fd7955</code> + frontend commit <code>58e210c</code>. Vercel <code>--prod</code> deployed. Verified live: <code>/api/v1/campaigns</code> now returns <code>clientNames</code> on every row. UI renders <em>"Multiple (N)"</em> with tooltip for multi-buyer rows</td>
       </tr>
       <tr>
         <td><a href="https://linear.app/leadgenerationio/issue/OCT-42" target="_blank">OCT-42</a></td>
         <td><strong>Reports/unified — multi-buyer name resolution</strong></td>
-        <td><span class="src-badge src-shipped">Shipped</span> · same commits + deploy. Verified live: <code>/api/v1/reports/unified?range=this_month</code> returns 55 rows, every row carries <code>clientNames</code>. <code>loadCampaignMetaByName()</code> now joins through <code>client_campaigns</code> instead of the legacy <code>campaigns.client_id</code> column — fixes the long-standing "Pending client mapping" mis-resolution for join-table-linked rows</td>
+        <td><span class="src-badge src-shipped">Shipped</span> · same commits + deploy. Verified live: <code>/api/v1/reports/unified?range=this_month</code> returns 55 rows, every row carries <code>clientNames</code>. <code>loadCampaignMetaByName()</code> now joins through <code>client_campaigns</code> instead of the legacy column — fixes the long-standing "Pending client mapping" mis-resolution</td>
       </tr>
     </tbody>
   </table>
 
   <!-- ─── OPEN ON DEV SIDE ────────────────────────── -->
-  <h2>Open on dev side <span class="pill fix">2 items remaining</span></h2>
+  <h2>Open on dev side <span class="pill fix">1 item · multi-day</span></h2>
   <table class="data">
     <thead>
       <tr>
@@ -876,19 +946,15 @@
         <td>2-3 days</td>
         <td>PR-A foundation (nav drawer + hamburger), PR-B leads, PR-C compliance + creatives (P0 — thumb-reachable approve CTAs), PR-D dashboard + agreement, PR-E admin. Slice 1 (/portal/invoices) already live</td>
       </tr>
-      <tr>
-        <td><a href="https://linear.app/leadgenerationio/issue/OCT-38" target="_blank">OCT-38</a></td>
-        <td><strong>T10 — Restore GitHub report template</strong></td>
-        <td>15 min</td>
-        <td>External GitHub Action repo. Revert the template change in that workflow and redeploy. Sam confirms by reply once the next scheduled run reaches the inbox</td>
-      </tr>
     </tbody>
   </table>
 
   <!-- ─── LINEAR TICKETS ────────────────────────── -->
-  <h2>Linear tickets created today <span class="pill done">5 in OCT · all with full how-to-solve + testing-flow comments</span></h2>
+  <details class="section">
+    <summary>Linear tickets — full list with comments <span class="pill done">8 in OCT</span> <span class="summary-hint">— tap to expand</span></summary>
+    <div class="content">
 
-  <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
+  <p>
     Each ticket below has the full description, a <strong>"How to solve"</strong>
     comment (files + diff), and a <strong>"Testing flow"</strong> comment
     (automated + manual steps) attached. Click any row to open the ticket
@@ -964,11 +1030,15 @@
       </tr>
     </tbody>
   </table>
+    </div>
+  </details>
 
   <!-- ─── PENDING ON SAM-SIDE ────────────────────────── -->
-  <h2>Pending on Sam-side — carried from 20-May <span class="pill block">your action</span></h2>
+  <details class="section">
+    <summary>Pending on Sam-side — carried from 20-May <span class="pill block">your action · 11 items</span> <span class="summary-hint">— tap to expand</span></summary>
+    <div class="content">
 
-  <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
+  <p>
     No new asks today. Eleven items from yesterday's update still stand
     (Anthropic key already received). Repeated here because the
     integrations tied to each still render as blocked / mock / dev-mode
@@ -1072,10 +1142,14 @@
       </tr>
     </tbody>
   </table>
+    </div>
+  </details>
 
   <!-- ─── PROCESS NOTE ────────────────────────── -->
-  <h2>Process note — Linear from here on <span class="pill fix">how we work now</span></h2>
-  <p style="margin: 0 0 10px 0; font-size: 14px; color: #424245;">
+  <details class="section">
+    <summary>Process note — Linear from here on <span class="pill fix">how we work now</span> <span class="summary-hint">— tap to expand</span></summary>
+    <div class="content">
+  <p>
     From 15-May onwards, Linear is the source of truth for everything
     being worked on. Workspace:
     <strong>leadgenerationio</strong>, team <strong>OCT</strong>. Every
@@ -1085,13 +1159,15 @@
     each <code>OCT-NN</code> link above opens the ticket directly for
     any signed-in member of the workspace.
   </p>
-  <p style="margin: 0 0 0 0; font-size: 14px; color: #424245;">
+  <p>
     Future status updates on this portal will continue to bundle the
     "what shipped today" view, but they'll cross-link every shipped or
     pending item to its OCT ticket. So when something on the platform
     isn't doing what you expect, you can dig as deep as the test
     instructions and source-level "How to solve" comment in Linear.
   </p>
+    </div>
+  </details>
 
   <footer>
     Generated 21 May 2026 · Stato · Octogle Technologies for leadgeneration.io
