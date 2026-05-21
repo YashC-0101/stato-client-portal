@@ -155,7 +155,20 @@
   <a class="back" href="index.html">← Back to portal</a>
 
   <h1>Stato — Status Update</h1>
-  <p class="meta">21 May 2026 · full development report since the 20-May meeting (cut-off: tasks.md saved 17:19 IST) · 23 commits · all values below verified against live prod</p>
+  <p class="meta">21 May 2026 · full development report since the 20-May meeting (cut-off: tasks.md saved 17:19 IST) · 25 commits · all values below verified against live prod</p>
+
+  <!-- ─── READY FOR TESTING BANNER ────────────────────────── -->
+  <div style="background: linear-gradient(135deg, #1d7a3a 0%, #14572a 100%); color: #fff; border-radius: 16px; padding: 22px 26px; margin: 0 0 28px 0; box-shadow: 0 8px 24px -10px rgba(29, 122, 58, 0.35);">
+    <div style="font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.85; margin-bottom: 10px;">▶ Ready for your testing tomorrow</div>
+    <p style="margin: 0 0 8px 0; font-size: 15.5px; line-height: 1.5;">
+      <strong>Everything from yesterday's meeting is now built and live on prod.</strong>
+      9 of 10 meeting tasks done (T10 sits in a separate GitHub-Action repo, 15-min revert). Plus 4 additional fixes spotted today during the multi-buyer audit — all already in prod.
+    </p>
+    <p style="margin: 0; font-size: 14px; line-height: 1.5; opacity: 0.95;">
+      The full test-flow for each shipped item is in the relevant Linear ticket as a "Testing flow" comment.
+      <strong>Sam — take Tomorrow morning to walk through each one</strong> using the verification cards below + the Linear comments. Anything that's not behaving how you expect, reply or text — Yash will file it as a new OCT ticket and have it back to you the same day.
+    </p>
+  </div>
 
   <!-- ─── TRY IT LIVE ────────────────────────── -->
   <div class="live-block">
@@ -216,7 +229,7 @@
       <div class="stat"><div class="num">23</div><div class="lbl">Commits since 20-May meeting</div></div>
       <div class="stat"><div class="num">8 / 10</div><div class="lbl">Meeting tasks shipped (T1-T9 live · T10 with Hari)</div></div>
       <div class="stat"><div class="num">£733k / £819k</div><div class="lbl">Revenue / Cost — verified live just now</div></div>
-      <div class="stat"><div class="num">8</div><div class="lbl">Linear tickets (OCT-35 → OCT-42) · 3 already shipped to prod</div></div>
+      <div class="stat"><div class="num">8</div><div class="lbl">Linear tickets (OCT-35 → OCT-42) · 6 live in prod · 2 still open</div></div>
     </div>
   </div>
 
@@ -812,13 +825,12 @@
   </table>
 
   <!-- ─── DONE TODAY ────────────────────────── -->
-  <h2>Done on dev side today <span class="pill done">2 items · live or audit complete</span></h2>
+  <h2>Done on dev side today <span class="pill done">4 items · all live or audit complete</span></h2>
   <table class="data">
     <thead>
       <tr>
         <th style="width: 12%">Linear</th>
-        <th style="width: 36%">Item</th>
-        <th style="width: 12%">Owner</th>
+        <th style="width: 38%">Item</th>
         <th>Outcome</th>
       </tr>
     </thead>
@@ -826,26 +838,33 @@
       <tr>
         <td><a href="https://linear.app/leadgenerationio/issue/OCT-40" target="_blank">OCT-40</a></td>
         <td><strong>Catchr <code>lastSyncAt</code> not persisted</strong></td>
-        <td><span class="src-badge src-yash">Yash</span></td>
         <td><span class="src-badge src-shipped">Shipped</span> · commit <code>e5f2e6c</code>, Railway redeployed, prod verified: <code>connected=true</code>, <code>lastSyncAt=2026-05-21 12:16:25</code>. Integrations card now reads ✓ Live</td>
       </tr>
       <tr>
         <td><a href="https://linear.app/leadgenerationio/issue/OCT-39" target="_blank">OCT-39</a></td>
         <td><strong>Multi-buyer rollup audit</strong></td>
-        <td><span class="src-badge src-yash">Yash</span></td>
-        <td><span class="src-badge src-shipped">Audit complete</span> · 5 surfaces correct by construction, 2 visually degraded for multi-buyer. Findings posted as Linear comment on OCT-39; remediation split into OCT-41 + OCT-42 below</td>
+        <td><span class="src-badge src-shipped">Audit complete</span> · 5 surfaces correct by construction, 2 visually degraded for multi-buyer. Findings posted as Linear comment on OCT-39; remediation split into OCT-41 + OCT-42 — <strong>both already shipped below</strong></td>
+      </tr>
+      <tr>
+        <td><a href="https://linear.app/leadgenerationio/issue/OCT-41" target="_blank">OCT-41</a></td>
+        <td><strong>Admin campaign list — multi-buyer name collapse</strong></td>
+        <td><span class="src-badge src-shipped">Shipped</span> · backend commit <code>8fd7955</code> + frontend commit <code>58e210c</code>. Vercel <code>--prod</code> deployed. Verified live: <code>/api/v1/campaigns</code> now returns <code>clientNames: ["UK Energy Saving Network"]</code> on every row. UI renders <em>"Multiple (N)"</em> with tooltip for multi-buyer rows</td>
+      </tr>
+      <tr>
+        <td><a href="https://linear.app/leadgenerationio/issue/OCT-42" target="_blank">OCT-42</a></td>
+        <td><strong>Reports/unified — multi-buyer name resolution</strong></td>
+        <td><span class="src-badge src-shipped">Shipped</span> · same commits + deploy. Verified live: <code>/api/v1/reports/unified?range=this_month</code> returns 55 rows, every row carries <code>clientNames</code>. <code>loadCampaignMetaByName()</code> now joins through <code>client_campaigns</code> instead of the legacy <code>campaigns.client_id</code> column — fixes the long-standing "Pending client mapping" mis-resolution for join-table-linked rows</td>
       </tr>
     </tbody>
   </table>
 
   <!-- ─── OPEN ON DEV SIDE ────────────────────────── -->
-  <h2>Open on dev side <span class="pill fix">4 items remaining</span></h2>
+  <h2>Open on dev side <span class="pill fix">2 items remaining</span></h2>
   <table class="data">
     <thead>
       <tr>
         <th style="width: 12%">Linear</th>
-        <th style="width: 32%">Item</th>
-        <th style="width: 12%">Owner</th>
+        <th style="width: 36%">Item</th>
         <th style="width: 14%">Effort</th>
         <th>Why it matters</th>
       </tr>
@@ -854,30 +873,14 @@
       <tr>
         <td><a href="https://linear.app/leadgenerationio/issue/OCT-37" target="_blank">OCT-37</a></td>
         <td><strong>T3 — Responsive UI overhaul</strong> (remaining 10 pages)</td>
-        <td><span class="src-badge src-yash">Yash</span></td>
         <td>2-3 days</td>
         <td>PR-A foundation (nav drawer + hamburger), PR-B leads, PR-C compliance + creatives (P0 — thumb-reachable approve CTAs), PR-D dashboard + agreement, PR-E admin. Slice 1 (/portal/invoices) already live</td>
       </tr>
       <tr>
         <td><a href="https://linear.app/leadgenerationio/issue/OCT-38" target="_blank">OCT-38</a></td>
         <td><strong>T10 — Restore GitHub report template</strong></td>
-        <td><span class="src-badge src-hari">Hari</span></td>
         <td>15 min</td>
-        <td>External GitHub Action repo. Hari to locate the workflow, revert the template change, redeploy. Sam confirms by reply once the next scheduled run reaches the inbox</td>
-      </tr>
-      <tr>
-        <td><a href="https://linear.app/leadgenerationio/issue/OCT-41" target="_blank">OCT-41</a></td>
-        <td><strong>Admin campaign list — multi-buyer name collapse</strong></td>
-        <td><span class="src-badge src-yash">Yash</span></td>
-        <td>~2 hr</td>
-        <td>Spawned from the OCT-39 audit. <code>listCampaigns()</code> returns LeadByte's singular <code>clientName</code> for multi-buyer campaigns — should surface all buyers or render "Multiple (N)" with tooltip. Revenue + cost remain correct (campaign-level union)</td>
-      </tr>
-      <tr>
-        <td><a href="https://linear.app/leadgenerationio/issue/OCT-42" target="_blank">OCT-42</a></td>
-        <td><strong>Reports/unified — multi-buyer name resolution</strong></td>
-        <td><span class="src-badge src-yash">Yash</span></td>
-        <td>~2 hr</td>
-        <td>Same pattern as OCT-41 but on the unified report (the surface Sam uses most). Picks an arbitrary buyer when multiple are linked; should surface all or "Multiple (N)"</td>
+        <td>External GitHub Action repo. Revert the template change in that workflow and redeploy. Sam confirms by reply once the next scheduled run reaches the inbox</td>
       </tr>
     </tbody>
   </table>
@@ -896,9 +899,8 @@
     <thead>
       <tr>
         <th style="width: 8%">Ref</th>
-        <th style="width: 38%">Title</th>
-        <th style="width: 12%">Status</th>
-        <th style="width: 12%">Owner</th>
+        <th style="width: 44%">Title</th>
+        <th style="width: 14%">Status</th>
         <th style="width: 10%">Type</th>
         <th>Tied to</th>
       </tr>
@@ -908,7 +910,6 @@
         <td><a href="https://linear.app/leadgenerationio/issue/OCT-35" target="_blank"><strong>OCT-35</strong></a></td>
         <td>T8: Render Xero "authorised" as "Pending Payment"</td>
         <td><span class="src-badge src-shipped">In Review · live</span></td>
-        <td><span class="src-badge src-yash">Yash</span></td>
         <td><span class="src-badge src-improve">Improvement</span></td>
         <td>Meeting 19:01</td>
       </tr>
@@ -916,7 +917,6 @@
         <td><a href="https://linear.app/leadgenerationio/issue/OCT-36" target="_blank"><strong>OCT-36</strong></a></td>
         <td>T1 schema gap: accept <code>accountIds[]</code> on traffic-source create/update</td>
         <td><span class="src-badge src-shipped">In Review · live</span></td>
-        <td><span class="src-badge src-yash">Yash</span></td>
         <td><span class="src-badge src-bug">Bug</span></td>
         <td>Audit · meeting 07:38</td>
       </tr>
@@ -924,7 +924,6 @@
         <td><a href="https://linear.app/leadgenerationio/issue/OCT-37" target="_blank"><strong>OCT-37</strong></a></td>
         <td>T3: Responsive UI overhaul across portal + admin pages</td>
         <td><span class="src-badge src-shipped">In Review</span></td>
-        <td><span class="src-badge src-yash">Yash</span></td>
         <td><span class="src-badge src-improve">Improvement</span></td>
         <td>Meeting · client phones</td>
       </tr>
@@ -932,7 +931,6 @@
         <td><a href="https://linear.app/leadgenerationio/issue/OCT-38" target="_blank"><strong>OCT-38</strong></a></td>
         <td>T10: Restore previous GitHub activity report template</td>
         <td><span class="src-badge src-shipped">In Review</span></td>
-        <td><span class="src-badge src-hari">Hari</span></td>
         <td><span class="src-badge src-bug">Bug</span></td>
         <td>Meeting 01:11</td>
       </tr>
@@ -940,7 +938,6 @@
         <td><a href="https://linear.app/leadgenerationio/issue/OCT-39" target="_blank"><strong>OCT-39</strong></a></td>
         <td>Multi-buyer behaviour audit (campaigns with multiple clients)</td>
         <td><span class="src-badge src-shipped">In Review</span></td>
-        <td><span class="src-badge src-yash">Yash</span></td>
         <td><span class="src-badge src-improve">Improvement</span></td>
         <td>Meeting 06:07</td>
       </tr>
@@ -948,23 +945,20 @@
         <td><a href="https://linear.app/leadgenerationio/issue/OCT-40" target="_blank"><strong>OCT-40</strong></a></td>
         <td>Catchr integration overview shows <code>connected=false</code> despite working sync (<code>lastSyncAt</code> never set)</td>
         <td><span class="src-badge src-shipped">In Review · live</span></td>
-        <td><span class="src-badge src-yash">Yash</span></td>
         <td><span class="src-badge src-bug">Bug</span></td>
         <td>Found + shipped today</td>
       </tr>
       <tr>
         <td><a href="https://linear.app/leadgenerationio/issue/OCT-41" target="_blank"><strong>OCT-41</strong></a></td>
         <td>Admin campaign list shows single clientName for multi-buyer campaigns</td>
-        <td><span class="src-badge src-shipped">In Review</span></td>
-        <td><span class="src-badge src-yash">Yash</span></td>
+        <td><span class="src-badge src-shipped">In Review · live</span></td>
         <td><span class="src-badge src-improve">Improvement</span></td>
         <td>Spawned from OCT-39 audit</td>
       </tr>
       <tr>
         <td><a href="https://linear.app/leadgenerationio/issue/OCT-42" target="_blank"><strong>OCT-42</strong></a></td>
         <td>Reports/unified clientName resolves arbitrarily for multi-buyer campaigns</td>
-        <td><span class="src-badge src-shipped">In Review</span></td>
-        <td><span class="src-badge src-yash">Yash</span></td>
+        <td><span class="src-badge src-shipped">In Review · live</span></td>
         <td><span class="src-badge src-improve">Improvement</span></td>
         <td>Spawned from OCT-39 audit</td>
       </tr>
