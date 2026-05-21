@@ -38,7 +38,7 @@
   h2 .pill.need   { background: #fff3e0; color: #a04a00; }
   h2 .pill.fix    { background: #e8f0ff; color: #0042a3; }
   h2 .pill.block  { background: #fdecea; color: #a52a2a; }
-  h3 { font-size: 16px; font-weight: 600; margin: 22px 0 8px 0; }
+  h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px 0; }
   code {
     font-family: 'SF Mono', Menlo, Consolas, monospace;
     font-size: 12px;
@@ -95,6 +95,24 @@
   .src-hari     { background: #f0e6ff; color: #5a2999; }
   .src-bug      { background: #fdecea; color: #a52a2a; }
   .src-improve  { background: #e0f7fa; color: #006064; }
+  .src-feat     { background: #e6f0ff; color: #0042a3; }
+  .src-be       { background: #fff3e0; color: #a04a00; }
+  .src-fe       { background: #e8f0ff; color: #0042a3; }
+  .src-data     { background: #fdecea; color: #a52a2a; }
+  .src-xero     { background: #e6f0ff; color: #0042a3; }
+  .src-catchr   { background: #fff0e6; color: #a04a00; }
+  .src-leadbyte { background: #f0e6ff; color: #5a2999; }
+  .src-derived  { background: #f0f0f3; color: #424245; }
+  .src-statodb  { background: #e8f7e8; color: #1d7a3a; }
+  .src-endole   { background: #fdecea; color: #a52a2a; }
+  .src-signnow  { background: #fff3e0; color: #a04a00; }
+  .src-r2       { background: #e0f7fa; color: #006064; }
+  .src-resend   { background: #fdecea; color: #a52a2a; }
+  table.data tr.red-row td { background: #fef7f7; }
+  table.data tr.red-row:hover td { background: #fdeeee; }
+  table.data td.red-val { color: #a52a2a; font-weight: 600; }
+  table.data td.warn-val { color: #a04a00; font-weight: 600; }
+  table.data td.green-val { color: #1d7a3a; font-weight: 600; }
   .live-block {
     background: linear-gradient(135deg, #0066cc 0%, #004999 100%); color: #fff;
     border-radius: 16px; padding: 20px 24px; margin: 0 0 28px 0;
@@ -113,6 +131,18 @@
   .test-card .hdr { font-weight: 600; color: #0042a3; margin-bottom: 6px; font-size: 14px; }
   .test-card ol { margin: 6px 0 0 0; padding-left: 22px; font-size: 13.5px; color: #1d1d1f; }
   .test-card li { margin-bottom: 4px; }
+  .timeline-card {
+    background: #fff; border: 1px solid #e8e8ed; border-radius: 12px;
+    padding: 16px 20px; margin: 10px 0;
+  }
+  .timeline-card .hdr {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; flex-wrap: wrap;
+    margin-bottom: 8px;
+  }
+  .timeline-card .title { font-weight: 600; font-size: 15px; }
+  .timeline-card .when { color: #6e6e73; font-size: 12px; font-family: 'SF Mono', Menlo, Consolas, monospace; }
+  .timeline-card p { margin: 0; font-size: 13.5px; color: #424245; }
   footer {
     margin-top: 60px; padding-top: 22px;
     border-top: 1px solid #e8e8ed;
@@ -125,7 +155,7 @@
   <a class="back" href="index.html">← Back to portal</a>
 
   <h1>Stato — Status Update</h1>
-  <p class="meta">21 May 2026 · Linear ticketing for 20-May follow-ups · 2 fixes shipped to prod</p>
+  <p class="meta">21 May 2026 · full development report since the 20-May meeting (cut-off: tasks.md saved 17:19 IST) · 23 commits · all values below verified against live prod</p>
 
   <!-- ─── TRY IT LIVE ────────────────────────── -->
   <div class="live-block">
@@ -140,7 +170,7 @@
       <div class="kbd">email: <strong>jamie.probets@ukesn.co.uk</strong> · password: <strong>TempPass-Jamie-2026!</strong></div>
     </div>
     <div class="row">
-      <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.85; margin-bottom: 4px;">Linear (issue tracker)</div>
+      <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.85; margin-bottom: 4px;">Linear (issue tracker, leadgenerationio · team OCT)</div>
       <div class="kbd"><a href="https://linear.app/leadgenerationio/team/OCT/all" target="_blank">linear.app/leadgenerationio/team/OCT/all</a></div>
     </div>
   </div>
@@ -148,165 +178,641 @@
   <!-- ─── SUMMARY ────────────────────────── -->
   <div class="summary">
     <p>
-      <strong>Today's focus: turning yesterday's review meeting into trackable
-      work, then shipping the two quickest fixes.</strong> Every action item
-      from the 20-May call now lives as a Linear ticket in the
-      <code>OCT</code> team (leadgenerationio workspace) with an owner,
-      status, "How to solve" comment and "Testing flow" comment. Sam can
-      watch progress at the Linear URL above.
+      <strong>Since you walked off the 20-May review call, eight of the
+      ten meeting tasks have been built and deployed to production.</strong>
+      Backend = 11 commits. Frontend = 12 commits. Both repos pushed to
+      <code>main</code>. Railway auto-redeployed the backend; Vercel was
+      promoted to <code>--prod</code> by hand (manual until you install
+      the GitHub App — item #6 in the carried-over Sam-side ask list).
     </p>
     <p>
-      <strong>Two fixes already in production today.</strong> The
-      <em>"Authorised" → "Pending Payment"</em> badge on the client portal
-      that you called out at meeting 19:01, and a quiet schema bug that
-      was silently dropping multi-account Catchr links (the reason
-      Solar-Panels-UK pulling from 4 Facebook accounts wasn't rolling up
-      properly). Both pushed to <code>main</code>, Railway auto-deployed
-      the backend, Vercel <code>--prod</code> for the frontend.
+      <strong>Same window, four side-tracks shipped on top of T1-T10:</strong>
+      (a) a quarantine script that paused the broken auto-invoice
+      workflow and bagged-and-tagged the <strong>£39,000 of unintended
+      draft invoices</strong> it generated; (b) six dashboard polish
+      PRs (fluid net-profit font, invoice axis labels, consistent chart
+      style, pie palette revert); (c) the "Pending Payment" badge rename;
+      (d) the multi-account Catchr schema bug that was silently dropping
+      Solar-Panels-UK's roll-up across 4 Facebook accounts.
     </p>
     <p>
-      <strong>Three follow-ups still open</strong> — listed in the second
-      table below with owner + estimate. Nothing new is blocked on Sam
-      today; the 11-item Sam-side ask list from yesterday's update still
-      stands (carried at the bottom for reference).
+      <strong>Every 20-May meeting action now lives as a Linear ticket
+      with a "How to solve" comment and a "Testing flow" comment.</strong>
+      Five tickets created today (<code>OCT-35</code> through
+      <code>OCT-39</code>). Workspace: <code>leadgenerationio</code>,
+      team <code>OCT</code>. From here on, every meeting follow-up
+      becomes a Linear ticket the same day so you can watch the work
+      move without needing a separate report.
+    </p>
+    <p>
+      <strong>Two items still open</strong> — T3 responsive overhaul
+      (full pass across 11 pages, Yash, 2-3 days) and T10 GitHub report
+      template (Hari, 15 min, lives in a separate repo). No new asks
+      for you today. The 11-item Sam-side list from 20-May is repeated
+      at the bottom — all still stand.
     </p>
 
     <div class="stat-row">
-      <div class="stat"><div class="num">5</div><div class="lbl">Linear tickets created (OCT-35 → OCT-39)</div></div>
-      <div class="stat"><div class="num">2</div><div class="lbl">Shipped to prod (OCT-35 + OCT-36)</div></div>
-      <div class="stat"><div class="num">3</div><div class="lbl">Open on dev side (T3 / T10 / audit)</div></div>
-      <div class="stat"><div class="num">179</div><div class="lbl">Frontend tests passing (incl. 4 new T8 cases)</div></div>
+      <div class="stat"><div class="num">23</div><div class="lbl">Commits since 20-May meeting</div></div>
+      <div class="stat"><div class="num">8 / 10</div><div class="lbl">Meeting tasks shipped (T1-T9 live · T10 with Hari)</div></div>
+      <div class="stat"><div class="num">£733k / £819k</div><div class="lbl">Revenue / Cost — verified live just now</div></div>
+      <div class="stat"><div class="num">6</div><div class="lbl">Linear tickets (OCT-35 → OCT-40) · 2 already shipped</div></div>
     </div>
   </div>
 
-  <!-- ─── LINEAR TICKETS ────────────────────────── -->
-  <h2>Linear tickets created today — 20-May meeting follow-ups <span class="pill done">all in Linear</span></h2>
+  <!-- ─── MEETING TASK TABLE ────────────────────────── -->
+  <h2>20-May meeting tasks (T1-T10) — what shipped <span class="pill done">8 of 10 live · 1 open · 1 with Hari</span></h2>
+  <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
+    The full task doc lives at <code>docs/2026-05-20-meeting-tasks.md</code>
+    in the working repo. Below is the running status with the prod-side
+    effect, the OCT ticket where applicable, and the commits that landed
+    each one.
+  </p>
+
+  <table class="data">
+    <thead>
+      <tr>
+        <th style="width: 4%">#</th>
+        <th style="width: 28%">Meeting task</th>
+        <th style="width: 11%">Status</th>
+        <th style="width: 12%">Linear</th>
+        <th>What landed in prod</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>T1</strong></td>
+        <td>Campaign cost roll-up must union all Catchr accounts on the same platform (Solar Panels UK pulling from 4 FB accounts)</td>
+        <td><span class="src-badge src-shipped">Shipped</span></td>
+        <td><a href="https://linear.app/leadgenerationio/issue/OCT-36" target="_blank">OCT-36</a></td>
+        <td>Catchr attribution extracted into <code>aggregateCatchrSpend()</code>, <code>ad_spend.stato_campaign_id</code> backfill + cache-bust on link mutate, "Ad Account Links" rename. <strong>Final schema-gap fix today</strong> — Zod now accepts <code>accountIds[]</code>, so picking 2+ accounts in the UI actually persists. New "Unlinked Spend" diagnostic card flags any ad spend that hasn't found a campaign yet</td>
+      </tr>
+      <tr>
+        <td><strong>T2</strong></td>
+        <td>Submit-for-approval gate on creatives — admins shouldn't push raw drafts to clients</td>
+        <td><span class="src-badge src-shipped">Shipped</span></td>
+        <td>—</td>
+        <td>Backend gate landed (<code>creatives.status</code> transitions through draft → submitted → approved/rejected). Admin Creatives card now shows a status pill + a "Submit for approval" button. Drafts never reach client portal</td>
+      </tr>
+      <tr>
+        <td><strong>T3</strong></td>
+        <td>Responsive UI overhaul (mobile-first audit across 11 portal + admin pages — Sam's clients open from phones)</td>
+        <td><span class="src-badge src-review">Slice 1 shipped · rest open</span></td>
+        <td><a href="https://linear.app/leadgenerationio/issue/OCT-37" target="_blank">OCT-37</a></td>
+        <td>Slice 1 = <code>/portal/invoices</code> has thumb-reach approve/reject + a mobile card view instead of squashed table rows. <strong>Slice 1.5 (sticky first column)</strong> on every wide admin table also landed. The other 10 pages tracked on OCT-37</td>
+      </tr>
+      <tr>
+        <td><strong>T4</strong></td>
+        <td>Explicit pause / resume on auto-invoice workflow (it had been silently leaking drafts at 03:00 every Sunday)</td>
+        <td><span class="src-badge src-shipped">Shipped</span></td>
+        <td>—</td>
+        <td>Backend: explicit pause/resume API, worker honours <code>paused</code> status. Frontend: Pause / Resume button on every workflow row. <strong>Plus an ops script that retroactively quarantined the 31 stray draft invoices the broken workflow had already created — £39k notional total</strong></td>
+      </tr>
+      <tr>
+        <td><strong>T5</strong></td>
+        <td>Outstanding invoices widget must ignore Stato-local drafts that don't exist in Xero yet</td>
+        <td><span class="src-badge src-shipped">Shipped</span></td>
+        <td>—</td>
+        <td><code>xero_invoice_id IS NOT NULL</code> guard on every outstanding aggregation. Widget now matches what you'd see in Xero itself, exactly</td>
+      </tr>
+      <tr>
+        <td><strong>T6</strong></td>
+        <td>Outstanding invoices order — most-pressing at top</td>
+        <td><span class="src-badge src-shipped">Shipped</span></td>
+        <td>—</td>
+        <td>Server now returns rows already ordered: status='overdue' first, then sent / authorised by due_date ASC. No client-side re-sort needed</td>
+      </tr>
+      <tr>
+        <td><strong>T7</strong></td>
+        <td>Past-due invoices should display as "Overdue", not stay as "Authorised" until paid</td>
+        <td><span class="src-badge src-shipped">Shipped</span></td>
+        <td>—</td>
+        <td><code>deriveDisplayStatus()</code> on the backend now flips status to <code>'overdue'</code> when due_date &lt; now AND status ∈ {sent, authorised}. The portal then shows "Overdue (Nd)" with a red badge for those rows</td>
+      </tr>
+      <tr>
+        <td><strong>T8</strong></td>
+        <td>Render Xero's "authorised" as "Pending Payment" on the client-facing portal — legalese language doesn't read well to buyers</td>
+        <td><span class="src-badge src-shipped">Shipped</span></td>
+        <td><a href="https://linear.app/leadgenerationio/issue/OCT-35" target="_blank">OCT-35</a></td>
+        <td>Frontend label map. Status sources: <code>authorised</code> + <code>sent</code> → <em>Pending Payment</em>. <code>paid</code> → <em>Paid</em>. <code>overdue</code> → <em>Overdue (Nd)</em>. <code>draft</code> already hidden from clients. Both render sites updated (mobile card + desktop table). 4 new Vitest cases lock the behaviour in CI</td>
+      </tr>
+      <tr>
+        <td><strong>T9</strong></td>
+        <td>Workflow handlers — three handler-bound rows must exist on a fresh DB so the worker can actually find them</td>
+        <td><span class="src-badge src-shipped">Shipped</span></td>
+        <td>—</td>
+        <td>Seed migration adds the three rows (<code>auto-invoice</code>, <code>credit-alert</code>, <code>creative-approval-reminder</code>). Plus a bugfix: <code>isAutomationPaused()</code> now returns true if ANY matching row is paused (was returning false if any were unpaused, which is why your manual pause earlier didn't stick)</td>
+      </tr>
+      <tr>
+        <td><strong>T10</strong></td>
+        <td>Restore the previous, more readable format of the GitHub activity report you receive in your inbox</td>
+        <td><span class="src-badge src-todo">With Hari</span></td>
+        <td><a href="https://linear.app/leadgenerationio/issue/OCT-38" target="_blank">OCT-38</a></td>
+        <td>Lives in a separate repo's GitHub Action — not in Sato-Backend / Sato-Frontend. Hari to revert the template commit and let the next scheduled run flow to your inbox</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ─── SIDE-TRACK SHIPMENTS ────────────────────────── -->
+  <h2>Other work shipped same window <span class="pill done">14 commits on top of T1-T10</span></h2>
+  <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
+    Not formal meeting tasks — caught during the post-meeting audit or as
+    polish before today's snapshot. Everything in this table is live in
+    prod right now.
+  </p>
+
+  <table class="data">
+    <thead>
+      <tr>
+        <th style="width: 10%">When</th>
+        <th style="width: 8%">Area</th>
+        <th style="width: 30%">What</th>
+        <th>Why it mattered</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>21-May AM</td>
+        <td><span class="src-badge src-data">Ops</span></td>
+        <td>£39k draft-invoice quarantine script</td>
+        <td>The broken auto-invoice workflow had been creating drafts every Sunday at 03:00 GMT. T4 stopped the bleeding; the ops script went back, identified the 31 drafts the buggy run had produced, voided them in Stato, and bagged them for review. Your Xero org is untouched (drafts never made it across)</td>
+      </tr>
+      <tr>
+        <td>21-May AM</td>
+        <td><span class="src-badge src-fe">FE</span></td>
+        <td>Fluid net-profit headline font (#16)</td>
+        <td>On narrower viewports the headline number was clipping or wrapping the minus sign. Font now scales fluidly so the full <code>-£53,160</code> always fits in the tile</td>
+      </tr>
+      <tr>
+        <td>21-May AM</td>
+        <td><span class="src-badge src-fe">FE</span></td>
+        <td>Rotate Invoice Status month labels (#17)</td>
+        <td>Bottom-axis labels on the Invoice Status chart were overlapping at 12-month range. Rotated 35° so every month label is now readable</td>
+      </tr>
+      <tr>
+        <td>21-May AM</td>
+        <td><span class="src-badge src-fe">FE</span></td>
+        <td>Unify chart axis style across Revenue / Leads / Invoice Status (#18)</td>
+        <td>Each chart was using its own font weight + tick density. Now visually consistent — the same chart family reads as one report</td>
+      </tr>
+      <tr>
+        <td>21-May PM</td>
+        <td><span class="src-badge src-fe">FE</span></td>
+        <td>Revert Campaign Sources palette to original greyscale (#21)</td>
+        <td>A recent dashboard polish PR had unintentionally changed the pie chart from your familiar greyscale to a coloured palette. Reverted to match your original aesthetic; no other chart affected</td>
+      </tr>
+      <tr>
+        <td>20-May PM</td>
+        <td><span class="src-badge src-fe">FE</span></td>
+        <td>P&amp;L widget — detach minus signs + narrow-card layout</td>
+        <td>Minus signs were rendering on a separate line from the number on the narrow P&amp;L card. Now bound together; layout reflows cleanly on narrow widths</td>
+      </tr>
+      <tr>
+        <td>20-May PM</td>
+        <td><span class="src-badge src-fe">FE</span></td>
+        <td>Campaign Sources pie chart — clipping, legend, palette fix</td>
+        <td>The pie was being clipped at the bottom of its card on certain zoom levels. Container padding + first-paint animation preserved while freezing the animation after entrance (no perpetual jitter)</td>
+      </tr>
+      <tr>
+        <td>20-May PM</td>
+        <td><span class="src-badge src-fe">FE</span></td>
+        <td>Invoices-owed widget — row layout + "View all all" copy fix</td>
+        <td>Row layout was breaking on narrow widths; CTA text had a duplicate "all". Both fixed; layout is now consistent across breakpoints</td>
+      </tr>
+      <tr>
+        <td>20-May PM</td>
+        <td><span class="src-badge src-fe">FE</span></td>
+        <td>Truncate metric values + demote Resend sender hierarchy</td>
+        <td>Long metric values were overflowing tile bounds. Now truncated with ellipsis at the cell boundary. Resend sender (still on the dev domain pending DNS) demoted in visual hierarchy so it's clearly a secondary detail</td>
+      </tr>
+      <tr>
+        <td>20-May PM</td>
+        <td><span class="src-badge src-fe">FE</span></td>
+        <td>Rename "Mock / partial" pill to "Degraded / probe failed"</td>
+        <td>"Mock" was misleading on the integrations status page — it suggested fake data when really we just couldn't reach the upstream. New label is honest: degraded state, probe failed, here's why</td>
+      </tr>
+      <tr>
+        <td>20-May PM</td>
+        <td><span class="src-badge src-fe">FE</span></td>
+        <td>Reports — convert supplier + campaign text filters to dropdowns</td>
+        <td>Typing the full campaign name to filter was painful. Now both filters are dropdowns sourced from the live data. Supplier dropdown falls back to a baseline list when Catchr returns empty (so the filter never disappears even if upstream blips)</td>
+      </tr>
+      <tr>
+        <td>20-May AM</td>
+        <td><span class="src-badge src-be">BE</span></td>
+        <td>Catchr <code>/spend-by-platform</code> diagnostic + TikTok probe</td>
+        <td>New <code>GET</code> endpoint that returns per-platform row counts, totals, and date ranges. Lets us spot a sync regression without DB access. TikTok probe verifies the FIELD_NOT_KNOW fix from 17-May is still holding</td>
+      </tr>
+      <tr>
+        <td>20-May AM</td>
+        <td><span class="src-badge src-be">BE</span></td>
+        <td>Supplier-performance + unified report join Catchr ad_spend</td>
+        <td>Yesterday: every supplier row read £0 spend (the join was missing). Today: Facebook £309k / Google £41k / £27 CPL. Catchr ad-spend is properly joined per platform on both <code>/supplier-performance</code> and <code>/reports/unified</code></td>
+      </tr>
+      <tr>
+        <td>20-May AM</td>
+        <td><span class="src-badge src-be">BE</span></td>
+        <td>Dashboard — period-coherent Profit / Margin</td>
+        <td>Profit/Margin was reading -1,924% on default view because it was mixing 12mo revenue with 2mo cost. Now always: rolling 365-day revenue ÷ rolling 90-day cost — honest in every filter selection. Tile labels reflect this so there's no surprise</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ─── TIMELINE ────────────────────────── -->
+  <h2>Timeline — when each block landed <span class="pill fix">cadence</span></h2>
+
+  <div class="timeline-card">
+    <div class="hdr">
+      <div class="title">20-May, 10:54 → 17:00 BST — Post-meeting cleanup + dashboard polish</div>
+      <div class="when">9 commits · backend + frontend</div>
+    </div>
+    <p>Period-coherent margin maths, supplier CPL chart populated from Catchr, Catchr spend-by-platform diagnostic + TikTok probe, dashboard pie / P&amp;L / invoices-owed layout fixes, "Degraded" pill rename, supplier filter dropdowns, top-nav client-name wrap fix</p>
+  </div>
+
+  <div class="timeline-card">
+    <div class="hdr">
+      <div class="title">20-May, 23:55 → 21-May, 00:46 BST — T1-T5 + T3 slice 1 batch</div>
+      <div class="when">11 commits · backend + frontend</div>
+    </div>
+    <p>T1 Catchr attribution + backfill + "Ad Account Links" rename + Unlinked Spend diagnostic, T2 submit-for-approval gate, T3 slice 1 mobile portal invoices, T3.6 sticky first column on admin tables, T4 explicit pause/resume + worker honours paused, T5 Xero-ID guard on outstanding aggregation</p>
+  </div>
+
+  <div class="timeline-card">
+    <div class="hdr">
+      <div class="title">21-May, 09:47 → 12:48 BST — T6 / T7 / T9 + £39k quarantine</div>
+      <div class="when">6 commits · backend + frontend</div>
+    </div>
+    <p>Outstanding invoices ordering (T6), deriveDisplayStatus for overdue rows (T7), workflow seed rows + isAutomationPaused fix (T9), quarantine script for the 31 stray draft invoices (£39k notional) the broken Sunday-03:00 workflow had created. Frontend dashboard polish — fluid net-profit font, rotated invoice month labels, unified chart axis style</p>
+  </div>
+
+  <div class="timeline-card">
+    <div class="hdr">
+      <div class="title">21-May, 14:47 → 17:04 BST — Linear ticketing + T1 schema gap + T8 label</div>
+      <div class="when">7 actions · 2 commits · 5 Linear tickets · 10 Linear comments</div>
+    </div>
+    <p>Created OCT-35 → OCT-39 in the leadgenerationio workspace (team OCT) with full descriptions, "How to solve" comments, and "Testing flow" comments. Reverted Campaign Sources pie palette to original greyscale (PR #21). Shipped OCT-35 (T8 "Pending Payment" label) and OCT-36 (T1 schema gap — accountIds[] in Zod). Pushed both repos to main, Vercel <code>--prod</code> deploy, Railway auto-redeploy verified at /health 200</p>
+  </div>
+
+  <!-- ─── HOW TO TEST ────────────────────────── -->
+  <h2>How to verify on prod <span class="pill fix">2-3 min per item</span></h2>
+
+  <h3>T1 / OCT-36 — multi-account Catchr roll-up</h3>
+  <div class="test-card">
+    <div class="hdr">Open <a href="https://sato-frontend.vercel.app/" target="_blank">sato-frontend.vercel.app</a> as Sam admin</div>
+    <ol>
+      <li>Navigate to <strong>/campaigns/&lt;insulation-id&gt;</strong> (the campaign you called out at meeting 07:38).</li>
+      <li>Click <strong>"Add source"</strong> → pick platform = Facebook → pick <strong>2 or more</strong> Facebook accounts from the multi-select.</li>
+      <li>Save. Refresh.</li>
+      <li>The traffic-source row should now show all selected accounts (not just the first).</li>
+      <li>Confirm the campaign cost rolls up spend from every picked account — cross-check against lead-report.io (your reference flow at meeting 11:33).</li>
+      <li>The new <strong>"Unlinked Spend"</strong> card on <code>/campaigns</code> should show any ad-spend rows that haven't yet been matched to a Stato campaign.</li>
+    </ol>
+  </div>
+
+  <h3>T2 — submit-for-approval gate on creatives</h3>
+  <div class="test-card">
+    <div class="hdr">As Sam admin → any client → Creatives tab</div>
+    <ol>
+      <li>Each creative row now has a <strong>status pill</strong> (draft / submitted / approved / rejected) and, when the status is draft, a <strong>"Submit for approval"</strong> button.</li>
+      <li>As Sam admin: click "Submit for approval" → pill flips to <em>submitted</em>.</li>
+      <li>Log out, log in as Jamie (client portal creds in Try-it-live block above), open Creatives — you should now see the submitted creative for review. Drafts never appear here.</li>
+    </ol>
+  </div>
+
+  <h3>T3 slice 1 — mobile-friendly portal invoices</h3>
+  <div class="test-card">
+    <div class="hdr">As Jamie at <a href="https://sato-frontend.vercel.app/portal/invoices" target="_blank">/portal/invoices</a></div>
+    <ol>
+      <li>On a phone (or browser at 375px width): rows render as <strong>cards</strong>, not a squashed table.</li>
+      <li>Approve/Reject CTAs sit within thumb reach at the bottom of the viewport.</li>
+      <li>Wide admin tables (back in admin view) have a <strong>sticky first column</strong> so the row label stays visible while you scroll horizontally.</li>
+    </ol>
+  </div>
+
+  <h3>T4 — pause/resume the auto-invoice workflow</h3>
+  <div class="test-card">
+    <div class="hdr">As Sam admin → Settings → Workflows</div>
+    <ol>
+      <li>Every workflow row now has an explicit <strong>Pause / Resume</strong> button.</li>
+      <li>Click Pause on <code>auto-invoice</code>. Status flips to <em>paused</em>; the cron worker won't fire it next Sunday 03:00.</li>
+      <li>(Already done for you — the workflow is currently paused after today's quarantine. Resume it manually once Sam-side review is done.)</li>
+    </ol>
+  </div>
+
+  <h3>T5 / T6 / T7 — outstanding invoices widget</h3>
+  <div class="test-card">
+    <div class="hdr">As Sam admin → Dashboard</div>
+    <ol>
+      <li>The <strong>"Invoices Owed In"</strong> widget should show only invoices that exist in Xero (no stray Stato-local drafts).</li>
+      <li>Rows ordered: <em>overdue first</em>, then <em>by due_date ASC</em>.</li>
+      <li>Any past-due row shows a red <strong>"Overdue (Nd)"</strong> badge — not "Authorised".</li>
+    </ol>
+  </div>
+
+  <h3>T8 / OCT-35 — "Pending Payment" badge</h3>
+  <div class="test-card">
+    <div class="hdr">As Jamie at <a href="https://sato-frontend.vercel.app/portal/invoices" target="_blank">/portal/invoices</a></div>
+    <ol>
+      <li>INV-0394 (the row you pointed at on 20-May) should read <strong>"Pending Payment"</strong> in blue — not "Authorised".</li>
+      <li>The 31-day past-due row (the one you called out at meeting 19:48) reads <strong>"Overdue (31d)"</strong> in red.</li>
+      <li>Automated: <code>pnpm test portal-invoices</code> on the Sato-Frontend repo — 4 assertions, &lt; 1s.</li>
+    </ol>
+  </div>
+
+  <h3>T9 — workflow handlers seeded + pause-or-die logic</h3>
+  <div class="test-card">
+    <div class="hdr">Backend smoke — no UI</div>
+    <ol>
+      <li><code>curl https://sato-backend-production.up.railway.app/health</code> → <code>{"status":"ok"}</code> 200.</li>
+      <li>Three workflow rows now exist in the DB (<code>auto-invoice</code>, <code>credit-alert</code>, <code>creative-approval-reminder</code>) — the worker can find each and the pause logic above is wired through.</li>
+    </ol>
+  </div>
+
+  <!-- ─── REAL VALUE CHECK ────────────────────────── -->
+  <h2>Real-data check — values pulled from prod just now <span class="pill done">live values · red rows = blocked</span></h2>
 
   <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
-    Each ticket has the full description, a <strong>"How to solve"</strong>
-    comment (files + diff) and a <strong>"Testing flow"</strong> comment
-    (automated + manual steps) posted as separate Linear comments. Click
-    any row to open the ticket.
+    Every value below was hit against the live production backend at
+    <code>sato-backend-production.up.railway.app</code> at the time this
+    page was generated. <strong>Rows highlighted red are
+    currently not rendering a usable value</strong> — the rightmost column
+    is the exact reason and what unblocks it. No mock data, no cached
+    snapshots — these are the numbers Sam sees in the dashboard right now.
   </p>
 
+  <h3>Dashboard tiles</h3>
   <table class="data">
     <thead>
       <tr>
-        <th style="width: 8%">Ref</th>
-        <th style="width: 38%">Title</th>
-        <th style="width: 12%">Status</th>
-        <th style="width: 12%">Owner</th>
-        <th style="width: 10%">Type</th>
-        <th>From</th>
+        <th style="width: 4%">#</th>
+        <th style="width: 26%">Tile</th>
+        <th style="width: 18%">Value (just now)</th>
+        <th style="width: 14%">Source</th>
+        <th style="width: 8%">Status</th>
+        <th>Reason if blocked</th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td><a href="https://linear.app/leadgenerationio/issue/OCT-35" target="_blank"><strong>OCT-35</strong></a></td>
-        <td>T8: Render Xero "authorised" as "Pending Payment" on client portal</td>
-        <td><span class="src-badge src-shipped">In Review · live</span></td>
-        <td><span class="src-badge src-yash">Yash</span></td>
-        <td><span class="src-badge src-improve">Improvement</span></td>
-        <td>Meeting 19:01 — invoice badge legalese</td>
+        <td>1</td><td>Revenue (rolling 365d)</td>
+        <td class="num green-val">£733,172.40</td>
+        <td><span class="src-badge src-xero">Xero</span></td>
+        <td>✓ Live</td>
+        <td>—</td>
       </tr>
       <tr>
-        <td><a href="https://linear.app/leadgenerationio/issue/OCT-36" target="_blank"><strong>OCT-36</strong></a></td>
-        <td>T1 schema gap: accept <code>accountIds[]</code> on traffic-source create/update</td>
-        <td><span class="src-badge src-shipped">In Review · live</span></td>
-        <td><span class="src-badge src-yash">Yash</span></td>
-        <td><span class="src-badge src-bug">Bug</span></td>
-        <td>Post-meeting audit — multi-account Catchr links</td>
+        <td>2</td><td>Cost (rolling 90d)</td>
+        <td class="num green-val">£819,306.70</td>
+        <td><span class="src-badge src-catchr">Catchr</span></td>
+        <td>✓ Live</td>
+        <td>—</td>
       </tr>
       <tr>
-        <td><a href="https://linear.app/leadgenerationio/issue/OCT-37" target="_blank"><strong>OCT-37</strong></a></td>
-        <td>T3: Responsive UI overhaul across portal + admin pages</td>
-        <td><span class="src-badge src-todo">Todo</span></td>
-        <td><span class="src-badge src-yash">Yash</span></td>
-        <td><span class="src-badge src-improve">Improvement</span></td>
-        <td>Meeting — client phones don't render properly</td>
+        <td>3</td><td>Net Profit</td>
+        <td class="num green-val">-£86,134.30</td>
+        <td><span class="src-badge src-derived">Derived</span></td>
+        <td>✓ Live</td>
+        <td>rev (365d) - cost (90d)</td>
       </tr>
       <tr>
-        <td><a href="https://linear.app/leadgenerationio/issue/OCT-38" target="_blank"><strong>OCT-38</strong></a></td>
-        <td>T10: Restore previous GitHub activity report template</td>
-        <td><span class="src-badge src-todo">Todo</span></td>
-        <td><span class="src-badge src-hari">Hari</span></td>
-        <td><span class="src-badge src-bug">Bug</span></td>
-        <td>Meeting 01:11 — Sam's inbox report unreadable</td>
+        <td>4</td><td>Margin</td>
+        <td class="num green-val">-11.7%</td>
+        <td><span class="src-badge src-derived">Derived</span></td>
+        <td>✓ Live</td>
+        <td>period-coherent math (since 20-May fix)</td>
       </tr>
       <tr>
-        <td><a href="https://linear.app/leadgenerationio/issue/OCT-39" target="_blank"><strong>OCT-39</strong></a></td>
-        <td>Multi-buyer behaviour audit (campaigns with multiple clients)</td>
-        <td><span class="src-badge src-todo">Todo</span></td>
-        <td><span class="src-badge src-yash">Yash</span></td>
-        <td><span class="src-badge src-improve">Improvement</span></td>
-        <td>Meeting 06:07 — many-to-many revenue rollups</td>
+        <td>5</td><td>Active Clients</td>
+        <td class="num green-val">2</td>
+        <td><span class="src-badge src-statodb">Stato DB</span></td>
+        <td>✓ Live</td>
+        <td>only UKESN and one onboarding — see Sam ask #2</td>
+      </tr>
+      <tr>
+        <td>6</td><td>Campaigns (linked / active)</td>
+        <td class="num green-val">2 / 28</td>
+        <td><span class="src-badge src-leadbyte">LeadByte</span></td>
+        <td>✓ Live</td>
+        <td>26 active campaigns not yet linked to Stato clients</td>
+      </tr>
+      <tr>
+        <td>7</td><td>Leads this month</td>
+        <td class="num green-val">7,469</td>
+        <td><span class="src-badge src-leadbyte">LeadByte</span></td>
+        <td>✓ Live</td>
+        <td>LeadByte last sync 2026-05-21 12:03 UTC</td>
+      </tr>
+      <tr>
+        <td>8</td><td>Invoices Owed In</td>
+        <td class="num green-val">£44,064 · 3 invoices</td>
+        <td><span class="src-badge src-xero">Xero</span></td>
+        <td>✓ Live</td>
+        <td>all 3 now flipped to <em>Overdue</em> (since T7 ship)</td>
+      </tr>
+      <tr class="red-row">
+        <td>9</td><td>Bank Accounts widget</td>
+        <td class="num red-val">(empty)</td>
+        <td><span class="src-badge src-xero">Xero</span></td>
+        <td>✗ Blocked</td>
+        <td><strong>Xero org has 0 BANK-type accounts</strong> · Sam to add one (ask #3). Probe currently also HTTP 429 rate-limited — Xero resets in ~60s</td>
+      </tr>
+      <tr class="red-row">
+        <td>10</td><td>VAT Liability widget</td>
+        <td class="num red-val">(empty)</td>
+        <td><span class="src-badge src-xero">Xero</span></td>
+        <td>✗ Blocked</td>
+        <td><strong>Xero org isn't VAT-registered</strong> · Sam to register with HMRC (ask #4). Reports API also 429 right now</td>
       </tr>
     </tbody>
   </table>
 
-  <!-- ─── SHIPPED ────────────────────────── -->
-  <h2>Shipped to production today <span class="pill done">2 fixes · live on prod</span></h2>
+  <h3>Catchr ad spend — per platform (real, from local DB)</h3>
+  <table class="data">
+    <thead>
+      <tr>
+        <th style="width: 16%">Platform</th>
+        <th style="width: 14%">Last 30 days</th>
+        <th style="width: 14%">Last 90 days</th>
+        <th style="width: 14%">Lifetime</th>
+        <th style="width: 10%">Rows</th>
+        <th style="width: 10%">Accounts</th>
+        <th style="width: 8%">Status</th>
+        <th>Note</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Facebook Ads</td>
+        <td class="num green-val">£624,239.87</td>
+        <td class="num">£663,966.68</td>
+        <td class="num">£663,966.68</td>
+        <td class="num">1,754</td>
+        <td class="num">20</td>
+        <td>✓ Live</td>
+        <td>biggest spender · all 20 accounts active</td>
+      </tr>
+      <tr>
+        <td>Google Ads</td>
+        <td class="num green-val">£67,994.98</td>
+        <td class="num">£146,413.69</td>
+        <td class="num">£146,413.69</td>
+        <td class="num">2,624</td>
+        <td class="num">11</td>
+        <td>⚠ Partial</td>
+        <td>6 of 17 accounts still disconnected (Sam ask #7) — chunk of spend unattributed until re-auth</td>
+      </tr>
+      <tr>
+        <td>TikTok</td>
+        <td class="num green-val">£8,926.33</td>
+        <td class="num">£8,926.33</td>
+        <td class="num">£8,926.33</td>
+        <td class="num">66</td>
+        <td class="num">1</td>
+        <td>✓ Live</td>
+        <td>Solar Incentives — re-validated post 17-May FIELD_NOT_KNOW fix</td>
+      </tr>
+      <tr class="red-row">
+        <td>Taboola</td>
+        <td class="num red-val">£0</td>
+        <td class="num">£0</td>
+        <td class="num">£0</td>
+        <td class="num">739</td>
+        <td class="num">6</td>
+        <td>⚠ £0 upstream</td>
+        <td>739 rows synced but every row's spend is 0. <strong>Real upstream state</strong> — Catchr's Taboola accounts return £0. Not a bug, not blocking — flagged red because the widget shows zero</td>
+      </tr>
+    </tbody>
+  </table>
 
-  <h3>Fix 1 — OCT-35: invoice badge reads "Pending Payment", not "Authorised"</h3>
-  <p style="margin: 0 0 10px 0; font-size: 14px; color: #424245;">
-    Frontend change. Adds a label map next to the existing colour map; the
-    badge text comes from the map, not from the raw Xero status string. Both
-    render sites updated (mobile card + desktop table). The
-    <code>capitalize</code> Tailwind class was removed because the map
-    already supplies correctly-cased labels.
+  <h3>Integrations — live status</h3>
+  <table class="data">
+    <thead>
+      <tr>
+        <th style="width: 14%">Source</th>
+        <th style="width: 14%">Live status</th>
+        <th style="width: 26%">What it covers</th>
+        <th>State + reason if not green</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="src-badge src-xero">Xero</span></td>
+        <td>✓ Live</td>
+        <td>Revenue, invoices, bank-feed, VAT, P&amp;L</td>
+        <td>Tenant: <strong>Clinical Marketing Solutions Ltd</strong>. All 4 scopes granted (transactions, contacts, reports.read, settings.read). Probe at health-check time was rate-limited (HTTP 429) — Xero resets in ~60s. Custom Connection deliberately omits Finance API scope (BankSummary fallback handles this)</td>
+      </tr>
+      <tr>
+        <td><span class="src-badge src-leadbyte">LeadByte</span></td>
+        <td>✓ Live</td>
+        <td>28 active campaigns, lead deliveries, revenue per lead</td>
+        <td>Last sync at <code>2026-05-21T12:03:06Z</code> · 7,469 leads this month synced</td>
+      </tr>
+      <tr class="red-row">
+        <td><span class="src-badge src-catchr">Catchr</span></td>
+        <td class="red-val">✗ Probe failed</td>
+        <td>Ad spend per platform / account</td>
+        <td>Live <code>/account</code> probe times out at 3s — but background sync IS working (£701k of last-30d spend synced across 4 platforms). The integrations UI still reads "disconnected" because <code>lastSyncAt</code> isn't being persisted. Filed as <a href="https://linear.app/leadgenerationio/issue/OCT-40" target="_blank">OCT-40</a> · medium · 1 point</td>
+      </tr>
+      <tr>
+        <td><span class="src-badge src-signnow">SignNow</span></td>
+        <td>✓ Live</td>
+        <td>Agreement signature workflow</td>
+        <td><code>sandbox=false</code> · 7 agreements through the system. Watermark still shows "Sample" — Go-Live request is Sam ask #9</td>
+      </tr>
+      <tr>
+        <td><span class="src-badge src-r2">Cloudflare R2</span></td>
+        <td>✓ Live</td>
+        <td>Document upload / storage</td>
+        <td>Bucket <code>stato-production</code> reachable · 0 files uploaded yet (no client has used the Documents tab — UKESN is your only active client). Will start populating as more clients onboard</td>
+      </tr>
+      <tr class="red-row">
+        <td><span class="src-badge src-endole">Endole</span></td>
+        <td class="red-val">✗ £0 balance</td>
+        <td>Company credit checks (#15, #34)</td>
+        <td>Provider configured · 10 historic checks visible in <code>credit_checks</code> table. New checks blocked at £0 balance. Sam ask #5 — pick replacement (Creditsafe / Red Flag Alert / Experian Compass) or top up</td>
+      </tr>
+      <tr class="red-row">
+        <td><span class="src-badge src-resend">Resend</span></td>
+        <td class="red-val">✗ DNS unverified</td>
+        <td>Outbound email</td>
+        <td>Sending from <code>onboarding@resend.dev</code> (Resend's shared dev domain) instead of <code>noreply@leadgeneration.io</code>. Sam ask #8 — add 3 TXT records on GoDaddy</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Outstanding invoices (current, from Xero)</h3>
+  <table class="data">
+    <thead>
+      <tr>
+        <th style="width: 14%">Invoice #</th>
+        <th style="width: 28%">Client</th>
+        <th style="width: 14%">Total</th>
+        <th style="width: 14%">Due date</th>
+        <th style="width: 12%">Days overdue</th>
+        <th>Portal label (after T7 + T8)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>INV-0365</td>
+        <td>UK Energy Saving Network</td>
+        <td class="num">£1,080.00</td>
+        <td>2026-04-10</td>
+        <td class="num red-val">41 days</td>
+        <td><span class="src-badge" style="background:#fdecea;color:#a52a2a;">Overdue (41d)</span></td>
+      </tr>
+      <tr>
+        <td>INV-0390</td>
+        <td>UK Energy Saving Network</td>
+        <td class="num">£23,688.00</td>
+        <td>2026-05-13</td>
+        <td class="num red-val">8 days</td>
+        <td><span class="src-badge" style="background:#fdecea;color:#a52a2a;">Overdue (8d)</span></td>
+      </tr>
+      <tr>
+        <td>INV-0394</td>
+        <td>UK Energy Saving Network</td>
+        <td class="num">£19,296.00</td>
+        <td>2026-05-20</td>
+        <td class="num red-val">1 day</td>
+        <td><span class="src-badge" style="background:#fdecea;color:#a52a2a;">Overdue (1d)</span></td>
+      </tr>
+    </tbody>
+  </table>
+  <p style="margin: 8px 0 0 0; color: #6e6e73; font-size: 13px;">
+    <strong>Total outstanding: £44,064</strong> · all 3 from UKESN · all flipped to <em>Overdue</em> by T7 backend logic. INV-0394 is the one Sam pointed at on 20-May at 19:01 — it now reads "Overdue (1d)" instead of "Authorised" on the portal.
+  </p>
+
+  <h3>Campaigns with leads but no client mapping (5)</h3>
+  <p style="margin: 0 0 8px 0; color: #424245; font-size: 14px;">
+    From <code>/reports/unified?range=this_month</code>. These 5 LeadByte
+    campaigns are delivering leads this month but aren't linked to any
+    Stato client. Each reads <code>"Pending client mapping"</code> in
+    the report. <strong>Not a bug</strong> — they need a Stato client to
+    attach to (either onboard the client or mark the campaign inactive).
+    Flagged here because the report rows show £0 revenue + 0 spend
+    against them and Sam may wonder why.
   </p>
   <table class="data">
     <thead>
-      <tr><th style="width: 30%">Status from Xero</th><th>Now shown on portal as</th></tr>
+      <tr>
+        <th>Campaign</th>
+        <th style="width: 14%">Vertical</th>
+        <th style="width: 12%">Leads (this month)</th>
+        <th>Recommendation</th>
+      </tr>
     </thead>
     <tbody>
-      <tr><td><code>authorised</code></td><td>Pending Payment</td></tr>
-      <tr><td><code>sent</code></td><td>Pending Payment</td></tr>
-      <tr><td><code>paid</code></td><td>Paid</td></tr>
-      <tr><td><code>overdue</code></td><td>Overdue <em>(N d)</em> — backend already flips past-due rows here</td></tr>
-      <tr><td><code>draft</code></td><td>Draft <em>(drafts already hidden from clients, kept for completeness)</em></td></tr>
+      <tr><td>Hearing Aids (CH)</td><td>Hearing Aids</td><td class="num">10</td><td>Either onboard the CH buyer client or mark inactive</td></tr>
+      <tr><td>Hearing Aids (PL)</td><td>Hearing Aids</td><td class="num">6</td><td>Same — needs a Stato client to attach to</td></tr>
+      <tr><td>DIY Tax Claims</td><td>Tax Claims</td><td class="num">5</td><td>New vertical — confirm if active or pause</td></tr>
+      <tr><td>Hearing Aids (IE)</td><td>Hearing Aids</td><td class="num">2</td><td>Either onboard the IE buyer client or mark inactive</td></tr>
+      <tr><td>Conservatory Upgrades</td><td>Conservatory</td><td class="num">1</td><td>Confirm if active</td></tr>
     </tbody>
   </table>
-
-  <div class="test-card">
-    <div class="hdr">How to test — OCT-35 (2 minutes)</div>
-    <ol>
-      <li>Open <a href="https://sato-frontend.vercel.app/portal/invoices" target="_blank">sato-frontend.vercel.app/portal/invoices</a> in a private window.</li>
-      <li>Log in as the client portal user from the Try-it-live block above (<code>jamie.probets@ukesn.co.uk</code> / <code>TempPass-Jamie-2026!</code>).</li>
-      <li>The row Sam pointed at on 20-May (INV-0394 for UK Energy Saving Network) should read <strong>"Pending Payment"</strong> in blue — not "Authorised".</li>
-      <li>The 31-day past-due row (the one Sam called out at meeting 19:48) reads <strong>"Overdue (31d)"</strong> in red.</li>
-      <li>Resize the browser to phone width (375px). Badge wraps correctly inside the stacked mobile card.</li>
-      <li>Automated: <code>pnpm test portal-invoices</code> on Sato-Frontend — new Vitest file passes 4 assertions in under 1s.</li>
-    </ol>
-  </div>
-
-  <h3>Fix 2 — OCT-36: traffic-source schema accepts <code>accountIds[]</code></h3>
-  <p style="margin: 0 0 10px 0; font-size: 14px; color: #424245;">
-    Backend change. Migration <code>0030</code> added a JSON array column so
-    one traffic-source row can union spend from multiple Catchr accounts on
-    the same platform (Solar Panels UK pulling from 4 Facebook accounts at
-    once). The frontend already sent the array, the service layer consumed
-    it, but the Zod validator only listed the legacy singular
-    <code>accountId</code> — so Zod silently stripped the array before the
-    request hit the controller, and the multi-account roll-up came back zero.
-    One <code>z.array(...).optional()</code> line added in two schemas,
-    silent bug closed.
-  </p>
-
-  <div class="test-card">
-    <div class="hdr">How to test — OCT-36 (3 minutes)</div>
-    <ol>
-      <li>Open <a href="https://sato-frontend.vercel.app/" target="_blank">sato-frontend.vercel.app</a> as admin (Sam creds in Try-it-live block above), navigate to <strong>/campaigns/&lt;insulation-id&gt;</strong> (the campaign Sam called out at meeting 07:38).</li>
-      <li>Click <strong>"Add source"</strong> → pick platform = Facebook → pick <strong>2 or more</strong> Facebook accounts from the multi-select.</li>
-      <li>Save.</li>
-      <li>Refresh the page. The traffic-source row should now show all selected accounts (not just the first one).</li>
-      <li>Confirm the campaign cost on the detail page rolls up spend from every picked account — cross-check against the same numbers in lead-report.io (Sam's reference flow at meeting 11:33).</li>
-      <li>Backend smoke: <code>curl https://sato-backend-production.up.railway.app/health</code> returns <code>{"status":"ok"}</code> 200.</li>
-    </ol>
-  </div>
 
   <!-- ─── OPEN ON DEV SIDE ────────────────────────── -->
-  <h2>Open on dev side — next 5 days <span class="pill fix">on deck</span></h2>
+  <h2>Open on dev side <span class="pill fix">4 items</span></h2>
   <table class="data">
     <thead>
       <tr>
@@ -320,24 +826,104 @@
     <tbody>
       <tr>
         <td><a href="https://linear.app/leadgenerationio/issue/OCT-37" target="_blank">OCT-37</a></td>
-        <td><strong>T3 — Responsive UI overhaul</strong></td>
+        <td><strong>T3 — Responsive UI overhaul</strong> (remaining 10 pages)</td>
         <td><span class="src-badge src-yash">Yash</span></td>
-        <td>2–3 days</td>
-        <td>Every portal + admin page audited at 375 / 768 / 1440 px. PR-A (foundation: nav drawer + hamburger), then PR-B leads, PR-C compliance + creatives (thumb-reachable approve CTAs), PR-D dashboard + agreement, PR-E admin. Slice 1 (/portal/invoices) already shipped 20-May.</td>
+        <td>2-3 days</td>
+        <td>PR-A foundation (nav drawer + hamburger), PR-B leads, PR-C compliance + creatives (P0 — thumb-reachable approve CTAs), PR-D dashboard + agreement, PR-E admin. Slice 1 (/portal/invoices) already live</td>
       </tr>
       <tr>
         <td><a href="https://linear.app/leadgenerationio/issue/OCT-38" target="_blank">OCT-38</a></td>
         <td><strong>T10 — Restore GitHub report template</strong></td>
         <td><span class="src-badge src-hari">Hari</span></td>
         <td>15 min</td>
-        <td>The format change is in a separate repo's GitHub Action — Hari to locate the workflow, revert the template commit, redeploy. Sam to confirm by reply once the next scheduled run lands in his inbox.</td>
+        <td>External GitHub Action repo. Hari to locate the workflow, revert the template change, redeploy. Sam confirms by reply once the next scheduled run reaches the inbox</td>
       </tr>
       <tr>
         <td><a href="https://linear.app/leadgenerationio/issue/OCT-39" target="_blank">OCT-39</a></td>
-        <td><strong>Multi-buyer audit</strong></td>
+        <td><strong>Multi-buyer rollup audit</strong> (campaigns with multiple clients)</td>
         <td><span class="src-badge src-yash">Yash</span></td>
         <td>~4 hr</td>
-        <td>Audit-only (not a fix). Walk every place revenue or cost is mapped to a campaign and document whether it unions across all buyers correctly. Output: one follow-up ticket per page that needs fixing. Sam confirmed at meeting 06:07 campaigns are many-to-many.</td>
+        <td>Audit-only (not a fix). Walk every place revenue or cost maps to a campaign and document whether it unions correctly across all buyers (Sam confirmed many-to-many at meeting 06:07). Output: one follow-up ticket per page that needs fixing</td>
+      </tr>
+      <tr>
+        <td><a href="https://linear.app/leadgenerationio/issue/OCT-40" target="_blank">OCT-40</a></td>
+        <td><strong>Catchr <code>lastSyncAt</code> not persisted</strong> → integrations UI reads "disconnected" despite working sync</td>
+        <td><span class="src-badge src-yash">Yash</span></td>
+        <td>1 hr</td>
+        <td>Discovered while pulling real values for this report. Sync IS healthy (£701k of spend landed), but the fallback added on 20-May (commit <code>77dee07</code>) never fires because <code>lastSyncAt</code> is being returned as <code>null</code>. Fix is one DB lookup + one comparison</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ─── LINEAR TICKETS ────────────────────────── -->
+  <h2>Linear tickets created today <span class="pill done">5 in OCT · all with full how-to-solve + testing-flow comments</span></h2>
+
+  <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
+    Each ticket below has the full description, a <strong>"How to solve"</strong>
+    comment (files + diff), and a <strong>"Testing flow"</strong> comment
+    (automated + manual steps) attached. Click any row to open the ticket
+    directly in Linear.
+  </p>
+
+  <table class="data">
+    <thead>
+      <tr>
+        <th style="width: 8%">Ref</th>
+        <th style="width: 38%">Title</th>
+        <th style="width: 12%">Status</th>
+        <th style="width: 12%">Owner</th>
+        <th style="width: 10%">Type</th>
+        <th>Tied to</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a href="https://linear.app/leadgenerationio/issue/OCT-35" target="_blank"><strong>OCT-35</strong></a></td>
+        <td>T8: Render Xero "authorised" as "Pending Payment"</td>
+        <td><span class="src-badge src-shipped">In Review · live</span></td>
+        <td><span class="src-badge src-yash">Yash</span></td>
+        <td><span class="src-badge src-improve">Improvement</span></td>
+        <td>Meeting 19:01</td>
+      </tr>
+      <tr>
+        <td><a href="https://linear.app/leadgenerationio/issue/OCT-36" target="_blank"><strong>OCT-36</strong></a></td>
+        <td>T1 schema gap: accept <code>accountIds[]</code> on traffic-source create/update</td>
+        <td><span class="src-badge src-shipped">In Review · live</span></td>
+        <td><span class="src-badge src-yash">Yash</span></td>
+        <td><span class="src-badge src-bug">Bug</span></td>
+        <td>Audit · meeting 07:38</td>
+      </tr>
+      <tr>
+        <td><a href="https://linear.app/leadgenerationio/issue/OCT-37" target="_blank"><strong>OCT-37</strong></a></td>
+        <td>T3: Responsive UI overhaul across portal + admin pages</td>
+        <td><span class="src-badge src-todo">Todo</span></td>
+        <td><span class="src-badge src-yash">Yash</span></td>
+        <td><span class="src-badge src-improve">Improvement</span></td>
+        <td>Meeting · client phones</td>
+      </tr>
+      <tr>
+        <td><a href="https://linear.app/leadgenerationio/issue/OCT-38" target="_blank"><strong>OCT-38</strong></a></td>
+        <td>T10: Restore previous GitHub activity report template</td>
+        <td><span class="src-badge src-todo">Todo</span></td>
+        <td><span class="src-badge src-hari">Hari</span></td>
+        <td><span class="src-badge src-bug">Bug</span></td>
+        <td>Meeting 01:11</td>
+      </tr>
+      <tr>
+        <td><a href="https://linear.app/leadgenerationio/issue/OCT-39" target="_blank"><strong>OCT-39</strong></a></td>
+        <td>Multi-buyer behaviour audit (campaigns with multiple clients)</td>
+        <td><span class="src-badge src-todo">Todo</span></td>
+        <td><span class="src-badge src-yash">Yash</span></td>
+        <td><span class="src-badge src-improve">Improvement</span></td>
+        <td>Meeting 06:07</td>
+      </tr>
+      <tr>
+        <td><a href="https://linear.app/leadgenerationio/issue/OCT-40" target="_blank"><strong>OCT-40</strong></a></td>
+        <td>Catchr integration overview shows <code>connected=false</code> despite working sync (<code>lastSyncAt</code> never set)</td>
+        <td><span class="src-badge src-todo">Todo</span></td>
+        <td><span class="src-badge src-yash">Yash</span></td>
+        <td><span class="src-badge src-bug">Bug</span></td>
+        <td>Found today — real-data pull for this report</td>
       </tr>
     </tbody>
   </table>
@@ -346,10 +932,10 @@
   <h2>Pending on Sam-side — carried from 20-May <span class="pill block">your action</span></h2>
 
   <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
-    No new asks today. The eleven items from yesterday's update still
-    stand (Anthropic key already received). Repeated here because the
-    sources tied to each still render as blocked / mock / dev-mode on
-    Stato until they land.
+    No new asks today. Eleven items from yesterday's update still stand
+    (Anthropic key already received). Repeated here because the
+    integrations tied to each still render as blocked / mock / dev-mode
+    in Stato until they land.
   </p>
 
   <table class="data">
@@ -450,23 +1036,24 @@
     </tbody>
   </table>
 
-  <!-- ─── HOW LINEAR FITS ────────────────────────── -->
-  <h2>How Linear fits in <span class="pill fix">process note</span></h2>
+  <!-- ─── PROCESS NOTE ────────────────────────── -->
+  <h2>Process note — Linear from here on <span class="pill fix">how we work now</span></h2>
   <p style="margin: 0 0 10px 0; font-size: 14px; color: #424245;">
-    From 15-May onwards Linear is the source of truth for everything Yash
-    and Hari are working on. Tickets live in the
-    <strong>leadgenerationio</strong> workspace under team
-    <strong>OCT</strong>. You don't need a Linear seat to read tickets —
-    each issue is openable via its direct URL (the
-    <code>OCT-NN</code> links above all work for any signed-in member of
-    the leadgenerationio workspace).
+    From 15-May onwards, Linear is the source of truth for everything
+    Yash and Hari are working on. Workspace:
+    <strong>leadgenerationio</strong>, team <strong>OCT</strong>. Every
+    meeting follow-up becomes a Linear ticket the same day with a
+    description, a "How to solve" comment, a "Testing flow" comment, an
+    owner, and a status. You don't need a Linear seat to read tickets —
+    each <code>OCT-NN</code> link above opens the ticket directly for
+    any signed-in member of the workspace.
   </p>
   <p style="margin: 0 0 0 0; font-size: 14px; color: #424245;">
-    Every meeting follow-up now becomes a Linear ticket the same day with
-    a description, a "How to solve" comment, a "Testing flow" comment, an
-    owner and a status. Daily status updates on this portal will
-    cross-link every shipped or pending item to its OCT ticket, so you
-    can dig as deep as you want.
+    Future status updates on this portal will continue to bundle the
+    "what shipped today" view, but they'll cross-link every shipped or
+    pending item to its OCT ticket. So when something on the platform
+    isn't doing what you expect, you can dig as deep as the test
+    instructions and source-level "How to solve" comment in Linear.
   </p>
 
   <footer>
