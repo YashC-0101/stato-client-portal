@@ -1,0 +1,477 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Stato — Status Update · 21 May 2026</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Arial, sans-serif;
+    background: #fafafa; color: #1d1d1f;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.55;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 56px 22px; }
+  .back {
+    display: inline-block; color: #0066cc; text-decoration: none;
+    font-size: 14px; margin-bottom: 24px;
+  }
+  .back:hover { text-decoration: underline; }
+  h1 {
+    font-size: 34px; font-weight: 700; letter-spacing: -0.02em;
+    margin: 0 0 6px 0;
+  }
+  .meta { color: #6e6e73; font-size: 14px; margin: 0 0 36px 0; }
+  h2 {
+    font-size: 22px; font-weight: 700; letter-spacing: -0.01em;
+    margin: 44px 0 14px 0;
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  }
+  h2 .pill {
+    font-size: 11px; font-weight: 600;
+    padding: 4px 10px; border-radius: 999px;
+    text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  h2 .pill.done   { background: #e6f7ec; color: #1d7a3a; }
+  h2 .pill.need   { background: #fff3e0; color: #a04a00; }
+  h2 .pill.fix    { background: #e8f0ff; color: #0042a3; }
+  h2 .pill.block  { background: #fdecea; color: #a52a2a; }
+  h3 { font-size: 16px; font-weight: 600; margin: 22px 0 8px 0; }
+  code {
+    font-family: 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 12px;
+    background: #f0f0f3; padding: 1px 5px; border-radius: 4px;
+    color: #1d1d1f;
+  }
+  .summary {
+    background: #fff; border: 1px solid #e8e8ed; border-radius: 14px;
+    padding: 22px 24px;
+  }
+  .summary p { margin: 0 0 10px 0; font-size: 15px; }
+  .summary p:last-child { margin: 0; }
+  .stat-row {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+    margin: 16px 0 0 0;
+  }
+  @media (max-width: 600px) { .stat-row { grid-template-columns: repeat(2, 1fr); } }
+  .stat {
+    background: #fafafa; border: 1px solid #e8e8ed; border-radius: 12px;
+    padding: 14px;
+  }
+  .stat .num { font-size: 26px; font-weight: 700; color: #1d1d1f; }
+  .stat .lbl { font-size: 12px; color: #6e6e73; margin-top: 4px; }
+  table.data {
+    width: 100%; border-collapse: collapse; margin: 8px 0 4px 0;
+    font-size: 13px; background: #fff;
+    border: 1px solid #e8e8ed; border-radius: 10px;
+    overflow: hidden;
+  }
+  table.data th, table.data td {
+    text-align: left; padding: 9px 12px;
+    border-bottom: 1px solid #f0f0f3;
+    vertical-align: top;
+  }
+  table.data th {
+    font-weight: 600; color: #6e6e73; font-size: 11px;
+    text-transform: uppercase; letter-spacing: 0.04em;
+    background: #fafafa;
+    border-bottom: 1px solid #e8e8ed;
+  }
+  table.data td.num { font-family: 'SF Mono', Menlo, Consolas, monospace; text-align: right; }
+  table.data tr:last-child td { border-bottom: none; }
+  table.data tr:hover td { background: #fafbfc; }
+  .src-badge {
+    display: inline-block;
+    font-size: 11px; font-weight: 600;
+    padding: 2px 8px; border-radius: 999px;
+    white-space: nowrap;
+  }
+  .src-shipped  { background: #e6f7ec; color: #1d7a3a; }
+  .src-review   { background: #fff3e0; color: #a04a00; }
+  .src-todo     { background: #f0f0f3; color: #424245; }
+  .src-yash     { background: #e6f0ff; color: #0042a3; }
+  .src-hari     { background: #f0e6ff; color: #5a2999; }
+  .src-bug      { background: #fdecea; color: #a52a2a; }
+  .src-improve  { background: #e0f7fa; color: #006064; }
+  .live-block {
+    background: linear-gradient(135deg, #0066cc 0%, #004999 100%); color: #fff;
+    border-radius: 16px; padding: 20px 24px; margin: 0 0 28px 0;
+    box-shadow: 0 8px 24px -10px rgba(0, 102, 204, 0.35);
+  }
+  .live-block .kbd { font-family: 'SF Mono', Menlo, Consolas, monospace; font-size: 13px; }
+  .live-block a { color: #fff; }
+  .live-block .row {
+    background: rgba(255,255,255,0.12); border-radius: 8px;
+    padding: 10px 12px; margin-top: 8px;
+  }
+  .test-card {
+    background: #f0f7ff; border: 1px solid #b8d4f5; border-radius: 12px;
+    padding: 14px 18px; margin: 8px 0;
+  }
+  .test-card .hdr { font-weight: 600; color: #0042a3; margin-bottom: 6px; font-size: 14px; }
+  .test-card ol { margin: 6px 0 0 0; padding-left: 22px; font-size: 13.5px; color: #1d1d1f; }
+  .test-card li { margin-bottom: 4px; }
+  footer {
+    margin-top: 60px; padding-top: 22px;
+    border-top: 1px solid #e8e8ed;
+    color: #86868b; font-size: 12.5px; text-align: center;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="index.html">← Back to portal</a>
+
+  <h1>Stato — Status Update</h1>
+  <p class="meta">21 May 2026 · Linear ticketing for 20-May follow-ups · 2 fixes shipped to prod</p>
+
+  <!-- ─── TRY IT LIVE ────────────────────────── -->
+  <div class="live-block">
+    <div style="font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.85; margin-bottom: 8px;">▶ Try it live</div>
+    <a href="https://sato-frontend.vercel.app/" target="_blank" class="kbd" style="display: block; font-size: 17px; font-weight: 700; text-decoration: none; margin-bottom: 12px; word-break: break-all;">https://sato-frontend.vercel.app/</a>
+    <div class="row">
+      <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.85; margin-bottom: 4px;">Admin (Sam)</div>
+      <div class="kbd">email: <strong>sam@leadgeneration.io</strong> · password: <strong>Sam@123</strong></div>
+    </div>
+    <div class="row">
+      <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.85; margin-bottom: 4px;">Client portal (Jamie @ UKESN)</div>
+      <div class="kbd">email: <strong>jamie.probets@ukesn.co.uk</strong> · password: <strong>TempPass-Jamie-2026!</strong></div>
+    </div>
+    <div class="row">
+      <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.85; margin-bottom: 4px;">Linear (issue tracker)</div>
+      <div class="kbd"><a href="https://linear.app/leadgenerationio/team/OCT/all" target="_blank">linear.app/leadgenerationio/team/OCT/all</a></div>
+    </div>
+  </div>
+
+  <!-- ─── SUMMARY ────────────────────────── -->
+  <div class="summary">
+    <p>
+      <strong>Today's focus: turning yesterday's review meeting into trackable
+      work, then shipping the two quickest fixes.</strong> Every action item
+      from the 20-May call now lives as a Linear ticket in the
+      <code>OCT</code> team (leadgenerationio workspace) with an owner,
+      status, "How to solve" comment and "Testing flow" comment. Sam can
+      watch progress at the Linear URL above.
+    </p>
+    <p>
+      <strong>Two fixes already in production today.</strong> The
+      <em>"Authorised" → "Pending Payment"</em> badge on the client portal
+      that you called out at meeting 19:01, and a quiet schema bug that
+      was silently dropping multi-account Catchr links (the reason
+      Solar-Panels-UK pulling from 4 Facebook accounts wasn't rolling up
+      properly). Both pushed to <code>main</code>, Railway auto-deployed
+      the backend, Vercel <code>--prod</code> for the frontend.
+    </p>
+    <p>
+      <strong>Three follow-ups still open</strong> — listed in the second
+      table below with owner + estimate. Nothing new is blocked on Sam
+      today; the 11-item Sam-side ask list from yesterday's update still
+      stands (carried at the bottom for reference).
+    </p>
+
+    <div class="stat-row">
+      <div class="stat"><div class="num">5</div><div class="lbl">Linear tickets created (OCT-35 → OCT-39)</div></div>
+      <div class="stat"><div class="num">2</div><div class="lbl">Shipped to prod (OCT-35 + OCT-36)</div></div>
+      <div class="stat"><div class="num">3</div><div class="lbl">Open on dev side (T3 / T10 / audit)</div></div>
+      <div class="stat"><div class="num">179</div><div class="lbl">Frontend tests passing (incl. 4 new T8 cases)</div></div>
+    </div>
+  </div>
+
+  <!-- ─── LINEAR TICKETS ────────────────────────── -->
+  <h2>Linear tickets created today — 20-May meeting follow-ups <span class="pill done">all in Linear</span></h2>
+
+  <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
+    Each ticket has the full description, a <strong>"How to solve"</strong>
+    comment (files + diff) and a <strong>"Testing flow"</strong> comment
+    (automated + manual steps) posted as separate Linear comments. Click
+    any row to open the ticket.
+  </p>
+
+  <table class="data">
+    <thead>
+      <tr>
+        <th style="width: 8%">Ref</th>
+        <th style="width: 38%">Title</th>
+        <th style="width: 12%">Status</th>
+        <th style="width: 12%">Owner</th>
+        <th style="width: 10%">Type</th>
+        <th>From</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a href="https://linear.app/leadgenerationio/issue/OCT-35" target="_blank"><strong>OCT-35</strong></a></td>
+        <td>T8: Render Xero "authorised" as "Pending Payment" on client portal</td>
+        <td><span class="src-badge src-shipped">In Review · live</span></td>
+        <td><span class="src-badge src-yash">Yash</span></td>
+        <td><span class="src-badge src-improve">Improvement</span></td>
+        <td>Meeting 19:01 — invoice badge legalese</td>
+      </tr>
+      <tr>
+        <td><a href="https://linear.app/leadgenerationio/issue/OCT-36" target="_blank"><strong>OCT-36</strong></a></td>
+        <td>T1 schema gap: accept <code>accountIds[]</code> on traffic-source create/update</td>
+        <td><span class="src-badge src-shipped">In Review · live</span></td>
+        <td><span class="src-badge src-yash">Yash</span></td>
+        <td><span class="src-badge src-bug">Bug</span></td>
+        <td>Post-meeting audit — multi-account Catchr links</td>
+      </tr>
+      <tr>
+        <td><a href="https://linear.app/leadgenerationio/issue/OCT-37" target="_blank"><strong>OCT-37</strong></a></td>
+        <td>T3: Responsive UI overhaul across portal + admin pages</td>
+        <td><span class="src-badge src-todo">Todo</span></td>
+        <td><span class="src-badge src-yash">Yash</span></td>
+        <td><span class="src-badge src-improve">Improvement</span></td>
+        <td>Meeting — client phones don't render properly</td>
+      </tr>
+      <tr>
+        <td><a href="https://linear.app/leadgenerationio/issue/OCT-38" target="_blank"><strong>OCT-38</strong></a></td>
+        <td>T10: Restore previous GitHub activity report template</td>
+        <td><span class="src-badge src-todo">Todo</span></td>
+        <td><span class="src-badge src-hari">Hari</span></td>
+        <td><span class="src-badge src-bug">Bug</span></td>
+        <td>Meeting 01:11 — Sam's inbox report unreadable</td>
+      </tr>
+      <tr>
+        <td><a href="https://linear.app/leadgenerationio/issue/OCT-39" target="_blank"><strong>OCT-39</strong></a></td>
+        <td>Multi-buyer behaviour audit (campaigns with multiple clients)</td>
+        <td><span class="src-badge src-todo">Todo</span></td>
+        <td><span class="src-badge src-yash">Yash</span></td>
+        <td><span class="src-badge src-improve">Improvement</span></td>
+        <td>Meeting 06:07 — many-to-many revenue rollups</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ─── SHIPPED ────────────────────────── -->
+  <h2>Shipped to production today <span class="pill done">2 fixes · live on prod</span></h2>
+
+  <h3>Fix 1 — OCT-35: invoice badge reads "Pending Payment", not "Authorised"</h3>
+  <p style="margin: 0 0 10px 0; font-size: 14px; color: #424245;">
+    Frontend change. Adds a label map next to the existing colour map; the
+    badge text comes from the map, not from the raw Xero status string. Both
+    render sites updated (mobile card + desktop table). The
+    <code>capitalize</code> Tailwind class was removed because the map
+    already supplies correctly-cased labels.
+  </p>
+  <table class="data">
+    <thead>
+      <tr><th style="width: 30%">Status from Xero</th><th>Now shown on portal as</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>authorised</code></td><td>Pending Payment</td></tr>
+      <tr><td><code>sent</code></td><td>Pending Payment</td></tr>
+      <tr><td><code>paid</code></td><td>Paid</td></tr>
+      <tr><td><code>overdue</code></td><td>Overdue <em>(N d)</em> — backend already flips past-due rows here</td></tr>
+      <tr><td><code>draft</code></td><td>Draft <em>(drafts already hidden from clients, kept for completeness)</em></td></tr>
+    </tbody>
+  </table>
+
+  <div class="test-card">
+    <div class="hdr">How to test — OCT-35 (2 minutes)</div>
+    <ol>
+      <li>Open <a href="https://sato-frontend.vercel.app/portal/invoices" target="_blank">sato-frontend.vercel.app/portal/invoices</a> in a private window.</li>
+      <li>Log in as the client portal user from the Try-it-live block above (<code>jamie.probets@ukesn.co.uk</code> / <code>TempPass-Jamie-2026!</code>).</li>
+      <li>The row Sam pointed at on 20-May (INV-0394 for UK Energy Saving Network) should read <strong>"Pending Payment"</strong> in blue — not "Authorised".</li>
+      <li>The 31-day past-due row (the one Sam called out at meeting 19:48) reads <strong>"Overdue (31d)"</strong> in red.</li>
+      <li>Resize the browser to phone width (375px). Badge wraps correctly inside the stacked mobile card.</li>
+      <li>Automated: <code>pnpm test portal-invoices</code> on Sato-Frontend — new Vitest file passes 4 assertions in under 1s.</li>
+    </ol>
+  </div>
+
+  <h3>Fix 2 — OCT-36: traffic-source schema accepts <code>accountIds[]</code></h3>
+  <p style="margin: 0 0 10px 0; font-size: 14px; color: #424245;">
+    Backend change. Migration <code>0030</code> added a JSON array column so
+    one traffic-source row can union spend from multiple Catchr accounts on
+    the same platform (Solar Panels UK pulling from 4 Facebook accounts at
+    once). The frontend already sent the array, the service layer consumed
+    it, but the Zod validator only listed the legacy singular
+    <code>accountId</code> — so Zod silently stripped the array before the
+    request hit the controller, and the multi-account roll-up came back zero.
+    One <code>z.array(...).optional()</code> line added in two schemas,
+    silent bug closed.
+  </p>
+
+  <div class="test-card">
+    <div class="hdr">How to test — OCT-36 (3 minutes)</div>
+    <ol>
+      <li>Open <a href="https://sato-frontend.vercel.app/" target="_blank">sato-frontend.vercel.app</a> as admin (Sam creds in Try-it-live block above), navigate to <strong>/campaigns/&lt;insulation-id&gt;</strong> (the campaign Sam called out at meeting 07:38).</li>
+      <li>Click <strong>"Add source"</strong> → pick platform = Facebook → pick <strong>2 or more</strong> Facebook accounts from the multi-select.</li>
+      <li>Save.</li>
+      <li>Refresh the page. The traffic-source row should now show all selected accounts (not just the first one).</li>
+      <li>Confirm the campaign cost on the detail page rolls up spend from every picked account — cross-check against the same numbers in lead-report.io (Sam's reference flow at meeting 11:33).</li>
+      <li>Backend smoke: <code>curl https://sato-backend-production.up.railway.app/health</code> returns <code>{"status":"ok"}</code> 200.</li>
+    </ol>
+  </div>
+
+  <!-- ─── OPEN ON DEV SIDE ────────────────────────── -->
+  <h2>Open on dev side — next 5 days <span class="pill fix">on deck</span></h2>
+  <table class="data">
+    <thead>
+      <tr>
+        <th style="width: 12%">Linear</th>
+        <th style="width: 32%">Item</th>
+        <th style="width: 12%">Owner</th>
+        <th style="width: 14%">Effort</th>
+        <th>Why it matters</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a href="https://linear.app/leadgenerationio/issue/OCT-37" target="_blank">OCT-37</a></td>
+        <td><strong>T3 — Responsive UI overhaul</strong></td>
+        <td><span class="src-badge src-yash">Yash</span></td>
+        <td>2–3 days</td>
+        <td>Every portal + admin page audited at 375 / 768 / 1440 px. PR-A (foundation: nav drawer + hamburger), then PR-B leads, PR-C compliance + creatives (thumb-reachable approve CTAs), PR-D dashboard + agreement, PR-E admin. Slice 1 (/portal/invoices) already shipped 20-May.</td>
+      </tr>
+      <tr>
+        <td><a href="https://linear.app/leadgenerationio/issue/OCT-38" target="_blank">OCT-38</a></td>
+        <td><strong>T10 — Restore GitHub report template</strong></td>
+        <td><span class="src-badge src-hari">Hari</span></td>
+        <td>15 min</td>
+        <td>The format change is in a separate repo's GitHub Action — Hari to locate the workflow, revert the template commit, redeploy. Sam to confirm by reply once the next scheduled run lands in his inbox.</td>
+      </tr>
+      <tr>
+        <td><a href="https://linear.app/leadgenerationio/issue/OCT-39" target="_blank">OCT-39</a></td>
+        <td><strong>Multi-buyer audit</strong></td>
+        <td><span class="src-badge src-yash">Yash</span></td>
+        <td>~4 hr</td>
+        <td>Audit-only (not a fix). Walk every place revenue or cost is mapped to a campaign and document whether it unions across all buyers correctly. Output: one follow-up ticket per page that needs fixing. Sam confirmed at meeting 06:07 campaigns are many-to-many.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ─── PENDING ON SAM-SIDE ────────────────────────── -->
+  <h2>Pending on Sam-side — carried from 20-May <span class="pill block">your action</span></h2>
+
+  <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
+    No new asks today. The eleven items from yesterday's update still
+    stand (Anthropic key already received). Repeated here because the
+    sources tied to each still render as blocked / mock / dev-mode on
+    Stato until they land.
+  </p>
+
+  <table class="data">
+    <thead>
+      <tr>
+        <th style="width: 4%">#</th>
+        <th style="width: 30%">Action</th>
+        <th style="width: 36%">Unblocks</th>
+        <th style="width: 10%">Effort</th>
+        <th>Where</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td><strong>Read-only Xero accountant access for <code>yash.c@octogle.com</code></strong></td>
+        <td>Manual validation of every Stato tile vs your real Xero — single biggest unblock for demo confidence</td>
+        <td>2 min</td>
+        <td>xero.com → My Xero → Add user → Read Only</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td><strong>Onboard 2-3 more clients</strong></td>
+        <td>Multi-client testing surfaces the many-to-many bugs <a href="https://linear.app/leadgenerationio/issue/OCT-39" target="_blank">OCT-39</a> is auditing. Need 4 fields per client (company name, number, contact name, email)</td>
+        <td>5 min / client</td>
+        <td>WhatsApp or the form on this portal</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td><strong>Add a bank account in Xero</strong></td>
+        <td>Bank Accounts widget on the dashboard</td>
+        <td>5 min</td>
+        <td>Xero → Banking → Add bank account</td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td><strong>Register Xero org for VAT</strong></td>
+        <td>VAT Liability widget on the dashboard</td>
+        <td>10 min</td>
+        <td>Xero → Settings → Tax → register with HMRC</td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td><strong>Endole replacement provider — pick one</strong></td>
+        <td>All credit checks. Options: Creditsafe (£200/mo unlimited) · Red Flag Alert (£150) · Experian Compass (£500 premium)</td>
+        <td>2 min</td>
+        <td>WhatsApp reply</td>
+      </tr>
+      <tr>
+        <td>6</td>
+        <td><strong>Vercel GitHub App install</strong> on Sato-Frontend repo</td>
+        <td>Today's FE deploy still needed a manual <code>vercel --prod</code>. Once installed, push-to-main = auto-deploy</td>
+        <td>2 min</td>
+        <td>github.com/settings/installations → Vercel</td>
+      </tr>
+      <tr>
+        <td>7</td>
+        <td><strong>Catchr Google Ads re-auth</strong> — 6 disconnected accounts</td>
+        <td>Banner reads "9 of 15 working". Each red-dot account = a chunk of unattributed ad spend</td>
+        <td>5 min</td>
+        <td>Catchr → Connections → Re-authenticate per red dot</td>
+      </tr>
+      <tr>
+        <td>8</td>
+        <td><strong>Resend DNS</strong> — 3 TXT records on GoDaddy</td>
+        <td>Outbound email currently sends from onboarding@resend.dev. Once verified, sends from noreply@leadgeneration.io + Email tab auto-logging kicks in</td>
+        <td>5 min</td>
+        <td>GoDaddy DNS or grant 24h admin access</td>
+      </tr>
+      <tr>
+        <td>9</td>
+        <td><strong>SignNow Go-Live</strong></td>
+        <td>Removes "Sample" watermark from all outgoing PDFs. 250-invite cap lifted</td>
+        <td>30 min + 1 day approval</td>
+        <td>SignNow API dashboard → register Stato Production → Business plan → Go Live</td>
+      </tr>
+      <tr>
+        <td>10</td>
+        <td><strong>Twilio creds</strong> — paste 3 values</td>
+        <td>Currently MOCK SMS. Once landed, system-error alerts text Sam's phone within 30s</td>
+        <td>10 min</td>
+        <td>twilio.com/console → sign up → buy long-code → paste ACCOUNT_SID + AUTH_TOKEN + FROM_NUMBER</td>
+      </tr>
+      <tr>
+        <td>11</td>
+        <td><strong>Attio API key</strong></td>
+        <td>"Import from Attio" button on /clients lights up</td>
+        <td>2 min</td>
+        <td>console.attio.com → Settings → API → create personal access token</td>
+      </tr>
+      <tr>
+        <td>12</td>
+        <td><strong>Go-ahead: Xero ↔ Stato comparison dashboard</strong></td>
+        <td>Yash-side ~half-day build. New admin page at <code>/integrations/xero/compare</code> · side-by-side Stato value · Xero value · delta · traffic-light coloured</td>
+        <td>1 yes/no</td>
+        <td>WhatsApp reply</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ─── HOW LINEAR FITS ────────────────────────── -->
+  <h2>How Linear fits in <span class="pill fix">process note</span></h2>
+  <p style="margin: 0 0 10px 0; font-size: 14px; color: #424245;">
+    From 15-May onwards Linear is the source of truth for everything Yash
+    and Hari are working on. Tickets live in the
+    <strong>leadgenerationio</strong> workspace under team
+    <strong>OCT</strong>. You don't need a Linear seat to read tickets —
+    each issue is openable via its direct URL (the
+    <code>OCT-NN</code> links above all work for any signed-in member of
+    the leadgenerationio workspace).
+  </p>
+  <p style="margin: 0 0 0 0; font-size: 14px; color: #424245;">
+    Every meeting follow-up now becomes a Linear ticket the same day with
+    a description, a "How to solve" comment, a "Testing flow" comment, an
+    owner and a status. Daily status updates on this portal will
+    cross-link every shipped or pending item to its OCT ticket, so you
+    can dig as deep as you want.
+  </p>
+
+  <footer>
+    Generated 21 May 2026 · Stato · Octogle Technologies for leadgeneration.io
+  </footer>
+</div>
+</body>
+</html>
