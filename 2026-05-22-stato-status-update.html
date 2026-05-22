@@ -204,6 +204,19 @@
     margin-left: 10px; opacity: 0; transition: opacity 200ms;
   }
   .saved-pill.visible { opacity: 1; }
+  /* Quick-access block — 2x2 on desktop, single column on phones */
+  .qa-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  @media (max-width: 640px) {
+    .qa-grid { grid-template-columns: 1fr; gap: 18px; }
+    /* Also tighten the comparison chart legend on phones so it wraps cleanly */
+    .cmp-legend { font-size: 11px; gap: 10px; }
+    .cmp-legend span[style*="margin-left: auto"] { margin-left: 0 !important; }
+    /* Top-of-page stat row keeps to 2 columns at 600-640px (already in stat-row media query at 600px) */
+  }
 </style>
 </head>
 <body>
@@ -219,7 +232,7 @@
       📌 Quick access — bookmark this block
     </div>
 
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+    <div class="qa-grid">
       <div>
         <div style="font-size: 12px; font-weight: 600; color: #6e6e73; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.04em;">Admin app (Owner view)</div>
         <div><a href="https://sato-frontend.vercel.app" target="_blank" style="color: #0066cc; font-family: 'SF Mono', Menlo, Consolas, monospace; font-size: 13px; word-break: break-all;">https://sato-frontend.vercel.app</a></div>
