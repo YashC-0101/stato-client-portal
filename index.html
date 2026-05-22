@@ -72,11 +72,22 @@
     for reference. All pages need the access code the Octogle Team sent you.
   </p>
 
+  <a class="card" href="2026-05-22-stato-status-update.html">
+    <div class="row">
+      <div class="ic" style="background: #e6f7ec;">🎯</div>
+      <div>
+        <h2>Status update — 22 May 2026 <span style="font-size:11px;font-weight:600;background:#1d7a3a;color:#fff;padding:2px 8px;border-radius:999px;margin-left:6px;letter-spacing:0.04em;">LATEST</span></h2>
+        <p><strong>18 commits shipped + deployed today across both repos.</strong> Cleared the entire 2026-05-15 meeting backlog + the OCT Linear cleanup + a major class of bugs that were causing the "data doesn't match LeadReports.io" complaints — <strong>Stato now matches LeadByte to the lead and to the penny</strong>, verified live against the LeadByte API itself. Hearing Aids (IE) was showing £24,989 vs LeadByte £15,189 — Stato was inflating by 65%. Same bug class affected every multi-supplier campaign and the total leads count (Stato 18,418 vs LB 17,780). Root cause: LeadByte's <code>/reports/campaign</code> and <code>/reports/supplier</code> return inconsistent lead counts (unique deliveries vs cascade-routing events); old algorithm multiplied campaign's revenue-per-lead by the inflated supplier count. New algorithm: proportional allocation so Σ(supplier.revenue) === campaign.revenue regardless. Hearing Aids (IE) now <strong>841 leads / £15,310.61</strong> Stato vs <strong>841 / £15,310.60</strong> LeadByte — exact match. Also shipped: Xero 429 explanation on bank widget + integrations card, per-source profitability roll-up (Facebook -110% / Google Ads -151% / Direct +100% — leadreports.io-style), responsive UI overhaul (Dashboard / Settings / Client Detail / Campaigns / Reports work at 375px iPhone-SE width), pie chart loading skeleton, Endole sandbox flipped to production. <strong>16 of 17 open Linear OCT tickets transitioned to Done with commit-link audit trail</strong>. <strong>Three pending items on your side</strong> — Catchr account mappings (£351k of ad spend awaiting attribution), Resend DNS, Endole credit-balance verify. Plus carryover from 21-May. <strong>12 text boxes inside with detailed asks + download button.</strong></p>
+      </div>
+      <div class="arrow">›</div>
+    </div>
+  </a>
+
   <a class="card" href="2026-05-21-stato-status-update.html">
     <div class="row">
       <div class="ic" style="background: #e6f7ec;">🎟️</div>
       <div>
-        <h2>Status update — 21 May 2026 <span style="font-size:11px;font-weight:600;background:#1d7a3a;color:#fff;padding:2px 8px;border-radius:999px;margin-left:6px;letter-spacing:0.04em;">LATEST</span></h2>
+        <h2>Status update — 21 May 2026</h2>
         <p><strong>All 10 meeting tasks from yesterday + 2 audit-spawn tickets are built and live on prod.</strong> 25 commits across both repos. T10 turned out to be about the format of these reports (not an external GitHub Action) — Sam wanted the older readable layout back, so this page is the proof point: collapsible sections, summary on top, tap-to-expand details. The OCT-39 audit also spawned OCT-41 + OCT-42 (multi-buyer naming on campaign list + unified report) — both also shipped today. <strong>Seven of eight Linear tickets live on prod</strong>; only OCT-37 (T3 responsive overhaul, multi-day) still open. <strong>Every value in the report verified against prod</strong>: revenue £733k, cost £819k, Catchr per-platform spend (FB £624k, GA £68k, TikTok £8.9k, Taboola £0), Catchr integration card now ✓ live, the 3 outstanding invoices (£44k all UKESN, all Overdue), 5 unmapped LeadByte campaigns. Anything not rendering a value highlighted in red with reason. <strong>No new asks for you today</strong> — the 11 Sam-side items from 20-May still stand. <strong>Please walk through each shipped item tomorrow morning using the per-task verification cards inside</strong> — anything that doesn't behave as expected, reply, and it'll be a new Linear ticket the same day.</p>
       </div>
       <div class="arrow">›</div>
@@ -205,7 +216,7 @@
   </a>
 
   <footer>
-    Updated 21 May 2026 · Stato · Octogle Technologies for leadgeneration.io
+    Updated 22 May 2026 · Stato · Octogle Technologies for leadgeneration.io
   </footer>
 </div>
 </body>

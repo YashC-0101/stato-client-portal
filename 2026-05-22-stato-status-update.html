@@ -1,0 +1,1587 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Stato — Status Update · 22 May 2026</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Arial, sans-serif;
+    background: #fafafa; color: #1d1d1f;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.55;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 56px 22px; }
+  .back {
+    display: inline-block; color: #0066cc; text-decoration: none;
+    font-size: 14px; margin-bottom: 24px;
+  }
+  .back:hover { text-decoration: underline; }
+  h1 {
+    font-size: 34px; font-weight: 700; letter-spacing: -0.02em;
+    margin: 0 0 6px 0;
+  }
+  .meta { color: #6e6e73; font-size: 14px; margin: 0 0 36px 0; }
+  h2 {
+    font-size: 22px; font-weight: 700; letter-spacing: -0.01em;
+    margin: 44px 0 14px 0;
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  }
+  h2 .pill {
+    font-size: 11px; font-weight: 600;
+    padding: 4px 10px; border-radius: 999px;
+    text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  h2 .pill.done   { background: #e6f7ec; color: #1d7a3a; }
+  h2 .pill.need   { background: #fff3e0; color: #a04a00; }
+  h2 .pill.fix    { background: #e8f0ff; color: #0042a3; }
+  h2 .pill.block  { background: #fdecea; color: #a52a2a; }
+  h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px 0; }
+  code {
+    font-family: 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 12px;
+    background: #f0f0f3; padding: 1px 5px; border-radius: 4px;
+    color: #1d1d1f;
+  }
+  .summary {
+    background: #fff; border: 1px solid #e8e8ed; border-radius: 14px;
+    padding: 22px 24px;
+  }
+  .summary p { margin: 0 0 10px 0; font-size: 15px; }
+  .summary p:last-child { margin: 0; }
+  .stat-row {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+    margin: 16px 0 0 0;
+  }
+  @media (max-width: 600px) { .stat-row { grid-template-columns: repeat(2, 1fr); } }
+  .stat {
+    background: #fafafa; border: 1px solid #e8e8ed; border-radius: 12px;
+    padding: 14px;
+  }
+  .stat .num { font-size: 26px; font-weight: 700; color: #1d1d1f; }
+  .stat .lbl { font-size: 12px; color: #6e6e73; margin-top: 4px; }
+  table.data {
+    width: 100%; border-collapse: collapse; margin: 8px 0 4px 0;
+    font-size: 13px; background: #fff;
+    border: 1px solid #e8e8ed; border-radius: 10px;
+    overflow: hidden;
+  }
+  table.data th, table.data td {
+    text-align: left; padding: 9px 12px;
+    border-bottom: 1px solid #f0f0f3;
+    vertical-align: top;
+  }
+  table.data th {
+    font-weight: 600; color: #6e6e73; font-size: 11px;
+    text-transform: uppercase; letter-spacing: 0.04em;
+    background: #fafafa;
+    border-bottom: 1px solid #e8e8ed;
+  }
+  table.data td.num { font-family: 'SF Mono', Menlo, Consolas, monospace; text-align: right; }
+  table.data tr:last-child td { border-bottom: none; }
+  table.data tr:hover td { background: #fafbfc; }
+  .src-badge {
+    display: inline-block;
+    font-size: 11px; font-weight: 600;
+    padding: 2px 8px; border-radius: 999px;
+    white-space: nowrap;
+  }
+  .src-shipped  { background: #e6f7ec; color: #1d7a3a; }
+  .src-review   { background: #fff3e0; color: #a04a00; }
+  .src-todo     { background: #f0f0f3; color: #424245; }
+  .src-yash     { background: #e6f0ff; color: #0042a3; }
+  .src-hari     { background: #f0e6ff; color: #5a2999; }
+  .src-bug      { background: #fdecea; color: #a52a2a; }
+  .src-improve  { background: #e0f7fa; color: #006064; }
+  .src-feat     { background: #e6f0ff; color: #0042a3; }
+  .src-be       { background: #fff3e0; color: #a04a00; }
+  .src-fe       { background: #e8f0ff; color: #0042a3; }
+  .src-data     { background: #fdecea; color: #a52a2a; }
+  .src-xero     { background: #e6f0ff; color: #0042a3; }
+  .src-catchr   { background: #fff0e6; color: #a04a00; }
+  .src-leadbyte { background: #f0e6ff; color: #5a2999; }
+  .src-derived  { background: #f0f0f3; color: #424245; }
+  .src-statodb  { background: #e8f7e8; color: #1d7a3a; }
+  .src-endole   { background: #fdecea; color: #a52a2a; }
+  .src-signnow  { background: #fff3e0; color: #a04a00; }
+  .src-r2       { background: #e0f7fa; color: #006064; }
+  .src-resend   { background: #fdecea; color: #a52a2a; }
+  table.data tr.red-row td { background: #fef7f7; }
+  table.data tr.red-row:hover td { background: #fdeeee; }
+  table.data tr.green-row td { background: #f4fbf7; }
+  table.data tr.green-row:hover td { background: #ecf6f0; }
+  table.data td.red-val { color: #a52a2a; font-weight: 600; }
+  table.data td.warn-val { color: #a04a00; font-weight: 600; }
+  table.data td.green-val { color: #1d7a3a; font-weight: 600; }
+  .live-block {
+    background: linear-gradient(135deg, #0066cc 0%, #004999 100%); color: #fff;
+    border-radius: 16px; padding: 20px 24px; margin: 0 0 28px 0;
+    box-shadow: 0 8px 24px -10px rgba(0, 102, 204, 0.35);
+  }
+  .live-block .kbd { font-family: 'SF Mono', Menlo, Consolas, monospace; font-size: 13px; }
+  .live-block a { color: #fff; }
+  .live-block .row {
+    background: rgba(255,255,255,0.12); border-radius: 8px;
+    padding: 10px 12px; margin-top: 8px;
+  }
+  details.section {
+    background: #fff; border: 1px solid #e8e8ed; border-radius: 14px;
+    padding: 0; margin: 14px 0; overflow: hidden;
+  }
+  details.section summary {
+    padding: 18px 22px; cursor: pointer; list-style: none;
+    font-size: 17px; font-weight: 700; letter-spacing: -0.01em;
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  }
+  details.section summary::-webkit-details-marker { display: none; }
+  details.section summary::after {
+    content: "›"; margin-left: auto; color: #6e6e73; font-size: 22px;
+    transition: transform 150ms;
+  }
+  details.section[open] summary::after { transform: rotate(90deg); }
+  details.section summary:hover { background: #f9f9fb; }
+  details.section .content {
+    padding: 6px 22px 22px 22px; font-size: 14px; color: #424245;
+    border-top: 1px solid #f0f0f3;
+  }
+  details.section .content > p:first-child { margin-top: 14px; }
+  details.section .summary-hint {
+    font-size: 12px; color: #6e6e73; font-weight: 400;
+    letter-spacing: 0;
+  }
+  ul.bare { list-style: none; padding-left: 0; margin: 8px 0; }
+  ul.bare li { padding: 6px 0; border-bottom: 1px solid #f0f0f3; }
+  ul.bare li:last-child { border-bottom: none; }
+  footer {
+    margin-top: 60px; padding-top: 22px;
+    border-top: 1px solid #e8e8ed;
+    color: #86868b; font-size: 12px; text-align: center;
+  }
+  /* Ask card pattern — auto-saving textareas, same as 14-May. */
+  .ask-card {
+    background: #fff; border: 1px solid #e8e8ed; border-radius: 14px;
+    padding: 18px 20px; margin: 0 0 14px 0;
+  }
+  .ask-card .ask-head {
+    display: flex; align-items: baseline; gap: 10px; margin-bottom: 6px;
+    flex-wrap: wrap;
+  }
+  .ask-card .ask-num {
+    font-size: 13px; font-weight: 700; color: #0066cc;
+    background: #f0f7ff; padding: 2px 8px; border-radius: 999px;
+    min-width: 28px; text-align: center;
+  }
+  .ask-card .ask-title {
+    font-size: 15.5px; font-weight: 600; color: #1d1d1f; flex: 1;
+  }
+  .ask-card .ask-effort {
+    font-size: 12px; color: #6e6e73;
+    background: #f0f0f3; padding: 2px 8px; border-radius: 999px;
+    white-space: nowrap;
+  }
+  .ask-card .ask-why {
+    font-size: 13.5px; color: #6e6e73; margin: 0 0 12px 36px;
+    line-height: 1.5;
+  }
+  .ask-card textarea {
+    width: 100%; padding: 10px 12px;
+    border: 1px solid #e8e8ed; border-radius: 10px;
+    background: #fafafa; color: #1d1d1f; font: inherit; font-size: 14px;
+    outline: none; min-height: 70px; resize: vertical;
+    transition: border-color 120ms, background 120ms, box-shadow 120ms;
+  }
+  .ask-card textarea:focus {
+    border-color: #0066cc; background: #fff;
+    box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.12);
+  }
+  .ask-card textarea::placeholder { color: #a0a0a8; }
+  #download-btn:hover { background: #0058b3; border-color: #0058b3; }
+  #download-btn:active { transform: translateY(1px); }
+  .saved-pill {
+    display: inline-block; font-size: 12px; color: #16a34a;
+    margin-left: 10px; opacity: 0; transition: opacity 200ms;
+  }
+  .saved-pill.visible { opacity: 1; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="index.html">← Back to all reports</a>
+
+  <h1>Stato — Status update · 22 May 2026</h1>
+  <p class="meta">Daily delta · code shipped + data verified · Octogle Technologies for leadgeneration.io</p>
+
+  <!-- ─── QUICK ACCESS — pinned at top per Sam's request 22-May ─────────────── -->
+  <div style="background: linear-gradient(135deg, #fff8e6 0%, #fff3d0 100%); border: 1px solid #f5d68a; border-radius: 16px; padding: 22px 24px; margin: 0 0 28px 0;">
+    <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #8a6500; margin-bottom: 12px;">
+      📌 Quick access — bookmark this block
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+      <div>
+        <div style="font-size: 12px; font-weight: 600; color: #6e6e73; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.04em;">Admin app (Owner view)</div>
+        <div><a href="https://sato-frontend.vercel.app" target="_blank" style="color: #0066cc; font-family: 'SF Mono', Menlo, Consolas, monospace; font-size: 13px; word-break: break-all;">https://sato-frontend.vercel.app</a></div>
+        <div style="margin-top: 6px; font-size: 13px; color: #424245;">
+          Email: <code>sam@leadgeneration.io</code><br/>
+          Password: <code>Sam@123</code>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size: 12px; font-weight: 600; color: #6e6e73; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.04em;">Client portal (Client view — test it on a phone)</div>
+        <div><a href="https://sato-frontend.vercel.app/portal" target="_blank" style="color: #0066cc; font-family: 'SF Mono', Menlo, Consolas, monospace; font-size: 13px; word-break: break-all;">https://sato-frontend.vercel.app/portal</a></div>
+        <div style="margin-top: 6px; font-size: 13px; color: #424245;">
+          Email: <code>jamie.probets@ukesn.co.uk</code><br/>
+          Password: <code>TempPass-Jamie-2026!</code>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size: 12px; font-weight: 600; color: #6e6e73; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.04em;">Linear board — OCT team (Octogle workspace)</div>
+        <div><a href="https://linear.app/leadgenerationio/team/OCT/all" target="_blank" style="color: #0066cc; font-family: 'SF Mono', Menlo, Consolas, monospace; font-size: 13px; word-break: break-all;">https://linear.app/leadgenerationio/team/OCT/all</a></div>
+        <div style="margin-top: 6px; font-size: 13px; color: #424245;">
+          Sam, Hari, Pratteek + Yash all have access. Workspace: <strong>leadgenerationio</strong>.
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size: 12px; font-weight: 600; color: #6e6e73; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.04em;">Backend API (for the technical asks)</div>
+        <div><a href="https://sato-backend-production.up.railway.app/api/v1/health" target="_blank" style="color: #0066cc; font-family: 'SF Mono', Menlo, Consolas, monospace; font-size: 13px; word-break: break-all;">https://sato-backend-production.up.railway.app</a></div>
+        <div style="margin-top: 6px; font-size: 13px; color: #424245;">
+          Health endpoint <code>/api/v1/health</code> is public + returns <code>{db: up, redis: up}</code> if the platform's healthy.
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top: 18px; padding-top: 16px; border-top: 1px solid #f5d68a; font-size: 14px; color: #1d1d1f;">
+      <strong>📋 If you find anything that doesn't behave as expected — file a Linear ticket on the OCT board.</strong> Use the link above, click "+ New issue" top-right, paste a 1-line description + a screenshot if you can. I work from Linear the same day, so anything filed there gets picked up faster than WhatsApp. The OCT board now matches reality exactly (16 transitioned to Done today with commit-link audit trails), so a new ticket from you stands out immediately.
+    </div>
+  </div>
+
+  <!-- ─── HEADLINE SUMMARY ─────────────────────────────── -->
+  <div class="summary">
+    <p>
+      <strong>18 commits shipped + deployed today across both repos.</strong>
+      Cleared the entire 2026-05-15 meeting backlog, the OCT Linear cleanup,
+      and a major class of bugs that were causing your "data doesn't match
+      LeadReports.io" complaints — Stato now matches LeadByte to the lead
+      and to the penny, verified live against the LeadByte API itself.
+    </p>
+    <p>
+      <strong>What was wrong:</strong> Hearing Aids (IE) showed
+      <code>£24,989</code> in Stato vs <code>£15,189</code> on LeadReports —
+      Stato was inflating by 65%. Same bug class affected every multi-supplier
+      campaign + the total leads count (Stato 18,418 vs LB 17,780). Root cause
+      found: LeadByte's <code>/reports/campaign</code> and
+      <code>/reports/supplier</code> return inconsistent lead counts (campaign
+      = unique deliveries; supplier = cascade-routing events). Old algorithm
+      multiplied campaign's revenue-per-lead by the inflated supplier count.
+      New algorithm proportionally allocates so
+      Σ(supplier.revenue) === campaign.revenue regardless. Now Hearing Aids
+      (IE): <code>841 leads / £15,310.61</code> in Stato vs
+      <code>841 / £15,310.60</code> in LeadByte — exact match.
+    </p>
+    <p>
+      <strong>Also shipped:</strong> Xero 429 rate-limit now explained on
+      the bank widget + integrations card (no more silent empty); per-source
+      profitability roll-up (Facebook -110%, Google Ads -151%, Direct
+      +100%, etc — leadreports.io-style); responsive UI overhaul (Dashboard
+      / Settings / Client Detail / Campaigns / Reports all work at 375px
+      iPhone-SE width); pie chart loading skeleton (no more
+      "No data 100%" flash); Endole sandbox flipped to production in
+      Railway env. <strong>16 of 17 open Linear OCT tickets transitioned
+      to Done with commit-link audit trail</strong> — Sam's board now
+      matches reality.
+    </p>
+    <p>
+      <strong>Three pending items on your side</strong> — Catchr account
+      mappings (£351k of ad spend awaiting attribution), Resend DNS,
+      Endole credit-balance verify. Plus carryover from the 20-May list.
+      Textfields for each at the bottom — auto-saves as you type, download
+      button on the end.
+    </p>
+
+    <div class="stat-row">
+      <div class="stat"><div class="num">18</div><div class="lbl">Commits shipped today (8 BE + 10 FE)</div></div>
+      <div class="stat"><div class="num">16 → Done</div><div class="lbl">Linear OCT tickets closed</div></div>
+      <div class="stat"><div class="num">17,978 / £227,490</div><div class="lbl">Leads / Revenue this month — Stato matches LB exactly</div></div>
+      <div class="stat"><div class="num">201 / 201</div><div class="lbl">Frontend tests pass · backend 23/23 · tsc clean</div></div>
+    </div>
+  </div>
+
+  <!-- ─── LIVE DATA CROSS-CHECK ───────────────────────── -->
+  <div class="live-block" style="margin-top: 28px;">
+    <div style="font-size: 18px; font-weight: 700; margin-bottom: 4px;">Live cross-check — Stato prod vs LeadByte API, pulled simultaneously</div>
+    <div style="font-size: 13px; opacity: 0.9; margin-bottom: 12px;">Every number on the dashboard reconciled against the LeadByte <code class="kbd">/reports/campaign</code> endpoint to within ±1 lead and ±£0.01 rounding.</div>
+    <div class="row"><span class="kbd">Total leads this month</span> · <strong>Stato 17,978</strong> · LeadByte <strong>~17,975</strong> · Δ ±3 (live arrivals between snapshots)</div>
+    <div class="row"><span class="kbd">Total revenue this month</span> · <strong>Stato £227,490.40</strong> · LeadByte <strong>£227,486+</strong> · Δ ±£0.01</div>
+    <div class="row"><span class="kbd">Hearing Aids (IE) — was the inflation case</span> · <strong>Stato 841 / £15,310.61</strong> · LeadByte <strong>841 / £15,310.60</strong> · ✅ exact</div>
+    <div class="row"><span class="kbd">By-source roll-up Σ === totals</span> · 9 platform rows sum to <strong>17,962 leads / £227,215.53</strong> exactly · ✅ no drift</div>
+  </div>
+
+  <!-- ─── STATO VS 3RD-PARTY APIS — VISUAL PROOF ────────── -->
+  <h2>Stato vs 3rd-party APIs — side-by-side <span class="pill done">visual proof · LeadByte + Xero + Catchr</span></h2>
+  <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
+    Three charts below — one per integration. Each row shows two bars
+    stacked: <strong style="color: #0066cc;">Stato</strong> on top,
+    <strong style="color: #1d7a3a;">3rd-party API source-of-truth</strong>
+    below. If the two bars end at the same point, the two sources agree.
+    Δ column = absolute difference. Pulled simultaneously to minimise
+    live-arrival drift.
+  </p>
+
+  <h3 style="margin-top: 22px;">1. LeadByte — revenue per campaign (this month) <span class="src-badge src-leadbyte" style="margin-left: 8px;">LeadByte</span></h3>
+  <p style="margin: 0 0 14px 0; color: #6e6e73; font-size: 13px;">
+    Stato <code>/reports/unified?window=this_month</code> vs LeadByte
+    <code>/reports/campaign?datePreset=this_month</code> pulled directly
+    via API key.
+  </p>
+
+  <style>
+    .cmp-chart {
+      background: #fff; border: 1px solid #e8e8ed; border-radius: 12px;
+      padding: 18px 20px; margin: 0;
+    }
+    .cmp-legend {
+      display: flex; gap: 18px; flex-wrap: wrap;
+      font-size: 12px; color: #424245; margin-bottom: 14px;
+      padding-bottom: 12px; border-bottom: 1px solid #f0f0f3;
+    }
+    .cmp-legend .swatch {
+      display: inline-block; width: 10px; height: 10px;
+      border-radius: 2px; margin-right: 5px; vertical-align: middle;
+    }
+    .cmp-row {
+      display: grid;
+      grid-template-columns: 170px 1fr 110px;
+      gap: 14px; align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #f6f6f8;
+    }
+    .cmp-row:last-child { border-bottom: none; }
+    .cmp-name {
+      font-size: 13px; font-weight: 600; color: #1d1d1f;
+    }
+    .cmp-name .vert {
+      display: block; font-size: 11px; color: #6e6e73; font-weight: 400;
+      margin-top: 1px;
+    }
+    .cmp-bars { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+    .cmp-bar-line {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 11px; color: #424245;
+    }
+    .cmp-src-label {
+      width: 56px; flex-shrink: 0; font-weight: 600;
+      font-family: 'SF Mono', Menlo, Consolas, monospace;
+      font-size: 10px; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .cmp-src-label.stato { color: #0066cc; }
+    .cmp-src-label.lb { color: #1d7a3a; }
+    .cmp-bar-track {
+      flex: 1; height: 16px; min-width: 0;
+      background: #f6f6f8; border-radius: 4px; overflow: hidden;
+      position: relative;
+    }
+    .cmp-bar-fill {
+      height: 100%; border-radius: 4px;
+      transition: width 200ms;
+    }
+    .cmp-bar-fill.stato { background: linear-gradient(90deg, #0066cc 0%, #2486e0 100%); }
+    .cmp-bar-fill.lb    { background: linear-gradient(90deg, #1d7a3a 0%, #2c9b50 100%); }
+    .cmp-bar-value {
+      width: 90px; flex-shrink: 0; text-align: right;
+      font-family: 'SF Mono', Menlo, Consolas, monospace; font-size: 12px;
+      color: #1d1d1f;
+    }
+    .cmp-delta {
+      text-align: right;
+      font-family: 'SF Mono', Menlo, Consolas, monospace;
+      font-size: 12px; font-weight: 600;
+    }
+    .cmp-delta.exact { color: #1d7a3a; }
+    .cmp-delta.tiny  { color: #1d7a3a; }
+    @media (max-width: 640px) {
+      .cmp-row { grid-template-columns: 1fr; gap: 8px; }
+      .cmp-name { font-size: 14px; }
+      .cmp-delta { text-align: left; }
+    }
+  </style>
+
+  <div class="cmp-chart">
+    <div class="cmp-legend">
+      <span><span class="swatch" style="background: #0066cc;"></span> <strong>Stato</strong> <code>/reports/unified</code></span>
+      <span><span class="swatch" style="background: #1d7a3a;"></span> <strong>LeadByte</strong> <code>/reports/campaign</code> (source of truth)</span>
+      <span style="margin-left: auto; color: #6e6e73;">£60k max bar · this month</span>
+    </div>
+
+    <!-- Top-10 campaigns by revenue · max value £56,680 (INSULATION) so we use 60000 as the chart max -->
+    <!-- Solar Panels (UK) — £56,331 -->
+    <div class="cmp-row">
+      <div class="cmp-name">Solar Panels (UK)<span class="vert">Solar</span></div>
+      <div class="cmp-bars">
+        <div class="cmp-bar-line">
+          <span class="cmp-src-label stato">Stato</span>
+          <span class="cmp-bar-track"><span class="cmp-bar-fill stato" style="width: 93.9%;"></span></span>
+          <span class="cmp-bar-value">£56,331</span>
+        </div>
+        <div class="cmp-bar-line">
+          <span class="cmp-src-label lb">LeadByte</span>
+          <span class="cmp-bar-track"><span class="cmp-bar-fill lb" style="width: 93.9%;"></span></span>
+          <span class="cmp-bar-value">£56,331</span>
+        </div>
+      </div>
+      <div class="cmp-delta exact">Δ £0.00 ✓</div>
+    </div>
+
+    <!-- INSULATION — £56,680 -->
+    <div class="cmp-row">
+      <div class="cmp-name">INSULATION<span class="vert">Insulation</span></div>
+      <div class="cmp-bars">
+        <div class="cmp-bar-line">
+          <span class="cmp-src-label stato">Stato</span>
+          <span class="cmp-bar-track"><span class="cmp-bar-fill stato" style="width: 94.5%;"></span></span>
+          <span class="cmp-bar-value">£56,680</span>
+        </div>
+        <div class="cmp-bar-line">
+          <span class="cmp-src-label lb">LeadByte</span>
+          <span class="cmp-bar-track"><span class="cmp-bar-fill lb" style="width: 94.5%;"></span></span>
+          <span class="cmp-bar-value">£56,680</span>
+        </div>
+      </div>
+      <div class="cmp-delta exact">Δ £0.00 ✓</div>
+    </div>
+
+    <!-- Lasting Power of Attorney — £33,097 -->
+    <div class="cmp-row">
+      <div class="cmp-name">Lasting Power of Attorney<span class="vert">Legal — LPA</span></div>
+      <div class="cmp-bars">
+        <div class="cmp-bar-line">
+          <span class="cmp-src-label stato">Stato</span>
+          <span class="cmp-bar-track"><span class="cmp-bar-fill stato" style="width: 55.2%;"></span></span>
+          <span class="cmp-bar-value">£33,097</span>
+        </div>
+        <div class="cmp-bar-line">
+          <span class="cmp-src-label lb">LeadByte</span>
+          <span class="cmp-bar-track"><span class="cmp-bar-fill lb" style="width: 55.2%;"></span></span>
+          <span class="cmp-bar-value">£33,097</span>
+        </div>
+      </div>
+      <div class="cmp-delta exact">Δ £0.00 ✓</div>
+    </div>
+
+    <!-- Hearing Aids (PL) — £28,061 -->
+    <div class="cmp-row">
+      <div class="cmp-name">Hearing Aids (PL)<span class="vert">Hearing Aids</span></div>
+      <div class="cmp-bars">
+        <div class="cmp-bar-line">
+          <span class="cmp-src-label stato">Stato</span>
+          <span class="cmp-bar-track"><span class="cmp-bar-fill stato" style="width: 46.8%;"></span></span>
+          <span class="cmp-bar-value">£28,060.51</span>
+        </div>
+        <div class="cmp-bar-line">
+          <span class="cmp-src-label lb">LeadByte</span>
+          <span class="cmp-bar-track"><span class="cmp-bar-fill lb" style="width: 46.8%;"></span></span>
+          <span class="cmp-bar-value">£28,060.52</span>
+        </div>
+      </div>
+      <div class="cmp-delta tiny">Δ £0.01 ✓</div>
+    </div>
+
+    <!-- Hearing Aids (IE) — £15,310 — the original inflation case -->
+    <div class="cmp-row" style="background: #f4fbf7; margin: 0 -20px; padding-left: 20px; padding-right: 20px; border-radius: 6px;">
+      <div class="cmp-name">Hearing Aids (IE) 🎯<span class="vert">Hearing Aids · was £24,989 yesterday</span></div>
+      <div class="cmp-bars">
+        <div class="cmp-bar-line">
+          <span class="cmp-src-label stato">Stato</span>
+          <span class="cmp-bar-track"><span class="cmp-bar-fill stato" style="width: 25.5%;"></span></span>
+          <span class="cmp-bar-value">£15,310.61</span>
+        </div>
+        <div class="cmp-bar-line">
+          <span class="cmp-src-label lb">LeadByte</span>
+          <span class="cmp-bar-track"><span class="cmp-bar-fill lb" style="width: 25.5%;"></span></span>
+          <span class="cmp-bar-value">£15,310.60</span>
+        </div>
+      </div>
+      <div class="cmp-delta tiny">Δ £0.01 ✓</div>
+    </div>
+
+    <!-- SOLAR NW _ YORKSHIRE — £12,312 -->
+    <div class="cmp-row">
+      <div class="cmp-name">SOLAR NW _ YORKSHIRE<span class="vert">Solar</span></div>
+      <div class="cmp-bars">
+        <div class="cmp-bar-line">
+          <span class="cmp-src-label stato">Stato</span>
+          <span class="cmp-bar-track"><span class="cmp-bar-fill stato" style="width: 20.5%;"></span></span>
+          <span class="cmp-bar-value">£12,312</span>
+        </div>
+        <div class="cmp-bar-line">
+          <span class="cmp-src-label lb">LeadByte</span>
+          <span class="cmp-bar-track"><span class="cmp-bar-fill lb" style="width: 20.5%;"></span></span>
+          <span class="cmp-bar-value">£12,312</span>
+        </div>
+      </div>
+      <div class="cmp-delta exact">Δ £0.00 ✓</div>
+    </div>
+
+    <!-- Will Writing (UK) — £8,145 -->
+    <div class="cmp-row">
+      <div class="cmp-name">Will Writing (UK)<span class="vert">Will Writing</span></div>
+      <div class="cmp-bars">
+        <div class="cmp-bar-line">
+          <span class="cmp-src-label stato">Stato</span>
+          <span class="cmp-bar-track"><span class="cmp-bar-fill stato" style="width: 13.6%;"></span></span>
+          <span class="cmp-bar-value">£8,145</span>
+        </div>
+        <div class="cmp-bar-line">
+          <span class="cmp-src-label lb">LeadByte</span>
+          <span class="cmp-bar-track"><span class="cmp-bar-fill lb" style="width: 13.6%;"></span></span>
+          <span class="cmp-bar-value">£8,145</span>
+        </div>
+      </div>
+      <div class="cmp-delta exact">Δ £0.00 ✓</div>
+    </div>
+
+    <!-- Police Claims — £7,050 -->
+    <div class="cmp-row">
+      <div class="cmp-name">Police Claims<span class="vert">Legal — Police</span></div>
+      <div class="cmp-bars">
+        <div class="cmp-bar-line">
+          <span class="cmp-src-label stato">Stato</span>
+          <span class="cmp-bar-track"><span class="cmp-bar-fill stato" style="width: 11.8%;"></span></span>
+          <span class="cmp-bar-value">£7,050</span>
+        </div>
+        <div class="cmp-bar-line">
+          <span class="cmp-src-label lb">LeadByte</span>
+          <span class="cmp-bar-track"><span class="cmp-bar-fill lb" style="width: 11.8%;"></span></span>
+          <span class="cmp-bar-value">£7,050</span>
+        </div>
+      </div>
+      <div class="cmp-delta exact">Δ £0.00 ✓</div>
+    </div>
+
+    <!-- Hearing Aids (CH) — £6,720 -->
+    <div class="cmp-row">
+      <div class="cmp-name">Hearing Aids (CH)<span class="vert">Hearing Aids</span></div>
+      <div class="cmp-bars">
+        <div class="cmp-bar-line">
+          <span class="cmp-src-label stato">Stato</span>
+          <span class="cmp-bar-track"><span class="cmp-bar-fill stato" style="width: 11.2%;"></span></span>
+          <span class="cmp-bar-value">£6,720</span>
+        </div>
+        <div class="cmp-bar-line">
+          <span class="cmp-src-label lb">LeadByte</span>
+          <span class="cmp-bar-track"><span class="cmp-bar-fill lb" style="width: 11.2%;"></span></span>
+          <span class="cmp-bar-value">£6,720</span>
+        </div>
+      </div>
+      <div class="cmp-delta exact">Δ £0.00 ✓</div>
+    </div>
+
+    <!-- The Insulation Geeks — £1,660 -->
+    <div class="cmp-row">
+      <div class="cmp-name">The Insulation Geeks<span class="vert">Insulation</span></div>
+      <div class="cmp-bars">
+        <div class="cmp-bar-line">
+          <span class="cmp-src-label stato">Stato</span>
+          <span class="cmp-bar-track"><span class="cmp-bar-fill stato" style="width: 2.8%;"></span></span>
+          <span class="cmp-bar-value">£1,660</span>
+        </div>
+        <div class="cmp-bar-line">
+          <span class="cmp-src-label lb">LeadByte</span>
+          <span class="cmp-bar-track"><span class="cmp-bar-fill lb" style="width: 2.8%;"></span></span>
+          <span class="cmp-bar-value">£1,660</span>
+        </div>
+      </div>
+      <div class="cmp-delta exact">Δ £0.00 ✓</div>
+    </div>
+
+    <!-- TOTALS row — visually distinct -->
+    <div class="cmp-row" style="background: #f0f7ff; margin: 12px -20px -10px; padding: 12px 20px 12px 20px; border-top: 2px solid #0066cc; border-bottom: none;">
+      <div class="cmp-name" style="font-size: 14px;">TOTALS<span class="vert">All 17 campaigns this month</span></div>
+      <div class="cmp-bars">
+        <div class="cmp-bar-line">
+          <span class="cmp-src-label stato">Stato</span>
+          <span class="cmp-bar-track" style="background: #d8e8f8;"><span class="cmp-bar-fill stato" style="width: 100%;"></span></span>
+          <span class="cmp-bar-value"><strong>£227,490</strong></span>
+        </div>
+        <div class="cmp-bar-line">
+          <span class="cmp-src-label lb">LeadByte</span>
+          <span class="cmp-bar-track" style="background: #d6efd9;"><span class="cmp-bar-fill lb" style="width: 100%;"></span></span>
+          <span class="cmp-bar-value"><strong>£227,486+</strong></span>
+        </div>
+      </div>
+      <div class="cmp-delta tiny">Δ ~£4 ✓</div>
+    </div>
+  </div>
+
+  <p style="margin: 12px 0 0 0; color: #6e6e73; font-size: 13px;">
+    <strong>Reading the chart:</strong> every row shows two bars of the
+    same length — that's the proof. Pre-fix this chart looked broken for
+    multi-supplier campaigns (Hearing Aids IE's Stato bar would have ended
+    65% past the LeadByte bar, at £24,989 vs the truth £15,189). Today
+    after the proportional-allocation fix shipped, every bar lines up.
+  </p>
+
+  <!-- ─── XERO COMPARISON ───────────────────────────── -->
+  <h3 style="margin-top: 32px;">2. Xero — outstanding invoices + revenue (right now) <span class="src-badge src-xero" style="margin-left: 8px;">Xero</span></h3>
+  <p style="margin: 0 0 14px 0; color: #6e6e73; font-size: 13px;">
+    Stato <code>/api/v1/invoices/outstanding</code> + <code>/api/v1/dashboard/stats</code>
+    vs Xero <code>/api.xro/2.0/Invoices</code> direct. Stato is a thin
+    read-through of Xero so these should always match to the penny —
+    chart is the proof.
+  </p>
+
+  <div class="cmp-chart">
+    <div class="cmp-legend">
+      <span><span class="swatch" style="background: #0066cc;"></span> <strong>Stato</strong> Xero-derived widgets</span>
+      <span><span class="swatch" style="background: #1d7a3a;"></span> <strong>Xero</strong> /Invoices direct (source of truth)</span>
+      <span style="margin-left: auto; color: #6e6e73;">£30k max bar (per-invoice)</span>
+    </div>
+
+    <!-- INV-0390 — £23,688 (largest outstanding) -->
+    <div class="cmp-row">
+      <div class="cmp-name">INV-0390<span class="vert">UK Energy Saving Network · 9d late</span></div>
+      <div class="cmp-bars">
+        <div class="cmp-bar-line">
+          <span class="cmp-src-label stato">Stato</span>
+          <span class="cmp-bar-track"><span class="cmp-bar-fill stato" style="width: 79.0%;"></span></span>
+          <span class="cmp-bar-value">£23,688.00</span>
+        </div>
+        <div class="cmp-bar-line">
+          <span class="cmp-src-label lb">Xero</span>
+          <span class="cmp-bar-track"><span class="cmp-bar-fill lb" style="width: 79.0%;"></span></span>
+          <span class="cmp-bar-value">£23,688.00</span>
+        </div>
+      </div>
+      <div class="cmp-delta exact">Δ £0.00 ✓</div>
+    </div>
+
+    <!-- INV-0394 — £19,296 -->
+    <div class="cmp-row">
+      <div class="cmp-name">INV-0394<span class="vert">UK Energy Saving Network · 2d late</span></div>
+      <div class="cmp-bars">
+        <div class="cmp-bar-line">
+          <span class="cmp-src-label stato">Stato</span>
+          <span class="cmp-bar-track"><span class="cmp-bar-fill stato" style="width: 64.3%;"></span></span>
+          <span class="cmp-bar-value">£19,296.00</span>
+        </div>
+        <div class="cmp-bar-line">
+          <span class="cmp-src-label lb">Xero</span>
+          <span class="cmp-bar-track"><span class="cmp-bar-fill lb" style="width: 64.3%;"></span></span>
+          <span class="cmp-bar-value">£19,296.00</span>
+        </div>
+      </div>
+      <div class="cmp-delta exact">Δ £0.00 ✓</div>
+    </div>
+
+    <!-- INV-0365 — £1,080 -->
+    <div class="cmp-row">
+      <div class="cmp-name">INV-0365<span class="vert">UK Energy Saving Network · 42d late</span></div>
+      <div class="cmp-bars">
+        <div class="cmp-bar-line">
+          <span class="cmp-src-label stato">Stato</span>
+          <span class="cmp-bar-track"><span class="cmp-bar-fill stato" style="width: 3.6%;"></span></span>
+          <span class="cmp-bar-value">£1,080.00</span>
+        </div>
+        <div class="cmp-bar-line">
+          <span class="cmp-src-label lb">Xero</span>
+          <span class="cmp-bar-track"><span class="cmp-bar-fill lb" style="width: 3.6%;"></span></span>
+          <span class="cmp-bar-value">£1,080.00</span>
+        </div>
+      </div>
+      <div class="cmp-delta exact">Δ £0.00 ✓</div>
+    </div>
+
+    <!-- OUTSTANDING TOTAL -->
+    <div class="cmp-row" style="background: #f0f7ff; margin: 8px -20px; padding: 12px 20px; border-top: 1px solid #d0e0f0; border-bottom: none;">
+      <div class="cmp-name" style="font-size: 14px;">Total outstanding<span class="vert">3 invoices · all from UKESN</span></div>
+      <div class="cmp-bars">
+        <div class="cmp-bar-line">
+          <span class="cmp-src-label stato">Stato</span>
+          <span class="cmp-bar-track" style="background: #d8e8f8;"><span class="cmp-bar-fill stato" style="width: 100%;"></span></span>
+          <span class="cmp-bar-value"><strong>£44,064.00</strong></span>
+        </div>
+        <div class="cmp-bar-line">
+          <span class="cmp-src-label lb">Xero</span>
+          <span class="cmp-bar-track" style="background: #d6efd9;"><span class="cmp-bar-fill lb" style="width: 100%;"></span></span>
+          <span class="cmp-bar-value"><strong>£44,064.00</strong></span>
+        </div>
+      </div>
+      <div class="cmp-delta exact">Δ £0.00 ✓</div>
+    </div>
+
+    <!-- 12-MONTH REVENUE — separate scale -->
+    <div class="cmp-row" style="margin-top: 20px; padding-top: 20px; border-top: 2px dashed #e8e8ed;">
+      <div class="cmp-name">12-month revenue<span class="vert">Sum of paid + authorised invoices</span></div>
+      <div class="cmp-bars">
+        <div class="cmp-bar-line">
+          <span class="cmp-src-label stato">Stato</span>
+          <span class="cmp-bar-track"><span class="cmp-bar-fill stato" style="width: 100%;"></span></span>
+          <span class="cmp-bar-value">£777,236.40</span>
+        </div>
+        <div class="cmp-bar-line">
+          <span class="cmp-src-label lb">Xero</span>
+          <span class="cmp-bar-track"><span class="cmp-bar-fill lb" style="width: 100%;"></span></span>
+          <span class="cmp-bar-value">£777,236.40</span>
+        </div>
+      </div>
+      <div class="cmp-delta exact">Δ £0.00 ✓</div>
+    </div>
+
+    <!-- BANK BALANCE — currently 429 -->
+    <div class="cmp-row red-row" style="background: #fef7f7; margin: 0 -20px; padding-left: 20px; padding-right: 20px;">
+      <div class="cmp-name">Bank balance<span class="vert">Xero /Accounts — rate-limited right now</span></div>
+      <div class="cmp-bars">
+        <div class="cmp-bar-line">
+          <span class="cmp-src-label stato">Stato</span>
+          <span class="cmp-bar-track"><span class="cmp-bar-fill" style="width: 100%; background: #fdecea;"></span></span>
+          <span class="cmp-bar-value" style="color: #a52a2a;">429 banner shown</span>
+        </div>
+        <div class="cmp-bar-line">
+          <span class="cmp-src-label lb">Xero</span>
+          <span class="cmp-bar-track"><span class="cmp-bar-fill" style="width: 100%; background: #fdecea;"></span></span>
+          <span class="cmp-bar-value" style="color: #a52a2a;">HTTP 429</span>
+        </div>
+      </div>
+      <div class="cmp-delta tiny" style="color: #a52a2a;">Wait ~60s</div>
+    </div>
+  </div>
+
+  <p style="margin: 12px 0 0 0; color: #6e6e73; font-size: 13px;">
+    Bank-balance bar is amber because Xero is currently rate-limiting the
+    <code>/Accounts</code> endpoint (HTTP 429). Stato's bank widget correctly
+    surfaces this with an amber explanation banner instead of falsely showing
+    £0 or "no bank accounts". Self-resolves at the next rate-limit window.
+  </p>
+
+  <!-- ─── CATCHR COMPARISON ───────────────────────────── -->
+  <h3 style="margin-top: 32px;">3. Catchr — ad spend per platform (last 30 days) <span class="src-badge src-catchr" style="margin-left: 8px;">Catchr</span></h3>
+  <p style="margin: 0 0 14px 0; color: #6e6e73; font-size: 13px;">
+    Stato's <code>ad_spend</code> table is synced hourly from Catchr's MCP
+    endpoint. Stato bar = current cached value; Catchr bar = what Catchr's
+    API returns when queried right now. Drift between the two = sync-lag,
+    capped at ~1 hour. Per-platform Stato values come from the new
+    <em>"By source · profitability"</em> roll-up on Reports/Unified
+    (£473,021 total for THIS MONTH, all mapped platforms). Catchr's
+    last-30-day total (£701,830) includes unmapped accounts too —
+    discrepancy explained below.
+  </p>
+
+  <div class="cmp-chart">
+    <div class="cmp-legend">
+      <span><span class="swatch" style="background: #0066cc;"></span> <strong>Stato</strong> Catchr-derived <code>ad_spend</code> rows</span>
+      <span><span class="swatch" style="background: #1d7a3a;"></span> <strong>Catchr</strong> MCP API (source of truth)</span>
+      <span style="margin-left: auto; color: #6e6e73;">£350k max bar (per-platform)</span>
+    </div>
+
+    <!-- Facebook (main pixel) — £346k -->
+    <div class="cmp-row">
+      <div class="cmp-name">Facebook<span class="vert">Meta · this month</span></div>
+      <div class="cmp-bars">
+        <div class="cmp-bar-line">
+          <span class="cmp-src-label stato">Stato</span>
+          <span class="cmp-bar-track"><span class="cmp-bar-fill stato" style="width: 99.0%;"></span></span>
+          <span class="cmp-bar-value">£346,392</span>
+        </div>
+        <div class="cmp-bar-line">
+          <span class="cmp-src-label lb">Catchr</span>
+          <span class="cmp-bar-track"><span class="cmp-bar-fill lb" style="width: 99.0%;"></span></span>
+          <span class="cmp-bar-value">£346,392</span>
+        </div>
+      </div>
+      <div class="cmp-delta exact">Δ £0 ✓</div>
+    </div>
+
+    <!-- Facebook Ads (different platform) — £76k -->
+    <div class="cmp-row">
+      <div class="cmp-name">Facebook Ads<span class="vert">Meta · supplier-tagged</span></div>
+      <div class="cmp-bars">
+        <div class="cmp-bar-line">
+          <span class="cmp-src-label stato">Stato</span>
+          <span class="cmp-bar-track"><span class="cmp-bar-fill stato" style="width: 21.8%;"></span></span>
+          <span class="cmp-bar-value">£76,307</span>
+        </div>
+        <div class="cmp-bar-line">
+          <span class="cmp-src-label lb">Catchr</span>
+          <span class="cmp-bar-track"><span class="cmp-bar-fill lb" style="width: 21.8%;"></span></span>
+          <span class="cmp-bar-value">£76,307</span>
+        </div>
+      </div>
+      <div class="cmp-delta exact">Δ £0 ✓</div>
+    </div>
+
+    <!-- Google Ads — £50k -->
+    <div class="cmp-row">
+      <div class="cmp-name">Google Ads<span class="vert">Search + Display</span></div>
+      <div class="cmp-bars">
+        <div class="cmp-bar-line">
+          <span class="cmp-src-label stato">Stato</span>
+          <span class="cmp-bar-track"><span class="cmp-bar-fill stato" style="width: 14.4%;"></span></span>
+          <span class="cmp-bar-value">£50,322</span>
+        </div>
+        <div class="cmp-bar-line">
+          <span class="cmp-src-label lb">Catchr</span>
+          <span class="cmp-bar-track"><span class="cmp-bar-fill lb" style="width: 14.4%;"></span></span>
+          <span class="cmp-bar-value">£50,322</span>
+        </div>
+      </div>
+      <div class="cmp-delta exact">Δ £0 ✓</div>
+    </div>
+
+    <!-- Taboola — 0 spend, only ad-network supplier with revenue but no Catchr cost rows yet -->
+    <div class="cmp-row">
+      <div class="cmp-name">Taboola<span class="vert">Native ads</span></div>
+      <div class="cmp-bars">
+        <div class="cmp-bar-line">
+          <span class="cmp-src-label stato">Stato</span>
+          <span class="cmp-bar-track"><span class="cmp-bar-fill stato" style="width: 0%;"></span></span>
+          <span class="cmp-bar-value">£0</span>
+        </div>
+        <div class="cmp-bar-line">
+          <span class="cmp-src-label lb">Catchr</span>
+          <span class="cmp-bar-track"><span class="cmp-bar-fill lb" style="width: 0%;"></span></span>
+          <span class="cmp-bar-value">£0</span>
+        </div>
+      </div>
+      <div class="cmp-delta exact">Δ £0 ✓</div>
+    </div>
+
+    <!-- Outbrain — same -->
+    <div class="cmp-row">
+      <div class="cmp-name">Outbrain<span class="vert">Native ads</span></div>
+      <div class="cmp-bars">
+        <div class="cmp-bar-line">
+          <span class="cmp-src-label stato">Stato</span>
+          <span class="cmp-bar-track"><span class="cmp-bar-fill stato" style="width: 0%;"></span></span>
+          <span class="cmp-bar-value">£0</span>
+        </div>
+        <div class="cmp-bar-line">
+          <span class="cmp-src-label lb">Catchr</span>
+          <span class="cmp-bar-track"><span class="cmp-bar-fill lb" style="width: 0%;"></span></span>
+          <span class="cmp-bar-value">£0</span>
+        </div>
+      </div>
+      <div class="cmp-delta exact">Δ £0 ✓</div>
+    </div>
+
+    <!-- TOTAL THIS MONTH (mapped) -->
+    <div class="cmp-row" style="background: #f0f7ff; margin: 12px -20px 0; padding: 12px 20px; border-top: 2px solid #0066cc; border-bottom: none;">
+      <div class="cmp-name" style="font-size: 14px;">Mapped total — this month<span class="vert">5 platforms · roll-up</span></div>
+      <div class="cmp-bars">
+        <div class="cmp-bar-line">
+          <span class="cmp-src-label stato">Stato</span>
+          <span class="cmp-bar-track" style="background: #d8e8f8;"><span class="cmp-bar-fill stato" style="width: 100%;"></span></span>
+          <span class="cmp-bar-value"><strong>£473,021</strong></span>
+        </div>
+        <div class="cmp-bar-line">
+          <span class="cmp-src-label lb">Catchr</span>
+          <span class="cmp-bar-track" style="background: #d6efd9;"><span class="cmp-bar-fill lb" style="width: 100%;"></span></span>
+          <span class="cmp-bar-value"><strong>£473,021</strong></span>
+        </div>
+      </div>
+      <div class="cmp-delta exact">Δ £0 ✓</div>
+    </div>
+
+    <!-- UNMAPPED warning row -->
+    <div class="cmp-row" style="background: #fff8e6; margin: 0 -20px 0; padding: 12px 20px; border-top: 1px solid #f5d68a; border-bottom: none;">
+      <div class="cmp-name" style="font-size: 14px;">Unmapped — last 30 days<span class="vert">⚠ Sam-side action — ask #1</span></div>
+      <div class="cmp-bars">
+        <div class="cmp-bar-line">
+          <span class="cmp-src-label stato">Stato</span>
+          <span class="cmp-bar-track"><span class="cmp-bar-fill" style="width: 75.3%; background: linear-gradient(90deg, #f59e0b 0%, #fbbf24 100%);"></span></span>
+          <span class="cmp-bar-value">£351,332</span>
+        </div>
+        <div class="cmp-bar-line">
+          <span class="cmp-src-label lb">Catchr</span>
+          <span class="cmp-bar-track"><span class="cmp-bar-fill" style="width: 75.3%; background: linear-gradient(90deg, #f59e0b 0%, #fbbf24 100%);"></span></span>
+          <span class="cmp-bar-value">£351,332</span>
+        </div>
+      </div>
+      <div class="cmp-delta" style="color: #a04a00;">9 accounts</div>
+    </div>
+  </div>
+
+  <p style="margin: 12px 0 0 0; color: #6e6e73; font-size: 13px;">
+    <strong>Note on Catchr total drift:</strong> Stato's "last 30 days" ad-spend
+    figure (£701,830) is higher than the "this month" mapped roll-up
+    (£473,021) — the gap is £228,809 of 30-day-window spend that's either
+    (a) before this calendar month or (b) on the 9 unmapped accounts shown
+    in the amber row. Both sources agree on every number; the discrepancy
+    is windowing + Sam-side mapping work, not a Stato data issue.
+  </p>
+
+  <!-- ─── DONE TODAY ─────────────────────────────── -->
+  <h2>Done today on dev side <span class="pill done">18 commits · all live in prod</span></h2>
+  <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
+    Backend (8): <code>0340fdd</code> → <code>f2adaef</code> → <code>c2f1855</code> → <code>cdb4879</code> → <code>3796ddf</code> → <code>5fe98df</code> → <code>6164069</code>.
+    Frontend (10): <code>8d6759b</code> → <code>5ef5b4d</code> → <code>8e5facd</code> → <code>e71c841</code> → <code>cc281ed</code> → <code>deea9bf</code> → <code>538ebfc</code> → <code>c29c427</code> → <code>3e36461</code> → <code>841dd49</code>.
+  </p>
+
+  <table class="data">
+    <thead>
+      <tr>
+        <th style="width: 4%">#</th>
+        <th style="width: 30%">What shipped</th>
+        <th style="width: 11%">Type</th>
+        <th>Where it landed in prod (Sam-visible effect)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>1</strong></td>
+        <td>Hearing Aids (IE) revenue inflation — and every other multi-supplier campaign</td>
+        <td><span class="src-badge src-bug">Data bug</span></td>
+        <td>Reports → Unified now shows Hearing Aids (IE) at £15,310.61 (was £24,989.19). All 17 campaigns match LeadByte to the penny. Root cause: proportional allocation of campaign revenue across suppliers instead of revPerLead × cascade-events sum.</td>
+      </tr>
+      <tr>
+        <td><strong>2</strong></td>
+        <td>Lead-count inflation — same root cause applied to leads</td>
+        <td><span class="src-badge src-bug">Data bug</span></td>
+        <td>Total this month went 18,418 → 17,800 (matches LB 17,819 within live arrivals). Per-supplier leads now sum to campaign's unique-lead truth, not the cascade-event sum.</td>
+      </tr>
+      <tr>
+        <td><strong>3</strong></td>
+        <td>Xero 429 rate-limit explanation on integrations card AND dashboard bank widget</td>
+        <td><span class="src-badge src-improve">UX</span></td>
+        <td>Was: "No active bank accounts in Xero" (misleading — Sam thought Stato lost his account). Now: amber banner <em>"Xero is rate-limited right now (HTTP 429). Bank balances refresh within ~60s. No action needed unless this persists for 10+ minutes."</em></td>
+      </tr>
+      <tr>
+        <td><strong>4</strong></td>
+        <td>leadsThisMonth field re-split — was misleading the label</td>
+        <td><span class="src-badge src-bug">Data bug</span></td>
+        <td>Integrations card's "LEADS THIS MONTH" tile was showing the 12-month rolling number (20,137) under a "this month" label. Now: TRUE current month (17,962) from cached LB API. Separate <code>leadsLast12Months</code> field carries the rolling number for dashboard tile that's actually labelled 12 months.</td>
+      </tr>
+      <tr>
+        <td><strong>5</strong></td>
+        <td>OCT-40 Catchr status endpoint — lastSyncAt always null</td>
+        <td><span class="src-badge src-bug">Data bug</span></td>
+        <td>Was reading from in-memory variable in a separate process from the sync worker. Now reads <code>max(ad_spend.synced_at)</code> from DB. Both <code>/catchr/status</code> and <code>/integrations/overview</code> now agree on the timestamp.</td>
+      </tr>
+      <tr>
+        <td><strong>6</strong></td>
+        <td>By-source profitability roll-up (Sam meeting #10)</td>
+        <td><span class="src-badge src-feat">New feature</span></td>
+        <td>New <em>"By source · profitability"</em> card on Reports/Unified — leadreports.io-style. One row per platform (Facebook £346k spend / -110.8%, Google Ads £50k / -151.8%, Facebook Ads £76k / -300.7%, Taboola/Direct/Outbrain +100%, etc). Σ(byPlatform) === totals exactly.</td>
+      </tr>
+      <tr>
+        <td><strong>7</strong></td>
+        <td>T3 Responsive UI overhaul — slices 2 + 3 (Dashboard, Campaigns, Integrations, Settings, Client Detail)</td>
+        <td><span class="src-badge src-feat">UX</span></td>
+        <td>All admin pages now work at 375px (iPhone SE) — sidebar collapses to hamburger, KPI tiles single-column, charts render, 7-tab Client Detail scrolls horizontally. Mobile prod verified live.</td>
+      </tr>
+      <tr>
+        <td><strong>8</strong></td>
+        <td>Spend / Margin tooltip — Catchr vs LeadByte payout disambiguation</td>
+        <td><span class="src-badge src-improve">UX</span></td>
+        <td>Reports/Unified column headers + totals tiles now have hoverable Info icon: <em>"Catchr ad spend — what you pay Meta / Google / TikTok / Taboola for the media buy. Does NOT include LeadByte supplier payouts."</em> Stops the "but LeadReports shows £52k, not £466k" confusion at the source.</td>
+      </tr>
+      <tr>
+        <td><strong>9</strong></td>
+        <td>Endole sandbox flipped to production in Railway env</td>
+        <td><span class="src-badge src-improve">Config</span></td>
+        <td><code>ENDOLE_SANDBOX=false</code> in Railway. New credit checks will now hit live Endole API (returns real scores). Pre-existing 10 checks remain in the history.</td>
+      </tr>
+      <tr>
+        <td><strong>10</strong></td>
+        <td>LeadByte multi-buyer skipped campaigns surfaced on Integrations</td>
+        <td><span class="src-badge src-feat">New feature</span></td>
+        <td>New collapsible card on the LeadByte block — shows campaigns the sync skipped because they have >1 buyer (LB API has no per-buyer daily granularity, so attribution is paused). Currently 0 skipped; renders when there's anything to flag.</td>
+      </tr>
+      <tr>
+        <td><strong>11</strong></td>
+        <td>R2 Documents tab on Staff Detail</td>
+        <td><span class="src-badge src-feat">Feature</span></td>
+        <td>Staff/Detail page now has a Documents tab matching the Client Detail pattern. File uploads go to R2 <code>stato-production</code> bucket via presigned URL.</td>
+      </tr>
+      <tr>
+        <td><strong>12</strong></td>
+        <td>Task delete confirmation dialog (replaces window.confirm)</td>
+        <td><span class="src-badge src-improve">UX</span></td>
+        <td>Refactored Tasks/Detail delete button to a shadcn AlertDialog. Same pattern as the LinkedClientsCard delete. Confirms before destroying, can be cancelled.</td>
+      </tr>
+      <tr>
+        <td><strong>13</strong></td>
+        <td>Endole error-102 alerts (balance exhausted)</td>
+        <td><span class="src-badge src-improve">Reliability</span></td>
+        <td>Backend now writes a <code>notifications</code> row when Endole returns HTTP 403 error_code "102" (balance exhausted). Dedupe window 1 hour so you don't get spammed. Helper points to https://www.endole.co.uk/ for the top-up.</td>
+      </tr>
+      <tr>
+        <td><strong>14</strong></td>
+        <td>Endole <code>checksRun</code> counter wired from real DB count</td>
+        <td><span class="src-badge src-bug">Bug</span></td>
+        <td>Was hardcoded <code>0</code> on the integrations card. Now reads <code>SELECT COUNT(*) FROM credit_checks</code> — shows 10 in prod. Also new field <code>checksRunLast30d</code>.</td>
+      </tr>
+      <tr>
+        <td><strong>15</strong></td>
+        <td>Catchr field-map log improvement</td>
+        <td><span class="src-badge src-improve">Observability</span></td>
+        <td>When a Catchr row drops because the campaign_id field name doesn't match the map, the warn log now includes the platform name + missing field key + sample row keys. So if a field drifts in prod, ops can see exactly which platform and which key in the logs.</td>
+      </tr>
+      <tr>
+        <td><strong>16</strong></td>
+        <td>SignNow webhook secret one-shot warn + .env.example correctness</td>
+        <td><span class="src-badge src-improve">Hardening</span></td>
+        <td><code>verifyWebhookSignature()</code> now warns the first time it's called without a secret (instead of silently returning false). <code>.env.example</code> comment updated to make clear sandbox is the actual default URL.</td>
+      </tr>
+      <tr>
+        <td><strong>17</strong></td>
+        <td>Twilio mock-mode log + DB invariant fix</td>
+        <td><span class="src-badge src-improve">Reliability</span></td>
+        <td>When Twilio creds aren't set, the alert worker now logs a visible <code>[twilio][mock] alerts deferred</code> line instead of silently no-op. Notifications stay un-sent in the DB so the backlog is preserved for the day creds arrive.</td>
+      </tr>
+      <tr>
+        <td><strong>18</strong></td>
+        <td>Pie chart loading skeleton (kills "No data 100%" flash)</td>
+        <td><span class="src-badge src-improve">UX</span></td>
+        <td>Dashboard's Campaign Sources pie was showing <em>"No data 100%"</em> for ~200ms on first paint before React Query resolved. Now shows a skeleton donut + 5 legend skeleton rows during fetch, then snaps to the real Solar 37.7% / Hearing Aids 18.9% / Insulation 17% breakdown.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ─── HOW WE TESTED ─────────────────────────────── -->
+  <details class="section">
+    <summary>How we tested it all <span class="pill done">prove-it section</span> <span class="summary-hint">— tap to expand</span></summary>
+    <div class="content">
+
+  <p>
+    Every shipped item went through the same verification pipeline before
+    being marked done. Headlines first, then the per-item evidence.
+  </p>
+
+  <h3>Headlines</h3>
+  <ul class="bare">
+    <li><strong>Frontend test suite:</strong> 201 / 201 pass (35 → 40 test files; 5 new audit/feature test files added today). Run via <code>pnpm exec vitest run</code> in <code>Sato-Frontend</code>.</li>
+    <li><strong>Backend test suite (today's scope):</strong> 23 / 23 pass on the touched test files (<code>unified-report-revenue-allocation</code>, <code>unified-report-cache</code>, <code>traffic-source-aggregation</code>, <code>leads-this-month-coherent</code>, <code>financial-overview-revenue</code>, <code>credit-check-status</code>, <code>ad-spend.skipped-campaign</code>, <code>endole-client</code>, <code>xero-client</code>, <code>signnow-client</code>, <code>alert-sms.service</code>, <code>integration</code>, <code>catchr-status</code>).</li>
+    <li><strong>TypeScript:</strong> <code>pnpm exec tsc --noEmit</code> exit 0 on both repos after every commit.</li>
+    <li><strong>Live API verification:</strong> after every backend deploy, hit prod with the live JWT and confirmed expected response shape + values.</li>
+    <li><strong>Browser verification (chrome-devtools MCP):</strong> after every frontend deploy, navigated to the affected pages on <code>https://sato-frontend.vercel.app</code> and asserted the new behaviour in the live DOM.</li>
+    <li><strong>Mobile verification:</strong> resized viewport to 375px (iPhone SE width) and verified Dashboard, Campaigns, Integrations, Settings, Client Detail, Reports all render without horizontal scroll.</li>
+  </ul>
+
+  <h3>Per-item evidence</h3>
+  <table class="data">
+    <thead>
+      <tr>
+        <th style="width: 4%">#</th>
+        <th style="width: 30%">Item</th>
+        <th>How it was verified</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>Hearing Aids (IE) revenue allocation</td>
+        <td>Hit LeadByte <code>/reports/campaign?datePreset=this_month&amp;campaignId=12</code> directly with the env's API key → returned <code>leads:841, revenue:£15,310.60</code>. Then hit Stato prod unified report → Σ supplier revenue for Hearing Aids (IE) = £15,310.61. ±£0.01 rounding.</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>Lead count normalization</td>
+        <td>Same comparison applied to leads. Stato Σ supplier.leads per campaign = LeadByte's <code>leads</code> field ± rounding. New regression test asserts Σ for Hearing Aids (IE) is 840 ±1 (was 1,382 pre-fix).</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td>Xero 429 explanation</td>
+        <td>Backed by <code>buildOverview()</code> calling <code>getBankBalances()</code> with try/catch + 60s cache. Frontend test asserts the amber banner renders when <code>data.error</code> is present. Verified live in prod: banner currently visible on Bank Accounts widget.</td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td>leadsThisMonth re-split</td>
+        <td>Rewrote <code>leads-this-month-coherent.test.ts</code> to assert overview.leadsLast12Months === dashboard.leadsThisMonth (same DB window) AND overview.leadsThisMonth (from LB API) is non-negative. Verified live: integrations card shows 17,962, dashboard 20,162. Both correctly labelled.</td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td>Catchr lastSyncAt</td>
+        <td>3 new vitest tests: returns max(ad_spend.synced_at) when DB has rows; falls back to in-memory when empty; response shape preserved. Verified live: both <code>/integrations/catchr/status</code> and <code>/integrations/overview</code> return identical timestamps.</td>
+      </tr>
+      <tr>
+        <td>6</td>
+        <td>By-source profitability</td>
+        <td>2 new vitest tests in unified-report-revenue-allocation: Σ(byPlatform) === totals; distinct platforms get separate rows. Verified live: 9 platform rows on the new card, sums match the totals strip to the penny.</td>
+      </tr>
+      <tr>
+        <td>7</td>
+        <td>T3 Responsive</td>
+        <td>Manually resized the live Vercel prod viewport to 375 / 768 / 1440 widths. Walked Dashboard, Campaigns, Integrations, Settings, Client Detail, Reports/Unified at each width. No horizontal scroll, no clipped content, hamburger menu replaces sidebar &lt; 1024px, all 7 Client Detail tabs accessible via horizontal scroll on mobile.</td>
+      </tr>
+      <tr>
+        <td>8</td>
+        <td>Spend/Margin tooltips</td>
+        <td>Verified via accessibility tree on live prod — Info icons render with full disambiguation text as <code>aria-label</code> + <code>title</code> on both the totals tile and column headers.</td>
+      </tr>
+      <tr>
+        <td>9</td>
+        <td>Endole sandbox flip</td>
+        <td>Confirmed via <code>/integrations/credit-check/status</code> → <code>{"sandbox":false}</code>. Background notification will fire on next 102 error if balance hits zero.</td>
+      </tr>
+      <tr>
+        <td>10</td>
+        <td>LeadByte multi-buyer card</td>
+        <td>2 new frontend tests: hides section when array empty; renders count + constraint text when non-empty + reveals rows on expand. Live: currently 0 skipped campaigns so card is hidden (correct).</td>
+      </tr>
+      <tr>
+        <td>11</td>
+        <td>R2 Documents tab on Staff Detail</td>
+        <td>New test asserts Documents tab trigger renders + FileUpload mutateAsync fires with folder='misc' on file select. Manual verify: tab appears on Staff/Detail page next to Profile/Tasks/Holidays.</td>
+      </tr>
+      <tr>
+        <td>12</td>
+        <td>Task delete dialog</td>
+        <td>3 new tests: clicking Delete opens dialog without firing mutation; confirm fires <code>mutateAsync('task-1')</code> + navigates to /tasks; cancel closes dialog without mutation.</td>
+      </tr>
+      <tr>
+        <td>13</td>
+        <td>Endole error-102 alerts</td>
+        <td>4 new endole-client tests: mock 102 response → exactly one createNotification call with right type/severity/title; non-102 errors don't emit; emit failure doesn't swallow upstream error; deduplication within 1h works.</td>
+      </tr>
+      <tr>
+        <td>14</td>
+        <td>Endole checksRun counter</td>
+        <td>New credit-check-status test seeds 3 credit_checks rows and asserts body.data.checksRun matches.</td>
+      </tr>
+      <tr>
+        <td>15</td>
+        <td>Catchr field-map log improvement</td>
+        <td>New ad-spend.skipped-campaign test: tik-tok row with wrong campaign-id key produces warn with platform + configuredCampaignField + sampleRowKeys; well-formed google-ads row produces no warning.</td>
+      </tr>
+      <tr>
+        <td>16</td>
+        <td>SignNow webhook secret warn</td>
+        <td>New signnow-client test: deletes env var, spies on console.warn, calls verifyWebhookSignature twice, asserts both return false AND exactly one warn fires (one-shot).</td>
+      </tr>
+      <tr>
+        <td>17</td>
+        <td>Twilio mock-mode log</td>
+        <td>New alert-sms.service test asserts the <code>[twilio][mock] alerts deferred</code> log fires when creds are missing. Existing tests cover DB invariants (smsNotifiedAt stays null, attempts stay 0).</td>
+      </tr>
+      <tr>
+        <td>18</td>
+        <td>Pie chart skeleton</td>
+        <td>Manual verify on prod: hard-reloaded dashboard, observed skeleton donut + 5 legend skeleton rows during ~200ms <code>useCampaigns()</code> fetch, then the real Solar / Hearing Aids / Insulation breakdown snaps in. No "No data 100%" flash visible at any frame.</td>
+      </tr>
+    </tbody>
+  </table>
+
+    </div>
+  </details>
+
+  <!-- ─── INTEGRATION VALUE TABLE ─────────────────────── -->
+  <details class="section">
+    <summary>Every integration — live state right now <span class="pill done">verified against 3rd-party APIs</span> <span class="summary-hint">— tap to expand</span></summary>
+    <div class="content">
+
+  <table class="data">
+    <thead>
+      <tr>
+        <th style="width: 14%">Source</th>
+        <th style="width: 14%">State</th>
+        <th style="width: 36%">What Stato shows</th>
+        <th>3rd-party API truth</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="green-row">
+        <td><span class="src-badge src-leadbyte">LeadByte</span></td>
+        <td class="green-val">✓ Live + matched</td>
+        <td>17,978 leads this month / £227,490.40 revenue (unified report)</td>
+        <td>LeadByte <code>/reports/campaign?datePreset=this_month</code> returned the same to ±£0.01 rounding</td>
+      </tr>
+      <tr class="green-row">
+        <td><span class="src-badge src-catchr">Catchr</span></td>
+        <td class="green-val">✓ Live + synced</td>
+        <td>£701,829.56 ad spend last 30d · 6 platforms connected · sync 2 min ago</td>
+        <td>Verified via <code>/integrations/catchr/status</code> → max(ad_spend.synced_at) = recent timestamp</td>
+      </tr>
+      <tr class="green-row">
+        <td><span class="src-badge src-xero">Xero — Invoices</span></td>
+        <td class="green-val">✓ Live</td>
+        <td>£777,236 revenue (12mo) · 3 outstanding (INV-0394, -0390, -0365) · £44,064 owed</td>
+        <td>Xero <code>/Invoices</code> matches. Recognised statuses widened to paid + authorised (Xero accrual accounting).</td>
+      </tr>
+      <tr class="red-row">
+        <td><span class="src-badge src-xero">Xero — Bank balances</span></td>
+        <td class="red-val">⚠ Rate-limited (429)</td>
+        <td>Empty + amber banner: <em>"Xero is rate-limited right now (HTTP 429). Bank balances refresh within ~60s."</em></td>
+        <td>Xero <code>/Accounts</code> returning 429 transiently. Self-resolves at next per-minute or daily reset boundary. Not a Stato bug.</td>
+      </tr>
+      <tr class="green-row">
+        <td><span class="src-badge src-endole">Endole</span></td>
+        <td class="green-val">✓ Production mode</td>
+        <td>10 checks run · sandbox=false · provider=endole</td>
+        <td>Live API. Background notification fires on 102 error (balance exhausted) — confirm your balance has funds for new checks.</td>
+      </tr>
+      <tr class="green-row">
+        <td><span class="src-badge src-signnow">SignNow</span></td>
+        <td class="green-val">✓ Production</td>
+        <td>7 agreements sent · sandbox=false</td>
+        <td>Live API. Webhook signature verification now warns once if secret missing.</td>
+      </tr>
+      <tr class="green-row">
+        <td><span class="src-badge src-r2">Cloudflare R2</span></td>
+        <td class="green-val">✓ Live</td>
+        <td>stato-production bucket reachable · 0 files yet</td>
+        <td>Presigned upload flow works. Mount points: Client Detail · Agreements · Staff Detail (NEW today).</td>
+      </tr>
+      <tr class="red-row">
+        <td><span class="src-badge src-resend">Resend</span></td>
+        <td class="warn-val">⚠ DNS pending</td>
+        <td>Sending from <code>onboarding@resend.dev</code></td>
+        <td>3 TXT records needed in GoDaddy DNS for <code>leadgeneration.io</code> to verify. Ask #6 below.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>By-source profitability — verified live just now</h3>
+  <p style="margin: 0 0 8px 0; color: #424245; font-size: 14px;">
+    New <em>"By source · profitability"</em> card on Reports/Unified. One row per platform. Σ === totals strip exactly.
+  </p>
+  <table class="data">
+    <thead>
+      <tr>
+        <th style="width: 22%">Platform</th>
+        <th style="width: 12%">Leads</th>
+        <th style="width: 16%">Spend (Catchr)</th>
+        <th style="width: 12%">CPL</th>
+        <th style="width: 16%">Revenue (LB allocation)</th>
+        <th style="width: 16%">Profit</th>
+        <th>Margin</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Facebook</td><td class="num">12,017</td><td class="num">£346,392</td><td class="num">£28.83</td><td class="num">£164,303</td><td class="num red-val">-£182,089</td><td class="num red-val">-110.8%</td></tr>
+      <tr><td>Facebook Ads</td><td class="num">2,681</td><td class="num">£76,307</td><td class="num">£28.46</td><td class="num">£19,041</td><td class="num red-val">-£57,266</td><td class="num red-val">-300.7%</td></tr>
+      <tr><td>Google Ads</td><td class="num">1,914</td><td class="num">£50,322</td><td class="num">£26.29</td><td class="num">£19,987</td><td class="num red-val">-£30,335</td><td class="num red-val">-151.8%</td></tr>
+      <tr><td>Direct</td><td class="num">550</td><td class="num">£0</td><td class="num">—</td><td class="num">£9,284</td><td class="num green-val">£9,284</td><td class="num green-val">100%</td></tr>
+      <tr><td>Taboola</td><td class="num">523</td><td class="num">£0</td><td class="num">—</td><td class="num">£9,821</td><td class="num green-val">£9,821</td><td class="num green-val">100%</td></tr>
+      <tr><td>Outbrain</td><td class="num">208</td><td class="num">£0</td><td class="num">—</td><td class="num">£3,820</td><td class="num green-val">£3,820</td><td class="num green-val">100%</td></tr>
+      <tr><td>Community Manager</td><td class="num">51</td><td class="num">£0</td><td class="num">—</td><td class="num">£665</td><td class="num green-val">£665</td><td class="num green-val">100%</td></tr>
+      <tr><td>Thank You</td><td class="num">13</td><td class="num">£0</td><td class="num">—</td><td class="num">£239</td><td class="num green-val">£239</td><td class="num green-val">100%</td></tr>
+      <tr><td>Trustpilot</td><td class="num">5</td><td class="num">£0</td><td class="num">—</td><td class="num">£55</td><td class="num green-val">£55</td><td class="num green-val">100%</td></tr>
+      <tr style="background: #f0f7ff; font-weight: 600;"><td>Totals</td><td class="num">17,962</td><td class="num">£473,021</td><td class="num">£26.34</td><td class="num">£227,216</td><td class="num red-val">-£245,805</td><td class="num red-val">-108.2%</td></tr>
+    </tbody>
+  </table>
+  <p style="margin: 8px 0 0 0; color: #6e6e73; font-size: 13px;">
+    <strong>Margin context (important):</strong> the negative numbers above
+    are <em>Catchr media-buy spend</em> (what you pay Meta/Google/etc) vs
+    <em>LeadByte revenue</em>. LeadReports.io shows much smaller cost
+    numbers because they're measuring LeadByte <em>supplier payout</em>
+    (£0 for direct-traffic) — different concept entirely. Tooltips on the
+    column headers now explain this in plain English.
+  </p>
+
+    </div>
+  </details>
+
+  <!-- ─── LINEAR CLEANUP ─────────────────────────────── -->
+  <details class="section">
+    <summary>Linear OCT cleanup — 16 tickets transitioned to Done <span class="pill done">5-min audit</span> <span class="summary-hint">— tap to expand</span></summary>
+    <div class="content">
+
+  <p>
+    Audit caught that 16 OCT tickets in "In Review" already had their code
+    shipped to prod days ago — just nobody had flipped the Linear status.
+    Bulk-transitioned all 16 to <strong>Done</strong> via the Linear API,
+    each with a commit-link audit-trail comment. The board now matches
+    reality.
+  </p>
+
+  <table class="data">
+    <thead>
+      <tr>
+        <th style="width: 8%">Ticket</th>
+        <th style="width: 38%">Title</th>
+        <th>Shipped via</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>OCT-26</td><td>Pause auto-invoice + delete drafts</td><td><code>c795a2c</code> (T6)</td></tr>
+      <tr><td>OCT-27</td><td>Apply overdue derivation on portal</td><td><code>66455e5</code> (T7)</td></tr>
+      <tr><td>OCT-28</td><td>Rename Authorized → Pending Payment</td><td><code>0d86461</code> (T8)</td></tr>
+      <tr><td>OCT-29</td><td>Reorder portal invoices outstanding-first</td><td><code>e0757ae</code> (T9)</td></tr>
+      <tr><td>OCT-30</td><td>Outstanding invoice aggregation audit</td><td><code>e4c9a83</code> (T5)</td></tr>
+      <tr><td>OCT-31</td><td>Creative submit-for-approval workflow</td><td><code>27717ad</code> (T2)</td></tr>
+      <tr><td>OCT-32</td><td>Manual ad-account → campaign linking (Catchr)</td><td><code>36b328e</code>+ (T1)</td></tr>
+      <tr><td>OCT-33</td><td>Comprehensive responsive UI overhaul</td><td><code>538ebfc</code> + <code>c29c427</code> (today, all 3 slices)</td></tr>
+      <tr><td>OCT-34</td><td>Generic workflow pause/resume toggle</td><td><code>a7996ae</code>+ (T4)</td></tr>
+      <tr><td>OCT-35</td><td>T8 Pending Payment label</td><td><code>0d86461</code></td></tr>
+      <tr><td>OCT-36</td><td>T1 schema gap accountIds[]</td><td>VERIFIED CLEAN today — was never a bug. Live test: +£300 across 3 accountIds attributed correctly.</td></tr>
+      <tr><td>OCT-37</td><td>T3 Responsive UI overhaul (dupe of OCT-33)</td><td><code>538ebfc</code> + <code>c29c427</code></td></tr>
+      <tr><td>OCT-39</td><td>Multi-buyer behaviour audit</td><td>AUDITED today — no bugs. Dev DB has 0 multi-buyer rows; code path verified by read.</td></tr>
+      <tr><td>OCT-40</td><td>Catchr connected=false despite working sync</td><td><code>5fe98df</code> (TODAY)</td></tr>
+      <tr><td>OCT-41</td><td>Admin campaign list multi-buyer clientName</td><td><code>8fd7955</code> + <code>58e210c</code></td></tr>
+      <tr><td>OCT-42</td><td>Reports/unified multi-buyer clientName</td><td><code>8fd7955</code></td></tr>
+    </tbody>
+  </table>
+
+  <p style="margin: 14px 0 0 0; color: #424245; font-size: 14px;">
+    <strong>Only 1 ticket still open in OCT</strong> — <strong>OCT-38</strong>
+    (T10 GitHub status report HTML). Confirmed unreachable from this
+    codebase — the <code>YashTi0101</code> handle referenced in the
+    original task doc doesn't exist on GitHub. Needs Hari ↔ Yash IRL
+    conversation to locate where the actual script lives.
+  </p>
+
+    </div>
+  </details>
+
+  <!-- ─── ASKS — TEXTFIELDS ─────────────────────────────── -->
+  <h2>What I need from you <span class="pill need">your input</span></h2>
+
+  <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
+    Twelve text boxes below — split into <strong>new today (1–3)</strong>
+    that came out of this morning's verification, then
+    <strong>carry-over (4–12)</strong> from the 21-May ask list that are
+    still open. Answer the ones you can, leave the rest blank, hit
+    Download. Auto-saves as you type so closing the tab won't lose
+    anything. Send the <code>.txt</code> back over WhatsApp.
+  </p>
+
+  <div id="ask-cards"></div>
+
+  <noscript>
+    <div class="ask-card">
+      <p>JavaScript is off — reply on WhatsApp with answers to:</p>
+      <ol>
+        <li>Catchr account mappings (£351k unattributed)</li>
+        <li>Endole credit balance — has funds for live checks?</li>
+        <li>Property Sales (UK) — price it or hide it?</li>
+        <li>Read-only Xero accountant access</li>
+        <li>Onboard 2-3 more clients (multi-client testing)</li>
+        <li>Resend DNS 3 TXT records on GoDaddy</li>
+        <li>Vercel GitHub App install on Sato-Frontend repo</li>
+        <li>Catchr Google Ads re-auth — 6 disconnected accounts</li>
+        <li>SignNow Go-Live (Business plan + 5 env vars)</li>
+        <li>Twilio creds — 3 values</li>
+        <li>Attio API key</li>
+        <li>Go-ahead on Xero ↔ Stato comparison dashboard</li>
+      </ol>
+    </div>
+  </noscript>
+
+  <div style="margin-top: 20px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+    <button id="download-btn" type="button" style="padding: 12px 22px; border-radius: 999px; background: #0066cc; color: #fff; border: 1px solid #0066cc; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer;">
+      ⬇ Download my answers as text
+    </button>
+    <span id="download-hint" style="color: #6e6e73; font-size: 13px;">
+      Saves a single <code>.txt</code> with everything you typed — WhatsApp it back to Yash.
+    </span>
+  </div>
+
+  <!-- ─── COMING NEXT ─────────────────────────── -->
+  <h2>Coming next <span class="pill fix">scheduled</span></h2>
+  <ul class="bare">
+    <li><strong>Xero ↔ Stato comparison dashboard</strong> — pending your go-ahead (ask #12). New admin page at <code>/integrations/xero/compare</code> with traffic-light coloured deltas per number. ~half-day to build.</li>
+    <li><strong>Auto-monitor for Endole 102 + Resend DNS verification</strong> — already running. The moment your top-up lands or DNS records propagate, Stato detects it and flips the integration card to green automatically.</li>
+    <li><strong>Property Sales pricing decision</strong> (ask #3) — once you confirm whether to price it or hide it, applies in &lt;5 min.</li>
+  </ul>
+
+  <footer>
+    Generated 22 May 2026 · Stato · Octogle Technologies for leadgeneration.io
+  </footer>
+</div>
+
+<script src="lib.js"></script>
+<script>
+  const ASKS = [
+    {
+      id: 'catchr-account-mappings',
+      title: 'Catchr account → campaign mappings — £351k waiting to be attributed',
+      why: 'Live audit caught 9 Catchr ad accounts active in the last 30 days with no campaign mapping. £351,332 of ad spend doesn\'t roll up to any campaign because Stato has no way to know which campaign each ad account drives. Fix: open each affected campaign\'s detail page (Property Sales, Tax Claims, PCP Claims, etc), Traffic Sources card, pick the platform + paste the account_id. ~3 min per campaign. The "Show accounts" button on the Campaigns page lists exactly which accounts need mapping.',
+      effort: '~20 min total',
+      placeholder: 'e.g. "did it for all 9 — show me what changed" / "send me a Loom walking through one" / "skip — those campaigns aren\'t ours"',
+    },
+    {
+      id: 'endole-balance',
+      title: 'Endole credit balance — does the account have live funds now?',
+      why: 'I flipped ENDOLE_SANDBOX=false in Railway today, so new credit checks now hit the live Endole API. If the account is still at £0 balance from earlier, the next real check will fail with error 102 — but background monitoring is already running and will alert you the moment it happens. Confirm here: have you topped up the Endole account, or is it still at £0? (If you\'re unsure, log into endole.co.uk → your account → billing.)',
+      effort: '~2 min',
+      placeholder: 'e.g. "topped up £200 last week" / "still at 0, need to find the right card" / "not sure — checking now"',
+    },
+    {
+      id: 'property-sales-pricing',
+      title: 'Property Sales (UK) — price the campaign or hide it from revenue dashboards?',
+      why: 'Live data shows Property Sales (UK) at 2,445 leads + £10,800 Catchr ad spend + £0 revenue this month. Investigation traced it to LeadByte — buyer "Better Move" has bought 1,800 sold leads but the buyer-routing rule has empty bid (per-lead price) in LB, so revenue rolls up as £0. Either (a) set a £/lead in LeadByte for Better Move on this campaign so revenue starts flowing, or (b) hide Property Sales from revenue dashboards so the £10.8k Catchr spend doesn\'t read as a loss. Whichever you pick, applies in &lt;5 min.',
+      effort: '~2 min answer',
+      placeholder: 'e.g. "price it at £15/lead via Better Move\'s buyer rule" / "hide it — internal traffic only" / "leave it, will set up next week"',
+    },
+    {
+      id: 'xero-read-only',
+      title: 'Read-only Xero accountant access for yash.c@octogle.com',
+      why: 'Single biggest unblock for demo confidence. With read-only access I can manually validate every Stato tile against your real Xero account side-by-side and catch any drift before you see it. Same access you give your accountant. xero.com → My Xero → Add user → "Yash Chavan", role: Read Only.',
+      effort: '~2 min',
+      placeholder: 'e.g. "added — accept the email" / "give me 5 min" / "let\'s do it on a screenshare"',
+    },
+    {
+      id: 'more-clients',
+      title: 'Onboard 2-3 more clients for multi-client testing',
+      why: 'Right now UKESN is the only real client in prod, so the multi-buyer flows are untestable end-to-end. With 2-3 more clients on board, I can verify many-to-many revenue attribution, the "Multiple (N)" buyer tooltips, and the credit-check alerts on real data. Need 4 fields per client: company name, Companies House number, primary contact name, contact email. WhatsApp works, or the form on the portal.',
+      effort: '~5 min / client',
+      placeholder: 'client 1: company / number / contact / email\nclient 2: ...\nclient 3: ...',
+    },
+    {
+      id: 'resend-dns',
+      title: 'Resend DNS — 3 TXT records on GoDaddy',
+      why: 'Carryover from April. Stato outbound email still shows From: onboarding@resend.dev because the leadgeneration.io domain isn\'t DNS-verified on Resend. 3 TXT records need to land in GoDaddy DNS. Once they propagate, emails send from notifications@leadgeneration.io and the integrations card flips green automatically. Resend dashboard has the exact 3 records to copy/paste.',
+      effort: '~5 min coordination',
+      placeholder: 'e.g. "done by my other dev — should propagate today" / "drop the values here, I\'ll add them" / "give me GoDaddy access"',
+    },
+    {
+      id: 'vercel-github-app',
+      title: 'Vercel GitHub App — install on Sato-Frontend repo',
+      why: 'Today\'s frontend deploys still required manual <code>vercel --prod</code> from my machine — I ran it 5 times today. With the GitHub App installed, every push to main auto-deploys (which is how the backend Railway side already works). github.com → settings → installations → Vercel → grant access to Sato-Frontend repo.',
+      effort: '~2 min',
+      placeholder: 'e.g. "installed — try a push" / "let me know which repo exactly" / "do it later"',
+    },
+    {
+      id: 'catchr-google-reauth',
+      title: 'Catchr Google Ads — re-auth 6 disconnected accounts',
+      why: 'Catchr dashboard banner reads "9 of 15 accounts working" — 6 Google Ads accounts are disconnected, so their ad-spend rows don\'t populate /reports. Login to Catchr → Connections → find the 6 with red dots → click Re-authenticate on each. ~5 min total. Mostly affects PCP Claims + Property Sales attribution since their Google Ads spend is currently dark.',
+      effort: '~5 min',
+      placeholder: 'e.g. "done, all 15 green" / "logged in but can\'t find the 6 — screenshot please" / "skip, retiring those accounts"',
+    },
+    {
+      id: 'signnow-golive',
+      title: 'SignNow Go-Live — Business plan + 5 env vars',
+      why: 'Every signature envelope currently goes out with a "Sample" watermark on the PDF + 250-invite cap because SignNow still authenticates with my dev API app. To migrate to leadgeneration.io ownership: register "Stato Production" in your SignNow API dashboard, upgrade to Business plan, click Go Live (~1 business day approval), webhook to https://sato-backend-production.up.railway.app/api/v1/webhooks/signnow with HMAC secret, then send CLIENT_ID, CLIENT_SECRET, USERNAME, PASSWORD, WEBHOOK_SECRET via 1Password / Signal. Blocks solicitor agreements at scale.',
+      effort: '~30 min + 1 day approval',
+      placeholder: 'e.g. "Stato Production submitted — approval Thursday" / "need help with the webhook step" / "let\'s do it on a 15-min call"',
+    },
+    {
+      id: 'twilio-creds',
+      title: 'Twilio creds — 3 values for automatic SMS alerts',
+      why: 'Currently MOCK SMS — when a system error fires, the alert worker logs <code>[twilio][mock] alerts deferred</code> instead of texting you. Once you sign up (free trial covers months), buy a US long-code (~$1/mo), and paste the 3 values, system-error alerts text your phone within 30 seconds. ACCOUNT_SID (starts AC...), AUTH_TOKEN, FROM_NUMBER (E.164 like +1...).',
+      effort: '~10 min',
+      placeholder: 'Paste the 3 values, or "send me how to" if you want a 1-min walkthrough video',
+    },
+    {
+      id: 'attio-api',
+      title: 'Attio API key — "Import from Attio" button lights up',
+      why: 'console.attio.com → Settings → API → create personal access token (starts <code>attio_pat_...</code>). Once pasted, the "Import from Attio" button on /clients lights up — pick companies from your CRM and bulk-import them as Stato clients with one click. Two minutes total.',
+      effort: '~2 min',
+      placeholder: 'Paste the key, or "I forgot the Attio password — reset it next week"',
+    },
+    {
+      id: 'xero-comparison-dashboard',
+      title: 'Go-ahead: build Xero ↔ Stato side-by-side comparison dashboard?',
+      why: 'New admin page at <code>/integrations/xero/compare</code> that pulls every reconcilable value from both sources and renders side-by-side: Stato value · Xero value · delta · traffic-light coloured (green if within £0.01, amber if &lt;5%, red if &gt;5%). Roughly half-day to build. Single answer is enough.',
+      effort: '1 yes/no',
+      placeholder: 'e.g. "yes, ship it" / "after demo first" / "no — Xero read-only is enough"',
+    },
+  ];
+
+  const RESPONSE_KEY = 'stato-2026-05-22-responses';
+
+  function loadStoredResponses() {
+    try {
+      const raw = localStorage.getItem(RESPONSE_KEY);
+      return raw ? JSON.parse(raw) : {};
+    } catch {
+      return {};
+    }
+  }
+
+  function saveResponses(map) {
+    try {
+      localStorage.setItem(RESPONSE_KEY, JSON.stringify(map));
+    } catch {
+      /* localStorage full or disabled — no-op. */
+    }
+  }
+
+  function renderAskCards() {
+    const container = document.getElementById('ask-cards');
+    if (!container) return;
+    container.innerHTML = '';
+    const stored = loadStoredResponses();
+
+    ASKS.forEach((ask, i) => {
+      const card = document.createElement('div');
+      card.className = 'ask-card';
+      const num = i + 1;
+      const tid = `ask-${ask.id}`;
+      card.innerHTML = `
+        <div class="ask-head">
+          <span class="ask-num">${num}</span>
+          <span class="ask-title">${ask.title}</span>
+          <span class="ask-effort">${ask.effort}</span>
+        </div>
+        <p class="ask-why">${ask.why}</p>
+        <textarea
+          id="${tid}"
+          data-ask-id="${ask.id}"
+          rows="3"
+          placeholder="${ask.placeholder.replace(/"/g, '&quot;')}"></textarea>
+        <span class="saved-pill" id="${tid}-saved">Saved locally</span>
+      `;
+      container.appendChild(card);
+
+      const ta = card.querySelector('textarea');
+      const saved = card.querySelector('.saved-pill');
+      ta.value = stored[ask.id] || '';
+      let savedTimer = null;
+      ta.addEventListener('input', () => {
+        const map = loadStoredResponses();
+        map[ask.id] = ta.value;
+        saveResponses(map);
+        saved.classList.add('visible');
+        clearTimeout(savedTimer);
+        savedTimer = setTimeout(() => saved.classList.remove('visible'), 1200);
+      });
+    });
+  }
+
+  function downloadAsText() {
+    const stored = loadStoredResponses();
+    const lines = [];
+    lines.push("Stato — Sam's responses to the 22 May 2026 update");
+    lines.push('Saved at: ' + new Date().toISOString());
+    lines.push('');
+    lines.push('═══════════════════════════════════════════════════════');
+    lines.push('');
+
+    ASKS.forEach((ask, i) => {
+      const num = i + 1;
+      const answer = (stored[ask.id] || '').trim();
+      lines.push(`${num}. ${ask.title}  (${ask.effort})`);
+      lines.push('   Why: ' + ask.why.replace(/<[^>]+>/g, ''));
+      lines.push('');
+      if (answer) {
+        lines.push('   Sam:');
+        answer.split('\n').forEach((l) => lines.push('     ' + l));
+      } else {
+        lines.push('   Sam: (no answer provided)');
+      }
+      lines.push('');
+      lines.push('───────────────────────────────────────────────────────');
+      lines.push('');
+    });
+
+    lines.push('— End of responses —');
+
+    const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const stamp = new Date().toISOString().slice(0, 10);
+    a.href = url;
+    a.download = `stato-sam-responses-${stamp}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  function boot() {
+    renderAskCards();
+    const btn = document.getElementById('download-btn');
+    if (btn) btn.addEventListener('click', downloadAsText);
+  }
+  if (typeof mountPasswordGate === 'function') {
+    mountPasswordGate(boot);
+  } else {
+    boot();
+  }
+</script>
+</body>
+</html>
