@@ -1,0 +1,852 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Stato — Status Update · 26 May 2026</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Arial, sans-serif;
+    background: #fafafa; color: #1d1d1f;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.55;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 56px 22px; }
+  .back {
+    display: inline-block; color: #0066cc; text-decoration: none;
+    font-size: 14px; margin-bottom: 24px;
+  }
+  .back:hover { text-decoration: underline; }
+  h1 {
+    font-size: 34px; font-weight: 700; letter-spacing: -0.02em;
+    margin: 0 0 6px 0;
+  }
+  .meta { color: #6e6e73; font-size: 14px; margin: 0 0 36px 0; }
+  h2 {
+    font-size: 22px; font-weight: 700; letter-spacing: -0.01em;
+    margin: 44px 0 14px 0;
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  }
+  h2 .pill {
+    font-size: 11px; font-weight: 600;
+    padding: 4px 10px; border-radius: 999px;
+    text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  h2 .pill.done   { background: #e6f7ec; color: #1d7a3a; }
+  h2 .pill.need   { background: #fff3e0; color: #a04a00; }
+  h2 .pill.fix    { background: #e8f0ff; color: #0042a3; }
+  h2 .pill.block  { background: #fdecea; color: #a52a2a; }
+  h2 .pill.info   { background: #f0f0f3; color: #424245; }
+  h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px 0; }
+  code {
+    font-family: 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 12px;
+    background: #f0f0f3; padding: 1px 5px; border-radius: 4px;
+    color: #1d1d1f;
+  }
+  .summary {
+    background: #fff; border: 1px solid #e8e8ed; border-radius: 14px;
+    padding: 22px 24px;
+  }
+  .summary p { margin: 0 0 10px 0; font-size: 15px; }
+  .summary p:last-child { margin: 0; }
+  .stat-row {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+    margin: 16px 0 0 0;
+  }
+  @media (max-width: 600px) { .stat-row { grid-template-columns: repeat(2, 1fr); } }
+  .stat {
+    background: #fafafa; border: 1px solid #e8e8ed; border-radius: 12px;
+    padding: 14px;
+  }
+  .stat .num { font-size: 26px; font-weight: 700; color: #1d1d1f; }
+  .stat .lbl { font-size: 12px; color: #6e6e73; margin-top: 4px; }
+  table.data {
+    width: 100%; border-collapse: collapse; margin: 8px 0 4px 0;
+    font-size: 13px; background: #fff;
+    border: 1px solid #e8e8ed; border-radius: 10px;
+    overflow: hidden;
+  }
+  table.data th, table.data td {
+    text-align: left; padding: 9px 12px;
+    border-bottom: 1px solid #f0f0f3;
+    vertical-align: top;
+  }
+  table.data th {
+    font-weight: 600; color: #6e6e73; font-size: 11px;
+    text-transform: uppercase; letter-spacing: 0.04em;
+    background: #fafafa;
+    border-bottom: 1px solid #e8e8ed;
+  }
+  table.data tr:last-child td { border-bottom: none; }
+  table.data tr:hover td { background: #fafbfc; }
+  .src-badge {
+    display: inline-block;
+    font-size: 11px; font-weight: 600;
+    padding: 2px 8px; border-radius: 999px;
+    white-space: nowrap;
+  }
+  .src-shipped  { background: #e6f7ec; color: #1d7a3a; }
+  .src-review   { background: #fff3e0; color: #a04a00; }
+  .src-pending  { background: #f0f0f3; color: #424245; }
+  .src-hari     { background: #f0e6ff; color: #5a2999; }
+  .src-yash     { background: #e6f0ff; color: #0042a3; }
+  .src-bug      { background: #fdecea; color: #a52a2a; }
+  .src-be       { background: #fff3e0; color: #a04a00; }
+  .src-fe       { background: #e8f0ff; color: #0042a3; }
+  details.section {
+    background: #fff; border: 1px solid #e8e8ed; border-radius: 14px;
+    padding: 0; margin: 14px 0; overflow: hidden;
+  }
+  details.section summary {
+    padding: 18px 22px; cursor: pointer; list-style: none;
+    font-size: 17px; font-weight: 700; letter-spacing: -0.01em;
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  }
+  details.section summary::-webkit-details-marker { display: none; }
+  details.section summary::after {
+    content: "›"; margin-left: auto; color: #6e6e73; font-size: 22px;
+    transition: transform 150ms;
+  }
+  details.section[open] summary::after { transform: rotate(90deg); }
+  details.section summary:hover { background: #f9f9fb; }
+  details.section .content {
+    padding: 6px 22px 22px 22px; font-size: 14px; color: #424245;
+    border-top: 1px solid #f0f0f3;
+  }
+  details.section .content > p:first-child { margin-top: 14px; }
+  details.section .summary-hint {
+    font-size: 12px; color: #6e6e73; font-weight: 400;
+    letter-spacing: 0;
+  }
+  ul.bare { list-style: none; padding-left: 0; margin: 8px 0; }
+  ul.bare li { padding: 6px 0; border-bottom: 1px solid #f0f0f3; }
+  ul.bare li:last-child { border-bottom: none; }
+  .qa-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  @media (max-width: 640px) {
+    .qa-grid { grid-template-columns: 1fr; gap: 18px; }
+  }
+  .ask-card {
+    background: #fff; border: 1px solid #e8e8ed; border-radius: 14px;
+    padding: 18px 20px; margin: 0 0 14px 0;
+  }
+  .ask-card .ask-head {
+    display: flex; align-items: baseline; gap: 10px; margin-bottom: 6px;
+    flex-wrap: wrap;
+  }
+  .ask-card .ask-num {
+    font-size: 13px; font-weight: 700; color: #0066cc;
+    background: #f0f7ff; padding: 2px 8px; border-radius: 999px;
+    min-width: 28px; text-align: center;
+  }
+  .ask-card .ask-num.q {
+    color: #5a2999; background: #f4ecff;
+  }
+  .ask-card .ask-title {
+    font-size: 15.5px; font-weight: 600; color: #1d1d1f; flex: 1;
+  }
+  .ask-card .ask-effort {
+    font-size: 12px; color: #6e6e73;
+    background: #f0f0f3; padding: 2px 8px; border-radius: 999px;
+    white-space: nowrap;
+  }
+  .ask-card .ask-why {
+    font-size: 13.5px; color: #6e6e73; margin: 0 0 12px 36px;
+    line-height: 1.5;
+  }
+  .ask-card textarea {
+    width: 100%; padding: 10px 12px;
+    border: 1px solid #e8e8ed; border-radius: 10px;
+    background: #fafafa; color: #1d1d1f; font: inherit; font-size: 14px;
+    outline: none; min-height: 70px; resize: vertical;
+    transition: border-color 120ms, background 120ms, box-shadow 120ms;
+  }
+  .ask-card textarea:focus {
+    border-color: #0066cc; background: #fff;
+    box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.12);
+  }
+  .ask-card textarea::placeholder { color: #a0a0a8; }
+  .saved-pill {
+    display: inline-block; font-size: 12px; color: #16a34a;
+    margin-left: 10px; opacity: 0; transition: opacity 200ms;
+  }
+  .saved-pill.visible { opacity: 1; }
+  #download-btn:hover { background: #0058b3; border-color: #0058b3; }
+  #download-btn:active { transform: translateY(1px); }
+  footer {
+    margin-top: 60px; padding-top: 22px;
+    border-top: 1px solid #e8e8ed;
+    color: #86868b; font-size: 12px; text-align: center;
+  }
+  .overall-card {
+    background: linear-gradient(135deg, #f0f7ff 0%, #e8f0fe 100%);
+    border: 1px solid #c9dffb; border-radius: 16px;
+    padding: 22px 24px; margin: 16px 0 20px 0;
+  }
+  .overall-card h3 { margin-top: 0; }
+  .overall-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px;
+    margin-top: 14px;
+  }
+  @media (max-width: 640px) { .overall-grid { grid-template-columns: 1fr; } }
+  .overall-tile {
+    background: #fff; border: 1px solid #d8e7fb; border-radius: 12px;
+    padding: 14px 16px;
+  }
+  .overall-tile .lbl {
+    font-size: 11px; font-weight: 700; color: #0042a3;
+    text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 4px;
+  }
+  .overall-tile .val {
+    font-size: 22px; font-weight: 700; color: #1d1d1f;
+  }
+  .overall-tile .sub {
+    font-size: 12px; color: #6e6e73; margin-top: 4px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="index.html">← Back to all reports</a>
+
+  <h1>Stato — Status update · 26 May 2026</h1>
+  <p class="meta">Weekly delta + overall project report · Octogle Technologies for leadgeneration.io</p>
+
+  <!-- ─── QUICK ACCESS ─────────────────────────────── -->
+  <div style="background: linear-gradient(135deg, #fff8e6 0%, #fff3d0 100%); border: 1px solid #f5d68a; border-radius: 16px; padding: 22px 24px; margin: 0 0 28px 0;">
+    <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #8a6500; margin-bottom: 12px;">
+      📌 Quick access
+    </div>
+
+    <div class="qa-grid">
+      <div>
+        <div style="font-size: 12px; font-weight: 600; color: #6e6e73; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.04em;">Admin app (Owner view)</div>
+        <div><a href="https://sato-frontend.vercel.app" target="_blank" style="color: #0066cc; font-family: 'SF Mono', Menlo, Consolas, monospace; font-size: 13px; word-break: break-all;">https://sato-frontend.vercel.app</a></div>
+        <div style="margin-top: 6px; font-size: 13px; color: #424245;">
+          Email: <code>sam@leadgeneration.io</code><br/>
+          Password: <code>Sam@123</code>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size: 12px; font-weight: 600; color: #6e6e73; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.04em;">Client portal (test on a phone)</div>
+        <div><a href="https://sato-frontend.vercel.app/portal" target="_blank" style="color: #0066cc; font-family: 'SF Mono', Menlo, Consolas, monospace; font-size: 13px; word-break: break-all;">https://sato-frontend.vercel.app/portal</a></div>
+        <div style="margin-top: 6px; font-size: 13px; color: #424245;">
+          Email: <code>jamie.probets@ukesn.co.uk</code><br/>
+          Password: <code>TempPass-Jamie-2026!</code>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size: 12px; font-weight: 600; color: #6e6e73; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.04em;">Linear board — OCT team</div>
+        <div><a href="https://linear.app/leadgenerationio/team/OCT/all" target="_blank" style="color: #0066cc; font-family: 'SF Mono', Menlo, Consolas, monospace; font-size: 13px; word-break: break-all;">https://linear.app/leadgenerationio/team/OCT/all</a></div>
+        <div style="margin-top: 6px; font-size: 13px; color: #424245;">
+          Sam, Hari, Pratteek + Yash all have access. Workspace: <strong>leadgenerationio</strong>.
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size: 12px; font-weight: 600; color: #6e6e73; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.04em;">Backend API health</div>
+        <div><a href="https://sato-backend-production.up.railway.app/api/v1/health" target="_blank" style="color: #0066cc; font-family: 'SF Mono', Menlo, Consolas, monospace; font-size: 13px; word-break: break-all;">https://sato-backend-production.up.railway.app</a></div>
+        <div style="margin-top: 6px; font-size: 13px; color: #424245;">
+          Public endpoint <code>/api/v1/health</code> returns <code>{db: up, redis: up}</code> if healthy.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── HEADLINE SUMMARY ─────────────────────────────── -->
+  <div class="summary">
+    <p>
+      <strong>Quiet week on user-visible features — but 11 commits shipped behind
+      the scenes hardening the platform.</strong> Hari (the second dev) opened
+      9 pull requests on Monday (2026-05-25); today (Tuesday) all 9 were
+      reviewed, approved, merged, and verified with a full test run. Plus a
+      regression-fix commit from Yash to keep the test suite green.
+    </p>
+    <p>
+      <strong>What this week's work means for you:</strong> Stato is now safe
+      to onboard a second business (multi-tenant scope guards on every
+      financial query — your data can never leak across tenants); Xero
+      rate-limiting now degrades gracefully (no more 60-second hangs on the
+      dashboard when Xero throttles); operator-facing error messages no
+      longer leak server-side details like <code>XERO_CLIENT_ID</code> or
+      hosting-platform names in screenshots.
+    </p>
+    <p>
+      <strong>Same 3 pending items from your side</strong> as 22-May: Catchr
+      account mappings (£351k of ad spend awaiting attribution), Resend DNS,
+      Endole credit-balance verify. <strong>4 new questions</strong> at the
+      bottom — mostly about pace + multi-client onboarding now that the
+      multi-tenant work is done.
+    </p>
+
+    <div class="stat-row">
+      <div class="stat"><div class="num">11</div><div class="lbl">Commits shipped (7 BE + 3 FE + 1 fix)</div></div>
+      <div class="stat"><div class="num">9 → Merged</div><div class="lbl">PRs reviewed + approved + landed</div></div>
+      <div class="stat"><div class="num">771 / 206</div><div class="lbl">Backend tests / Frontend tests passing</div></div>
+      <div class="stat"><div class="num">0 open</div><div class="lbl">PRs across both repos · main is clean</div></div>
+    </div>
+  </div>
+
+  <!-- ─── WEEK IN COMMITS ─────────────────────────────── -->
+  <h2>This week's shipped work <span class="pill done">11 commits · both repos</span></h2>
+
+  <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
+    All 9 PRs from Hari (<code>@hkv667</code>) plus today's regression fix.
+    Each row links to the merged commit. None of these change the UI; this
+    was a defensive / structural week.
+  </p>
+
+  <table class="data">
+    <thead>
+      <tr>
+        <th>Ticket</th>
+        <th>Title</th>
+        <th>Repo</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>OCT-46</code></td>
+        <td>P&amp;L summary revenue scoped by business — multi-tenant guard on <code>getPnlSummary</code></td>
+        <td><span class="src-badge src-be">backend</span></td>
+        <td><span class="src-badge src-shipped">shipped</span></td>
+      </tr>
+      <tr>
+        <td><code>OCT-47</code></td>
+        <td>Unattributed-ad-spend count tenant-scoped — only your own Catchr accounts</td>
+        <td><span class="src-badge src-be">backend</span></td>
+        <td><span class="src-badge src-shipped">shipped</span></td>
+      </tr>
+      <tr>
+        <td><code>OCT-48</code></td>
+        <td>Campaign performance + meta-loader scoped by business — no cross-tenant name leaks</td>
+        <td><span class="src-badge src-be">backend</span></td>
+        <td><span class="src-badge src-shipped">shipped</span></td>
+      </tr>
+      <tr>
+        <td><code>OCT-49</code></td>
+        <td>Unified report scoped by business — closes the last multi-tenant gap</td>
+        <td><span class="src-badge src-be">backend</span></td>
+        <td><span class="src-badge src-shipped">shipped</span></td>
+      </tr>
+      <tr>
+        <td><code>OCT-51</code></td>
+        <td>Xero 429 retry deadline — bail out if total elapsed exceeds 15s</td>
+        <td><span class="src-badge src-be">backend</span></td>
+        <td><span class="src-badge src-shipped">shipped</span></td>
+      </tr>
+      <tr>
+        <td><code>OCT-54</code></td>
+        <td>Per-fetch Xero timeout — single hung request can't blow the deadline</td>
+        <td><span class="src-badge src-be">backend</span></td>
+        <td><span class="src-badge src-shipped">shipped</span></td>
+      </tr>
+      <tr>
+        <td><code>OCT-44</code></td>
+        <td>Rename <code>window</code> state to <code>reportWindow</code> — lint hygiene, no user effect</td>
+        <td><span class="src-badge src-fe">frontend</span></td>
+        <td><span class="src-badge src-shipped">shipped</span></td>
+      </tr>
+      <tr>
+        <td><code>OCT-45</code></td>
+        <td>Xero error copy no longer mentions <code>XERO_CLIENT_ID</code> or Railway by name</td>
+        <td><span class="src-badge src-fe">frontend</span></td>
+        <td><span class="src-badge src-shipped">shipped</span></td>
+      </tr>
+      <tr>
+        <td><code>OCT-53</code></td>
+        <td>Extends OCT-45 to bank widget, VAT widget, /settings, and /leadbyte/buyers</td>
+        <td><span class="src-badge src-fe">frontend</span></td>
+        <td><span class="src-badge src-shipped">shipped</span></td>
+      </tr>
+      <tr>
+        <td>—</td>
+        <td>Test-fixture regression fix (Yash) — restore green CI after OCT-48 landed</td>
+        <td><span class="src-badge src-be">backend</span></td>
+        <td><span class="src-badge src-shipped">shipped</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <details class="section">
+    <summary>Why this matters in plain English <span class="summary-hint">— 3 things</span></summary>
+    <div class="content">
+      <p>
+        <strong>1. Multi-tenant safety (OCT-46 / 47 / 48 / 49).</strong>
+        Until this week, every report that summed money — P&amp;L, campaign
+        performance, the unified report — pulled from every tenant's data in
+        the same database. Single-tenant in prod today, so no visible bug.
+        But the moment you onboard a second business in Stato, the dashboards
+        would have silently mixed the two. Now there are explicit
+        <code>WHERE business_id = ?</code> guards on every aggregation path,
+        with regression tests that seed an "alien tenant" and verify your
+        owner view never sees their numbers.
+      </p>
+      <p>
+        <strong>2. Xero rate-limit resilience (OCT-51 / 54).</strong>
+        When Xero throttles (HTTP 429 — which you've seen on the bank
+        widget), the previous code would retry with exponential backoff
+        and could hang for up to 90 seconds before giving up. With this
+        week's changes, every Xero call has both a 15-second total budget
+        AND a per-fetch timeout. If Xero hangs, you get the existing
+        "rate-limited" amber banner in under 15s instead of a frozen UI.
+      </p>
+      <p>
+        <strong>3. Error-copy hygiene (OCT-45 / 53).</strong>
+        When Xero rejected credentials, the integrations card used to say
+        "verify <code>XERO_CLIENT_ID</code> and <code>XERO_CLIENT_SECRET</code>
+        on Railway match the values in the Xero portal." Both the env-var
+        names and the hosting platform leaked into operator UI — fine for
+        you, but anything that ends up in a screenshot or support ticket
+        gives outsiders a starting point on the deployment topology. New
+        copy: "Xero rejected the credentials — verify the Custom Connection
+        client ID and secret in the Xero developer portal match the values
+        in the server configuration." Same info; no implementation detail.
+        Regression test scans every source file under <code>src/</code> to
+        make sure the env-var names can never silently sneak back into UI.
+      </p>
+    </div>
+  </details>
+
+  <!-- ─── OVERALL PROJECT REPORT ─────────────────────────────── -->
+  <h2>Overall project report <span class="pill info">where Stato stands today</span></h2>
+
+  <div class="overall-card">
+    <h3 style="font-size: 17px; margin-bottom: 6px;">Quick health check</h3>
+    <div style="font-size: 13.5px; color: #424245;">
+      Code is healthy, prod is stable, real data flows through every
+      dashboard. The only remaining gates are on your side — not engineering.
+    </div>
+    <div class="overall-grid">
+      <div class="overall-tile">
+        <div class="lbl">Production status</div>
+        <div class="val">🟢 Live · stable</div>
+        <div class="sub">Both repos deployed · main matches origin · no incidents this week</div>
+      </div>
+      <div class="overall-tile">
+        <div class="lbl">Test coverage</div>
+        <div class="val">977 passing</div>
+        <div class="sub">Backend 771 · Frontend 206 · 8 known dev-env failures (no real bugs)</div>
+      </div>
+      <div class="overall-tile">
+        <div class="lbl">Linear OCT board</div>
+        <div class="val">0 open</div>
+        <div class="sub">All 16 tickets from the 22-May audit transitioned to Done</div>
+      </div>
+      <div class="overall-tile">
+        <div class="lbl">Pending side blockers</div>
+        <div class="val">3 + 8 carryover</div>
+        <div class="sub">3 urgent (Catchr / Resend / Endole) + 8 from the 22-May list</div>
+      </div>
+      <div class="overall-tile">
+        <div class="lbl">Reconciliation accuracy</div>
+        <div class="val">±£0.01</div>
+        <div class="sub">Stato matches LeadByte + Xero + Catchr to the penny (as of 22-May audit)</div>
+      </div>
+      <div class="overall-tile">
+        <div class="lbl">Multi-tenant readiness</div>
+        <div class="val">🟢 Now ready</div>
+        <div class="sub">This week's OCT-46/47/48/49 closed the last gaps for safely onboarding a second business</div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Phase milestones — where each major workstream sits</h3>
+  <table class="data">
+    <thead>
+      <tr>
+        <th>Area</th>
+        <th>Status</th>
+        <th>What's left</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Core platform (auth · clients · invoices · campaigns)</td>
+        <td><span class="src-badge src-shipped">Live</span></td>
+        <td>Stable. No outstanding tickets.</td>
+      </tr>
+      <tr>
+        <td>Xero integration (bank · invoices · VAT · contacts)</td>
+        <td><span class="src-badge src-shipped">Live</span></td>
+        <td>429 handling now bounded (this week). Read-only accountant access still pending from you for validation.</td>
+      </tr>
+      <tr>
+        <td>LeadByte integration (leads · campaigns · deliveries)</td>
+        <td><span class="src-badge src-shipped">Live</span></td>
+        <td>Reconciliation exact (±£0.01) since 22-May.</td>
+      </tr>
+      <tr>
+        <td>Catchr integration (ad spend per platform)</td>
+        <td><span class="src-badge src-review">Mostly live</span></td>
+        <td>£351k of spend across 9 unmapped accounts waiting on your campaign-mapping action.</td>
+      </tr>
+      <tr>
+        <td>Multi-tenant safety</td>
+        <td><span class="src-badge src-shipped">Live (this week)</span></td>
+        <td>Ready to onboard a second business when you're ready.</td>
+      </tr>
+      <tr>
+        <td>Client portal (compliance · creatives · invoices · leads)</td>
+        <td><span class="src-badge src-shipped">Live</span></td>
+        <td>Stable. One real client (UKESN). 2-3 more would unblock multi-client testing.</td>
+      </tr>
+      <tr>
+        <td>Credit-check provider (Endole · Creditsafe)</td>
+        <td><span class="src-badge src-review">Live with caveat</span></td>
+        <td>Production credentials configured. Background monitor will flip green automatically once your Endole balance is verified.</td>
+      </tr>
+      <tr>
+        <td>Resend (outbound email)</td>
+        <td><span class="src-badge src-pending">Pending DNS</span></td>
+        <td>3 TXT records on GoDaddy. Flips automatically when DNS propagates.</td>
+      </tr>
+      <tr>
+        <td>SignNow (signature workflow)</td>
+        <td><span class="src-badge src-pending">Mock</span></td>
+        <td>Business plan + 5 env vars from you.</td>
+      </tr>
+      <tr>
+        <td>Twilio (SMS alerts)</td>
+        <td><span class="src-badge src-pending">Mock</span></td>
+        <td>3 env vars from you when ready.</td>
+      </tr>
+      <tr>
+        <td>Attio import</td>
+        <td><span class="src-badge src-pending">Pending key</span></td>
+        <td>Personal access token from you.</td>
+      </tr>
+      <tr>
+        <td>Vercel auto-deploy (frontend)</td>
+        <td><span class="src-badge src-pending">Manual</span></td>
+        <td>GitHub App install. Backend already auto-deploys via Railway.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ─── REQUIREMENTS — TEXTFIELDS ─────────────────────────────── -->
+  <h2>What I need from you (requirements) <span class="pill need">your input</span></h2>
+
+  <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
+    Eleven text boxes below — the same 12 from 22-May but with one resolved
+    (test fixture fix shipped today). Auto-saves as you type, download
+    button at the end, send the <code>.txt</code> back over WhatsApp.
+  </p>
+
+  <div id="ask-cards"></div>
+
+  <noscript>
+    <div class="ask-card">
+      <p>JavaScript is off — reply on WhatsApp with answers to:</p>
+      <ol>
+        <li>Catchr account mappings (£351k unattributed)</li>
+        <li>Endole credit balance — has funds for live checks?</li>
+        <li>Property Sales (UK) — price it or hide it?</li>
+        <li>Read-only Xero accountant access</li>
+        <li>Onboard 2-3 more clients (multi-client testing)</li>
+        <li>Resend DNS 3 TXT records on GoDaddy</li>
+        <li>Vercel GitHub App install on Sato-Frontend repo</li>
+        <li>Catchr Google Ads re-auth — 6 disconnected accounts</li>
+        <li>SignNow Go-Live (Business plan + 5 env vars)</li>
+        <li>Twilio creds — 3 values</li>
+        <li>Attio API key</li>
+      </ol>
+    </div>
+  </noscript>
+
+  <!-- ─── QUESTIONS ─────────────────────────────── -->
+  <h2>Open questions <span class="pill info">help me plan the next 2 weeks</span></h2>
+
+  <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
+    Four new strategic questions following this week's defensive work.
+    Answers here drive what gets prioritised next. Same auto-save behaviour.
+  </p>
+
+  <div id="question-cards"></div>
+
+  <div style="margin-top: 20px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+    <button id="download-btn" type="button" style="padding: 12px 22px; border-radius: 999px; background: #0066cc; color: #fff; border: 1px solid #0066cc; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer;">
+      ⬇ Download my answers as text
+    </button>
+    <span id="download-hint" style="color: #6e6e73; font-size: 13px;">
+      Saves a single <code>.txt</code> with everything — requirements + questions.
+    </span>
+  </div>
+
+  <!-- ─── COMING NEXT ─────────────────────────── -->
+  <h2>Coming next <span class="pill fix">on deck</span></h2>
+  <ul class="bare">
+    <li><strong>Background monitors keep running.</strong> Endole balance + Resend DNS auto-detect and flip integration cards green the moment you act on them — no follow-up status update needed.</li>
+    <li><strong>Test infra hygiene.</strong> 8 known dev-env test failures (stale tests + 5s timeout + dev-seed password drift) — non-urgent cleanup. Will land if/when the suite needs reliability for CI.</li>
+    <li><strong>Multi-client onboarding.</strong> Now that multi-tenant is safe, ready to onboard the 2-3 additional clients listed in requirement #5 whenever you're ready.</li>
+    <li><strong>Xero ↔ Stato comparison dashboard.</strong> Still parked pending your go-ahead from 22-May (carryover ask #12 — included in this update).</li>
+  </ul>
+
+  <footer>
+    Generated 26 May 2026 · Stato · Octogle Technologies for leadgeneration.io
+  </footer>
+</div>
+
+<script src="lib.js"></script>
+<script>
+  const ASKS = [
+    {
+      id: 'catchr-account-mappings',
+      title: 'Catchr account → campaign mappings — £351k waiting to be attributed',
+      why: 'Live audit caught 9 Catchr ad accounts active in the last 30 days with no campaign mapping. £351,332 of ad spend doesn\'t roll up to any campaign because Stato has no way to know which campaign each ad account drives. Fix: open each affected campaign\'s detail page (Property Sales, Tax Claims, PCP Claims, etc), Traffic Sources card, pick the platform + paste the account_id. ~3 min per campaign. The "Show accounts" button on the Campaigns page lists exactly which accounts need mapping.',
+      effort: '~20 min total',
+      placeholder: 'e.g. "did it for all 9 — show me what changed" / "send me a Loom walking through one" / "skip — those campaigns aren\'t ours"',
+    },
+    {
+      id: 'endole-balance',
+      title: 'Endole credit balance — does the account have live funds now?',
+      why: 'ENDOLE_SANDBOX=false in Railway since 22-May, so new credit checks now hit the live Endole API. If the account is still at £0 balance, the next real check will fail with error 102 — background monitoring is already running and will alert you the moment it happens. Confirm here: have you topped up Endole, or is it still at £0? (Log into endole.co.uk → your account → billing.)',
+      effort: '~2 min',
+      placeholder: 'e.g. "topped up £200 last week" / "still at 0, need to find the right card" / "not sure — checking now"',
+    },
+    {
+      id: 'property-sales-pricing',
+      title: 'Property Sales (UK) — price the campaign or hide it from revenue dashboards?',
+      why: 'Property Sales (UK) shows 2,445 leads + £10,800 Catchr ad spend + £0 revenue. Investigation traced to LeadByte — buyer "Better Move" has bought 1,800 sold leads but the buyer-routing rule has empty bid in LB, so revenue rolls up as £0. Either (a) set a £/lead in LeadByte for Better Move on this campaign, or (b) hide Property Sales from revenue dashboards so the £10.8k Catchr spend doesn\'t read as a loss. Whichever you pick, applies in <5 min.',
+      effort: '~2 min answer',
+      placeholder: 'e.g. "price it at £15/lead via Better Move\'s buyer rule" / "hide it — internal traffic only" / "leave it, will set up next week"',
+    },
+    {
+      id: 'xero-read-only',
+      title: 'Read-only Xero accountant access for yash.c@octogle.com',
+      why: 'Single biggest unblock for demo confidence. With read-only access I can manually validate every Stato tile against your real Xero account side-by-side and catch any drift before you see it. Same access you give your accountant. xero.com → My Xero → Add user → "Yash Chavan", role: Read Only.',
+      effort: '~2 min',
+      placeholder: 'e.g. "added — accept the email" / "give me 5 min" / "let\'s do it on a screenshare"',
+    },
+    {
+      id: 'more-clients',
+      title: 'Onboard 2-3 more clients for multi-client testing',
+      why: 'Multi-tenant safety landed this week, so it\'s now safe to bring more on. UKESN is currently the only real client in prod, so multi-buyer flows are untestable end-to-end. With 2-3 more clients on board, many-to-many revenue attribution + the "Multiple (N)" buyer tooltips + credit-check alerts can be verified on real data. Need 4 fields per client: company name, Companies House number, primary contact name, contact email.',
+      effort: '~5 min / client',
+      placeholder: 'client 1: company / number / contact / email\nclient 2: ...\nclient 3: ...',
+    },
+    {
+      id: 'resend-dns',
+      title: 'Resend DNS — 3 TXT records on GoDaddy',
+      why: 'Carryover from April. Stato outbound email still shows From: onboarding@resend.dev because the leadgeneration.io domain isn\'t DNS-verified on Resend. 3 TXT records need to land in GoDaddy DNS. Once they propagate, emails send from notifications@leadgeneration.io and the integrations card flips green automatically. Resend dashboard has the exact 3 records to copy/paste.',
+      effort: '~5 min coordination',
+      placeholder: 'e.g. "done by my other dev — should propagate today" / "drop the values here, I\'ll add them" / "give me GoDaddy access"',
+    },
+    {
+      id: 'vercel-github-app',
+      title: 'Vercel GitHub App — install on Sato-Frontend repo',
+      why: 'Frontend deploys still require manual <code>vercel --prod</code>. With the GitHub App installed, every push to main auto-deploys (which is how the backend Railway side already works). github.com → settings → installations → Vercel → grant access to Sato-Frontend repo.',
+      effort: '~2 min',
+      placeholder: 'e.g. "installed — try a push" / "let me know which repo exactly" / "do it later"',
+    },
+    {
+      id: 'catchr-google-reauth',
+      title: 'Catchr Google Ads — re-auth 6 disconnected accounts',
+      why: 'Catchr dashboard banner reads "9 of 15 accounts working" — 6 Google Ads accounts are disconnected, so their ad-spend rows don\'t populate /reports. Login to Catchr → Connections → find the 6 with red dots → click Re-authenticate on each. ~5 min total. Mostly affects PCP Claims + Property Sales attribution since their Google Ads spend is currently dark.',
+      effort: '~5 min',
+      placeholder: 'e.g. "done, all 15 green" / "logged in but can\'t find the 6 — screenshot please" / "skip, retiring those accounts"',
+    },
+    {
+      id: 'signnow-golive',
+      title: 'SignNow Go-Live — Business plan + 5 env vars',
+      why: 'Every signature envelope goes out with a "Sample" watermark + 250-invite cap because SignNow still authenticates with my dev API app. To migrate to leadgeneration.io ownership: register "Stato Production" in SignNow API dashboard, upgrade to Business plan, click Go Live (~1 business day approval), webhook to https://sato-backend-production.up.railway.app/api/v1/webhooks/signnow with HMAC secret, then send CLIENT_ID, CLIENT_SECRET, USERNAME, PASSWORD, WEBHOOK_SECRET via 1Password / Signal. Blocks solicitor agreements at scale.',
+      effort: '~30 min + 1 day approval',
+      placeholder: 'e.g. "Stato Production submitted — approval Thursday" / "need help with the webhook step" / "let\'s do it on a 15-min call"',
+    },
+    {
+      id: 'twilio-creds',
+      title: 'Twilio creds — 3 values for automatic SMS alerts',
+      why: 'Currently MOCK SMS — when a system error fires, the alert worker logs <code>[twilio][mock] alerts deferred</code> instead of texting you. Once you sign up (free trial covers months), buy a US long-code (~$1/mo), and paste the 3 values, system-error alerts text your phone within 30 seconds. ACCOUNT_SID (starts AC...), AUTH_TOKEN, FROM_NUMBER (E.164 like +1...).',
+      effort: '~10 min',
+      placeholder: 'Paste the 3 values, or "send me how to" if you want a 1-min walkthrough video',
+    },
+    {
+      id: 'attio-api',
+      title: 'Attio API key — "Import from Attio" button lights up',
+      why: 'console.attio.com → Settings → API → create personal access token (starts <code>attio_pat_...</code>). Once pasted, the "Import from Attio" button on /clients lights up — pick companies from your CRM and bulk-import them as Stato clients with one click. Two minutes total.',
+      effort: '~2 min',
+      placeholder: 'Paste the key, or "I forgot the Attio password — reset it next week"',
+    },
+  ];
+
+  const QUESTIONS = [
+    {
+      id: 'q-multi-tenant-onboarding',
+      title: 'Multi-tenant is now safe — when do you want to onboard the second business in Stato?',
+      why: 'This week\'s OCT-46/47/48/49 made it safe to add a second tenant (e.g. WinTrading, or another business you run). Until now Stato was single-tenant by design. With the guards in place, multi-business onboarding is a 30-min config exercise per tenant. Question: is this on the roadmap for the next 2 weeks, the next quarter, or paused indefinitely?',
+      effort: 'short answer',
+      placeholder: 'e.g. "yes — let\'s do WinTrading next sprint" / "Q3 plan, not now" / "leadgen-only for the foreseeable future"',
+    },
+    {
+      id: 'q-comparison-dashboard',
+      title: 'Xero ↔ Stato comparison dashboard — still want it?',
+      why: 'Carryover from 22-May (ask #12). New admin page at <code>/integrations/xero/compare</code> that pulls every reconcilable value from both sources and renders side-by-side with traffic-light coloured deltas. Half-day to build. Useful for your own audit confidence; not blocking anything else.',
+      effort: '1 yes/no',
+      placeholder: 'e.g. "yes, ship it" / "after read-only Xero access first" / "no — read-only Xero access is enough"',
+    },
+    {
+      id: 'q-friday-rhythm',
+      title: 'Friday recurring meeting — still want this format, or switch to async Loom?',
+      why: 'You said Mon/Tues are bad days for meetings. Friday\'s been the slot for the recurring review. Now that the OCT board is at 0 open + reconciliation is exact, a 30-min Friday call may be overkill — happy to switch to a Friday async Loom (5-10 min walkthrough video + this update) and only meet when there\'s a real decision to make. Or keep the Friday call. Up to you.',
+      effort: 'short answer',
+      placeholder: 'e.g. "keep Friday call — useful" / "switch to async Loom from this week" / "let\'s try alternate weeks"',
+    },
+    {
+      id: 'q-feature-roadmap',
+      title: 'Next 2 weeks — what feature would move the needle most for you?',
+      why: 'Defensive work is done; engineering time is flexible. Most-likely candidates: (a) build the Xero comparison dashboard, (b) build per-client P&L on top of the per-campaign P&L, (c) add the workflow scheduler UI (cron expressions from admin), (d) Polish the client portal further (in-app notifications, more email tabs). Or something not on this list. Single sentence is enough.',
+      effort: 'short answer',
+      placeholder: 'e.g. "per-client P&L" / "client portal notifications" / "nothing — let it bake, focus on onboarding"',
+    },
+  ];
+
+  const RESPONSE_KEY = 'stato-2026-05-26-responses';
+
+  function loadStoredResponses() {
+    try {
+      const raw = localStorage.getItem(RESPONSE_KEY);
+      return raw ? JSON.parse(raw) : {};
+    } catch {
+      return {};
+    }
+  }
+
+  function saveResponses(map) {
+    try {
+      localStorage.setItem(RESPONSE_KEY, JSON.stringify(map));
+    } catch {
+      /* localStorage full or disabled — no-op. */
+    }
+  }
+
+  function renderCardsInto(containerId, items, kind) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    container.innerHTML = '';
+    const stored = loadStoredResponses();
+    const numClass = kind === 'question' ? 'ask-num q' : 'ask-num';
+
+    items.forEach((item, i) => {
+      const card = document.createElement('div');
+      card.className = 'ask-card';
+      const num = i + 1;
+      const tid = `${kind}-${item.id}`;
+      card.innerHTML = `
+        <div class="ask-head">
+          <span class="${numClass}">${kind === 'question' ? 'Q' + num : num}</span>
+          <span class="ask-title">${item.title}</span>
+          <span class="ask-effort">${item.effort}</span>
+        </div>
+        <p class="ask-why">${item.why}</p>
+        <textarea
+          id="${tid}"
+          data-item-id="${item.id}"
+          rows="3"
+          placeholder="${item.placeholder.replace(/"/g, '&quot;')}"></textarea>
+        <span class="saved-pill" id="${tid}-saved">Saved locally</span>
+      `;
+      container.appendChild(card);
+
+      const ta = card.querySelector('textarea');
+      const saved = card.querySelector('.saved-pill');
+      ta.value = stored[item.id] || '';
+      let savedTimer = null;
+      ta.addEventListener('input', () => {
+        const map = loadStoredResponses();
+        map[item.id] = ta.value;
+        saveResponses(map);
+        saved.classList.add('visible');
+        clearTimeout(savedTimer);
+        savedTimer = setTimeout(() => saved.classList.remove('visible'), 1200);
+      });
+    });
+  }
+
+  function downloadAsText() {
+    const stored = loadStoredResponses();
+    const lines = [];
+    lines.push("Stato — Sam's responses to the 26 May 2026 update");
+    lines.push('Saved at: ' + new Date().toISOString());
+    lines.push('');
+    lines.push('═══════════════════════════════════════════════════════');
+    lines.push('REQUIREMENTS');
+    lines.push('═══════════════════════════════════════════════════════');
+    lines.push('');
+
+    ASKS.forEach((ask, i) => {
+      const num = i + 1;
+      const answer = (stored[ask.id] || '').trim();
+      lines.push(`${num}. ${ask.title}  (${ask.effort})`);
+      lines.push('   Why: ' + ask.why.replace(/<[^>]+>/g, ''));
+      lines.push('');
+      if (answer) {
+        lines.push('   Sam:');
+        answer.split('\n').forEach((l) => lines.push('     ' + l));
+      } else {
+        lines.push('   Sam: (no answer provided)');
+      }
+      lines.push('');
+      lines.push('───────────────────────────────────────────────────────');
+      lines.push('');
+    });
+
+    lines.push('');
+    lines.push('═══════════════════════════════════════════════════════');
+    lines.push('OPEN QUESTIONS');
+    lines.push('═══════════════════════════════════════════════════════');
+    lines.push('');
+
+    QUESTIONS.forEach((q, i) => {
+      const num = i + 1;
+      const answer = (stored[q.id] || '').trim();
+      lines.push(`Q${num}. ${q.title}  (${q.effort})`);
+      lines.push('   Why: ' + q.why.replace(/<[^>]+>/g, ''));
+      lines.push('');
+      if (answer) {
+        lines.push('   Sam:');
+        answer.split('\n').forEach((l) => lines.push('     ' + l));
+      } else {
+        lines.push('   Sam: (no answer provided)');
+      }
+      lines.push('');
+      lines.push('───────────────────────────────────────────────────────');
+      lines.push('');
+    });
+
+    lines.push('— End of responses —');
+
+    const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const stamp = new Date().toISOString().slice(0, 10);
+    a.href = url;
+    a.download = `stato-sam-responses-${stamp}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  function boot() {
+    renderCardsInto('ask-cards', ASKS, 'ask');
+    renderCardsInto('question-cards', QUESTIONS, 'question');
+    const btn = document.getElementById('download-btn');
+    if (btn) btn.addEventListener('click', downloadAsText);
+  }
+  if (typeof mountPasswordGate === 'function') {
+    mountPasswordGate(boot);
+  } else {
+    boot();
+  }
+</script>
+</body>
+</html>

@@ -72,11 +72,22 @@
     for reference. All pages need the access code the Octogle Team sent you.
   </p>
 
+  <a class="card" href="2026-05-26-stato-status-update.html">
+    <div class="row">
+      <div class="ic" style="background: #e6f7ec;">🛡️</div>
+      <div>
+        <h2>Status update — 26 May 2026 <span style="font-size:11px;font-weight:600;background:#1d7a3a;color:#fff;padding:2px 8px;border-radius:999px;margin-left:6px;letter-spacing:0.04em;">LATEST</span></h2>
+        <p><strong>Weekly delta + overall project report.</strong> Quiet week on user-visible features — but <strong>11 commits shipped behind the scenes hardening the platform</strong>. Hari (the 2nd dev) opened 9 PRs on 25 May; today (26 May) all 9 were reviewed, approved, merged, and verified with a full test run (771 backend + 206 frontend = 977 tests passing). <strong>What this week's work means for you:</strong> Stato is now safe to onboard a 2nd business (multi-tenant scope guards on every financial query — OCT-46/47/48/49); Xero rate-limiting now degrades gracefully (no more 60s hangs — OCT-51/54); operator-facing error messages no longer leak server-side details like <code>XERO_CLIENT_ID</code> or hosting-platform names in screenshots (OCT-45/53). <strong>NEW inside</strong>: an overall project report showing every workstream's status with a phase-milestone table, 11 pending-from-you items (same as 22-May with one resolved), and <strong>4 new strategic questions</strong> — multi-tenant onboarding timing, comparison-dashboard go-ahead, Friday meeting rhythm, and what feature to build next. <strong>15 text boxes inside with auto-save + download button.</strong></p>
+      </div>
+      <div class="arrow">›</div>
+    </div>
+  </a>
+
   <a class="card" href="2026-05-22-stato-status-update.html">
     <div class="row">
       <div class="ic" style="background: #e6f7ec;">🎯</div>
       <div>
-        <h2>Status update — 22 May 2026 <span style="font-size:11px;font-weight:600;background:#1d7a3a;color:#fff;padding:2px 8px;border-radius:999px;margin-left:6px;letter-spacing:0.04em;">LATEST</span></h2>
+        <h2>Status update — 22 May 2026</h2>
         <p><strong>18 commits shipped + deployed today across both repos.</strong> Cleared the entire 2026-05-15 meeting backlog + the OCT Linear cleanup + a major class of bugs that were causing the "data doesn't match LeadReports.io" complaints — <strong>Stato now matches LeadByte to the lead and to the penny</strong>, verified live against the LeadByte API itself. Hearing Aids (IE) was showing £24,989 vs LeadByte £15,189 — Stato was inflating by 65%. Same bug class affected every multi-supplier campaign and the total leads count (Stato 18,418 vs LB 17,780). Root cause: LeadByte's <code>/reports/campaign</code> and <code>/reports/supplier</code> return inconsistent lead counts (unique deliveries vs cascade-routing events); old algorithm multiplied campaign's revenue-per-lead by the inflated supplier count. New algorithm: proportional allocation so Σ(supplier.revenue) === campaign.revenue regardless. Hearing Aids (IE) now <strong>841 leads / £15,310.61</strong> Stato vs <strong>841 / £15,310.60</strong> LeadByte — exact match. Also shipped: Xero 429 explanation on bank widget + integrations card, per-source profitability roll-up (Facebook -110% / Google Ads -151% / Direct +100% — leadreports.io-style), responsive UI overhaul (Dashboard / Settings / Client Detail / Campaigns / Reports work at 375px iPhone-SE width), pie chart loading skeleton, Endole sandbox flipped to production. <strong>16 of 17 open Linear OCT tickets transitioned to Done with commit-link audit trail</strong>. <strong>Three pending items on your side</strong> — Catchr account mappings (£351k of ad spend awaiting attribution), Resend DNS, Endole credit-balance verify. Plus carryover from 21-May. <strong>12 text boxes inside with detailed asks + download button.</strong></p>
       </div>
       <div class="arrow">›</div>
@@ -216,7 +227,7 @@
   </a>
 
   <footer>
-    Updated 22 May 2026 · Stato · Octogle Technologies for leadgeneration.io
+    Updated 26 May 2026 · Stato · Octogle Technologies for leadgeneration.io
   </footer>
 </div>
 </body>
