@@ -72,11 +72,22 @@
     for reference. All pages need the access code the Octogle Team sent you.
   </p>
 
+  <a class="card" href="2026-05-27-stato-status-update-post-meeting.html">
+    <div class="row">
+      <div class="ic" style="background: #dcfce7;">✅</div>
+      <div>
+        <h2>Status update — 27 May 2026 (post-4:30 PM meeting) <span style="font-size:11px;font-weight:600;background:#16a34a;color:#fff;padding:2px 8px;border-radius:999px;margin-left:6px;letter-spacing:0.04em;">LATEST · ALL DONE</span></h2>
+        <p><strong>Everything from the 4:30 PM meeting is shipped to prod — including real Ad Spend data flowing on Kobe's portal (Facebook £6,868.36 + Google £5,646.30 = £12,514.66 May MTD).</strong> Live in the client portal under Kobe (client_admin self-serve, not Sam): <strong>multi-user access</strong> (add + remove portal users from <code>/portal/users</code>), <strong>per-user tab permissions (OCT-61)</strong> — exactly the model you described in the meeting ("create a user → select which tabs they see → press create"), <strong>manual override for pending agreement</strong> (Kobe uploads the signed PDF himself; Pending flips to Signed automatically), <strong>compliance → creatives approval flow</strong> (pending stays in Compliance, approved moves into Creatives as dated folders e.g. "Wednesday, 27 May 2026 · 2 assets"), <strong>Ad Spend dedicated tab</strong> at <code>/portal/ad-spend</code> with real data (Hari PR #29 promoted to tab, PR #22 rewired attribution via traffic_sources; managed clients only — Benson reclassified <code>ppl → managed</code>; UKESN remains PPL per Sam's spec). Bonus fixes on top: routing bug that landed client_admin on a blank admin page is fixed, internal staff SOS button removed from client portal, header polish (initials avatar + divider, "Ad Spend" no-wrap). <strong>3 screenshots embedded</strong> (portal dashboard, agreement self-upload, Ad Spend live data showing £12,514.66 breakdown). <strong>9-step testing flow inside</strong> + suggested group message. Please walk it as Kobe and reply in the group.</p>
+      </div>
+      <div class="arrow">›</div>
+    </div>
+  </a>
+
   <a class="card" href="2026-05-27-stato-status-update.html">
     <div class="row">
       <div class="ic" style="background: #e6f7ec;">🎬</div>
       <div>
-        <h2>Status update — 27 May 2026 <span style="font-size:11px;font-weight:600;background:#1d7a3a;color:#fff;padding:2px 8px;border-radius:999px;margin-left:6px;letter-spacing:0.04em;">LATEST · evening update</span></h2>
+        <h2>Status update — 27 May 2026 (morning · jam-video response)</h2>
         <p><strong>Jam-video response + 8 follow-up fixes shipped to prod, Benson portal verified live.</strong> Morning closed all 12 jam-video items (3 code gaps: optimistic untick / saved-categories / creator-only delete; AI generate enabled by your Railway env var). Afternoon you flagged eight follow-ups — <strong>all eight addressed in 7 commits</strong>: the subtask tick race + the matching drag-and-drop race that made you "do it twice" (both onSettled→onSuccess), Actions card → single status dropdown, On Hold tile on the dashboard (+ a silent camelCase/snake_case bug that had been blanking In Progress + Completed Today since launch), SOS Page column now a clickable link, and the <strong>file-tree subtask folder view</strong> — each row in the list view has a ▸ chevron that expands to show its subtasks indented underneath with inline check toggles. <strong>Benson Goldstein portal verified live</strong> with Coby's password — 1 active campaign, 215 leads this month, real PCP Claim data. <strong>Option B promoted to recommended demo path</strong>: Coby logs in himself today, sees his own portal with real data, while you screen-share admin alongside. <strong>14 screenshots embedded</strong> inside (admin dashboard, list view, board, task detail, AI prompt + populated form, SOS queue with clickable links, Benson task w/ 7 subtasks, Benson + UKESN client portal proofs, On Hold board proof, folder view expanded). <strong>SOS WhatsApp sender</strong> still pending — needs WhatsApp Business API or Twilio creds, account-setup not code. <strong>15 text boxes inside with auto-save + download button.</strong></p>
       </div>
       <div class="arrow">›</div>

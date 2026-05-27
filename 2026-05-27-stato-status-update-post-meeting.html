@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Stato — Status Update · 27 May (post-4:30 PM meeting)</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Arial, sans-serif;
+    background: #fafafa; color: #1d1d1f;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.55;
+  }
+  .wrap { max-width: 1000px; margin: 0 auto; padding: 56px 22px; }
+  .back {
+    display: inline-block; color: #0066cc; text-decoration: none;
+    font-size: 14px; margin-bottom: 24px;
+  }
+  .back:hover { text-decoration: underline; }
+  h1 {
+    font-size: 32px; font-weight: 700; letter-spacing: -0.02em;
+    margin: 0 0 6px 0;
+  }
+  .meta { color: #6e6e73; font-size: 14px; margin: 0 0 28px 0; }
+  h2 {
+    font-size: 21px; font-weight: 700; letter-spacing: -0.01em;
+    margin: 44px 0 14px 0;
+  }
+  h3 { font-size: 16px; font-weight: 600; margin: 22px 0 8px 0; }
+  code {
+    font-family: 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 12px;
+    background: #f0f0f3; padding: 1px 5px; border-radius: 4px;
+  }
+
+  .priority-banner {
+    background: linear-gradient(135deg, #fff5f5 0%, #ffe9e9 100%);
+    border: 1px solid #f5b8b8; border-radius: 14px;
+    padding: 18px 22px; margin: 0 0 22px 0;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .priority-banner .pill {
+    background: #a52a2a; color: #fff;
+    font-size: 11px; font-weight: 700;
+    padding: 4px 10px; border-radius: 999px;
+    letter-spacing: 0.05em; text-transform: uppercase;
+    flex-shrink: 0;
+  }
+  .priority-banner p { margin: 0; font-size: 14.5px; color: #5a2a2a; }
+
+  .summary {
+    background: #fff; border: 1px solid #e8e8ed; border-radius: 14px;
+    padding: 22px 24px; margin: 0 0 22px 0;
+  }
+  .summary p { margin: 0 0 10px 0; font-size: 15px; }
+  .summary p:last-child { margin: 0; }
+  .summary strong { color: #1d7a3a; }
+  .summary .pending strong { color: #a04a00; }
+
+  table.data {
+    width: 100%; border-collapse: collapse; margin: 8px 0 4px 0;
+    font-size: 13.5px; background: #fff;
+    border: 1px solid #e8e8ed; border-radius: 10px;
+    overflow: hidden;
+  }
+  table.data th, table.data td {
+    text-align: left; padding: 11px 14px;
+    border-bottom: 1px solid #f0f0f3;
+    vertical-align: top;
+  }
+  table.data th {
+    font-weight: 600; color: #6e6e73; font-size: 11px;
+    text-transform: uppercase; letter-spacing: 0.04em;
+    background: #fafafa;
+    border-bottom: 1px solid #e8e8ed;
+  }
+  table.data tr:last-child td { border-bottom: none; }
+  .badge {
+    display: inline-block;
+    font-size: 11px; font-weight: 600;
+    padding: 2px 8px; border-radius: 999px;
+    white-space: nowrap;
+  }
+  .badge.done    { background: #e6f7ec; color: #1d7a3a; }
+  .badge.pending { background: #fff3e0; color: #a04a00; }
+  .badge.hari    { background: #f0e6ff; color: #5a2999; }
+
+  .ad-spend-card {
+    background: linear-gradient(135deg, #fff8e6 0%, #fff3d0 100%);
+    border: 1px solid #f5d68a; border-radius: 14px;
+    padding: 18px 22px; margin: 18px 0;
+  }
+  .ad-spend-card h3 { margin-top: 0; color: #8a6500; }
+  .ad-spend-card p { margin: 6px 0; font-size: 14px; color: #5a4400; }
+
+  .shot-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+    margin: 18px 0;
+  }
+  @media (max-width: 900px) { .shot-grid { grid-template-columns: 1fr; } }
+  .shot {
+    background: #fff; border: 1px solid #e8e8ed; border-radius: 12px;
+    overflow: hidden;
+  }
+  .shot img {
+    width: 100%; height: auto; display: block;
+    border-bottom: 1px solid #f0f0f3;
+    background: #fafafa;
+  }
+  .shot .caption {
+    padding: 10px 14px; font-size: 13px; color: #424245;
+  }
+  .shot .caption strong { color: #1d1d1f; }
+
+  .ask-box {
+    background: linear-gradient(135deg, #f0f7ff 0%, #e8f0fe 100%);
+    border: 1px solid #c9dffb; border-radius: 14px;
+    padding: 22px 24px; margin: 22px 0;
+  }
+  .ask-box h3 { margin-top: 0; color: #0042a3; }
+  .ask-box p { margin: 8px 0; font-size: 14.5px; color: #1d1d1f; }
+  .ask-box ul { margin: 8px 0 0 0; padding-left: 20px; font-size: 14px; }
+  .ask-box li { margin: 4px 0; }
+
+  footer {
+    margin-top: 50px; padding-top: 18px;
+    border-top: 1px solid #e8e8ed;
+    color: #86868b; font-size: 12px; text-align: center;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="index.html">← Back to all reports</a>
+
+  <h1>Stato — Status update · 27 May 2026 (post 4:30 PM meeting)</h1>
+  <p class="meta">Everything from the 4:30 PM meeting shipped to production · Ad Spend dedicated tab live with real data (Hari PR #29 + PR #22) · nothing pending</p>
+
+  <div class="priority-banner" style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-color: #86efac;">
+    <span class="pill" style="background: #16a34a;">All done</span>
+    <p style="color: #14532d;">Every item from the 4:30 PM meeting is now live in production — including Ad Spend with real Facebook + Google data flowing on Kobe's portal. Please walk the testing flow below and reply in the group.</p>
+  </div>
+
+  <div class="summary">
+    <p><strong>All UI + data from the 4:30 PM meeting is shipped to production.</strong> Multi-user access, per-user tab permissions, agreement self-upload, compliance → creatives approval flow, manual override for pending agreement — all live in the client portal under Kobe (client_admin self-serve).</p>
+    <p><strong>Ad Spend is now its own dedicated nav tab</strong> at <a href="https://sato-frontend.vercel.app/portal/ad-spend" style="color:#0066cc;">/portal/ad-spend</a> (Hari's <a href="https://github.com/Leadgenerationio/Sato-Frontend/pull/29" style="color:#0066cc;">PR #29</a>) — visible to managed clients only (Benson is managed; PPL clients hidden, confirmed live with UKESN's Jamie).</p>
+    <p><strong style="color:#1d7a3a;">Real data is now flowing</strong> after Hari's <a href="https://github.com/Leadgenerationio/Sato-Backend/pull/22" style="color:#0066cc;">BE PR #22</a> rewired attribution through <code>traffic_sources</code> instead of relying on <code>ad_spend.client_id</code>. Verified live on Kobe's portal just now: <strong>Facebook £6,868.36 + Google £5,646.30 = £12,514.66 total for May (MTD)</strong>.</p>
+    <p><strong>Action needed from you:</strong> log into the Benson portal as Kobe, walk the testing steps below, and reply in the group.</p>
+  </div>
+
+  <h2>What shipped after the 4:30 PM meeting</h2>
+  <table class="data">
+    <thead>
+      <tr>
+        <th style="width: 32%;">Feature</th>
+        <th>Where in client portal</th>
+        <th style="width: 18%;">Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Multi-user access</strong> (client_admin self-serve, not Sam)</td>
+        <td><code>/portal/users</code> · client_admin sees "Add user" button · creates portal logins for own staff</td>
+        <td><span class="badge done">Live</span></td>
+      </tr>
+      <tr>
+        <td><strong>Remove portal user</strong></td>
+        <td>Trash icon on each row · confirm dialog · row vanishes instantly (optimistic UX)</td>
+        <td><span class="badge done">Live</span></td>
+      </tr>
+      <tr>
+        <td><strong>Per-user tab permissions</strong> (OCT-61 — Sam's "select what they can see")</td>
+        <td>Add-user dialog: tab toggles · Permissions button on each row to edit later</td>
+        <td><span class="badge done">Live</span></td>
+      </tr>
+      <tr>
+        <td><strong>Manual override "Pending agreement"</strong></td>
+        <td><code>/portal/agreement</code> · amber "Already signed elsewhere?" upload box (client_admin only) · auto-flips Pending → Signed</td>
+        <td><span class="badge done">Live</span></td>
+      </tr>
+      <tr>
+        <td><strong>Compliance → Creatives flow</strong></td>
+        <td>Compliance shows pending only · Creatives shows approved as dated folders ("Wednesday, 27 May 2026 · 2 assets")</td>
+        <td><span class="badge done">Live</span></td>
+      </tr>
+      <tr>
+        <td><strong>Routing fix</strong> for client_admin (was landing on blank page)</td>
+        <td>Login now sends client_admin to <code>/portal</code>, not <code>/</code> · no more 403 cascade</td>
+        <td><span class="badge done">Live</span></td>
+      </tr>
+      <tr>
+        <td><strong>Removed staff SOS button</strong> from client portal</td>
+        <td>SOS pings Sam from any signed-in user — it shouldn't be visible to clients</td>
+        <td><span class="badge done">Live</span></td>
+      </tr>
+      <tr>
+        <td><strong>Header polish</strong> (initials avatar + divider before username)</td>
+        <td>Top-right of every portal page · "CB Coby Benson" no longer collides with the active nav tab</td>
+        <td><span class="badge done">Live</span></td>
+      </tr>
+      <tr>
+        <td><strong>Benson reclassified <code>ppl</code> → <code>managed</code></strong></td>
+        <td>Unlocks the Ad Spend tab in Kobe's nav · "Managed" badge now next to "Benson Goldstein Ltd"</td>
+        <td><span class="badge done">Live</span></td>
+      </tr>
+      <tr>
+        <td><strong>Ad Spend dedicated tab</strong> (Hari PR #29)</td>
+        <td>New nav item <code>/portal/ad-spend</code> · per-platform spend + per-currency totals · managed clients only · empty / "not on your plan" states wired</td>
+        <td><span class="badge done">Live</span></td>
+      </tr>
+      <tr>
+        <td><strong>Ad Spend real data live for Benson</strong> (Hari BE PR #22)</td>
+        <td>Attribution rewired via <code>traffic_sources</code> instead of <code>ad_spend.client_id</code>. Kobe's tab now shows <strong>Facebook £6,868.36 + Google £5,646.30 = £12,514.66</strong> for May MTD.</td>
+        <td><span class="badge done">Live</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="ad-spend-card" style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-color: #86efac;">
+    <h3 style="color: #14532d;">Ad Spend — now showing real data ✓</h3>
+    <p style="color: #14532d;"><strong>Where:</strong> Own nav tab between <em>Compliance</em> and <em>Creatives</em> — direct link <a href="https://sato-frontend.vercel.app/portal/ad-spend" style="color:#15803d; font-weight:600;">/portal/ad-spend</a>. Managed clients only (PPL clients never see the tab; confirmed live on UKESN). Dashboard card removed in PR #29 so there's only one place to look.</p>
+    <p style="color: #14532d;"><strong>What broke / how it got fixed:</strong> The first cut filtered <code>ad_spend</code> by <code>client_id</code> — every row had <code>NULL</code> there (the ingestion pipeline doesn't tag client at write time). Hari's <a href="https://github.com/Leadgenerationio/Sato-Backend/pull/22" style="color:#15803d; font-weight:600;">BE PR #22</a> rewired the lookup to go through <code>traffic_sources.account_id → client_id</code> instead, which is the same path the agency-side <code>getPnlSummary</code> already uses for P&amp;L. <strong>No data migration was needed</strong> — just the query path change.</p>
+    <p style="color: #14532d;"><strong>Live numbers right now (verified just before this update):</strong> Benson MTD = <strong>£12,514.66</strong> total — Facebook <strong>£6,868.36</strong> + Google <strong>£5,646.30</strong>. Numbers update automatically as Catchr ingestion runs daily.</p>
+  </div>
+
+  <h2>Screenshots (verified live in incognito as Kobe)</h2>
+  <div class="shot-grid">
+    <div class="shot">
+      <img src="screenshots/01-portal-dashboard.png" alt="Portal dashboard after the routing fix" />
+      <div class="caption">
+        <strong>Portal dashboard</strong> — Coby Benson logged in, lands on <code>/portal</code> (not blank), Users tab visible (client_admin only), no SOS button, header avatar + divider.
+      </div>
+    </div>
+    <div class="shot">
+      <img src="screenshots/02-agreement-self-upload.png" alt="Agreement self-upload (client_admin)" />
+      <div class="caption">
+        <strong>Agreement self-upload</strong> — <code>/portal/agreement</code> shows the amber "Already signed your agreement elsewhere?" box. Kobe uploads the signed PDF themselves; Pending flips to Signed automatically.
+      </div>
+    </div>
+    <div class="shot">
+      <img src="screenshots/05-ad-spend-live-data.png" alt="Ad Spend tab showing real data after Hari PR #22" />
+      <div class="caption">
+        <strong>Ad Spend — live data on Kobe's portal</strong> — Facebook £6,868.36 + Google £5,646.30 = <strong>£12,514.66 May MTD</strong> after Hari's BE PR #22 (attribution via traffic_sources). Tab sits between Compliance &amp; Creatives in the nav.
+      </div>
+    </div>
+  </div>
+
+  <h2>Testing flow — please walk this and reply in the group</h2>
+  <p style="color: #424245; font-size: 14px; margin: 8px 0 14px 0;">Use an incognito window so the deployed bundle isn't masked by an old disk cache. Sign in as Kobe (<code>coby@bensongoldstein.com</code>).</p>
+
+  <table class="data">
+    <thead>
+      <tr>
+        <th style="width: 4%;">#</th>
+        <th style="width: 28%;">Step</th>
+        <th>What you should see</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>Open <code>sato-frontend.vercel.app/login</code> in incognito and sign in as Kobe</td>
+        <td>Lands on <code>/portal</code> — title "Benson Goldstein Ltd" with a <strong>"Managed"</strong> badge. Nav has 9 items including <strong>Ad Spend</strong> and <strong>Users</strong>.</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>Click <strong>Ad Spend</strong> tab</td>
+        <td>Lands on <code>/portal/ad-spend</code>. Heading "Ad Spend", subtitle "By platform · this month". For now: empty state "No ad spend this month" (data is Hari's piece). No crash.</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td>Click <strong>Compliance</strong> → review the pending PCP creative → click <strong>Approve</strong></td>
+        <td>Toast confirms. Switch to <strong>Creatives</strong> tab — the approved asset appears in a dated folder e.g. "Wednesday, 27 May 2026 · 3 assets".</td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td>Click <strong>Agreement</strong> tab</td>
+        <td>Amber box <strong>"Already signed your agreement elsewhere?"</strong> is visible with an Upload signed agreement button. (Optional: upload any PDF — agreement flips to Signed, dashboard banner clears.)</td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td>Click <strong>Users</strong> tab → <strong>Add user</strong></td>
+        <td>Dialog opens with Name / Email / Initial password / Make admin / <strong>"Tabs they can see"</strong> toggle grid (5 toggles). Turn a couple OFF, leave Make admin OFF, press Add user. Toast: "Portal user added".</td>
+      </tr>
+      <tr>
+        <td>6</td>
+        <td>On the same row, click the <strong>Trash</strong> icon → confirm</td>
+        <td>Row disappears immediately, toast "Portal user removed — &lt;email&gt;".</td>
+      </tr>
+      <tr>
+        <td>7</td>
+        <td>Add a second user (any name/email), then click <strong>"Permissions"</strong> on their row</td>
+        <td>Edit dialog opens pre-filled with their current tabs. Toggle a couple, Save → toast "Permissions updated".</td>
+      </tr>
+      <tr>
+        <td>8</td>
+        <td>Sign out → sign back in as that limited user</td>
+        <td>Nav shows fewer tabs (only the ones you allowed) plus Dashboard + Account. Direct URL to a hidden tab still loads but the link isn't in the nav.</td>
+      </tr>
+      <tr>
+        <td>9</td>
+        <td>Sign back in as Kobe</td>
+        <td>Top-right shows <strong>CB Coby Benson</strong> with avatar circle + vertical divider · NO floating red SOS button in any portal page.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="ask-box">
+    <h3>Please check the following and reply in the group</h3>
+    <p>You said in the 4:30 meeting that the portal had to be live today with these features. Everything's deployed — confirm each piece works for you:</p>
+    <ul>
+      <li><strong>Multi-user access:</strong> Kobe adds + removes portal users himself via <code>/portal/users</code> (no need to involve us).</li>
+      <li><strong>Permissions:</strong> When Kobe adds a user, he can pick which tabs they see; he can also edit permissions on existing users via the "Permissions" button.</li>
+      <li><strong>Pending Agreement override:</strong> The "Action needed" alert can be cleared by Kobe uploading the signed PDF on <code>/portal/agreement</code>.</li>
+      <li><strong>Compliance → Creatives:</strong> Pending creatives appear under Compliance; approved ones move into Creatives in dated folders.</li>
+      <li><strong>Ad Spend:</strong> Own nav tab at <code>/portal/ad-spend</code> showing real per-platform spend — Benson MTD <strong>£12,514.66</strong> (Facebook + Google). Managed clients only.</li>
+    </ul>
+    <p style="margin-top:14px;"><strong>Suggested message you can drop in the group:</strong></p>
+    <p style="background:#fff; border:1px solid #d8e7fb; border-radius:10px; padding:12px 14px; font-size:14px; color:#1d1d1f; margin-top:6px;">
+      "All features from the 4:30 meeting are live in the portal — multi-user access, per-user tab permissions, pending-agreement self-upload, compliance → creatives flow, and Ad Spend (showing real £12.5k MTD for Benson). Please log in as Kobe and confirm everything works on your side."
+    </p>
+  </div>
+
+  <h2>Deploy state right now</h2>
+  <table class="data">
+    <thead>
+      <tr><th>Layer</th><th>SHA / URL</th><th>Status</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Backend</td>
+        <td><code>f1bf293</code> (includes Hari PR #22 — ad-spend attribution via traffic_sources) on <code>sato-backend-production.up.railway.app</code></td>
+        <td><span class="badge done">/health 200</span></td>
+      </tr>
+      <tr>
+        <td>Frontend</td>
+        <td><code>8bdcc5a</code> (includes Hari PR #29 — Ad Spend tab + nav whitespace fix) aliased to <code>sato-frontend.vercel.app</code> (deploy <code>k658t4nht</code>)</td>
+        <td><span class="badge done">Ready</span></td>
+      </tr>
+      <tr>
+        <td>Migration <code>0035</code> (client_admin role)</td>
+        <td>Applied on Railway · auto-promoted earliest portal user per client</td>
+        <td><span class="badge done">Applied</span></td>
+      </tr>
+      <tr>
+        <td>Migration <code>0036</code> (allowed_tabs column)</td>
+        <td>Applied on Railway · backward-compat (NULL = full access)</td>
+        <td><span class="badge done">Applied</span></td>
+      </tr>
+      <tr>
+        <td>Benson client_type</td>
+        <td>Updated <code>ppl</code> → <code>managed</code> via prod Postgres</td>
+        <td><span class="badge done">Updated</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <footer>
+    Octogle Technologies for leadgeneration.io · 27 May 2026, post-4:30 PM meeting recap.
+  </footer>
+</div>
+</body>
+</html>
