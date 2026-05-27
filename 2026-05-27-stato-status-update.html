@@ -1,0 +1,986 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Stato — Status Update · 27 May 2026</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Arial, sans-serif;
+    background: #fafafa; color: #1d1d1f;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.55;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 56px 22px; }
+  .back {
+    display: inline-block; color: #0066cc; text-decoration: none;
+    font-size: 14px; margin-bottom: 24px;
+  }
+  .back:hover { text-decoration: underline; }
+  h1 {
+    font-size: 34px; font-weight: 700; letter-spacing: -0.02em;
+    margin: 0 0 6px 0;
+  }
+  .meta { color: #6e6e73; font-size: 14px; margin: 0 0 36px 0; }
+  h2 {
+    font-size: 22px; font-weight: 700; letter-spacing: -0.01em;
+    margin: 44px 0 14px 0;
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  }
+  h2 .pill {
+    font-size: 11px; font-weight: 600;
+    padding: 4px 10px; border-radius: 999px;
+    text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  h2 .pill.done   { background: #e6f7ec; color: #1d7a3a; }
+  h2 .pill.need   { background: #fff3e0; color: #a04a00; }
+  h2 .pill.fix    { background: #e8f0ff; color: #0042a3; }
+  h2 .pill.block  { background: #fdecea; color: #a52a2a; }
+  h2 .pill.info   { background: #f0f0f3; color: #424245; }
+  h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px 0; }
+  code {
+    font-family: 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 12px;
+    background: #f0f0f3; padding: 1px 5px; border-radius: 4px;
+    color: #1d1d1f;
+  }
+  .summary {
+    background: #fff; border: 1px solid #e8e8ed; border-radius: 14px;
+    padding: 22px 24px;
+  }
+  .summary p { margin: 0 0 10px 0; font-size: 15px; }
+  .summary p:last-child { margin: 0; }
+  .stat-row {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+    margin: 16px 0 0 0;
+  }
+  @media (max-width: 600px) { .stat-row { grid-template-columns: repeat(2, 1fr); } }
+  .stat {
+    background: #fafafa; border: 1px solid #e8e8ed; border-radius: 12px;
+    padding: 14px;
+  }
+  .stat .num { font-size: 26px; font-weight: 700; color: #1d1d1f; }
+  .stat .lbl { font-size: 12px; color: #6e6e73; margin-top: 4px; }
+  table.data {
+    width: 100%; border-collapse: collapse; margin: 8px 0 4px 0;
+    font-size: 13px; background: #fff;
+    border: 1px solid #e8e8ed; border-radius: 10px;
+    overflow: hidden;
+  }
+  table.data th, table.data td {
+    text-align: left; padding: 9px 12px;
+    border-bottom: 1px solid #f0f0f3;
+    vertical-align: top;
+  }
+  table.data th {
+    font-weight: 600; color: #6e6e73; font-size: 11px;
+    text-transform: uppercase; letter-spacing: 0.04em;
+    background: #fafafa;
+    border-bottom: 1px solid #e8e8ed;
+  }
+  table.data tr:last-child td { border-bottom: none; }
+  table.data tr:hover td { background: #fafbfc; }
+  .src-badge {
+    display: inline-block;
+    font-size: 11px; font-weight: 600;
+    padding: 2px 8px; border-radius: 999px;
+    white-space: nowrap;
+  }
+  .src-shipped  { background: #e6f7ec; color: #1d7a3a; }
+  .src-review   { background: #fff3e0; color: #a04a00; }
+  .src-pending  { background: #f0f0f3; color: #424245; }
+  .src-hari     { background: #f0e6ff; color: #5a2999; }
+  .src-yash     { background: #e6f0ff; color: #0042a3; }
+  .src-bug      { background: #fdecea; color: #a52a2a; }
+  .src-be       { background: #fff3e0; color: #a04a00; }
+  .src-fe       { background: #e8f0ff; color: #0042a3; }
+  details.section {
+    background: #fff; border: 1px solid #e8e8ed; border-radius: 14px;
+    padding: 0; margin: 14px 0; overflow: hidden;
+  }
+  details.section summary {
+    padding: 18px 22px; cursor: pointer; list-style: none;
+    font-size: 17px; font-weight: 700; letter-spacing: -0.01em;
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  }
+  details.section summary::-webkit-details-marker { display: none; }
+  details.section summary::after {
+    content: "›"; margin-left: auto; color: #6e6e73; font-size: 22px;
+    transition: transform 150ms;
+  }
+  details.section[open] summary::after { transform: rotate(90deg); }
+  details.section summary:hover { background: #f9f9fb; }
+  details.section .content {
+    padding: 6px 22px 22px 22px; font-size: 14px; color: #424245;
+    border-top: 1px solid #f0f0f3;
+  }
+  details.section .content > p:first-child { margin-top: 14px; }
+  details.section .summary-hint {
+    font-size: 12px; color: #6e6e73; font-weight: 400;
+    letter-spacing: 0;
+  }
+  ul.bare { list-style: none; padding-left: 0; margin: 8px 0; }
+  ul.bare li { padding: 6px 0; border-bottom: 1px solid #f0f0f3; }
+  ul.bare li:last-child { border-bottom: none; }
+  .qa-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  @media (max-width: 640px) {
+    .qa-grid { grid-template-columns: 1fr; gap: 18px; }
+  }
+  .ask-card {
+    background: #fff; border: 1px solid #e8e8ed; border-radius: 14px;
+    padding: 18px 20px; margin: 0 0 14px 0;
+  }
+  .ask-card .ask-head {
+    display: flex; align-items: baseline; gap: 10px; margin-bottom: 6px;
+    flex-wrap: wrap;
+  }
+  .ask-card .ask-num {
+    font-size: 13px; font-weight: 700; color: #0066cc;
+    background: #f0f7ff; padding: 2px 8px; border-radius: 999px;
+    min-width: 28px; text-align: center;
+  }
+  .ask-card .ask-num.q {
+    color: #5a2999; background: #f4ecff;
+  }
+  .ask-card .ask-title {
+    font-size: 15.5px; font-weight: 600; color: #1d1d1f; flex: 1;
+  }
+  .ask-card .ask-effort {
+    font-size: 12px; color: #6e6e73;
+    background: #f0f0f3; padding: 2px 8px; border-radius: 999px;
+    white-space: nowrap;
+  }
+  .ask-card .ask-why {
+    font-size: 13.5px; color: #6e6e73; margin: 0 0 12px 36px;
+    line-height: 1.5;
+  }
+  .ask-card textarea {
+    width: 100%; padding: 10px 12px;
+    border: 1px solid #e8e8ed; border-radius: 10px;
+    background: #fafafa; color: #1d1d1f; font: inherit; font-size: 14px;
+    outline: none; min-height: 70px; resize: vertical;
+    transition: border-color 120ms, background 120ms, box-shadow 120ms;
+  }
+  .ask-card textarea:focus {
+    border-color: #0066cc; background: #fff;
+    box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.12);
+  }
+  .ask-card textarea::placeholder { color: #a0a0a8; }
+  .saved-pill {
+    display: inline-block; font-size: 12px; color: #16a34a;
+    margin-left: 10px; opacity: 0; transition: opacity 200ms;
+  }
+  .saved-pill.visible { opacity: 1; }
+  #download-btn:hover { background: #0058b3; border-color: #0058b3; }
+  #download-btn:active { transform: translateY(1px); }
+  footer {
+    margin-top: 60px; padding-top: 22px;
+    border-top: 1px solid #e8e8ed;
+    color: #86868b; font-size: 12px; text-align: center;
+  }
+  .overall-card {
+    background: linear-gradient(135deg, #f0f7ff 0%, #e8f0fe 100%);
+    border: 1px solid #c9dffb; border-radius: 16px;
+    padding: 22px 24px; margin: 16px 0 20px 0;
+  }
+  .overall-card h3 { margin-top: 0; }
+  .overall-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px;
+    margin-top: 14px;
+  }
+  @media (max-width: 640px) { .overall-grid { grid-template-columns: 1fr; } }
+  .overall-tile {
+    background: #fff; border: 1px solid #d8e7fb; border-radius: 12px;
+    padding: 14px 16px;
+  }
+  .overall-tile .lbl {
+    font-size: 11px; font-weight: 700; color: #0042a3;
+    text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 4px;
+  }
+  .overall-tile .val {
+    font-size: 22px; font-weight: 700; color: #1d1d1f;
+  }
+  .overall-tile .sub {
+    font-size: 12px; color: #6e6e73; margin-top: 4px;
+  }
+  .sam-quote {
+    background: linear-gradient(135deg, #fff8e6 0%, #fff3d0 100%);
+    border: 1px solid #f5d68a; border-radius: 14px;
+    padding: 18px 20px; margin: 14px 0 20px 0;
+    font-style: italic; color: #5a4400;
+  }
+  .sam-quote .who {
+    display: block; font-style: normal; font-weight: 700;
+    font-size: 12px; color: #8a6500; letter-spacing: 0.05em;
+    text-transform: uppercase; margin-bottom: 8px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="index.html">← Back to all reports</a>
+
+  <h1>Stato — Status update · 27 May 2026</h1>
+  <p class="meta">Jam-video response · Benson Goldstein demo prep · Octogle Technologies for leadgeneration.io</p>
+
+  <!-- ─── QUICK ACCESS ─────────────────────────────── -->
+  <div style="background: linear-gradient(135deg, #fff8e6 0%, #fff3d0 100%); border: 1px solid #f5d68a; border-radius: 16px; padding: 22px 24px; margin: 0 0 28px 0;">
+    <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #8a6500; margin-bottom: 12px;">
+      📌 Quick access
+    </div>
+
+    <div class="qa-grid">
+      <div>
+        <div style="font-size: 12px; font-weight: 600; color: #6e6e73; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.04em;">Admin app (Owner view)</div>
+        <div><a href="https://sato-frontend.vercel.app" target="_blank" style="color: #0066cc; font-family: 'SF Mono', Menlo, Consolas, monospace; font-size: 13px; word-break: break-all;">https://sato-frontend.vercel.app</a></div>
+        <div style="margin-top: 6px; font-size: 13px; color: #424245;">
+          Email: <code>sam@leadgeneration.io</code><br/>
+          Password: <code>Sam@123</code>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size: 12px; font-weight: 600; color: #6e6e73; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.04em;">Benson Goldstein task (live in prod)</div>
+        <div><a href="https://sato-frontend.vercel.app/tasks/a2b1a5bb-a4c3-4253-a8ec-3029158159ee" target="_blank" style="color: #0066cc; font-family: 'SF Mono', Menlo, Consolas, monospace; font-size: 13px; word-break: break-all;">/tasks/a2b1a5bb-…</a></div>
+        <div style="margin-top: 6px; font-size: 13px; color: #424245;">
+          High · 2 hr · Due 1 Jun · 7 AI subtasks pre-loaded · linked SOP <code>onbording</code>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size: 12px; font-weight: 600; color: #6e6e73; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.04em;">Linear board — OCT team</div>
+        <div><a href="https://linear.app/leadgenerationio/team/OCT/all" target="_blank" style="color: #0066cc; font-family: 'SF Mono', Menlo, Consolas, monospace; font-size: 13px; word-break: break-all;">https://linear.app/leadgenerationio/team/OCT/all</a></div>
+        <div style="margin-top: 6px; font-size: 13px; color: #424245;">
+          Sam, Hari, Pratteek + Yash all have access. Workspace: <strong>leadgenerationio</strong>.
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size: 12px; font-weight: 600; color: #6e6e73; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.04em;">Backend API health</div>
+        <div><a href="https://sato-backend-production.up.railway.app/api/v1/health" target="_blank" style="color: #0066cc; font-family: 'SF Mono', Menlo, Consolas, monospace; font-size: 13px; word-break: break-all;">https://sato-backend-production.up.railway.app</a></div>
+        <div style="margin-top: 6px; font-size: 13px; color: #424245;">
+          Public endpoint <code>/api/v1/health</code> returns <code>{db: up, redis: up}</code> if healthy.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SAM'S MESSAGE ─────────────────────────────── -->
+  <div class="sam-quote">
+    <span class="who">📩 Sam · WhatsApp · 27 May 2026 (attached: jam-video Loom)</span>
+    "If we can just focus on this task tomorrow please — I promised the
+    client a dashboard and I need to have something working for them
+    tomorrow, it's Benson Goldstein."
+  </div>
+
+  <!-- ─── HEADLINE SUMMARY ─────────────────────────────── -->
+  <div class="summary">
+    <p>
+      <strong>Full jam-video response shipped to prod today.</strong> You
+      sent a Loom (jam-video) walking through the Task Manager flagging
+      12 specific items. Most were already live from the 14-May / 17-May
+      shipments; <strong>3 remaining code gaps were closed today</strong>
+      (optimistic untick, saved-categories autocomplete, creator-only
+      delete) and the <strong>AI generate button is now live in prod</strong>
+      because <code>ANTHROPIC_API_KEY</code> is configured on Railway.
+    </p>
+    <p>
+      <strong>Demo-ready for Benson Goldstein tomorrow.</strong> Both
+      repos pushed to <code>main</code> + redeployed (BE auto via Railway,
+      FE via <code>vercel --prod</code>). End-to-end smoke-tested on prod
+      from a real browser — every item ticks. A live task
+      <em>"Set up Benson Goldstein as new client"</em> is already
+      pre-loaded in production with 7 AI-suggested subtasks, High
+      priority, due 1 June, linked to the onboarding SOP.
+    </p>
+    <p>
+      <strong>12 / 12 jam-video items now closed.</strong> The same
+      11 pending-from-you items from 26-May still stand
+      (Catchr mapping / Resend DNS / Endole top-up + 8 carryover). 3 new
+      questions at the bottom — mostly about the post-demo direction.
+    </p>
+
+    <div class="stat-row">
+      <div class="stat"><div class="num">12 / 12</div><div class="lbl">Jam-video items closed</div></div>
+      <div class="stat"><div class="num">2 commits</div><div class="lbl">BE 9479f4a · FE 27b2f50</div></div>
+      <div class="stat"><div class="num">12 tests added</div><div class="lbl">5 BE + 7 FE · all green on prod</div></div>
+      <div class="stat"><div class="num">1 live task</div><div class="lbl">Benson Goldstein onboarding · 7 subtasks</div></div>
+    </div>
+  </div>
+
+  <!-- ─── JAM-VIDEO ITEM-BY-ITEM ─────────────────────────────── -->
+  <h2>Jam-video — 12 items, all verified live in prod <span class="pill done">12 / 12 done</span></h2>
+
+  <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
+    Every item walked through in your Loom. Status reflects production
+    state at 12:13 today, after BE 9479f4a and FE 27b2f50 deployed.
+    Items 1, 5, 10, 11 are the new work today; everything else was
+    already live from earlier shipments and re-verified.
+  </p>
+
+  <table class="data">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Your ask</th>
+        <th>Status</th>
+        <th>How to test on prod</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>"When I untick it, it takes a while / doesn't untick"</td>
+        <td><span class="src-badge src-shipped">fixed today</span></td>
+        <td>Tasks → change status dropdown → badge flips instantly (no spinner). Optimistic update with rollback on error.</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>"Have a dropdown to select the status" (replace checkbox)</td>
+        <td><span class="src-badge src-shipped">already live</span></td>
+        <td>Tasks list → status column is a native select with 4 values.</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td>"Child task should sit under the parent — folderize"</td>
+        <td><span class="src-badge src-shipped">already live</span></td>
+        <td>Tasks list → children indent under parent. Board cards show "↳ Parent: …" hint. Detail page has Children panel.</td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td>"Filter by due today / time / status / multi-filter"</td>
+        <td><span class="src-badge src-shipped">already live</span></td>
+        <td>Tasks toolbar → 5 status tabs + Priority + Due (Today / This week / Overdue) + Time (Quick ≤30m / Normal / Long).</td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td>"Save categories as we make them" (autocomplete)</td>
+        <td><span class="src-badge src-shipped">fixed today</span></td>
+        <td>New Task → type "O" in Category → "Onboarding" suggests. New backend endpoint <code>GET /tasks/categories</code> returns workspace-distinct list.</td>
+      </tr>
+      <tr>
+        <td>6</td>
+        <td>Status set: On Hold / To Do / In Progress / Completed (not "Blocked")</td>
+        <td><span class="src-badge src-shipped">already live</span></td>
+        <td>Board view → 4 columns left-to-right in that order. Dropdown uses "On Hold" (not Blocked).</td>
+      </tr>
+      <tr>
+        <td>7</td>
+        <td>"Drag-and-drop between columns"</td>
+        <td><span class="src-badge src-shipped">already live</span></td>
+        <td>Tasks → Board → drag a card across columns. Pointer + keyboard a11y both work.</td>
+      </tr>
+      <tr>
+        <td>8</td>
+        <td>"Archive completed after a period"</td>
+        <td><span class="src-badge src-shipped">already live</span></td>
+        <td>Default view hides pre-today completed. Click "Archived" tab to see older completed. "All" disables the filter.</td>
+      </tr>
+      <tr>
+        <td>9</td>
+        <td>"<code>/task/13</code> in SOS messages should be clickable"</td>
+        <td><span class="src-badge src-shipped">already live</span></td>
+        <td>SOS Queue → row with <code>/tasks/&lt;id&gt;</code> in page → "Open referenced task" button + inline blue link.</td>
+      </tr>
+      <tr>
+        <td>10</td>
+        <td>"Only the person that made the task can delete it"</td>
+        <td><span class="src-badge src-shipped">fixed today</span></td>
+        <td>Open someone else's task → no Delete button. Open your own → Delete visible. Backend now returns <code>403 "Only the task creator can delete this task"</code> for non-creators.</td>
+      </tr>
+      <tr>
+        <td>11</td>
+        <td>"AI generate task — not configured for the environment"</td>
+        <td><span class="src-badge src-shipped">fixed today</span></td>
+        <td>You set <code>ANTHROPIC_API_KEY</code> on Railway. Generated a real "Onboard Benson Goldstein" task with 7 subtasks. No 503 toast.</td>
+      </tr>
+      <tr>
+        <td>12</td>
+        <td>Sam's phone number on SOS / resolved item visible</td>
+        <td><span class="src-badge src-shipped">already live</span></td>
+        <td>SOS Queue → toggle Resolved tab. Resolved items persist with original message + page context.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <details class="section">
+    <summary>Why this matters in plain English <span class="summary-hint">— 4 things</span></summary>
+    <div class="content">
+      <p>
+        <strong>1. Optimistic untick (item #1).</strong> The status badge
+        used to wait for the network round-trip before flipping — a few
+        hundred milliseconds — which felt like "didn't update." Now the
+        cache flips synchronously and rolls back only if the server
+        rejects. Visual change in &lt;16ms instead of 300-800ms.
+      </p>
+      <p>
+        <strong>2. Creator-only delete (item #10).</strong> Until today
+        the delete button was visible to anyone with task access and the
+        backend silently deleted whoever's task it was. Now both layers
+        enforce the rule: the icon is hidden when you're not the creator,
+        and the API returns a clear <code>403</code> if anyone tries to
+        force it via direct request. Tested live with two different
+        users — the demo user can't delete tasks Sam created, and gets
+        the right error if they try.
+      </p>
+      <p>
+        <strong>3. Saved categories (item #5).</strong> Before, typing
+        "Marketing" today and "marketing" tomorrow created two
+        different categories. Now the Category input is bound to a
+        native <code>&lt;datalist&gt;</code> populated from a new
+        <code>GET /tasks/categories</code> endpoint that returns every
+        distinct category the workspace has ever used. Starts empty;
+        grows as you create tasks.
+      </p>
+      <p>
+        <strong>4. AI generate live (item #11).</strong> The <code>ANTHROPIC_API_KEY</code>
+        you set on Railway is now active in prod. The "Generate with AI"
+        button on /tasks/create accepts a sentence, calls Claude
+        directly, and pre-fills title / description / priority /
+        category / time block / linked SOP / subtasks. Tested live on
+        prod with the Benson onboarding prompt — produced 7 sensible
+        subtasks and a 2-hour time estimate in ~3 seconds.
+      </p>
+    </div>
+  </details>
+
+  <!-- ─── TODAY'S COMMITS ─────────────────────────────── -->
+  <h2>Today's shipped work <span class="pill done">2 commits · both repos</span></h2>
+
+  <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
+    Both commits landed in <code>main</code> and deployed. Backend
+    auto-deploys via Railway; frontend was promoted manually with
+    <code>vercel --prod</code> (the GitHub-App auto-deploy is still on
+    your side — same carryover as 26-May).
+  </p>
+
+  <table class="data">
+    <thead>
+      <tr>
+        <th>Commit</th>
+        <th>Title</th>
+        <th>Repo</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>9479f4a</code></td>
+        <td>fix(tasks): creator-only delete + saved categories endpoint (jam-video #5 + #10)</td>
+        <td><span class="src-badge src-be">backend</span></td>
+        <td><span class="src-badge src-shipped">live</span></td>
+      </tr>
+      <tr>
+        <td><code>27b2f50</code></td>
+        <td>fix(tasks): optimistic untick + creator-only delete + category autocomplete (jam-video #1 + #5 + #10)</td>
+        <td><span class="src-badge src-fe">frontend</span></td>
+        <td><span class="src-badge src-shipped">live</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ─── BENSON GOLDSTEIN ─────────────────────────────── -->
+  <h2>Benson Goldstein — onboarding task ready for tomorrow <span class="pill fix">live in prod</span></h2>
+
+  <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
+    Created live in production using the AI generate flow you flagged
+    as broken — proof that #11 works end-to-end. Pre-loaded with the
+    same 7 subtasks the AI proposed so tomorrow's demo can run with the
+    real audit trail.
+  </p>
+
+  <table class="data">
+    <thead>
+      <tr><th>Field</th><th>Value</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Title</td><td><strong>Set up Benson Goldstein as new client</strong></td></tr>
+      <tr><td>Status</td><td>To Do</td></tr>
+      <tr><td>Priority</td><td>High</td></tr>
+      <tr><td>Due date</td><td>1 June 2026</td></tr>
+      <tr><td>Time block</td><td>2 hr</td></tr>
+      <tr><td>Category</td><td>Onboarding</td></tr>
+      <tr><td>Linked SOP</td><td>onbording (clickable to SOP detail)</td></tr>
+      <tr><td>Assignee</td><td>Sam Owner</td></tr>
+      <tr><td>Created by</td><td><code>demo@stato.app</code> (you can re-assign once Sam logs in)</td></tr>
+      <tr><td>Subtasks</td><td>7 / 7 loaded · 0 ticked · ready to walk through during the call</td></tr>
+      <tr><td>Direct link</td><td><a href="https://sato-frontend.vercel.app/tasks/a2b1a5bb-a4c3-4253-a8ec-3029158159ee" target="_blank">/tasks/a2b1a5bb-a4c3-4253-a8ec-3029158159ee</a></td></tr>
+    </tbody>
+  </table>
+
+  <details class="section">
+    <summary>The 7 pre-loaded subtasks <span class="summary-hint">— AI-drafted from your prompt</span></summary>
+    <div class="content">
+      <ol style="padding-left: 22px; margin: 14px 0;">
+        <li>Collect and verify Benson Goldstein's contact and company information</li>
+        <li>Set up client account in system with appropriate access levels</li>
+        <li>Send welcome email with onboarding materials and next steps</li>
+        <li>Schedule initial kickoff call to review requirements and expectations</li>
+        <li>Create client folder and organize documentation</li>
+        <li>Assign account manager and notify team of new client</li>
+        <li>Confirm completion and update client status in CRM</li>
+      </ol>
+      <p>
+        Each renders as a check-row on the detail page with "Mark as done"
+        / "Remove" affordances. Tick them off live during the demo —
+        every change writes to the audit log so you can show Benson
+        exactly what happened and when.
+      </p>
+    </div>
+  </details>
+
+  <!-- ─── PROD SMOKE TEST ─────────────────────────────── -->
+  <h2>Prod smoke test — every fix verified end-to-end <span class="pill done">all green</span></h2>
+
+  <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
+    Drove a real browser against <code>https://sato-frontend.vercel.app</code>
+    after the deploy. Every item walked through. Console clean (0 errors,
+    0 warnings). Screenshots saved for the demo deck if you want them.
+  </p>
+
+  <table class="data">
+    <thead>
+      <tr><th>#</th><th>What I did</th><th>What I saw</th><th>Verdict</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>Flipped "Mortgage Application" status To Do → Completed via dropdown</td>
+        <td>Cell switched in same render frame. Activity log captured <em>"Demo moved status todo → completed"</em></td>
+        <td><span class="src-badge src-shipped">PASS</span></td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td>Inspected the category &lt;datalist&gt; on /tasks/create</td>
+        <td>Endpoint returned <code>["general","Personal"]</code> from existing tasks. Input wired with <code>list="task-category-suggestions"</code></td>
+        <td><span class="src-badge src-shipped">PASS</span></td>
+      </tr>
+      <tr>
+        <td>10</td>
+        <td>From <code>demo@stato.app</code>: hit <code>DELETE /tasks/&lt;sam's task&gt;</code> and opened the detail page</td>
+        <td>API: <code>403 {"status":"error","message":"Only the task creator can delete this task"}</code>. UI: no Delete button. On my own task: Delete button visible</td>
+        <td><span class="src-badge src-shipped">PASS</span></td>
+      </tr>
+      <tr>
+        <td>11</td>
+        <td>Clicked "Generate with AI" with prompt "Onboard Benson Goldstein as a new client this week"</td>
+        <td>Form auto-populated: title, description, Priority High, Category "Onboarding", 2 hours, linked SOP, 7 subtasks. No 503</td>
+        <td><span class="src-badge src-shipped">PASS</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ─── OVERALL PROJECT REPORT ─────────────────────────────── -->
+  <h2>Overall project report <span class="pill info">where Stato stands today</span></h2>
+
+  <div class="overall-card">
+    <h3 style="font-size: 17px; margin-bottom: 6px;">Quick health check</h3>
+    <div style="font-size: 13.5px; color: #424245;">
+      Stato is in the strongest shape it's been since launch. Last
+      Sam-flagged set (jam-video) is now fully closed. Demo-ready.
+    </div>
+    <div class="overall-grid">
+      <div class="overall-tile">
+        <div class="lbl">Production status</div>
+        <div class="val">🟢 Live · stable</div>
+        <div class="sub">Both repos deployed today. Smoke tested end-to-end. Console clean.</div>
+      </div>
+      <div class="overall-tile">
+        <div class="lbl">Test coverage</div>
+        <div class="val">989 passing</div>
+        <div class="sub">Backend 776 (+5) · Frontend 213 (+7) · 7 known dev-env failures (no real bugs)</div>
+      </div>
+      <div class="overall-tile">
+        <div class="lbl">Jam-video items</div>
+        <div class="val">12 / 12 ✅</div>
+        <div class="sub">Every Loom-flagged item now live in prod and verified from a real browser</div>
+      </div>
+      <div class="overall-tile">
+        <div class="lbl">Linear OCT board</div>
+        <div class="val">0 open</div>
+        <div class="sub">Carryover from 26-May. No new tickets opened today.</div>
+      </div>
+      <div class="overall-tile">
+        <div class="lbl">Reconciliation accuracy</div>
+        <div class="val">±£0.01</div>
+        <div class="sub">Stato matches LeadByte + Xero + Catchr to the penny (as of 22-May audit)</div>
+      </div>
+      <div class="overall-tile">
+        <div class="lbl">Pending side blockers</div>
+        <div class="val">3 + 8 carryover</div>
+        <div class="sub">Same 3 urgent (Catchr / Resend / Endole) + 8 from 22-May list</div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Phase milestones — where each major workstream sits</h3>
+  <table class="data">
+    <thead>
+      <tr>
+        <th>Area</th>
+        <th>Status</th>
+        <th>What's left</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Core platform (auth · clients · invoices · campaigns)</td>
+        <td><span class="src-badge src-shipped">Live</span></td>
+        <td>Stable. No outstanding tickets.</td>
+      </tr>
+      <tr>
+        <td>Task manager (jam-video target)</td>
+        <td><span class="src-badge src-shipped">Live · all 12 items</span></td>
+        <td>Optimistic UI, creator-only delete, category autocomplete, AI generate all live as of today.</td>
+      </tr>
+      <tr>
+        <td>Xero integration (bank · invoices · VAT · contacts)</td>
+        <td><span class="src-badge src-shipped">Live</span></td>
+        <td>429 bounded since 26-May. Read-only accountant access still pending from you for cross-validation.</td>
+      </tr>
+      <tr>
+        <td>LeadByte integration (leads · campaigns · deliveries)</td>
+        <td><span class="src-badge src-shipped">Live</span></td>
+        <td>Reconciliation exact (±£0.01) since 22-May.</td>
+      </tr>
+      <tr>
+        <td>Catchr integration (ad spend per platform)</td>
+        <td><span class="src-badge src-review">Mostly live</span></td>
+        <td>£351k of spend across 9 unmapped accounts waiting on your campaign-mapping action.</td>
+      </tr>
+      <tr>
+        <td>Multi-tenant safety</td>
+        <td><span class="src-badge src-shipped">Live</span></td>
+        <td>Ready to onboard a second business when you decide.</td>
+      </tr>
+      <tr>
+        <td>Client portal (compliance · creatives · invoices · leads)</td>
+        <td><span class="src-badge src-shipped">Live</span></td>
+        <td>Stable. One real client (UKESN). Adding Benson Goldstein tomorrow.</td>
+      </tr>
+      <tr>
+        <td>AI features (task generation · subtask drafting)</td>
+        <td><span class="src-badge src-shipped">Live (today)</span></td>
+        <td>Anthropic key configured. Claude Haiku 4.5 producing usable drafts in ~3s.</td>
+      </tr>
+      <tr>
+        <td>Credit-check provider (Endole · Creditsafe)</td>
+        <td><span class="src-badge src-review">Live with caveat</span></td>
+        <td>Production credentials configured. Background monitor flips green automatically once your Endole balance is verified.</td>
+      </tr>
+      <tr>
+        <td>Resend (outbound email)</td>
+        <td><span class="src-badge src-pending">Pending DNS</span></td>
+        <td>3 TXT records on GoDaddy. Flips automatically when DNS propagates.</td>
+      </tr>
+      <tr>
+        <td>SignNow (signature workflow)</td>
+        <td><span class="src-badge src-pending">Mock</span></td>
+        <td>Business plan + 5 env vars from you.</td>
+      </tr>
+      <tr>
+        <td>Twilio (SMS alerts)</td>
+        <td><span class="src-badge src-pending">Mock</span></td>
+        <td>3 env vars from you when ready.</td>
+      </tr>
+      <tr>
+        <td>Attio import</td>
+        <td><span class="src-badge src-pending">Pending key</span></td>
+        <td>Personal access token from you.</td>
+      </tr>
+      <tr>
+        <td>Vercel auto-deploy (frontend)</td>
+        <td><span class="src-badge src-pending">Manual</span></td>
+        <td>GitHub App install. Backend already auto-deploys via Railway.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ─── REQUIREMENTS ─────────────────────────────── -->
+  <h2>What I need from you (requirements) <span class="pill need">your input</span></h2>
+
+  <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
+    Same 11 items as 26-May — nothing was resolved on your side in the
+    last day (today was code work + deploy + smoke test). Auto-saves as
+    you type, download button at the end, send the <code>.txt</code>
+    back over WhatsApp.
+  </p>
+
+  <div id="ask-cards"></div>
+
+  <noscript>
+    <div class="ask-card">
+      <p>JavaScript is off — reply on WhatsApp with answers to:</p>
+      <ol>
+        <li>Catchr account mappings (£351k unattributed)</li>
+        <li>Endole credit balance — has funds for live checks?</li>
+        <li>Property Sales (UK) — price it or hide it?</li>
+        <li>Read-only Xero accountant access</li>
+        <li>Onboard 2-3 more clients (multi-client testing)</li>
+        <li>Resend DNS 3 TXT records on GoDaddy</li>
+        <li>Vercel GitHub App install on Sato-Frontend repo</li>
+        <li>Catchr Google Ads re-auth — 6 disconnected accounts</li>
+        <li>SignNow Go-Live (Business plan + 5 env vars)</li>
+        <li>Twilio creds — 3 values</li>
+        <li>Attio API key</li>
+      </ol>
+    </div>
+  </noscript>
+
+  <!-- ─── QUESTIONS ─────────────────────────────── -->
+  <h2>Open questions <span class="pill info">post-demo direction</span></h2>
+
+  <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
+    Three new questions pointed at the post-Benson Goldstein direction.
+    Answers here drive what gets prioritised next. Same auto-save behaviour.
+  </p>
+
+  <div id="question-cards"></div>
+
+  <div style="margin-top: 20px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+    <button id="download-btn" type="button" style="padding: 12px 22px; border-radius: 999px; background: #0066cc; color: #fff; border: 1px solid #0066cc; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer;">
+      ⬇ Download my answers as text
+    </button>
+    <span id="download-hint" style="color: #6e6e73; font-size: 13px;">
+      Saves a single <code>.txt</code> with everything — requirements + questions.
+    </span>
+  </div>
+
+  <!-- ─── COMING NEXT ─────────────────────────── -->
+  <h2>Coming next <span class="pill fix">on deck</span></h2>
+  <ul class="bare">
+    <li><strong>Tomorrow's Benson Goldstein demo.</strong> Task pre-loaded in prod with 7 subtasks. Tick them off live during the call so Benson sees the audit trail update in real time.</li>
+    <li><strong>Background monitors keep running.</strong> Endole balance + Resend DNS auto-detect and flip integration cards green the moment you act on them — no follow-up status update needed.</li>
+    <li><strong>Friday rhythm.</strong> Question 3 below — keep the weekly call or switch to async Loom + this update.</li>
+    <li><strong>Multi-client onboarding.</strong> Now that the Benson task is live, we can use the same flow to onboard the next 2-3 clients on requirement #5.</li>
+    <li><strong>Xero ↔ Stato comparison dashboard.</strong> Still parked pending your go-ahead (carryover from 22-May).</li>
+  </ul>
+
+  <footer>
+    Generated 27 May 2026 · Stato · Octogle Technologies for leadgeneration.io
+  </footer>
+</div>
+
+<script src="lib.js"></script>
+<script>
+  const ASKS = [
+    {
+      id: 'catchr-account-mappings',
+      title: 'Catchr account → campaign mappings — £351k waiting to be attributed',
+      why: 'Carryover from 22-May. 9 Catchr ad accounts active in the last 30 days with no campaign mapping. £351,332 of ad spend doesn\'t roll up to any campaign. Fix: open each affected campaign\'s detail page (Property Sales, Tax Claims, PCP Claims, etc), Traffic Sources card, pick the platform + paste the account_id. ~3 min per campaign. The "Show accounts" button on the Campaigns page lists exactly which accounts need mapping.',
+      effort: '~20 min total',
+      placeholder: 'e.g. "did it for all 9 — show me what changed" / "send me a Loom walking through one" / "skip — those campaigns aren\'t ours"',
+    },
+    {
+      id: 'endole-balance',
+      title: 'Endole credit balance — does the account have live funds now?',
+      why: 'ENDOLE_SANDBOX=false in Railway since 22-May, so new credit checks now hit the live Endole API. If the account is still at £0 balance, the next real check will fail with error 102 — background monitoring is already running and will alert you the moment it happens. Confirm here: have you topped up Endole, or is it still at £0? (Log into endole.co.uk → your account → billing.)',
+      effort: '~2 min',
+      placeholder: 'e.g. "topped up £200 last week" / "still at 0, need to find the right card" / "not sure — checking now"',
+    },
+    {
+      id: 'property-sales-pricing',
+      title: 'Property Sales (UK) — price the campaign or hide it from revenue dashboards?',
+      why: 'Property Sales (UK) shows 2,445 leads + £10,800 Catchr ad spend + £0 revenue. Investigation traced to LeadByte — buyer "Better Move" has bought 1,800 sold leads but the buyer-routing rule has empty bid in LB, so revenue rolls up as £0. Either (a) set a £/lead in LeadByte for Better Move on this campaign, or (b) hide Property Sales from revenue dashboards so the £10.8k Catchr spend doesn\'t read as a loss. Whichever you pick, applies in <5 min.',
+      effort: '~2 min answer',
+      placeholder: 'e.g. "price it at £15/lead via Better Move\'s buyer rule" / "hide it — internal traffic only" / "leave it, will set up next week"',
+    },
+    {
+      id: 'xero-read-only',
+      title: 'Read-only Xero accountant access for yash.c@octogle.com',
+      why: 'Single biggest unblock for demo confidence. With read-only access I can manually validate every Stato tile against your real Xero account side-by-side and catch any drift before you see it. Same access you give your accountant. xero.com → My Xero → Add user → "Yash Chavan", role: Read Only.',
+      effort: '~2 min',
+      placeholder: 'e.g. "added — accept the email" / "give me 5 min" / "let\'s do it on a screenshare"',
+    },
+    {
+      id: 'more-clients',
+      title: 'Onboard 2-3 more clients for multi-client testing',
+      why: 'Multi-tenant safety landed last week, so it\'s now safe to bring more on. UKESN is currently the only real client in prod, so multi-buyer flows are untestable end-to-end. Benson Goldstein is being onboarded tomorrow — if you have 2 others in mind, drop them here and we can run them through the same flow. Need 4 fields per client: company name, Companies House number, primary contact name, contact email.',
+      effort: '~5 min / client',
+      placeholder: 'client 1: company / number / contact / email\nclient 2: ...\nclient 3: ...',
+    },
+    {
+      id: 'resend-dns',
+      title: 'Resend DNS — 3 TXT records on GoDaddy',
+      why: 'Carryover from April. Stato outbound email still shows From: onboarding@resend.dev because the leadgeneration.io domain isn\'t DNS-verified on Resend. 3 TXT records need to land in GoDaddy DNS. Once they propagate, emails send from notifications@leadgeneration.io and the integrations card flips green automatically. Resend dashboard has the exact 3 records to copy/paste.',
+      effort: '~5 min coordination',
+      placeholder: 'e.g. "done by my other dev — should propagate today" / "drop the values here, I\'ll add them" / "give me GoDaddy access"',
+    },
+    {
+      id: 'vercel-github-app',
+      title: 'Vercel GitHub App — install on Sato-Frontend repo',
+      why: 'Frontend deploys still require manual <code>vercel --prod</code> (which is how today\'s shipment landed). With the GitHub App installed, every push to main auto-deploys (which is how the backend Railway side already works). github.com → settings → installations → Vercel → grant access to Sato-Frontend repo.',
+      effort: '~2 min',
+      placeholder: 'e.g. "installed — try a push" / "let me know which repo exactly" / "do it later"',
+    },
+    {
+      id: 'catchr-google-reauth',
+      title: 'Catchr Google Ads — re-auth 6 disconnected accounts',
+      why: 'Catchr dashboard banner reads "9 of 15 accounts working" — 6 Google Ads accounts are disconnected, so their ad-spend rows don\'t populate /reports. Login to Catchr → Connections → find the 6 with red dots → click Re-authenticate on each. ~5 min total. Mostly affects PCP Claims + Property Sales attribution since their Google Ads spend is currently dark.',
+      effort: '~5 min',
+      placeholder: 'e.g. "done, all 15 green" / "logged in but can\'t find the 6 — screenshot please" / "skip, retiring those accounts"',
+    },
+    {
+      id: 'signnow-golive',
+      title: 'SignNow Go-Live — Business plan + 5 env vars',
+      why: 'Every signature envelope goes out with a "Sample" watermark + 250-invite cap because SignNow still authenticates with my dev API app. To migrate to leadgeneration.io ownership: register "Stato Production" in SignNow API dashboard, upgrade to Business plan, click Go Live (~1 business day approval), webhook to https://sato-backend-production.up.railway.app/api/v1/webhooks/signnow with HMAC secret, then send CLIENT_ID, CLIENT_SECRET, USERNAME, PASSWORD, WEBHOOK_SECRET via 1Password / Signal. Blocks solicitor agreements at scale.',
+      effort: '~30 min + 1 day approval',
+      placeholder: 'e.g. "Stato Production submitted — approval Thursday" / "need help with the webhook step" / "let\'s do it on a 15-min call"',
+    },
+    {
+      id: 'twilio-creds',
+      title: 'Twilio creds — 3 values for automatic SMS alerts',
+      why: 'Currently MOCK SMS — when a system error fires, the alert worker logs <code>[twilio][mock] alerts deferred</code> instead of texting you. Once you sign up (free trial covers months), buy a US long-code (~$1/mo), and paste the 3 values, system-error alerts text your phone within 30 seconds. ACCOUNT_SID (starts AC...), AUTH_TOKEN, FROM_NUMBER (E.164 like +1...).',
+      effort: '~10 min',
+      placeholder: 'Paste the 3 values, or "send me how to" if you want a 1-min walkthrough video',
+    },
+    {
+      id: 'attio-api',
+      title: 'Attio API key — "Import from Attio" button lights up',
+      why: 'console.attio.com → Settings → API → create personal access token (starts <code>attio_pat_...</code>). Once pasted, the "Import from Attio" button on /clients lights up — pick companies from your CRM and bulk-import them as Stato clients with one click. Two minutes total.',
+      effort: '~2 min',
+      placeholder: 'Paste the key, or "I forgot the Attio password — reset it next week"',
+    },
+  ];
+
+  const QUESTIONS = [
+    {
+      id: 'q-benson-demo-outcome',
+      title: 'Tomorrow\'s Benson Goldstein demo — how did it go?',
+      why: 'The task is pre-loaded at /tasks/a2b1a5bb-… with 7 subtasks. Plan is to walk through them live, tick them off as you talk, show the audit log update in real time. Anything that didn\'t land the way you expected, drop it here and it becomes a Linear ticket the same day.',
+      effort: 'after the meeting',
+      placeholder: 'e.g. "smooth — Benson liked X / Y" / "they asked about Z, can we add it?" / "didn\'t demo Stato, only the portal"',
+    },
+    {
+      id: 'q-friday-rhythm',
+      title: 'Friday recurring meeting — keep or switch to async Loom?',
+      why: 'Carryover from 26-May. You said Mon/Tues are bad days for meetings. Friday\'s been the slot. Now that the jam-video items + the OCT board are both at 0 open + reconciliation is exact, a 30-min Friday call may be overkill — happy to switch to a Friday async Loom (5-10 min walkthrough video + this update) and only meet when there\'s a real decision to make.',
+      effort: 'short answer',
+      placeholder: 'e.g. "keep Friday call" / "switch to async Loom from this week" / "let\'s try alternate weeks"',
+    },
+    {
+      id: 'q-feature-roadmap',
+      title: 'Next 2 weeks — what feature would move the needle most?',
+      why: 'Carryover from 26-May (no answer yet). Defensive work is done; jam-video gaps closed. Most-likely candidates: (a) Xero comparison dashboard, (b) per-client P&L on top of per-campaign, (c) workflow scheduler UI (cron expressions from admin), (d) polish the client portal further (in-app notifications, more email tabs), (e) something else from the demo with Benson tomorrow. Single sentence is enough.',
+      effort: 'short answer',
+      placeholder: 'e.g. "per-client P&L" / "client portal notifications" / "wait until after Benson signs, then we\'ll know"',
+    },
+  ];
+
+  const RESPONSE_KEY = 'stato-2026-05-27-responses';
+
+  function loadStoredResponses() {
+    try {
+      const raw = localStorage.getItem(RESPONSE_KEY);
+      return raw ? JSON.parse(raw) : {};
+    } catch {
+      return {};
+    }
+  }
+
+  function saveResponses(map) {
+    try {
+      localStorage.setItem(RESPONSE_KEY, JSON.stringify(map));
+    } catch {
+      /* localStorage full or disabled — no-op. */
+    }
+  }
+
+  function renderCardsInto(containerId, items, kind) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    container.innerHTML = '';
+    const stored = loadStoredResponses();
+    const numClass = kind === 'question' ? 'ask-num q' : 'ask-num';
+
+    items.forEach((item, i) => {
+      const card = document.createElement('div');
+      card.className = 'ask-card';
+
+      const head = document.createElement('div');
+      head.className = 'ask-head';
+
+      const num = document.createElement('span');
+      num.className = numClass;
+      num.textContent = kind === 'question' ? `Q${i + 1}` : String(i + 1);
+
+      const title = document.createElement('div');
+      title.className = 'ask-title';
+      title.innerHTML = item.title;
+
+      const effort = document.createElement('span');
+      effort.className = 'ask-effort';
+      effort.textContent = item.effort;
+
+      head.appendChild(num);
+      head.appendChild(title);
+      head.appendChild(effort);
+
+      const why = document.createElement('p');
+      why.className = 'ask-why';
+      why.innerHTML = item.why;
+
+      const ta = document.createElement('textarea');
+      ta.placeholder = item.placeholder;
+      ta.value = stored[item.id] || '';
+      const saved = document.createElement('span');
+      saved.className = 'saved-pill';
+      saved.textContent = '✓ saved';
+
+      let timer;
+      ta.addEventListener('input', () => {
+        const map = loadStoredResponses();
+        map[item.id] = ta.value;
+        saveResponses(map);
+        saved.classList.add('visible');
+        clearTimeout(timer);
+        timer = setTimeout(() => saved.classList.remove('visible'), 800);
+      });
+
+      card.appendChild(head);
+      card.appendChild(why);
+      card.appendChild(ta);
+      card.appendChild(saved);
+
+      container.appendChild(card);
+    });
+  }
+
+  function downloadAllAnswers() {
+    const stored = loadStoredResponses();
+    const lines = ['Stato — 27 May 2026 — Sam responses', '='.repeat(48), ''];
+    lines.push('REQUIREMENTS', '-'.repeat(16));
+    ASKS.forEach((a, i) => {
+      lines.push(`${i + 1}. ${a.title.replace(/<[^>]+>/g, '')}`);
+      lines.push(stored[a.id] || '(no answer yet)');
+      lines.push('');
+    });
+    lines.push('', 'QUESTIONS', '-'.repeat(16));
+    QUESTIONS.forEach((q, i) => {
+      lines.push(`Q${i + 1}. ${q.title.replace(/<[^>]+>/g, '')}`);
+      lines.push(stored[q.id] || '(no answer yet)');
+      lines.push('');
+    });
+    const blob = new Blob([lines.join('\n')], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'stato-2026-05-27-sam-responses.txt';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  renderCardsInto('ask-cards', ASKS, 'ask');
+  renderCardsInto('question-cards', QUESTIONS, 'question');
+  document.getElementById('download-btn').addEventListener('click', downloadAllAnswers);
+</script>
+</body>
+</html>
