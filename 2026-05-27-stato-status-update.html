@@ -608,6 +608,69 @@
     </div>
   </details>
 
+  <!-- ─── CLIENT-PORTAL MEETING (4:30 PM) ─────────────────────────────── -->
+  <h2>Client-portal meeting (4:30 PM) — shipped <span class="pill done">all live</span></h2>
+
+  <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
+    Three items from the Weekly Developer Reporting Meeting handed off
+    from Hari this evening. Each landed in prod within minutes of the
+    handoff. Test paths below run against the live URLs.
+  </p>
+
+  <table class="data">
+    <thead>
+      <tr>
+        <th>Your ask</th>
+        <th>What changed</th>
+        <th>How to test on prod</th>
+        <th>Commit</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>"Multi-user access — add more people under this account"</td>
+        <td>New <strong>"Portal users"</strong> card on every client detail Overview tab. "Add portal user" → modal (name + email + initial password) → submits with role=client + clientId pre-filled. Lists all existing portal users for that client. All users see every tab for now — role-based tab visibility is deferred per the meeting.</td>
+        <td>
+          1. Go to <a href="https://sato-frontend.vercel.app/clients/997f415b-a378-4ccb-ab14-9fb05a1a5769" target="_blank">Benson Goldstein's client page</a><br/>
+          2. Scroll to <strong>Portal users</strong> card on the Overview tab<br/>
+          3. Click <strong>Add portal user</strong> · fill name / email / password<br/>
+          4. New user can sign in at <code>/portal</code> immediately with those creds
+        </td>
+        <td><code>84c8126</code></td>
+      </tr>
+      <tr>
+        <td>"Manual override for 'Pending agreement, action needed' on existing clients"</td>
+        <td>BE: <code>PUT /clients/:id</code> now accepts <code>agreementSigned</code>. Flipping it to <code>true</code> also bumps <code>onboardingStatus</code> past 'pending' so the portal banner clears. FE: small <strong>"Mark as signed (external)"</strong> button on the onboarding strip when agreement is "Not signed".</td>
+        <td>
+          1. Go to <a href="https://sato-frontend.vercel.app/clients/997f415b-a378-4ccb-ab14-9fb05a1a5769" target="_blank">Benson Goldstein's client page</a><br/>
+          2. Onboarding strip → <strong>Agreement: Not signed · [Mark as signed (external)]</strong><br/>
+          3. Click → button flips to "Signed", "Pending agreement" banner clears on portal side<br/>
+          4. Sign in as Coby → Dashboard's "Agreement: Action needed" tile is gone
+        </td>
+        <td><code>0a65397</code> · <code>b75270a</code></td>
+      </tr>
+      <tr>
+        <td>"Compliance → Creatives workflow: pending in Compliance, approved → Creatives as dated folders, rejected disappears"</td>
+        <td>Compliance tab now filters to <strong>only items NOT yet approved</strong> (pending + rejected + changes_requested all surface for re-decide). Creatives tab now <strong>only shows approved items</strong> grouped by <code>approval.decidedAt</code> truncated to YYYY-MM-DD — each date renders as a folder ("Wednesday, 27 May 2026 · 3 assets") with newest first.</td>
+        <td>
+          1. Sign in to the portal as <code>coby@bensongoldstein.com</code><br/>
+          2. <strong>Compliance</strong> tab — only items pending review or rejected/changes-requested<br/>
+          3. Approve one → it disappears from Compliance, appears in <strong>Creatives</strong> under today's date folder<br/>
+          4. Reject one → stays in Compliance with rejected badge, never appears in Creatives
+        </td>
+        <td><code>80a1447</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p style="margin: 14px 0 0 0; color: #424245; font-size: 13.5px;">
+    <strong>What you can do right now:</strong> open Benson Goldstein's
+    client page, spawn logins for the staff who need portal access,
+    flip the agreement override so the "Pending" banner clears, then
+    walk Coby through Compliance → approve a creative → watch it move
+    to a date-stamped folder under Creatives.
+  </p>
+
   <!-- ─── TODAY'S COMMITS ─────────────────────────────── -->
   <h2>Today's shipped work <span class="pill done">2 commits · both repos</span></h2>
 
