@@ -395,11 +395,82 @@
 
     <div class="stat-row">
       <div class="stat"><div class="num">12 / 12</div><div class="lbl">Jam-video items closed</div></div>
-      <div class="stat"><div class="num">2 commits</div><div class="lbl">BE 9479f4a · FE 27b2f50</div></div>
-      <div class="stat"><div class="num">12 tests added</div><div class="lbl">5 BE + 7 FE · all green on prod</div></div>
+      <div class="stat"><div class="num">7 commits</div><div class="lbl">BE 9479f4a + 9747820 · FE 27b2f50 → 31fdecc</div></div>
+      <div class="stat"><div class="num">14 tests added</div><div class="lbl">5 BE + 9 FE · all green on prod</div></div>
       <div class="stat"><div class="num">1 live task</div><div class="lbl">Benson Goldstein onboarding · 7 subtasks</div></div>
     </div>
   </div>
+
+  <!-- ─── EVENING SHIPMENT (27 May 14:00–15:15) ─────────────────────────────── -->
+  <h2>Evening shipment — second round of fixes <span class="pill done">all live</span></h2>
+
+  <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
+    After the jam-video items landed, you flagged eight follow-ups in
+    sequence. All shipped within the same afternoon. Order = chronological
+    in your messages.
+  </p>
+
+  <table class="data">
+    <thead>
+      <tr>
+        <th>Your follow-up</th>
+        <th>What I did</th>
+        <th>Commit · Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>"Tick is jumping around — still delay"</td>
+        <td><code>useUpdateSubtask</code> race: <code>onSettled</code>-invalidate refetch was stomping the next click's optimistic flip. Replaced with <code>onSuccess</code> + direct cache write. Verified live: 1 single click → 1 clean transition, no bounce. Activity log clean.</td>
+        <td><code>9287595</code> · <span class="src-badge src-shipped">live</span></td>
+      </tr>
+      <tr>
+        <td>"Drag-and-drop / status taking time, need to do it twice"</td>
+        <td>Same race lurked in <code>useUpdateTaskStatus</code>. Same fix: <code>onSuccess</code> writes server response into every cached list + the detail; <code>task-stats</code> still invalidates (no optimistic state to stomp).</td>
+        <td><code>e1534a2</code> · <span class="src-badge src-shipped">live</span></td>
+      </tr>
+      <tr>
+        <td>"Change Actions to dropdown"</td>
+        <td>Detail page's Actions card (1–2 Start/Hold/Resume/Complete buttons) is now a single <code>&lt;select&gt;</code> with all four statuses. User can jump between any pair, not just curated edges. Verified live.</td>
+        <td><code>e1534a2</code> · <span class="src-badge src-shipped">live</span></td>
+      </tr>
+      <tr>
+        <td>"On Hold not added to Block view" (dashboard Tasks tile)</td>
+        <td>Tile now has 4 rows: In Progress · <strong>On Hold</strong> · Completed Today · Overdue. Bonus: In Progress + Completed Today were rendering blank since launch (FE camelCase / BE snake_case mismatch) — fixed at the same time.</td>
+        <td><code>9747820</code> + <code>e1534a2</code> · <span class="src-badge src-shipped">live</span></td>
+      </tr>
+      <tr>
+        <td>"SOS Page should be clickable link"</td>
+        <td>Page column on the SOS queue table renders the path as a blue underlined react-router Link. Operator clicks <code>/campaigns</code> or <code>/portal/account</code> → jumps to the screen the user was stuck on.</td>
+        <td><code>f8d39a4</code> · <span class="src-badge src-shipped">live</span></td>
+      </tr>
+      <tr>
+        <td>"Task + subtasks in folders" (option a)</td>
+        <td>Each list-view row now has a ▸ chevron next to the title. Click → expands to show that task's subtasks as indented rows underneath, file-tree style. Each subtask has its own check icon — toggle done inline without opening detail.</td>
+        <td><code>31fdecc</code> · <span class="src-badge src-shipped">live</span></td>
+      </tr>
+      <tr>
+        <td>"On Hold not in Board view" (turned out to be viewport)</td>
+        <td>Board has had On Hold since day 1. Tailwind grid drops from 4 cols to 2 under 1024px so On Hold + Completed sit below the fold. Green-bordered proof screenshot added.</td>
+        <td>— · <span class="src-badge src-shipped">verified</span></td>
+      </tr>
+      <tr>
+        <td>"SOS — send from a Stato WhatsApp number, not personal"</td>
+        <td>Current flow uses <code>wa.me</code> deep link which opens the SENDER's WhatsApp — that's why messages arrive "from their personal number." To send from a Stato-owned WhatsApp account needs either WhatsApp Business API (Meta) or Twilio WhatsApp. Same as the 22-May Twilio carryover.</td>
+        <td>— · <span class="src-badge src-pending">needs creds</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <details class="section" open>
+    <summary>Folder view in action — screenshot <span class="summary-hint">— click chevron → subtasks expand below</span></summary>
+    <div class="content">
+      <div class="shot" style="border: 2px solid #16a34a; margin-top: 14px;">
+        <a href="assets/2026-05-27/demo-12-folder-view-expanded.png" target="_blank"><img src="assets/2026-05-27/demo-12-folder-view-expanded.png" alt="Folder view expanded"/></a>
+        <div class="caption"><strong>List view · Benson row expanded</strong> — 7 subtasks render as indented rows directly below the parent. Each has its own check icon for inline toggle. Other rows (Mortgage Application, Foresters) still collapsed with ▸ chevron.</div>
+      </div>
+    </div>
+  </details>
 
   <!-- ─── JAM-VIDEO ITEM-BY-ITEM ─────────────────────────────── -->
   <h2>Jam-video — 12 items, all verified live in prod <span class="pill done">12 / 12 done</span></h2>
