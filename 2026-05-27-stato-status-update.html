@@ -311,6 +311,18 @@
       </div>
 
       <div>
+        <div style="font-size: 12px; font-weight: 600; color: #6e6e73; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.04em;">Client portal (test on a phone)</div>
+        <div><a href="https://sato-frontend.vercel.app/portal" target="_blank" style="color: #0066cc; font-family: 'SF Mono', Menlo, Consolas, monospace; font-size: 13px; word-break: break-all;">https://sato-frontend.vercel.app/portal</a></div>
+        <div style="margin-top: 6px; font-size: 13px; color: #424245;">
+          Email: <code>jamie.probets@ukesn.co.uk</code><br/>
+          Password: <code>TempPass-Jamie-2026!</code>
+        </div>
+        <div style="margin-top: 6px; font-size: 12px; color: #8a6500;">
+          ⚠ This is what Benson would see if onboarded — see the Admin-vs-Client section below.
+        </div>
+      </div>
+
+      <div>
         <div style="font-size: 12px; font-weight: 600; color: #6e6e73; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.04em;">Benson Goldstein task (live in prod)</div>
         <div><a href="https://sato-frontend.vercel.app/tasks/a2b1a5bb-a4c3-4253-a8ec-3029158159ee" target="_blank" style="color: #0066cc; font-family: 'SF Mono', Menlo, Consolas, monospace; font-size: 13px; word-break: break-all;">/tasks/a2b1a5bb-…</a></div>
         <div style="margin-top: 6px; font-size: 13px; color: #424245;">
@@ -323,14 +335,6 @@
         <div><a href="https://linear.app/leadgenerationio/team/OCT/all" target="_blank" style="color: #0066cc; font-family: 'SF Mono', Menlo, Consolas, monospace; font-size: 13px; word-break: break-all;">https://linear.app/leadgenerationio/team/OCT/all</a></div>
         <div style="margin-top: 6px; font-size: 13px; color: #424245;">
           Sam, Hari, Pratteek + Yash all have access. Workspace: <strong>leadgenerationio</strong>.
-        </div>
-      </div>
-
-      <div>
-        <div style="font-size: 12px; font-weight: 600; color: #6e6e73; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.04em;">Backend API health</div>
-        <div><a href="https://sato-backend-production.up.railway.app/api/v1/health" target="_blank" style="color: #0066cc; font-family: 'SF Mono', Menlo, Consolas, monospace; font-size: 13px; word-break: break-all;">https://sato-backend-production.up.railway.app</a></div>
-        <div style="margin-top: 6px; font-size: 13px; color: #424245;">
-          Public endpoint <code>/api/v1/health</code> returns <code>{db: up, redis: up}</code> if healthy.
         </div>
       </div>
     </div>
@@ -791,6 +795,10 @@
     <div class="shot">
       <a href="assets/2026-05-27/demo-3-tasks-board.png" target="_blank"><img src="assets/2026-05-27/demo-3-tasks-board.png" alt="Tasks board / kanban"/></a>
       <div class="caption"><strong>Tasks · Board view</strong> — 4 columns To&nbsp;Do / In&nbsp;Progress / On&nbsp;Hold / Completed (fix #6), drag-and-drop (fix #7), child card shows parent hint (fix #3).</div>
+    </div>
+    <div class="shot" style="border: 2px solid #16a34a;">
+      <a href="assets/2026-05-27/demo-3b-board-on-hold-proof.png" target="_blank"><img src="assets/2026-05-27/demo-3b-board-on-hold-proof.png" alt="On Hold column proof"/></a>
+      <div class="caption"><strong>"On Hold" column proof</strong> — re-screenshot after you flagged the column was missing. It IS rendering. The Benson task you moved is sitting in it with count 1. If you can't see it, your browser window is narrower than ~1024px — Tailwind grid drops from 4 columns to 2, putting On Hold + Completed below the fold. <strong>Scroll down or widen the window.</strong></div>
     </div>
     <div class="shot">
       <a href="assets/2026-05-27/demo-4-task-detail.png" target="_blank"><img src="assets/2026-05-27/demo-4-task-detail.png" alt="Task detail page"/></a>
