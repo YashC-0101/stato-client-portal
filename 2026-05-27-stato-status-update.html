@@ -220,6 +220,71 @@
     font-size: 12px; color: #8a6500; letter-spacing: 0.05em;
     text-transform: uppercase; margin-bottom: 8px;
   }
+  .shot-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;
+    margin: 14px 0;
+  }
+  @media (max-width: 720px) { .shot-grid { grid-template-columns: 1fr; } }
+  .shot {
+    background: #fff; border: 1px solid #e8e8ed; border-radius: 12px;
+    overflow: hidden;
+  }
+  .shot img {
+    width: 100%; height: auto; display: block;
+    border-bottom: 1px solid #f0f0f3;
+    background: #fafafa;
+  }
+  .shot .caption {
+    padding: 10px 14px; font-size: 13px; color: #424245;
+  }
+  .shot .caption strong { color: #1d1d1f; }
+  .warn-card {
+    background: linear-gradient(135deg, #fff5f5 0%, #ffe9e9 100%);
+    border: 1px solid #f5b8b8; border-radius: 14px;
+    padding: 20px 22px; margin: 14px 0 20px 0;
+  }
+  .warn-card h3 { margin-top: 0; color: #a52a2a; }
+  .compare-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+    margin: 14px 0;
+  }
+  @media (max-width: 720px) { .compare-grid { grid-template-columns: 1fr; } }
+  .compare-pane {
+    background: #fff; border: 1px solid #e8e8ed; border-radius: 12px;
+    padding: 16px 18px;
+  }
+  .compare-pane h4 {
+    margin: 0 0 8px 0; font-size: 14px; font-weight: 700;
+    color: #1d1d1f; letter-spacing: -0.01em;
+  }
+  .compare-pane.admin h4 { color: #0042a3; }
+  .compare-pane.client h4 { color: #1d7a3a; }
+  .compare-pane ul {
+    margin: 6px 0 0 0; padding-left: 18px;
+    font-size: 13.5px; color: #424245; line-height: 1.7;
+  }
+  .compare-pane ul.no { padding-left: 18px; color: #6e6e73; }
+  .compare-pane ul.no li::marker { color: #a52a2a; }
+  .opt-card {
+    background: #fff; border: 1px solid #e8e8ed; border-radius: 14px;
+    padding: 18px 22px; margin: 0 0 14px 0;
+    border-left: 4px solid #d8d8de;
+  }
+  .opt-card.recommended { border-left-color: #16a34a; background: #fafff6; }
+  .opt-card h4 {
+    margin: 0 0 8px 0; font-size: 16px; font-weight: 700;
+    display: flex; align-items: baseline; gap: 10px;
+  }
+  .opt-card .opt-tag {
+    font-size: 11px; font-weight: 600;
+    padding: 2px 8px; border-radius: 999px;
+    text-transform: uppercase; letter-spacing: 0.04em;
+    background: #f0f0f3; color: #424245;
+  }
+  .opt-card.recommended .opt-tag { background: #e6f7ec; color: #1d7a3a; }
+  .opt-card p { margin: 6px 0; font-size: 13.5px; color: #424245; }
+  .opt-card ol { margin: 8px 0 0 0; padding-left: 20px;
+    font-size: 13.5px; color: #424245; line-height: 1.7; }
 </style>
 </head>
 <body>
@@ -702,6 +767,208 @@
     </tbody>
   </table>
 
+  <!-- ─── SCREENSHOTS / EVIDENCE ─────────────────────────────── -->
+  <h2>Screenshots — evidence from prod, taken today <span class="pill done">12 shots</span></h2>
+
+  <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
+    Drove a real Chrome session against
+    <code>https://sato-frontend.vercel.app</code> after the deploy and
+    captured the full demo flow. All 12 PNGs are checked into the portal
+    under <code>assets/2026-05-27/</code> if you want to grab them for
+    your own deck. Tap any image below to open the full file.
+  </p>
+
+  <h3>Admin app — the dashboard you'll screen-share</h3>
+  <div class="shot-grid">
+    <div class="shot">
+      <a href="assets/2026-05-27/demo-1-dashboard.png" target="_blank"><img src="assets/2026-05-27/demo-1-dashboard.png" alt="Stato admin dashboard"/></a>
+      <div class="caption"><strong>Dashboard</strong> — £802k revenue, ad spend chart, campaign sources pie, bank feed, invoices, P&amp;L, credit alerts. The morning overview.</div>
+    </div>
+    <div class="shot">
+      <a href="assets/2026-05-27/demo-2-tasks-list.png" target="_blank"><img src="assets/2026-05-27/demo-2-tasks-list.png" alt="Tasks list view"/></a>
+      <div class="caption"><strong>Tasks · List view</strong> — status dropdown per row (fix #2), 5 status tabs + 3 combo filters (fix #4), Archived tab (fix #8), inline status (fix #1).</div>
+    </div>
+    <div class="shot">
+      <a href="assets/2026-05-27/demo-3-tasks-board.png" target="_blank"><img src="assets/2026-05-27/demo-3-tasks-board.png" alt="Tasks board / kanban"/></a>
+      <div class="caption"><strong>Tasks · Board view</strong> — 4 columns To&nbsp;Do / In&nbsp;Progress / On&nbsp;Hold / Completed (fix #6), drag-and-drop (fix #7), child card shows parent hint (fix #3).</div>
+    </div>
+    <div class="shot">
+      <a href="assets/2026-05-27/demo-4-task-detail.png" target="_blank"><img src="assets/2026-05-27/demo-4-task-detail.png" alt="Task detail page"/></a>
+      <div class="caption"><strong>Task detail</strong> — title / priority / status, description, relationships (Time block / SOP / Parent / Children), subtasks, attachments, comments, sidebar with Created-By + full audit log.</div>
+    </div>
+    <div class="shot">
+      <a href="assets/2026-05-27/demo-5-ai-dialog.png" target="_blank"><img src="assets/2026-05-27/demo-5-ai-dialog.png" alt="AI generate dialog"/></a>
+      <div class="caption"><strong>AI generate · prompt</strong> — describe a task in one sentence (fix #11, <code>ANTHROPIC_API_KEY</code> now live).</div>
+    </div>
+    <div class="shot" style="border: 2px solid #16a34a;">
+      <a href="assets/2026-05-27/demo-5b-ai-populated.png" target="_blank"><img src="assets/2026-05-27/demo-5b-ai-populated.png" alt="AI generated form populated"/></a>
+      <div class="caption"><strong>AI generate · populated</strong> — full form auto-filled in ~3s: title, description, Priority&nbsp;High, Category&nbsp;Onboarding, 2 hours, linked SOP, 7 subtasks. Generated for the exact Benson Goldstein prompt.</div>
+    </div>
+    <div class="shot">
+      <a href="assets/2026-05-27/demo-6-sos-queue.png" target="_blank"><img src="assets/2026-05-27/demo-6-sos-queue.png" alt="SOS queue"/></a>
+      <div class="caption"><strong>SOS Queue</strong> — when the team gets stuck, requests come here. Row with <code>/tasks/&lt;id&gt;</code> has a one-click "Open referenced task" button (fix #9).</div>
+    </div>
+    <div class="shot">
+      <a href="assets/2026-05-27/demo-7-benson-task-with-subtasks.png" target="_blank"><img src="assets/2026-05-27/demo-7-benson-task-with-subtasks.png" alt="Benson Goldstein onboarding task"/></a>
+      <div class="caption"><strong>Benson Goldstein task — live in prod</strong> with 7 subtasks pre-loaded, due 1 June, linked SOP. <a href="https://sato-frontend.vercel.app/tasks/a2b1a5bb-a4c3-4253-a8ec-3029158159ee" target="_blank">Open directly</a>.</div>
+    </div>
+    <div class="shot">
+      <a href="assets/2026-05-27/smoke-1-status-flipped.png" target="_blank"><img src="assets/2026-05-27/smoke-1-status-flipped.png" alt="Status optimistic flip"/></a>
+      <div class="caption"><strong>Optimistic untick proof (fix #1)</strong> — "Mortgage Application" flipped To&nbsp;Do → Completed in the same render frame. No spinner gap.</div>
+    </div>
+    <div class="shot">
+      <a href="assets/2026-05-27/smoke-10-no-delete-button.png" target="_blank"><img src="assets/2026-05-27/smoke-10-no-delete-button.png" alt="Creator-only delete proof"/></a>
+      <div class="caption"><strong>Creator-only delete proof (fix #10)</strong> — viewing sam@leadgeneration.io's task as demo@stato.app shows no Delete button. API also 403s if forced.</div>
+    </div>
+  </div>
+
+  <h3>Client portal — what Benson would actually log in to</h3>
+  <div class="shot-grid">
+    <div class="shot">
+      <a href="assets/2026-05-27/demo-8-client-portal-dashboard.png" target="_blank"><img src="assets/2026-05-27/demo-8-client-portal-dashboard.png" alt="Client portal dashboard"/></a>
+      <div class="caption"><strong>Client portal · Dashboard</strong> (UKESN's view as proof) — Active Campaigns / Leads This Month / Outstanding / Agreement status + 14-day lead deliveries chart. <em>This is what Benson Goldstein would see if/when onboarded as a client.</em></div>
+    </div>
+    <div class="shot">
+      <a href="assets/2026-05-27/demo-9-client-portal-leads.png" target="_blank"><img src="assets/2026-05-27/demo-9-client-portal-leads.png" alt="Client portal leads"/></a>
+      <div class="caption"><strong>Client portal · Leads</strong> — date-range picker (7d / 30d / 90d / YTD / custom), total / avg / peak tiles, daily volume chart, per-campaign breakdown. UKESN currently sees 8,887 leads across 3 campaigns.</div>
+    </div>
+  </div>
+
+  <!-- ─── ADMIN vs CLIENT ─────────────────────────────── -->
+  <h2>Important — Admin tasks ≠ what Benson sees <span class="pill block">read this first</span></h2>
+
+  <div class="warn-card">
+    <h3 style="font-size: 16px;">⚠ The task I created today is <em>internal</em>. Benson can't see it.</h3>
+    <p style="font-size: 14px; color: #424245; margin: 8px 0;">
+      The Task Manager you walked through in the jam-video lives on the
+      <strong>admin app</strong> — for owners / ops / finance only. The
+      Benson Goldstein onboarding task I pre-loaded is great for
+      <strong>you / Hari / Pratteek</strong> to track during the
+      onboarding, but it's behind the admin login. If you tell Benson
+      <em>"log in and see your dashboard"</em>, he opens the
+      <strong>Client Portal</strong> instead — which is a completely
+      different surface (Dashboard · Leads · Invoices · Compliance ·
+      Creatives · Agreement · Account). <strong>No Tasks tab there.</strong>
+    </p>
+  </div>
+
+  <div class="compare-grid">
+    <div class="compare-pane admin">
+      <h4>🛠 Admin app · <code>/</code> (what you see)</h4>
+      <p style="font-size: 13px; color: #6e6e73; margin: 0 0 8px 0;">Login: <code>sam@leadgeneration.io</code></p>
+      <ul>
+        <li>Dashboard (P&amp;L, bank feed, revenue chart)</li>
+        <li>Finance · Clients · Campaigns · LeadByte</li>
+        <li>Agreements · Workflows · <strong>Tasks (jam-video)</strong></li>
+        <li>SOPs · Staff · Reports · Notifications · SOS</li>
+        <li>Integrations · Settings</li>
+        <li>Sees every business + every client + every figure</li>
+      </ul>
+    </div>
+    <div class="compare-pane client">
+      <h4>👤 Client Portal · <code>/portal</code> (what Benson sees)</h4>
+      <p style="font-size: 13px; color: #6e6e73; margin: 0 0 8px 0;">Login: client's own email + temp password</p>
+      <ul>
+        <li>Dashboard (own campaigns, leads, outstanding balance)</li>
+        <li>Leads (deliveries chart, per-campaign breakdown)</li>
+        <li>Invoices (own invoices, pay status)</li>
+        <li>Compliance · Creatives (approval workflow)</li>
+        <li>Agreement · Account</li>
+      </ul>
+      <p style="margin: 10px 0 4px 0; font-size: 13px; font-weight: 600; color: #a52a2a;">Benson does NOT see:</p>
+      <ul class="no">
+        <li>The Tasks tab</li>
+        <li>P&amp;L · bank balance · your costs</li>
+        <li>Other clients' data</li>
+        <li>The jam-video Task Manager you just walked through</li>
+      </ul>
+    </div>
+  </div>
+
+  <p style="margin: 14px 0 6px 0; color: #424245; font-size: 14px;">
+    <strong>What this means for tomorrow:</strong> if you screen-share
+    the admin app to Benson, everything works exactly as today's smoke
+    test proves. But if you tell Benson <em>"log in to your dashboard
+    yourself"</em>, the Task Manager + this onboarding task aren't part
+    of his view — he sees the client-portal screenshots in the section
+    just above this. Both views are real and working in prod. The
+    question is which one you intend to give him.
+  </p>
+
+  <!-- ─── YASH'S SUGGESTIONS ─────────────────────────────── -->
+  <h2>My read on your message — suggestions for tomorrow <span class="pill fix">Yash's take</span></h2>
+
+  <p style="margin: 0 0 14px 0; color: #424245; font-size: 14px;">
+    Your message said: <em>"focus on this task tomorrow — I promised the
+    client a dashboard — Benson Goldstein."</em> "This task" almost
+    certainly means the Task Manager (the jam-video work) — which is
+    100% ready. The word <em>"dashboard"</em> is the bit I want to
+    double-check, because the admin dashboard and the client dashboard
+    are two different surfaces. Three ways to play tomorrow's call:
+  </p>
+
+  <div class="opt-card recommended">
+    <h4>Option A — Screen-share the admin app <span class="opt-tag">recommended</span></h4>
+    <p>
+      You drive on your screen. Benson watches you walk through:
+      <strong>Dashboard → Tasks (the jam-video) → his pre-loaded
+      onboarding task → AI generate → SOS</strong>. This is the safest
+      route — everything verified live today, the Benson task is
+      already there waiting, and you control the narrative. Zero
+      additional setup needed before the meeting.
+    </p>
+    <ol>
+      <li>Open <a href="https://sato-frontend.vercel.app" target="_blank">sato-frontend.vercel.app</a>, sign in as you.</li>
+      <li>Use the demo flow from the 26-May card: Dashboard → AI generate → Task list → Task detail → SOS.</li>
+      <li>Show the Benson task with 7 subtasks → tick a couple off live → point at the audit log updating.</li>
+    </ol>
+  </div>
+
+  <div class="opt-card">
+    <h4>Option B — Onboard Benson Goldstein as a real client + give him portal access <span class="opt-tag">if he wants self-serve</span></h4>
+    <p>
+      Benson logs in himself and sees his own client portal. More
+      impressive but needs ~20 min of setup before the call. Use the
+      Benson task I created as the checklist — its 7 subtasks
+      <strong>are exactly these steps</strong>. Order:
+    </p>
+    <ol>
+      <li>Create the client record (<code>/clients → New</code>): company name, Companies House number, primary contact name, contact email.</li>
+      <li>Run a credit check (Endole — assuming it's topped up; otherwise the dashboard tile still shows "Action needed" cleanly).</li>
+      <li>Create a portal user for Benson (email + temp password).</li>
+      <li>Link 1-2 campaigns so his Leads tab and Dashboard tiles aren't empty.</li>
+      <li>(Optional) Generate an agreement + send via SignNow (still in Mock mode — will show "Sample" watermark).</li>
+      <li>WhatsApp Benson the URL + temp password ~1h before the call.</li>
+    </ol>
+    <p style="font-size: 12.5px; color: #6e6e73; margin-top: 8px;">
+      Limitation: outbound email is still Resend-pending-DNS, so the
+      "welcome" email won't send from <code>leadgeneration.io</code> —
+      you'd hand-deliver the creds.
+    </p>
+  </div>
+
+  <div class="opt-card">
+    <h4>Option C — Hybrid (do A live, show B as a preview) <span class="opt-tag">most flexible</span></h4>
+    <p>
+      Drive Option A on your screen during the meeting, and at the end
+      open UKESN's portal (Jamie's view, screenshots above) and say
+      <em>"this is what your portal will look like when we onboard you
+      formally — same shape, your data."</em> Lets you commit to a
+      follow-up call where Benson actually logs in once he's signed.
+      No extra setup needed before tomorrow.
+    </p>
+  </div>
+
+  <p style="margin: 18px 0 0 0; color: #424245; font-size: 14px;">
+    <strong>My honest recommendation:</strong> go with <strong>A</strong>
+    if Benson is technical enough to follow a screen-share, or
+    <strong>C</strong> if he'd react better to <em>"here's what your
+    portal will look like"</em>. <strong>B</strong> is impressive but
+    fragile — if Benson's network is flaky during the call, he stares
+    at a loading spinner instead of the dashboard. Tell me which one
+    and I'll prep the exact click-by-click playbook for the morning.
+  </p>
+
   <!-- ─── REQUIREMENTS ─────────────────────────────── -->
   <h2>What I need from you (requirements) <span class="pill need">your input</span></h2>
 
@@ -850,6 +1117,13 @@
   ];
 
   const QUESTIONS = [
+    {
+      id: 'q-benson-demo-mode',
+      title: 'Tomorrow\'s Benson Goldstein demo — A, B, or C?',
+      why: 'See the "My read on your message" section above. A = screen-share admin app (zero prep, fully verified today). B = onboard Benson as a real client + portal access (~20 min prep + Endole live + manual creds handoff). C = hybrid (drive A live, show UKESN\'s portal at the end as a preview of what Benson would have). My recommendation: A or C. Tell me which and I\'ll prep the exact click-by-click playbook for the morning.',
+      effort: 'one letter',
+      placeholder: 'e.g. "A" / "C — let\'s do hybrid" / "B but help me with steps 1-4 in the morning"',
+    },
     {
       id: 'q-benson-demo-outcome',
       title: 'Tomorrow\'s Benson Goldstein demo — how did it go?',
