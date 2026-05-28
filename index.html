@@ -72,11 +72,22 @@
     for reference. All pages need the access code the Octogle Team sent you.
   </p>
 
+  <a class="card" href="2026-05-28-stato-status-update-jam-video-2.html">
+    <div class="row">
+      <div class="ic" style="background: #fff8e6;">📼</div>
+      <div>
+        <h2>Status update — 28 May 2026 (jam-video #2 corrections) <span style="font-size:11px;font-weight:600;background:#1d7a3a;color:#fff;padding:2px 8px;border-radius:999px;margin-left:6px;letter-spacing:0.04em;">LATEST</span></h2>
+        <p><strong>Sam's jam-video #2 was right — first round addressed the words of the 4:30 meeting but missed the intent.</strong> Portal is now <em>display-only</em>: agency tells the client what they see, client doesn't act on the account. <strong>All 7 of Sam's asks actioned</strong>, with his verbatim quotes paired to each change. (1) Agreement upload box deleted — agency marks signed from admin side. (2) Creatives tab is display-only — no Approve/Changes/Reject buttons; Compliance keeps them. (3) Found the £5,646 → £1,888 root cause: Catchr's <code>authorization_id</code> rotates on every reconnect, creating 3× duplicate rows in <code>ad_spend</code> — defensive dedupe shipped at 11 sum sites (portal Leads, admin Dashboard, /reports, /ad-spend, financial overview, P&amp;L, supplier perf, traffic-source rollup). (4) Standalone <code>/portal/ad-spend</code> tab deleted; per-source view now lives inside <code>/portal/leads</code> as "By Source" card paired with the existing date-range picker; <strong>lead counts now come from LeadByte's per-supplier truth</strong> (same as Sam's admin <code>/reports</code>) — no more "est." flag on preset ranges like this_month/last_month/ytd. (5) Stop AI-summarising recordings — this doc itself follows the verbatim-quote pattern. (6) Velocity concern — worth a direct call. (7) Users tab and self-service endpoints deleted from the portal entirely. <strong>6 screenshots embedded</strong>: featured shot is the By Source card showing Benson MTD Facebook 112 leads · £6,868.36 / Google 19 leads · £1,882.10 — matching Sam's admin numbers exactly.</p>
+      </div>
+      <div class="arrow">›</div>
+    </div>
+  </a>
+
   <a class="card" href="2026-05-27-stato-status-update-post-meeting.html">
     <div class="row">
       <div class="ic" style="background: #dcfce7;">✅</div>
       <div>
-        <h2>Status update — 27 May 2026 (post-4:30 PM meeting) <span style="font-size:11px;font-weight:600;background:#16a34a;color:#fff;padding:2px 8px;border-radius:999px;margin-left:6px;letter-spacing:0.04em;">LATEST · ALL DONE</span></h2>
+        <h2>Status update — 27 May 2026 (post-4:30 PM meeting · pre-correction)</h2>
         <p><strong>Everything from the 4:30 PM meeting is shipped to prod — including real Ad Spend data flowing on Kobe's portal (Facebook £6,868.36 + Google £5,646.30 = £12,514.66 May MTD).</strong> Live in the client portal under Kobe (client_admin self-serve, not Sam): <strong>multi-user access</strong> (add + remove portal users from <code>/portal/users</code>), <strong>per-user tab permissions (OCT-61)</strong> — exactly the model you described in the meeting ("create a user → select which tabs they see → press create"), <strong>manual override for pending agreement</strong> (Kobe uploads the signed PDF himself; Pending flips to Signed automatically), <strong>compliance → creatives approval flow</strong> (pending stays in Compliance, approved moves into Creatives as dated folders e.g. "Wednesday, 27 May 2026 · 2 assets"), <strong>Ad Spend dedicated tab</strong> at <code>/portal/ad-spend</code> with real data (Hari PR #29 promoted to tab, PR #22 rewired attribution via traffic_sources; managed clients only — Benson reclassified <code>ppl → managed</code>; UKESN remains PPL per Sam's spec). Bonus fixes on top: routing bug that landed client_admin on a blank admin page is fixed, internal staff SOS button removed from client portal, header polish (initials avatar + divider, "Ad Spend" no-wrap). <strong>3 screenshots embedded</strong> (portal dashboard, agreement self-upload, Ad Spend live data showing £12,514.66 breakdown). <strong>9-step testing flow inside</strong> + suggested group message. Please walk it as Kobe and reply in the group.</p>
       </div>
       <div class="arrow">›</div>

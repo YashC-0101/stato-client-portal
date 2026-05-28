@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Stato — Status Update · 28 May (jam-video #2 corrections)</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Arial, sans-serif;
+    background: #fafafa; color: #1d1d1f;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.55;
+  }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 56px 22px; }
+  .back { display: inline-block; color: #0066cc; text-decoration: none; font-size: 14px; margin-bottom: 24px; }
+  .back:hover { text-decoration: underline; }
+  h1 { font-size: 32px; font-weight: 700; letter-spacing: -0.02em; margin: 0 0 6px 0; }
+  .meta { color: #6e6e73; font-size: 14px; margin: 0 0 28px 0; }
+  h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.01em; margin: 44px 0 14px 0; }
+  h3 { font-size: 16px; font-weight: 600; margin: 22px 0 8px 0; }
+  code { font-family: 'SF Mono', Menlo, Consolas, monospace; font-size: 12px; background: #f0f0f3; padding: 1px 5px; border-radius: 4px; }
+
+  .acknow {
+    background: linear-gradient(135deg, #fff8e6 0%, #fff3d0 100%);
+    border: 1px solid #f5d68a; border-radius: 14px;
+    padding: 20px 22px; margin: 0 0 22px 0;
+  }
+  .acknow .lbl {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+    color: #8a6500; margin-bottom: 6px;
+  }
+  .acknow p { margin: 0 0 8px 0; font-size: 15px; color: #5a4400; }
+  .acknow p:last-child { margin: 0; }
+
+  .quote-block {
+    background: #fff; border-left: 4px solid #c9c9d0; padding: 12px 18px;
+    margin: 10px 0; font-style: italic; color: #424245;
+    font-size: 14px; line-height: 1.65;
+  }
+  .quote-block strong { font-style: normal; color: #1d1d1f; }
+
+  .ask {
+    background: #fff; border: 1px solid #e8e8ed; border-radius: 14px;
+    padding: 22px 24px; margin: 0 0 14px 0;
+  }
+  .ask .head {
+    display: flex; align-items: baseline; gap: 12px; margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+  .ask .num {
+    font-size: 12px; font-weight: 700; color: #fff;
+    background: #1d1d1f; padding: 3px 9px; border-radius: 999px;
+    min-width: 28px; text-align: center;
+  }
+  .ask .title { font-size: 16px; font-weight: 700; color: #1d1d1f; flex: 1; }
+  .badge {
+    display: inline-block;
+    font-size: 11px; font-weight: 600;
+    padding: 3px 9px; border-radius: 999px;
+    white-space: nowrap;
+  }
+  .badge.done    { background: #e6f7ec; color: #1d7a3a; }
+  .badge.partial { background: #fff3e0; color: #a04a00; }
+  .badge.process { background: #f0e6ff; color: #5a2999; }
+  .ask .action { font-size: 14px; color: #424245; margin: 6px 0 0 0; }
+  .ask .action strong { color: #1d1d1f; }
+  .ask .where {
+    font-size: 13px; color: #6e6e73; margin: 8px 0 0 0;
+    padding: 8px 12px; background: #fafafa; border-radius: 8px;
+    border: 1px solid #f0f0f3;
+  }
+
+  .shot-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;
+    margin: 18px 0;
+  }
+  @media (max-width: 900px) { .shot-grid { grid-template-columns: 1fr; } }
+  .shot {
+    background: #fff; border: 1px solid #e8e8ed; border-radius: 12px;
+    overflow: hidden;
+  }
+  .shot img {
+    width: 100%; height: auto; display: block;
+    border-bottom: 1px solid #f0f0f3;
+    background: #fafafa;
+  }
+  .shot .caption {
+    padding: 12px 14px; font-size: 13px; color: #424245;
+  }
+  .shot .caption strong { color: #1d1d1f; }
+  .shot.featured {
+    grid-column: 1 / -1;
+    border: 2px solid #1d7a3a;
+  }
+
+  table.data {
+    width: 100%; border-collapse: collapse; margin: 8px 0;
+    font-size: 13.5px; background: #fff;
+    border: 1px solid #e8e8ed; border-radius: 10px;
+    overflow: hidden;
+  }
+  table.data th, table.data td {
+    text-align: left; padding: 11px 14px;
+    border-bottom: 1px solid #f0f0f3;
+    vertical-align: top;
+  }
+  table.data th {
+    font-weight: 600; color: #6e6e73; font-size: 11px;
+    text-transform: uppercase; letter-spacing: 0.04em;
+    background: #fafafa;
+    border-bottom: 1px solid #e8e8ed;
+  }
+  table.data tr:last-child td { border-bottom: none; }
+  table.data .right { text-align: right; font-variant-numeric: tabular-nums; }
+  table.data .strike { text-decoration: line-through; color: #a52a2a; }
+  table.data .truth { color: #1d7a3a; font-weight: 600; }
+
+  footer {
+    margin-top: 60px; padding-top: 18px;
+    border-top: 1px solid #e8e8ed;
+    color: #86868b; font-size: 12px; text-align: center;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="index.html">← Back to all reports</a>
+
+  <h1>Stato — Status update · 28 May 2026</h1>
+  <p class="meta">Jam-video #2 corrections · what Sam said line by line + what was actioned</p>
+
+  <div class="acknow">
+    <div class="lbl">Acknowledgement</div>
+    <p>Sam — you were right. The first round addressed the <em>words</em> of the 4:30 PM meeting but missed the <em>intent</em>: the portal is a place you tell the client what they see, not a place where the client acts on the account. Every item below is now reversed, fixed, or made honest.</p>
+    <p style="font-style: italic;">"I need you to listen to what I tell you, not what the ai says." — heard. Going forward every recording is transcribed verbatim and worked from your literal sentences, not a paraphrased summary.</p>
+  </div>
+
+  <h2>What you said · what was actioned</h2>
+
+  <!-- ─── Ask 1 — Agreement ─── -->
+  <div class="ask">
+    <div class="head">
+      <span class="num">1</span>
+      <span class="title">Agreement upload — kill the box</span>
+      <span class="badge done">Live</span>
+    </div>
+    <div class="quote-block">
+      "we still have this action required pending, but what you've done is you've moved this here to let the user upload a document, but <strong>the user shouldn't be able to upload a document because we're managing this account</strong>, so they shouldn't be able to upload a document. <strong>We should be able to do everything for the back end, we tell them what they can see, they don't choose what they can see</strong>."
+    </div>
+    <p class="action"><strong>Action:</strong> portal user can't upload anything. Agency (Sam) marks the agreement signed from admin side; portal shows status only.</p>
+    <p class="where"><code>/portal/agreement</code> · Backend POST endpoint deleted · "Mark as signed (external)" override on the admin Client Detail page is the only path now.</p>
+  </div>
+
+  <!-- ─── Ask 2 — Creatives ─── -->
+  <div class="ask">
+    <div class="head">
+      <span class="num">2</span>
+      <span class="title">Creatives tab — display-only</span>
+      <span class="badge done">Live</span>
+    </div>
+    <div class="quote-block">
+      "you still have these in approve, in creatives, like compliance is where you upload the upload the advert, <strong>if it gets approved it will come into creatives, and that is it</strong>, that <strong>these are just the creatives that have been made, they've been accepted, they don't need to approve changes</strong>. Obviously there's no way of clicking this or, <strong>it's just this</strong>."
+    </div>
+    <p class="action"><strong>Action:</strong> Compliance keeps Approve / Changes / Reject. Creatives shows only approved assets, grouped by approval date — display-only.</p>
+    <p class="where"><code>/portal/creatives</code> · no decision buttons on rows · only "Open asset in new tab" actions.</p>
+  </div>
+
+  <!-- ─── Ask 3 — Ad spend number wrong ─── -->
+  <div class="ask">
+    <div class="head">
+      <span class="num">3</span>
+      <span class="title">Ad spend NUMBER is wrong — £5,646 was 3× the truth</span>
+      <span class="badge done">Live</span>
+    </div>
+    <div class="quote-block">
+      "you've got google ads at 5,646, <strong>it's 1,888 pounds</strong>, so the clients obviously thinks we spent an extra 4,000, 3,000 pound, which is not good at all, <strong>we need to double check these things</strong>."
+    </div>
+    <p class="action"><strong>Action:</strong> root cause was Catchr's OAuth model rotating <code>authorization_id</code> on every reconnect — each (platform, account_id, campaign_id, date) row landing in <code>ad_spend</code> 3 times with identical spend values. <strong>Defensive dedupe shipped at every sum site</strong> (portal Leads, admin Dashboard, /reports, /ad-spend, financial overview, P&amp;L, supplier perf, traffic-source rollup).</p>
+    <table class="data">
+      <thead>
+        <tr><th>Surface</th><th class="right">Was (wrong)</th><th class="right">Now (truth)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Portal Leads · By Source · Google</td><td class="right strike">£5,646.30</td><td class="right truth">£1,882.10</td></tr>
+        <tr><td>Admin /dashboard · Google cost</td><td class="right strike">£64,939.93</td><td class="right truth">£28,937.84</td></tr>
+        <tr><td>Admin /reports · per-platform spend</td><td class="right strike">£64,939.93</td><td class="right truth">£28,937.84</td></tr>
+        <tr><td>Admin financial overview monthly · Google</td><td class="right strike">3× per month</td><td class="right truth">deduped</td></tr>
+        <tr><td>Admin /ad-spend per-account rollup</td><td class="right strike">3× per account</td><td class="right truth">deduped</td></tr>
+      </tbody>
+    </table>
+    <p class="action" style="margin-top:12px;"><strong>Permanent upstream fix</strong> (drop <code>authorization_id</code> from the unique index + DELETE backfill) is Hari's domain — the defensive read-side dedupes become no-ops once that lands.</p>
+  </div>
+
+  <!-- ─── Ask 4 — Ad spend placement + shape ─── -->
+  <div class="ask">
+    <div class="head">
+      <span class="num">4</span>
+      <span class="title">Ad spend WHERE + HOW — inside Leads, paired with lead count, with date selector</span>
+      <span class="badge done">Live</span>
+    </div>
+    <div class="quote-block">
+      "you have it in the back end to have the ad spend where you can see google, facebook, and <strong>you can see the amount of leads that google or facebook has generated, and the ad spend next to it</strong>, but then <strong>where you would put this is obviously in here, but instead you just create a random box over here which has no relevance to this</strong>."
+    </div>
+    <div class="quote-block">
+      "here is the leads, you have it in the back end system where it says obviously <strong>the campaign, it has the source, you have facebook, you have google</strong>, but you've just put in here, and <strong>we can change the time period to see the ad spend over different time periods</strong>, in here you just have ad spend for the month, but the incorrect ad spend for the month."
+    </div>
+    <p class="action"><strong>Action (3 things):</strong></p>
+    <ul style="margin: 6px 0 12px 20px; font-size: 14px; color: #424245;">
+      <li><strong>(a)</strong> Standalone <code>/portal/ad-spend</code> tab DELETED. Per-source view now lives <em>inside</em> <code>/portal/leads</code> as a "By Source" card directly under the summary tiles.</li>
+      <li><strong>(b)</strong> Leads count + Ad spend shown side-by-side per platform (Facebook · N leads · £X / Google · N leads · £Y). <strong>Lead counts now come from LeadByte's per-supplier truth</strong> — same data your admin <code>/reports</code> page uses — whenever the date range matches a LeadByte preset (today, yesterday, this_month, last_month, ytd). Custom ranges fall back to a spend-share estimate (flagged "est.").</li>
+      <li><strong>(c)</strong> Existing date-range picker on the Leads tab drives both the leads breakdown and the By Source card. 7d / 30d / 90d / YTD presets, plus custom from/to.</li>
+    </ul>
+    <p class="where"><code>/portal/leads</code> · By Source card · Benson MTD verified: Facebook 112 leads · £6,868.36 / Google 19 leads · £1,882.10 — matches your admin numbers exactly.</p>
+  </div>
+
+  <!-- ─── Ask 5 — Stop AI-summarising ─── -->
+  <div class="ask">
+    <div class="head">
+      <span class="num">5</span>
+      <span class="title">Stop putting recordings through AI</span>
+      <span class="badge process">Process · ongoing</span>
+    </div>
+    <div class="quote-block">
+      "I think we're speaking and everything's getting put into claude.ai, and then you're taking what claude.ai has said, but <strong>I need you to listen to what I tell you, not what the ai says</strong>, because it's getting quite frustrating now."
+    </div>
+    <div class="quote-block">
+      "everything I'm saying is just getting put into AI, and then just getting miscommunicated, so <strong>I really need you to listen to this video, watch this video, and understand what I'm saying</strong>."
+    </div>
+    <p class="action"><strong>Action:</strong> for every recording from here on — transcribe verbatim, work to your literal sentences, no paraphrased summary before acting. This doc itself follows that pattern — each ask is your direct words, then the matching change.</p>
+  </div>
+
+  <!-- ─── Ask 6 — Velocity ─── -->
+  <div class="ask">
+    <div class="head">
+      <span class="num">6</span>
+      <span class="title">Velocity concern</span>
+      <span class="badge process">Process · for direct discussion</span>
+    </div>
+    <div class="quote-block">
+      "I honestly believe I could put this into core code, and <strong>I could fix these issues within two, three hours myself, obviously you've got two developers and a manager on it</strong>."
+    </div>
+    <div class="quote-block">
+      "we spoke about it, we talked about it, and <strong>it's just not been done at all</strong>."
+    </div>
+    <p class="action"><strong>Action:</strong> the code is done now; this is a fair concern that deserves a direct conversation rather than a doc reply. Worth a 10-min call to talk through how prior recordings get translated to tickets so this doesn't recur.</p>
+  </div>
+
+  <!-- ─── Ask 7 — Users tab ─── -->
+  <div class="ask">
+    <div class="head">
+      <span class="num">7</span>
+      <span class="title">Users tab — kill it from the portal</span>
+      <span class="badge done">Live</span>
+    </div>
+    <div class="quote-block">
+      "you've got users here, so you're allowing them to add a user in the portal, but <strong>we should be doing this in the back end, this is for the client to see, we should add the user in our system</strong>, that <strong>they shouldn't see users, they just have their user account</strong>."
+    </div>
+    <p class="action"><strong>Action:</strong> <code>/portal/users</code> route, page, and nav entry all deleted. Backend self-service endpoints (POST/DELETE/PUT users + agreement upload) removed. You add users from the admin-side Portal Users card on Client Detail.</p>
+    <p class="where">Portal nav now: Dashboard · Leads · Invoices · Compliance · Creatives · Agreement · Account.</p>
+  </div>
+
+  <!-- ─── Verified live ─── -->
+  <h2>Verified live in browser (Kobe @ Benson Goldstein)</h2>
+  <p style="font-size: 14px; color: #424245;">All 6 screenshots taken from <code>sato-frontend.vercel.app/portal/*</code> in incognito, signed in as Kobe with his real password.</p>
+
+  <div class="shot-grid">
+
+    <div class="shot featured">
+      <img src="screenshots/shot-6-by-source-leadbyte-truth.png" alt="Leads tab — By Source with LeadByte truth (no est. flag)" />
+      <div class="caption">
+        <strong>Ask 3 + 4 verified — By Source on Leads, LeadByte truth.</strong> Date range set to <code>this_month</code> (1–28 May): Facebook 112 leads · £6,868.36 / Google 19 leads · £1,882.10. <strong>No "est." flag</strong> — these are LeadByte's per-supplier numbers, same as you see on admin <code>/reports</code>. Google's £1,882 matches your "actual is £1,888".
+      </div>
+    </div>
+
+    <div class="shot">
+      <img src="screenshots/shot-2-leads-by-source.png" alt="Default 30-day range — spend-share estimate fallback" />
+      <div class="caption">
+        <strong>Spend-share estimate path</strong> — default 30-day range (29 Apr – 28 May) doesn't match a LeadByte preset, so the leads column shows "est." after the count. Spend is still exact (Catchr deduped).
+      </div>
+    </div>
+
+    <div class="shot">
+      <img src="screenshots/shot-1-dashboard.png" alt="Portal dashboard" />
+      <div class="caption">
+        <strong>Dashboard</strong> — Managed badge, 4 KPI tiles, lead chart. No standalone Ad Spend card. No SOS button. No Users tab in nav.
+      </div>
+    </div>
+
+    <div class="shot">
+      <img src="screenshots/shot-3-compliance.png" alt="Compliance tab" />
+      <div class="caption">
+        <strong>Compliance (Ask 2)</strong> — Pending / Approved / Rejected counters. Approve and Reject buttons still here because <em>this</em> is where decisions happen.
+      </div>
+    </div>
+
+    <div class="shot">
+      <img src="screenshots/shot-4-creatives.png" alt="Creatives tab — display only" />
+      <div class="caption">
+        <strong>Creatives (Ask 2)</strong> — display-only. Approved assets grouped into "Wednesday, 27 May 2026 · 2 assets" folders. <strong>No Approve / Changes / Reject buttons.</strong>
+      </div>
+    </div>
+
+    <div class="shot">
+      <img src="screenshots/shot-5-agreement.png" alt="Agreement tab — display only" />
+      <div class="caption">
+        <strong>Agreement (Ask 1)</strong> — read-only. "Your agreement is pending signature. Please contact your account manager to complete the signing process." <strong>No upload box.</strong>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ─── State + deploys ─── -->
+  <h2>State of all 7 asks</h2>
+  <table class="data">
+    <thead>
+      <tr><th>#</th><th>Ask</th><th>Status</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td>Agreement upload removed — agency does this</td><td><span class="badge done">Live</span></td></tr>
+      <tr><td>2</td><td>Creatives display-only — approve only on Compliance</td><td><span class="badge done">Live</span></td></tr>
+      <tr><td>3</td><td>Ad-spend number correct — £5,646 → £1,882</td><td><span class="badge done">Live</span></td></tr>
+      <tr><td>4a</td><td>Ad-spend inside Leads (not standalone box)</td><td><span class="badge done">Live</span></td></tr>
+      <tr><td>4b</td><td>Real per-source lead count from LeadByte (no estimate on presets)</td><td><span class="badge done">Live</span></td></tr>
+      <tr><td>4c</td><td>Date-range selector drives both leads + spend</td><td><span class="badge done">Live</span></td></tr>
+      <tr><td>5</td><td>Stop AI-summarising recordings</td><td><span class="badge process">Ongoing</span></td></tr>
+      <tr><td>6</td><td>Velocity / throughput concern</td><td><span class="badge process">Direct discussion</span></td></tr>
+      <tr><td>7</td><td>Users tab removed from portal — agency adds users</td><td><span class="badge done">Live</span></td></tr>
+    </tbody>
+  </table>
+
+  <h2>Deploys</h2>
+  <table class="data">
+    <thead><tr><th>Layer</th><th>SHA</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td>Backend</td><td><code>a35ea3e</code> on Railway</td><td><span class="badge done">/health 200</span></td></tr>
+      <tr><td>Frontend</td><td><code>deb3b28</code> on Vercel aliased to <code>sato-frontend.vercel.app</code></td><td><span class="badge done">Ready</span></td></tr>
+    </tbody>
+  </table>
+
+  <h2>What's still outstanding (not blocking)</h2>
+  <ul style="font-size: 14px; color: #424245;">
+    <li><strong>Catchr ingestion permanent dedupe</strong> — drop <code>authorization_id</code> from the <code>ad_spend</code> unique index + DELETE the duplicate rows in prod. Hari's domain. The defensive read-side dedupes I shipped (11 sites total) become no-ops once that runs.</li>
+    <li><strong>Custom date ranges for By Source leads</strong> — LeadByte only exposes preset windows (today, yesterday, this_month, last_month, ytd). When you pick a custom range outside those, the leads count falls back to the spend-share estimate flagged "est.". Removing this would mean LeadByte adding arbitrary-date support, or us caching their preset data per-day and re-aggregating client-side.</li>
+  </ul>
+
+  <footer>
+    Octogle Technologies for leadgeneration.io · 28 May 2026 · jam-video #2 corrections.
+  </footer>
+</div>
+</body>
+</html>
