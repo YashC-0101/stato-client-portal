@@ -261,6 +261,37 @@
     <p class="where">Portal nav now: Dashboard · Leads · Invoices · Compliance · Creatives · Agreement · Account.</p>
   </div>
 
+  <!-- ─── Ask 8 — Post-publish bug ─── -->
+  <div class="ask">
+    <div class="head">
+      <span class="num">+</span>
+      <span class="title">Creative click was opening an expired R2 URL (XML error page)</span>
+      <span class="badge done">Live · Hari PRs #23/24 + #31/32</span>
+    </div>
+    <p class="action" style="margin-top: 0;">
+      Sam reported (post-publish): clicking a creative on <code>/portal/creatives</code> opened
+      <code>cloudflarestorage.com/...</code> with
+      <code>&lt;Error&gt;&lt;Code&gt;ExpiredRequest&lt;/Code&gt;&lt;/Error&gt;</code>.
+    </p>
+    <p class="action"><strong>Root cause:</strong> the BE returned a 1-hour presigned R2 URL on the creatives list response; the FE
+      opened that URL directly without refreshing, so anyone who loaded the list, sat for &gt;1 hour
+      and then clicked saw R2's XML expiry page. Worse: many legacy assets landed in the
+      <code>misc/</code> folder while the FE expected <code>creatives/</code> — even a refresh would
+      have signed against the wrong folder.</p>
+    <p class="action"><strong>Hari's fix (4 PRs):</strong></p>
+    <ul style="margin: 6px 0 12px 20px; font-size: 14px; color: #424245;">
+      <li><strong>BE #23</strong> — list endpoint also returns the <code>r2Key</code> so the FE
+        can re-sign without parsing the stored URL.</li>
+      <li><strong>BE #24</strong> — new <code>GET /api/v1/portal/creatives/:id/signed-url</code>
+        endpoint. Server picks the right R2 folder (handles legacy <code>misc/</code> rows) and
+        enforces per-resource authz on every fetch.</li>
+      <li><strong>FE #31 → #32</strong> — click handler now calls the per-id endpoint, opens the
+        returned URL. No client-side folder guessing.</li>
+    </ul>
+    <p class="where">Verified live: click on Kobe's portal triggered <code>GET /portal/creatives/a88d8cea-…/signed-url</code> → fresh R2 URL with
+      <code>X-Amz-Date=20260528T085832Z</code> (today) → image loads in new tab. Screenshot below.</p>
+  </div>
+
   <!-- ─── Verified live ─── -->
   <h2>Verified live in browser (Kobe @ Benson Goldstein)</h2>
   <p style="font-size: 14px; color: #424245;">All 6 screenshots taken from <code>sato-frontend.vercel.app/portal/*</code> in incognito, signed in as Kobe with his real password.</p>
@@ -309,6 +340,16 @@
       </div>
     </div>
 
+    <div class="shot featured">
+      <img src="screenshots/shot-7-creative-opens-fresh.png" alt="Creative asset opens — no XML error" />
+      <div class="caption">
+        <strong>Creative click works — post-publish fix verified.</strong> Clicking a creative now hits
+        <code>GET /portal/creatives/:id/signed-url</code> and opens the fresh R2 link in a new tab
+        (X-Amz-Date today, not 26 May). The Car Finance Check / Benson Goldstein PCP claim image
+        renders correctly — no more <code>ExpiredRequest</code> XML page.
+      </div>
+    </div>
+
   </div>
 
   <!-- ─── State + deploys ─── -->
@@ -327,6 +368,7 @@
       <tr><td>5</td><td>Stop AI-summarising recordings</td><td><span class="badge process">Ongoing</span></td></tr>
       <tr><td>6</td><td>Velocity / throughput concern</td><td><span class="badge process">Direct discussion</span></td></tr>
       <tr><td>7</td><td>Users tab removed from portal — agency adds users</td><td><span class="badge done">Live</span></td></tr>
+      <tr><td>+</td><td>Creative click no longer opens expired R2 XML — Hari PRs #23/24 + #31/32</td><td><span class="badge done">Live</span></td></tr>
     </tbody>
   </table>
 
@@ -334,8 +376,8 @@
   <table class="data">
     <thead><tr><th>Layer</th><th>SHA</th><th>Status</th></tr></thead>
     <tbody>
-      <tr><td>Backend</td><td><code>a35ea3e</code> on Railway</td><td><span class="badge done">/health 200</span></td></tr>
-      <tr><td>Frontend</td><td><code>deb3b28</code> on Vercel aliased to <code>sato-frontend.vercel.app</code></td><td><span class="badge done">Ready</span></td></tr>
+      <tr><td>Backend</td><td><code>4f46b27</code> on Railway · includes Hari's signed-url endpoint + per-resource authz</td><td><span class="badge done">/health 200</span></td></tr>
+      <tr><td>Frontend</td><td><code>8ce5701</code> on Vercel aliased to <code>sato-frontend.vercel.app</code> · includes Hari's per-id signed-url click handler</td><td><span class="badge done">Ready</span></td></tr>
     </tbody>
   </table>
 
