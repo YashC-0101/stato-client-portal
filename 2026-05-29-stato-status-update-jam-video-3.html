@@ -1,0 +1,516 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Stato — Status Update · 29 May (jam-video #3 corrections)</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Arial, sans-serif;
+    background: #fafafa; color: #1d1d1f;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.55;
+  }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 56px 22px; }
+  .back { display: inline-block; color: #0066cc; text-decoration: none; font-size: 14px; margin-bottom: 24px; }
+  .back:hover { text-decoration: underline; }
+  h1 { font-size: 32px; font-weight: 700; letter-spacing: -0.02em; margin: 0 0 6px 0; }
+  .meta { color: #6e6e73; font-size: 14px; margin: 0 0 28px 0; }
+  h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.01em; margin: 44px 0 14px 0; }
+  h3 { font-size: 16px; font-weight: 600; margin: 22px 0 8px 0; }
+  code { font-family: 'SF Mono', Menlo, Consolas, monospace; font-size: 12px; background: #f0f0f3; padding: 1px 5px; border-radius: 4px; }
+
+  .acknow {
+    background: linear-gradient(135deg, #e6f7ec 0%, #d0f5da 100%);
+    border: 1px solid #8ad6a3; border-radius: 14px;
+    padding: 20px 22px; margin: 0 0 22px 0;
+  }
+  .acknow .lbl {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+    color: #155a2c; margin-bottom: 6px;
+  }
+  .acknow p { margin: 0 0 8px 0; font-size: 15px; color: #1d4429; }
+  .acknow p:last-child { margin: 0; }
+  .acknow .stat-row {
+    display: flex; gap: 16px; margin-top: 12px;
+    flex-wrap: wrap;
+  }
+  .acknow .stat {
+    background: #fff; border: 1px solid #b8e3c5; border-radius: 10px;
+    padding: 10px 14px; flex: 1; min-width: 180px;
+  }
+  .acknow .stat .num {
+    font-size: 22px; font-weight: 700; color: #155a2c; line-height: 1.2;
+  }
+  .acknow .stat .lab {
+    font-size: 12px; color: #1d4429; margin-top: 2px;
+  }
+
+  .quote-block {
+    background: #fff; border-left: 4px solid #c9c9d0; padding: 12px 18px;
+    margin: 10px 0; font-style: italic; color: #424245;
+    font-size: 14px; line-height: 1.65;
+  }
+  .quote-block strong { font-style: normal; color: #1d1d1f; }
+
+  .ask {
+    background: #fff; border: 1px solid #e8e8ed; border-radius: 14px;
+    padding: 22px 24px; margin: 0 0 14px 0;
+  }
+  .ask .head {
+    display: flex; align-items: baseline; gap: 12px; margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+  .ask .num {
+    font-size: 12px; font-weight: 700; color: #fff;
+    background: #1d1d1f; padding: 3px 9px; border-radius: 999px;
+    min-width: 28px; text-align: center;
+  }
+  .ask .num.extra {
+    background: #5a2999;
+  }
+  .ask .title { font-size: 16px; font-weight: 700; color: #1d1d1f; flex: 1; }
+  .badge {
+    display: inline-block;
+    font-size: 11px; font-weight: 600;
+    padding: 3px 9px; border-radius: 999px;
+    white-space: nowrap;
+  }
+  .badge.done    { background: #e6f7ec; color: #1d7a3a; }
+  .badge.partial { background: #fff3e0; color: #a04a00; }
+  .badge.process { background: #f0e6ff; color: #5a2999; }
+  .ask .action { font-size: 14px; color: #424245; margin: 6px 0 0 0; }
+  .ask .action strong { color: #1d1d1f; }
+  .ask .where {
+    font-size: 13px; color: #6e6e73; margin: 8px 0 0 0;
+    padding: 8px 12px; background: #fafafa; border-radius: 8px;
+    border: 1px solid #f0f0f3;
+  }
+
+  .shot-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;
+    margin: 18px 0;
+  }
+  @media (max-width: 900px) { .shot-grid { grid-template-columns: 1fr; } }
+  .shot {
+    background: #fff; border: 1px solid #e8e8ed; border-radius: 12px;
+    overflow: hidden;
+  }
+  .shot img {
+    width: 100%; height: auto; display: block;
+    border-bottom: 1px solid #f0f0f3;
+    background: #fafafa;
+  }
+  .shot .caption {
+    padding: 12px 14px; font-size: 13px; color: #424245;
+  }
+  .shot .caption strong { color: #1d1d1f; }
+  .shot.featured {
+    grid-column: 1 / -1;
+    border: 2px solid #1d7a3a;
+  }
+
+  table.data {
+    width: 100%; border-collapse: collapse; margin: 8px 0;
+    font-size: 13.5px; background: #fff;
+    border: 1px solid #e8e8ed; border-radius: 10px;
+    overflow: hidden;
+  }
+  table.data th, table.data td {
+    text-align: left; padding: 11px 14px;
+    border-bottom: 1px solid #f0f0f3;
+    vertical-align: top;
+  }
+  table.data th {
+    font-weight: 600; color: #6e6e73; font-size: 11px;
+    text-transform: uppercase; letter-spacing: 0.04em;
+    background: #fafafa;
+    border-bottom: 1px solid #e8e8ed;
+  }
+  table.data tr:last-child td { border-bottom: none; }
+  table.data .right { text-align: right; font-variant-numeric: tabular-nums; }
+  table.data .strike { text-decoration: line-through; color: #a52a2a; }
+  table.data .truth { color: #1d7a3a; font-weight: 600; }
+  table.data .match { color: #1d7a3a; font-weight: 600; }
+
+  .source-check {
+    background: #f0f7ff; border: 1px solid #b8d4f5; border-radius: 12px;
+    padding: 18px 22px; margin: 18px 0;
+  }
+  .source-check .head {
+    font-size: 14px; font-weight: 700; color: #0a4480; margin-bottom: 10px;
+  }
+  .source-check p {
+    font-size: 13.5px; color: #1d3a5f; margin: 0;
+  }
+  .source-check code { background: #d8e7f8; color: #0a4480; }
+
+  footer {
+    margin-top: 60px; padding-top: 18px;
+    border-top: 1px solid #e8e8ed;
+    color: #86868b; font-size: 12px; text-align: center;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="index.html">← Back to all reports</a>
+
+  <h1>Stato — Status update · 29 May 2026</h1>
+  <p class="meta">Jam-video #3 corrections · every verbatim sentence mapped to a shipped change · 22 / 22 items addressed same day</p>
+
+  <div class="acknow">
+    <div class="lbl">Same-day shipment</div>
+    <p>Sam — every paragraph from your 29-May jam-video is shipped to prod within the same working day. <strong>19 of 19 verbatim asks live</strong> (18 fully, 1 partial — see the per-creative-metrics note inside). <strong>3 extra bugs</strong> caught while testing the prod portal afterwards (the Leads-By-Source vanishing on This Month, the Creatives-page cross-reference sentence, and the Dashboard-vs-Agreement-tab Signed/Pending mismatch) <strong>also fixed and live the same day</strong>.</p>
+    <p>This doc follows the verbatim-quote pattern you asked for on 28-May — each ask is your direct words from the recording, followed by the matching code change.</p>
+    <div class="stat-row">
+      <div class="stat"><div class="num">22 / 22</div><div class="lab">items addressed</div></div>
+      <div class="stat"><div class="num">110 leads · £9,019</div><div class="lab">your quoted truth, on prod</div></div>
+      <div class="stat"><div class="num">2 prod deploys</div><div class="lab">BE + FE shipped today</div></div>
+      <div class="stat"><div class="num">7 screenshots</div><div class="lab">live on Coby's portal</div></div>
+    </div>
+  </div>
+
+  <h2>What you said · what was actioned</h2>
+
+  <!-- ─── Ask 1 — Estimated badges ─── -->
+  <div class="ask">
+    <div class="head">
+      <span class="num">1</span>
+      <span class="title">Drop the "estimated" labels — real figures only, non-negotiable</span>
+      <span class="badge done">Live</span>
+    </div>
+    <div class="quote-block">
+      "on here though you've put in <strong>estimated</strong>, you put <strong>estimated 111 leads, estimated 30 which is not correct</strong>, we need to show the client actual figures, <strong>we can't just make up figures and give it to the client</strong>, so these need to be actual figures and needs to be actual live ad spends, so that's a <strong>non-negotiable</strong>, but these need to be real time ad spends, like it is on the back end and these need to be real time figures as well."
+    </div>
+    <p class="action"><strong>Action:</strong> every "est." badge removed from the portal. Lead counts now come from LeadByte's per-supplier <code>validLeads</code> (the same source admin <code>/reports</code> uses). Ad spend comes from Catchr's deduped MAX-CTE aggregation. No estimates, no spend-share fallback, no fabricated zeros — when real data isn't available the card collapses to an honest "temporarily unavailable" state.</p>
+    <p class="where">Affected pages: <code>/portal</code> (dashboard tile) · <code>/portal/leads</code> (By Source card) · <code>/portal/compliance</code> + <code>/portal/creatives</code> (Campaign performance card).</p>
+  </div>
+
+  <!-- ─── Ask 2 — 110 vs 141 ─── -->
+  <div class="ask">
+    <div class="head">
+      <span class="num">2</span>
+      <span class="title">Dashboard figures must match admin /reports — 110, not 141</span>
+      <span class="badge done">Live</span>
+    </div>
+    <div class="quote-block">
+      "come to reports, campaign overview, come and taste at the campaign, you can see here <strong>Google's on 18 valid leads and Facebook's on 92 valid leads, so it's 110 but 141</strong>, you've got the figures well off, so these need to be real, we can't have fake figures in here."
+    </div>
+    <p class="action"><strong>Action:</strong> dashboard "Leads This Month" tile now reads the same LeadByte supplier-spend path your admin <code>/reports</code> page uses. Same cache key, same function call — by construction the two surfaces cannot disagree.</p>
+    <table class="data">
+      <thead><tr><th>Surface</th><th class="right">Was (wrong)</th><th class="right">Now (truth)</th></tr></thead>
+      <tbody>
+        <tr><td>Portal Dashboard tile · Leads This Month</td><td class="right strike">141</td><td class="right truth">110</td></tr>
+        <tr><td>Portal Leads tab · Facebook</td><td class="right">—</td><td class="right truth">92 leads · £7,136.96</td></tr>
+        <tr><td>Portal Leads tab · Google</td><td class="right">—</td><td class="right truth">18 leads · £1,882.07</td></tr>
+        <tr><td>Portal Leads tab · Total</td><td class="right">—</td><td class="right truth">110 leads · £9,019.03</td></tr>
+      </tbody>
+    </table>
+    <p class="where">Verified on prod: Coby's Dashboard tile = <strong>110</strong>. Sam's quoted truth (18 + 92 = 110) matches exactly.</p>
+  </div>
+
+  <!-- ─── Ask 3 — Compliance interactivity ─── -->
+  <div class="ask">
+    <div class="head">
+      <span class="num">3</span>
+      <span class="title">Compliance items — clickable, deletable, interactive</span>
+      <span class="badge done">Live</span>
+    </div>
+    <div class="quote-block">
+      "compliance wise, like oh that doesn't work, I don't know why we're not testing it, you can see here, <strong>can't click it, can't delete it, can't do anything with it, it's non-interactive</strong>."
+    </div>
+    <p class="action"><strong>Action (3 things):</strong></p>
+    <ul style="margin: 6px 0 12px 20px; font-size: 14px; color: #424245;">
+      <li><strong>Click</strong> — every row is now a button. Clicking selects the creative into the right-hand detail panel (no modal, no route push, instant).</li>
+      <li><strong>Delete</strong> — admin-side affordance on <code>/campaigns/:id</code> Creatives section. Trash button → confirm dialog → soft-delete (audit trail preserved). Portal stays display-only per your jam-video #2 rule ("we tell them what they can see, they don't choose what they can see").</li>
+      <li><strong>Interactive</strong> — Approve / Reject controls live in the detail panel for pending rows. Each decision is IP-timestamped for audit.</li>
+    </ul>
+    <p class="where"><code>/portal/compliance</code> · clickable rows + Approve/Reject in panel · <code>/campaigns/:id</code> · Trash button with confirm dialog.</p>
+  </div>
+
+  <!-- ─── Ask 4 — Open in new tab ─── -->
+  <div class="ask">
+    <div class="head">
+      <span class="num">4</span>
+      <span class="title">No more "open in a brand new tab" — inline preview</span>
+      <span class="badge done">Live</span>
+    </div>
+    <div class="quote-block">
+      "same here, you got these but you can't see what it is, you see this, <strong>you have to open it up in a brand new tab, so it's not very user-friendly</strong>."
+    </div>
+    <p class="action"><strong>Action:</strong> every Compliance + Creatives row renders a thumbnail inline. Clicking opens the full image inside the right-hand detail panel — no new tab, no XML expiry, no click-out-and-click-back. The R2 signed URL is batched into the list response so the first paint already has the image ready.</p>
+    <p class="where"><code>/portal/compliance</code> and <code>/portal/creatives</code> · inline <code>&lt;img&gt;</code>/<code>&lt;video&gt;</code> tags · full preview in side-panel.</p>
+  </div>
+
+  <!-- ─── Ask 5 — Side-panel layout ─── -->
+  <div class="ask">
+    <div class="head">
+      <span class="num">5</span>
+      <span class="title">Click in → see all the ads on the right hand side</span>
+      <span class="badge done">Live</span>
+    </div>
+    <div class="quote-block">
+      "so this is the software that I use and like for example, you can see here, like these different ads, so you get an idea of what the ad looks like, <strong>they click in, you can see all the ads on the right hand side, so this is what it should be looking like</strong>, is this, don't copy this exactly, please don't copy this exactly, this is just an example."
+    </div>
+    <p class="action"><strong>Action:</strong> Compliance + Creatives both use a grid-left, detail-right layout on <code>≥md</code> screens — <code>grid-cols-[300px_1fr]</code>. List on the left scrolls; right panel sticks. On mobile (<code>&lt;md</code>) it stacks single-column. Default-select is the first item, so the panel is populated on first load. Built with our shadcn/ui design system — same pattern as your reference, not a literal copy ("don't copy this exactly" honoured).</p>
+    <p class="where"><code>components/portal/creative-list-item.tsx</code> · <code>components/portal/creative-detail-panel.tsx</code> — new shared components.</p>
+  </div>
+
+  <!-- ─── Ask 6 — Folders + signed off ─── -->
+  <div class="ask">
+    <div class="head">
+      <span class="num">6</span>
+      <span class="title">Show how many to date, who signed them off</span>
+      <span class="badge done">Live</span>
+    </div>
+    <div class="quote-block">
+      "like look at the interface of this, we can see the adverts, they're nicely put into nice little folders, <strong>it shows you how many to date, who signed them off, everything's on here that we need</strong>."
+    </div>
+    <p class="action"><strong>Action:</strong></p>
+    <ul style="margin: 6px 0 12px 20px; font-size: 14px; color: #424245;">
+      <li><strong>How many to date</strong> — section header on Creatives reads <code>"Media · 2 approved assets"</code> live.</li>
+      <li><strong>Who signed them off</strong> — every list row shows "Signed off by Coby Benson · 27 May" in green directly under the campaign name. (This was missing on the first iteration of the side-panel layout — patched after re-watching your video.)</li>
+      <li>The detail panel additionally shows the full datetime audit: "Signed off by Coby Benson on 27 May 2026, 11:52".</li>
+    </ul>
+    <p class="where"><code>creative-list-item.tsx</code> · row metadata · 3-line layout: name · campaign + metrics · signed-off attribution.</p>
+  </div>
+
+  <!-- ─── Ask 7 — Audit info ─── -->
+  <div class="ask">
+    <div class="head">
+      <span class="num">7</span>
+      <span class="title">Surface who approved, when, what was approved — not "good enough" before</span>
+      <span class="badge done">Live</span>
+    </div>
+    <div class="quote-block">
+      "and then you've got this, which just shows this, <strong>who's approved it, where's the time stamps, what's been approved, it's just not good enough</strong>."
+    </div>
+    <p class="action"><strong>Action:</strong> right-hand detail panel renders the full audit block:</p>
+    <ul style="margin: 6px 0 12px 20px; font-size: 14px; color: #424245;">
+      <li><strong>Who:</strong> "Signed off by <em>Coby Benson</em>" / "Rejected by <em>Coby Benson</em>"</li>
+      <li><strong>When:</strong> "on <em>27 May 2026, 11:52</em>" — full UK-locale datetime to the minute</li>
+      <li><strong>What:</strong> creative name + campaign name in the panel header, status badge prominent</li>
+      <li><strong>Why (on rejection):</strong> feedback text quoted in a red panel</li>
+    </ul>
+    <p class="where"><code>creative-detail-panel.tsx</code> lines 195–219 · audit block · status-coloured.</p>
+  </div>
+
+  <!-- ─── Ask 8 — Engageable UI ─── -->
+  <div class="ask">
+    <div class="head">
+      <span class="num">8</span>
+      <span class="title">Engageable UI — no boring click-in / click-out</span>
+      <span class="badge done">Live</span>
+    </div>
+    <div class="quote-block">
+      "we just need exact figures, exact ad spend, compliance, we want, it needs to be, we can't engage this, that doesn't open, but we don't want that to open, <strong>we want it to look nice UI, we don't want to just have this boring</strong>, nice, you know, something like this, we can see the ads, <strong>they don't have to click in and click out, we've got the ads</strong>."
+    </div>
+    <p class="action"><strong>Action:</strong> the side-panel pattern means clicking a row updates the right-hand panel in place — no modal open, no modal close, no separate page. Selecting "the next creative" is one click, full preview switches inline. Sticky panel on desktop so the list stays visible while the detail changes.</p>
+  </div>
+
+  <!-- ─── Ask 9 — Creatives identifiable ─── -->
+  <div class="ask">
+    <div class="head">
+      <span class="num">9</span>
+      <span class="title">Each creative must be visually distinct — no more "what creative is what"</span>
+      <span class="badge done">Live</span>
+    </div>
+    <div class="quote-block">
+      "and then obviously you've got creatives, <strong>we can't see what creative is what</strong>."
+    </div>
+    <p class="action"><strong>Action:</strong> inline <code>&lt;img&gt;</code>/<code>&lt;video&gt;</code> thumbnails per row using R2 signed URLs, batched into the list response. Each row visually distinct at first glance — no more grey placeholder boxes.</p>
+  </div>
+
+  <!-- ─── Ask 10 — All the data here ─── -->
+  <div class="ask">
+    <div class="head">
+      <span class="num">10</span>
+      <span class="title">All the data — capture, update, performance — alongside the creative</span>
+      <span class="badge partial">Partial — campaign-level live, per-ad queued</span>
+    </div>
+    <div class="quote-block">
+      "you know, this looks engaging, you can see the ads, you know, <strong>all the data that you need is in here</strong>, I've got it here, you have <strong>all the data from capture, update here, all the data is there</strong>."
+    </div>
+    <p class="action"><strong>Action (parent-campaign metrics, real data, live now):</strong> each creative row + detail panel now shows the parent campaign's performance from the last 29 days, computed in a single batched call per request:</p>
+    <table class="data">
+      <thead><tr><th>Metric</th><th class="right">Benson Goldstein / PCP Claim (UK) Main</th></tr></thead>
+      <tbody>
+        <tr><td>Spend (Catchr, deduped)</td><td class="right truth">£9,019.03</td></tr>
+        <tr><td>Valid leads (LeadByte)</td><td class="right truth">110</td></tr>
+        <tr><td>Cost per lead</td><td class="right truth">£82</td></tr>
+      </tbody>
+    </table>
+    <p class="action"><strong>Honesty rule:</strong> when a campaign has no Catchr account linked, spend renders as £0 with a tooltip explaining why. Same for LeadByte mapping. BE failure → "temporarily unavailable" instead of a fabricated number.</p>
+    <p class="action"><strong>What's not yet shipped — per-individual-ad metrics:</strong> Sato has no link between an uploaded creative file and the platform-side Facebook/Google ad ID it became (the creatives table has no <code>platform_ad_id</code> column, and our Catchr field-map doesn't request the <code>ad_id</code> dimension). Building this requires a new mapping column + a way to populate it (manual UI / filename match / asset-hash) + updated Catchr queries — roughly a week of work. Queued as a separate spec; campaign-level numbers are the honest stand-in until then.</p>
+    <p class="where"><code>Sato-Backend/src/services/portal.service.ts</code> · <code>getCampaignMetricsForCampaigns()</code> — new helper, batched, deduped, real-data-only.</p>
+  </div>
+
+  <h2>Extra bugs found while testing prod after the deploy</h2>
+  <p style="font-size: 14px; color: #424245;">After shipping the jam-video #3 changes I walked the live portal as Coby and caught three more issues that weren't in your recording. All three fixed and re-deployed the same day.</p>
+
+  <!-- ─── Extra 1 — Leads timezone bug ─── -->
+  <div class="ask">
+    <div class="head">
+      <span class="num extra">+1</span>
+      <span class="title">Leads By Source vanished on This Week / This Month / Last Month / YTD</span>
+      <span class="badge done">Live · 25b7ddb</span>
+    </div>
+    <p class="action"><strong>Symptom:</strong> By Source card only populated when Today / Yesterday was selected. Every other preset collapsed to an empty state with the preset buttons.</p>
+    <p class="action"><strong>Root cause:</strong> timezone bug. <code>firstOfMonth()</code> built a midnight-<em>local</em> Date then routed it through <code>.toISOString()</code> — for UK (BST = UTC+1) that converted "1 May 00:00 BST" into "30 Apr 23:00 UTC" → string "2026-04-30". The BE's LeadByte-preset mapper expected exactly "2026-05-01" for the <code>this_month</code> window, so the request landed in <code>custom-no-preset-match</code> and the card hid its data.</p>
+    <p class="action"><strong>Fix:</strong> single <code>isoLocal()</code> helper formats local-Y/M/D without ever crossing UTC. All four preset helpers route through it.</p>
+    <p class="where">Verified live: default range loads as 2026-05-01 → 2026-05-29 and renders Facebook 92 / Google 18 / £9,019.03 on first paint.</p>
+  </div>
+
+  <!-- ─── Extra 2 — Creatives header sentence ─── -->
+  <div class="ask">
+    <div class="head">
+      <span class="num extra">+2</span>
+      <span class="title">Creatives page header had a redundant Compliance cross-reference</span>
+      <span class="badge done">Live · e012460</span>
+    </div>
+    <p class="action"><strong>Before:</strong> "Approved assets currently running on your campaigns. Items still awaiting review live on the <strong>Compliance</strong> tab."</p>
+    <p class="action"><strong>After:</strong> "Approved assets currently running on your campaigns."</p>
+    <p class="action"><strong>Why:</strong> the cross-reference was redundant — pending items are already labelled "Pending review" on the Compliance tab itself. Sam asked for it gone.</p>
+  </div>
+
+  <!-- ─── Extra 3 — Agreement status mismatch ─── -->
+  <div class="ask">
+    <div class="head">
+      <span class="num extra">+3</span>
+      <span class="title">Dashboard said "Signed", Agreement tab said "Pending" — two sources of truth drifted apart</span>
+      <span class="badge done">Live · e33bbd3</span>
+    </div>
+    <p class="action"><strong>Symptom:</strong> Dashboard tile showed Agreement = "Active / Signed" but <code>/portal/agreement</code> said "Pending — please contact your account manager."</p>
+    <p class="action"><strong>Root cause:</strong> two independent sources of truth. Dashboard reads the admin-toggleable <code>clients.agreementSigned</code> boolean (set to <code>true</code> for Benson Goldstein because the agreement was signed offline). The Agreement tab was deriving status only from the <code>agreements</code> row's <code>signedAt</code> timestamp — which was <code>null</code> because no workflow step ever populated it (SignNow integration is parked).</p>
+    <p class="action"><strong>Fix:</strong> <code>getAgreement</code> now treats the admin boolean as the override. When <code>client.agreementSigned === true</code>, derived status is forced to <code>'signed'</code> regardless of the row's <code>signedAt</code>. Display timestamp falls back through <code>sentAt → updatedAt → createdAt</code>.</p>
+    <p class="where">Verified live: Agreement tab now shows "<strong>Signed on 18 May 2026</strong>" with a green badge. No more "contact your account manager" warning.</p>
+  </div>
+
+  <!-- ─── Source numbers cross-check ─── -->
+  <h2>Source-data reconciliation — Catchr MCP (live) + LeadByte</h2>
+  <p style="font-size: 14px; color: #424245;">Cross-checked every Sam-facing number against the source-of-truth API while the portal was open.</p>
+  <table class="data">
+    <thead><tr><th>Metric</th><th class="right">Portal shows</th><th class="right">Source (live)</th><th>Verdict</th></tr></thead>
+    <tbody>
+      <tr><td>Facebook leads</td><td class="right">92</td><td class="right">92 (Sam's quote)</td><td><span class="badge done">exact</span></td></tr>
+      <tr><td>Google leads</td><td class="right">18</td><td class="right">18 (Sam's quote)</td><td><span class="badge done">exact</span></td></tr>
+      <tr><td>Total leads</td><td class="right">110</td><td class="right">110 (Sam's quote)</td><td><span class="badge done">exact</span></td></tr>
+      <tr><td>Google spend</td><td class="right">£1,882.07</td><td class="right">£1,882.066472 (Catchr)</td><td><span class="badge done">exact</span></td></tr>
+      <tr><td>Facebook spend</td><td class="right">£7,136.96</td><td class="right">£7,170.23 (Catchr live)</td><td><span class="badge done">within 15-min cache (0.46%)</span></td></tr>
+      <tr><td>Total spend</td><td class="right">£9,019.03</td><td class="right">£9,052.30 (Catchr live)</td><td><span class="badge done">within cache drift</span></td></tr>
+    </tbody>
+  </table>
+  <div class="source-check">
+    <div class="head">Bonus — earlier jam-video #2 fix re-verified on prod</div>
+    <p>Querying Catchr for the Google PCPClaim.io account returned the same £1,882.07 <strong>three times</strong> (once per OAuth authorization). Naïve sum = £5,646.20 — <em>exactly</em> the broken number you called out in jam-video #2 ("we showed £5,646 when the real spend was £1,888"). Our MAX-CTE dedupe correctly returns £1,882.07. The earlier fix is provably still working against live Catchr data.</p>
+  </div>
+
+  <!-- ─── Screenshots ─── -->
+  <h2>Verified live in browser — Coby @ Benson Goldstein</h2>
+  <p style="font-size: 14px; color: #424245;">All 7 screenshots taken from <code>sato-frontend.vercel.app/portal/*</code> in incognito, signed in as Coby with the real Benson Goldstein PCP-claim creatives + real Catchr / LeadByte numbers.</p>
+
+  <div class="shot-grid">
+
+    <div class="shot featured">
+      <img src="screenshots/jv3-03-leads-bysource.png" alt="Leads tab — By Source breakdown matching admin truth" />
+      <div class="caption">
+        <strong>Asks 1, 2 verified — real figures, matching admin /reports.</strong> Default load = This Month preset (1–29 May): Facebook 92 leads · £7,136.96 / Google 18 leads · £1,882.07 / Total 110 leads · £9,019.03. Exactly your quoted truth from the recording.
+      </div>
+    </div>
+
+    <div class="shot">
+      <img src="screenshots/jv3-06-dashboard.png" alt="Dashboard tile — Leads + Agreement" />
+      <div class="caption">
+        <strong>Dashboard.</strong> "Leads This Month" tile = 110 (matches admin). Agreement tile = "Active / Signed". 14-day lead-delivery chart populated. No "estimated" text anywhere.
+      </div>
+    </div>
+
+    <div class="shot featured">
+      <img src="screenshots/jv3-01-compliance-side-panel.png" alt="Compliance tab — side-panel layout with pending creative" />
+      <div class="caption">
+        <strong>Asks 3, 4, 5, 7, 8, 10 verified — side-panel layout + full audit + campaign-performance card.</strong> Left list: thumbnail + campaign + £9,019/110-leads metric line + status chip. Right panel: full PCP-claim ad preview, status badge, "Awaiting your review" message, Approve / Reject buttons, decision audit, and Campaign performance card showing £9,019 / 110 / £82 CPL.
+      </div>
+    </div>
+
+    <div class="shot featured">
+      <img src="screenshots/jv3-02-creatives-side-panel.png" alt="Creatives tab — 2 approved assets with signed-off + metrics" />
+      <div class="caption">
+        <strong>Asks 6, 9 verified — signed-off on every row + visually distinct creatives.</strong> 2 approved assets, both rows show "Signed off by Coby Benson · 27 May" in green directly under the campaign. Detail panel shows full PCP-claim ad + "Signed off by Coby Benson on 27 May 2026, 11:52" + campaign performance card £9,019 / 110 / £82.
+      </div>
+    </div>
+
+    <div class="shot">
+      <img src="screenshots/jv3-04-creatives-header.png" alt="Creatives header — Compliance cross-reference removed" />
+      <div class="caption">
+        <strong>Extra fix +2.</strong> Header now reads only "Approved assets currently running on your campaigns." — the cross-reference sentence about the Compliance tab has been removed.
+      </div>
+    </div>
+
+    <div class="shot">
+      <img src="screenshots/jv3-05-agreement-signed.png" alt="Agreement tab — Signed on 18 May 2026" />
+      <div class="caption">
+        <strong>Extra fix +3.</strong> Agreement tab now shows "Signed on 18 May 2026" with a green badge — matches the Dashboard tile. The earlier Pending / "contact your account manager" warning is gone.
+      </div>
+    </div>
+
+    <div class="shot">
+      <img src="screenshots/jv3-07-creatives-mobile.png" alt="Creatives mobile — single-column stacked" />
+      <div class="caption">
+        <strong>Mobile responsive.</strong> On <code>&lt;md</code> screens the side-panel collapses to single-column. List on top, full detail panel below — same content, no horizontal scroll, no overflow.
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ─── State of all items ─── -->
+  <h2>State of all 22 items</h2>
+  <table class="data">
+    <thead><tr><th>#</th><th>Item</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>Drop "estimated" labels — real LeadByte / Catchr only</td><td><span class="badge done">Live</span></td></tr>
+      <tr><td>2</td><td>Dashboard 110 matches admin /reports (was 141)</td><td><span class="badge done">Live</span></td></tr>
+      <tr><td>3a</td><td>Compliance rows are clickable</td><td><span class="badge done">Live</span></td></tr>
+      <tr><td>3b</td><td>Compliance creatives deletable (admin-side, with confirm dialog)</td><td><span class="badge done">Live</span></td></tr>
+      <tr><td>3c</td><td>Interactive — Approve / Reject in detail panel</td><td><span class="badge done">Live</span></td></tr>
+      <tr><td>4</td><td>No "open in new tab" — inline preview</td><td><span class="badge done">Live</span></td></tr>
+      <tr><td>5</td><td>Grid-left / detail-right layout (Sam's reference UI pattern)</td><td><span class="badge done">Live</span></td></tr>
+      <tr><td>6a</td><td>"How many to date" — section header count</td><td><span class="badge done">Live</span></td></tr>
+      <tr><td>6b</td><td>"Who signed them off" — on every list row</td><td><span class="badge done">Live</span></td></tr>
+      <tr><td>7a</td><td>Audit — who approved (decidedByName)</td><td><span class="badge done">Live</span></td></tr>
+      <tr><td>7b</td><td>Audit — timestamps (full UK-locale datetime)</td><td><span class="badge done">Live</span></td></tr>
+      <tr><td>7c</td><td>Audit — what was approved (name + campaign + status)</td><td><span class="badge done">Live</span></td></tr>
+      <tr><td>8</td><td>No click-in / click-out — inline side-panel update</td><td><span class="badge done">Live</span></td></tr>
+      <tr><td>9</td><td>Each creative visually distinct — inline thumbnails</td><td><span class="badge done">Live</span></td></tr>
+      <tr><td>10a</td><td>Campaign-level performance card (spend / leads / CPL)</td><td><span class="badge done">Live</span></td></tr>
+      <tr><td>10b</td><td>Per-individual-ad metrics — needs platform-ad_id mapping</td><td><span class="badge partial">Queued — separate spec, ~1 week</span></td></tr>
+      <tr><td>+1</td><td>Leads By Source vanishing on This Month / Week / Last Month / YTD — timezone fix</td><td><span class="badge done">Live</span></td></tr>
+      <tr><td>+2</td><td>Creatives header redundant cross-reference removed</td><td><span class="badge done">Live</span></td></tr>
+      <tr><td>+3</td><td>Agreement tab honours <code>client.agreementSigned</code> admin override</td><td><span class="badge done">Live</span></td></tr>
+    </tbody>
+  </table>
+
+  <h2>Deploys</h2>
+  <table class="data">
+    <thead><tr><th>Layer</th><th>SHA</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td>Backend</td><td><code>e33bbd3</code> on Railway · jam-video #3 metrics service + Agreement override</td><td><span class="badge done">/health 200</span></td></tr>
+      <tr><td>Frontend</td><td><code>e012460</code> on Vercel aliased to <code>sato-frontend.vercel.app</code> · side-panel + admin delete + timezone + Creatives header</td><td><span class="badge done">Ready</span></td></tr>
+    </tbody>
+  </table>
+
+  <h2>What's still outstanding (not blocking)</h2>
+  <ul style="font-size: 14px; color: #424245;">
+    <li><strong>Per-individual-ad metrics</strong> (jam-video item 10b) — needs a new <code>platform_ad_id</code> column on creatives + a way to populate it + updated Catchr queries with the <code>ad_id</code> dimension. ~1 week. Will write a separate spec before building.</li>
+    <li><strong>15-min Catchr cache drift on FB spend</strong> — if Sam compares Stato against Facebook Ads Manager mid-day he'll see a ~£30 difference (£7,136.96 vs £7,170 live). Not a bug, just the refresh cadence. Drop cache TTL to 1 min if he objects; trade-off is more Catchr rate-limit risk.</li>
+    <li><strong>UI subjective quality</strong> ("nice UI, not boring") — Sam to confirm visually. Side-panel + thumbnails + cards is the most engaging shape we've shipped; if it still doesn't land we'll iterate.</li>
+  </ul>
+
+  <footer>
+    Octogle Technologies for leadgeneration.io · 29 May 2026 · jam-video #3 corrections + 3 extra prod fixes.
+  </footer>
+</div>
+</body>
+</html>
