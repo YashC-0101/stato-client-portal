@@ -149,6 +149,36 @@
     <li><strong>Coverage</strong> — 8 live ad-network connections (Facebook, Google ×3, Taboola ×2, TikTok, Bing) feeding the platform today.</li>
   </ul>
 
+  <h2>5 · What we need from you</h2>
+  <p style="font-size: 14px; color: #424245;">These are the only items waiting on you — none block the platform, and each unlocks something already built and ready.</p>
+
+  <p style="font-size: 13px; font-weight: 700; color: #1d1d1f; margin: 18px 0 6px 0;">Decisions &amp; data</p>
+  <table class="data">
+    <thead><tr><th>Item</th><th>What we need</th><th>Why it matters</th></tr></thead>
+    <tbody>
+      <tr><td>Property Sales (UK) campaign</td><td>Decide: <strong>price it</strong> in LeadByte, or <strong>hide it</strong> from revenue dashboards</td><td>3,286 leads show £0 revenue otherwise (looks broken)</td></tr>
+      <tr><td>Catchr ad-account mapping</td><td>Map each ad account → campaign in the Ad-Account Links UI (~£304k across 8 unlinked accounts)</td><td>That spend isn't attributed to any campaign's cost</td></tr>
+      <tr><td>Bank-feed categorisation</td><td>Categorise the <strong>489 uncategorised</strong> transactions in Xero</td><td>P&amp;L cost buckets stay incomplete until then</td></tr>
+      <tr><td>Benson Goldstein terms</td><td>Confirm the <strong>"4-day" payment terms</strong> is intentional vs 30</td><td>Drives that client's agreement + invoicing</td></tr>
+      <tr><td>Document-upload error</td><td>Send a <strong>file or error message</strong> that reproduces the issue you mentioned</td><td>We can't fix what we can't reproduce</td></tr>
+      <tr><td>Priority list</td><td>The <strong>10–15 item priority list</strong> Pratteek asked for</td><td>Focuses the next sprint on what matters most to you</td></tr>
+    </tbody>
+  </table>
+
+  <p style="font-size: 13px; font-weight: 700; color: #1d1d1f; margin: 18px 0 6px 0;">Access &amp; setup — each ~5 minutes, unlocks a feature already built</p>
+  <table class="data">
+    <thead><tr><th>Action</th><th>What it unlocks</th></tr></thead>
+    <tbody>
+      <tr><td>Enable the <strong>Finance API entitlement</strong> on the Xero Custom Connection (then we add the scope our side — coordinated)</td><td>Bank widget shows the real statement balance, not the ledger figure</td></tr>
+      <tr><td>Set <code>XERO_VAT_STAGGER=2</code> on Railway</td><td>VAT widget shows the correct quarter ranges</td></tr>
+      <tr><td>Set <code>ENDOLE_SANDBOX=false</code> + confirm each client's Companies House number</td><td>Credit scores become real data instead of sample values</td></tr>
+      <tr><td>Set <code>ANTHROPIC_API_KEY</code> on Railway</td><td>Unlocks the Loom→AI SOP wizard + AI new-task button</td></tr>
+      <tr><td>Re-key <strong>SignNow</strong> to a generic mailbox (e.g. <code>signing@stato.app</code>)</td><td>Agreement invites stop coming from a personal name</td></tr>
+      <tr><td>Re-authorise <strong>Catchr for Google Ads</strong></td><td>Stops Google ad-spend being under-reported</td></tr>
+      <tr><td>Grant <strong>Outbrain account access</strong></td><td>Connects the one ad network still missing (the other 8 are live — see section 1)</td></tr>
+    </tbody>
+  </table>
+
   <footer>
     Octogle Technologies for leadgeneration.io · 2 June 2026 · real-data reconciliation — Stato vs LeadByte / Catchr / Xero.
   </footer>
