@@ -125,7 +125,23 @@
 
   <p class="note"><strong>Note on live figures:</strong> these are verified live and reconcile to source; they naturally move through the day as new leads deliver and ad spend accrues (Catchr syncs hourly). The point isn't a frozen number — it's that whenever you open Stato, what it shows matches what LeadByte / Catchr / Xero report.</p>
 
-  <h2>3 · What this means</h2>
+  <h2>3 · Shipped to prod today (2 June)</h2>
+  <p style="font-size: 14px; color: #424245;">Alongside the reconciliation, here's what we deployed live today — every item is committed, tested, and on prod (backend on Railway, frontend on Vercel).</p>
+  <table class="data">
+    <thead><tr><th>Area</th><th>What changed</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td>Per-client P&amp;L</td><td>Now recognises <strong>paid + authorised</strong> invoices — so a client's P&amp;L matches the dashboard instead of under-counting authorised-but-unpaid revenue.</td><td><span class="badge done">Live</span></td></tr>
+      <tr><td>Xero reliability</td><td>Every Xero call (bank balance, invoices, transactions, contacts) now <strong>auto-retries on rate-limit</strong> — fewer "fetch failed" blips on the finance screens.</td><td><span class="badge done">Live</span></td></tr>
+      <tr><td>"Needs mapping" count</td><td>The unattributed ad-spend count now reflects campaigns linked the current way (was reading <strong>0</strong>).</td><td><span class="badge done">Live</span></td></tr>
+      <tr><td>Ad-spend report</td><td>Admin Ad-Spend summary now loads correctly with <strong>no filters applied</strong> (previously broke on the unfiltered view).</td><td><span class="badge done">Live</span></td></tr>
+      <tr><td>Leads page</td><td>"Avg / Day" now divides by actual calendar days — was understated for clients with multiple campaigns.</td><td><span class="badge done">Live</span></td></tr>
+      <tr><td>Invoice CSV export</td><td>Fields are quoted/escaped, so a client name with a comma ("Acme, Inc.") no longer corrupts the exported file.</td><td><span class="badge done">Live</span></td></tr>
+      <tr><td>Dashboard "Due" link</td><td>"View all due" now lands on the correct filtered invoice list (was an empty view).</td><td><span class="badge done">Live</span></td></tr>
+      <tr><td>Quality / reliability</td><td>Regression tests added for each fix above + test-suite stabilisation, so these can't silently regress.</td><td><span class="badge done">Live</span></td></tr>
+    </tbody>
+  </table>
+
+  <h2>4 · What this means</h2>
   <ul style="font-size: 14px; color: #424245;">
     <li><strong>Leads</strong> — Stato reads LeadByte's valid-lead truth, the same source your admin reports use. No estimates.</li>
     <li><strong>Ad spend</strong> — Stato reads Catchr per-platform, de-duplicated, matching the live spend to the penny.</li>
