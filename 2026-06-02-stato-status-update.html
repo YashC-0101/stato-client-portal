@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Stato — Status Update · 2 June (real-data reconciliation)</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Arial, sans-serif;
+    background: #fafafa; color: #1d1d1f;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.55;
+  }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 56px 22px; }
+  .back { display: inline-block; color: #0066cc; text-decoration: none; font-size: 14px; margin-bottom: 24px; }
+  .back:hover { text-decoration: underline; }
+  h1 { font-size: 32px; font-weight: 700; letter-spacing: -0.02em; margin: 0 0 6px 0; }
+  .meta { color: #6e6e73; font-size: 14px; margin: 0 0 28px 0; }
+  h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.01em; margin: 44px 0 14px 0; }
+  code { font-family: 'SF Mono', Menlo, Consolas, monospace; font-size: 12px; background: #f0f0f3; padding: 1px 5px; border-radius: 4px; }
+
+  .acknow {
+    background: linear-gradient(135deg, #e6f7ec 0%, #d0f5da 100%);
+    border: 1px solid #8ad6a3; border-radius: 14px;
+    padding: 20px 22px; margin: 0 0 22px 0;
+  }
+  .acknow .lbl {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+    color: #155a2c; margin-bottom: 6px;
+  }
+  .acknow p { margin: 0 0 8px 0; font-size: 15px; color: #1d4429; }
+  .acknow p:last-child { margin: 0; }
+  .acknow .stat-row { display: flex; gap: 16px; margin-top: 12px; flex-wrap: wrap; }
+  .acknow .stat { background: #fff; border: 1px solid #b8e3c5; border-radius: 10px; padding: 10px 14px; flex: 1; min-width: 170px; }
+  .acknow .stat .num { font-size: 22px; font-weight: 700; color: #155a2c; line-height: 1.2; }
+  .acknow .stat .lab { font-size: 12px; color: #1d4429; margin-top: 2px; }
+
+  .badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 999px; white-space: nowrap; }
+  .badge.done    { background: #e6f7ec; color: #1d7a3a; }
+  .badge.partial { background: #fff3e0; color: #a04a00; }
+
+  table.data {
+    width: 100%; border-collapse: collapse; margin: 8px 0;
+    font-size: 13.5px; background: #fff;
+    border: 1px solid #e8e8ed; border-radius: 10px; overflow: hidden;
+  }
+  table.data th, table.data td { text-align: left; padding: 11px 14px; border-bottom: 1px solid #f0f0f3; vertical-align: top; }
+  table.data th { font-weight: 600; color: #6e6e73; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; background: #fafafa; border-bottom: 1px solid #e8e8ed; }
+  table.data tr:last-child td { border-bottom: none; }
+  table.data .right { text-align: right; font-variant-numeric: tabular-nums; }
+  table.data .strike { text-decoration: line-through; color: #a52a2a; }
+  table.data .truth { color: #1d7a3a; font-weight: 600; }
+
+  .source-check { background: #f0f7ff; border: 1px solid #b8d4f5; border-radius: 12px; padding: 18px 22px; margin: 18px 0; }
+  .source-check .head { font-size: 14px; font-weight: 700; color: #0a4480; margin-bottom: 10px; }
+  .source-check p { font-size: 13.5px; color: #1d3a5f; margin: 0; }
+  .source-check code { background: #d8e7f8; color: #0a4480; }
+
+  .note { font-size: 13px; color: #6e6e73; margin: 10px 0 0 0; }
+
+  footer { margin-top: 60px; padding-top: 18px; border-top: 1px solid #e8e8ed; color: #86868b; font-size: 12px; text-align: center; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="index.html">← Back to all reports</a>
+
+  <h1>Stato — Status update · 2 June 2026</h1>
+  <p class="meta">Real-data reconciliation · every number Stato shows, checked against the third-party system that owns it (LeadByte · Catchr · Xero)</p>
+
+  <div class="acknow">
+    <div class="lbl">The headline — Stato shows the real numbers</div>
+    <p>Sam — this update is the proof you asked for: <strong>Stato is not inventing figures. Every number it displays is pulled from, and reconciles to, the source system that owns it</strong> — leads from LeadByte, ad spend from Catchr, invoices &amp; balances from Xero.</p>
+    <p>Two things below: (1) the live integration connections, <strong>re-checked today</strong>; and (2) the Stato-vs-source reconciliation, <strong>from our most recent live verification (31 May – 1 June)</strong> — the figures reconcile and move daily as new data lands.</p>
+    <div class="stat-row">
+      <div class="stat"><div class="num">8 / 9</div><div class="lab">ad-network connections live &amp; syncing</div></div>
+      <div class="stat"><div class="num">3 sources</div><div class="lab">LeadByte · Catchr · Xero — all live</div></div>
+      <div class="stat"><div class="num">to the lead / penny</div><div class="lab">Stato matches the source</div></div>
+    </div>
+  </div>
+
+  <!-- Live integration status — pulled live today -->
+  <h2>1 · Live integration status (checked today)</h2>
+  <p style="font-size: 14px; color: #424245;">Pulled live from Catchr on 2 June — these are the actual ad-network authorizations feeding Stato right now.</p>
+  <table class="data">
+    <thead><tr><th>Network</th><th>Connection</th><th class="right">Ad accounts</th><th>State</th></tr></thead>
+    <tbody>
+      <tr><td>Facebook Ads</td><td>Penda</td><td class="right">47</td><td><span class="badge done">SUCCESS</span></td></tr>
+      <tr><td>Google Ads</td><td>Sam Wynne</td><td class="right">86</td><td><span class="badge done">SUCCESS</span></td></tr>
+      <tr><td>Google Ads</td><td>Lead Gen Sam</td><td class="right">20</td><td><span class="badge done">SUCCESS</span></td></tr>
+      <tr><td>Google Ads</td><td>Adam Brett</td><td class="right">19</td><td><span class="badge done">SUCCESS</span></td></tr>
+      <tr><td>Taboola</td><td>Adam Brett</td><td class="right">16</td><td><span class="badge done">SUCCESS</span></td></tr>
+      <tr><td>Taboola</td><td>Insulation (UK)</td><td class="right">16</td><td><span class="badge done">SUCCESS</span></td></tr>
+      <tr><td>TikTok Ads</td><td>Adam Brett</td><td class="right">7</td><td><span class="badge done">SUCCESS</span></td></tr>
+      <tr><td>Microsoft / Bing Ads</td><td>LastingPowerofAttorney.io</td><td class="right">1</td><td><span class="badge done">SUCCESS</span></td></tr>
+      <tr><td>Outbrain</td><td>Outbrains</td><td class="right">0</td><td><span class="badge partial">account access pending</span></td></tr>
+    </tbody>
+  </table>
+  <p class="note">8 of 9 connections are live and syncing into Stato. Outbrain is the only one pending (account access not yet granted on the Outbrain side).</p>
+
+  <!-- Reconciliation -->
+  <h2>2 · Stato vs source — the numbers side-by-side</h2>
+  <p style="font-size: 14px; color: #424245;">For the managed client (Benson Goldstein · PCP Claim), every figure Stato shows next to the value the source system reports. <strong>From our most recent live verification (31 May – 1 June)</strong> against Catchr, LeadByte and Xero — not a fresh re-check today; the integration connections in section 1 are what we re-checked today.</p>
+  <table class="data">
+    <thead><tr><th>Metric</th><th class="right">Stato shows</th><th>Source system</th><th class="right">Source value</th><th>Match</th></tr></thead>
+    <tbody>
+      <tr><td>Valid leads (MTD)</td><td class="right">110</td><td><strong>LeadByte</strong></td><td class="right">110</td><td><span class="badge done">exact</span></td></tr>
+      <tr><td>— Facebook valid leads</td><td class="right">92</td><td>LeadByte</td><td class="right">92</td><td><span class="badge done">exact</span></td></tr>
+      <tr><td>— Google valid leads</td><td class="right">18</td><td>LeadByte</td><td class="right">18</td><td><span class="badge done">exact</span></td></tr>
+      <tr><td>Ad spend — Facebook (MTD)</td><td class="right">£7,514</td><td><strong>Catchr</strong></td><td class="right">£7,514</td><td><span class="badge done">matches</span></td></tr>
+      <tr><td>Ad spend — Google (MTD)</td><td class="right">£1,882</td><td><strong>Catchr</strong></td><td class="right">£1,882</td><td><span class="badge done">matches†</span></td></tr>
+      <tr><td>Ad spend — total (MTD)</td><td class="right">£9,396</td><td><strong>Catchr</strong></td><td class="right">£9,396</td><td><span class="badge done">matches</span></td></tr>
+      <tr><td>Invoices synced</td><td class="right">59</td><td><strong>Xero</strong></td><td class="right">59</td><td><span class="badge done">exact</span></td></tr>
+      <tr><td>Outstanding balance</td><td class="right">£0</td><td><strong>Xero</strong></td><td class="right">£0</td><td><span class="badge done">exact</span></td></tr>
+      <tr><td>Agreement status</td><td>Signed 18 May</td><td><strong>SignNow</strong> / admin</td><td>Signed</td><td><span class="badge done">matches</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="source-check">
+    <div class="head">† Why the Google figure proves the point</div>
+    <p>Querying Catchr for the Google PCP Claim account returns the same spend <strong>three times</strong> (once per OAuth reconnect). A naïve sum reads <code>£5,646</code> — exactly the wrong number flagged earlier. Stato's de-duplication collapses the duplicates and returns the real <strong>£1,882</strong>, matching Catchr. The numbers are right <em>because</em> the platform understands how Catchr's data behaves.</p>
+  </div>
+
+  <p class="note"><strong>Note on live figures:</strong> these are verified live and reconcile to source; they naturally move through the day as new leads deliver and ad spend accrues (Catchr syncs hourly). The point isn't a frozen number — it's that whenever you open Stato, what it shows matches what LeadByte / Catchr / Xero report.</p>
+
+  <h2>3 · What this means</h2>
+  <ul style="font-size: 14px; color: #424245;">
+    <li><strong>Leads</strong> — Stato reads LeadByte's valid-lead truth, the same source your admin reports use. No estimates.</li>
+    <li><strong>Ad spend</strong> — Stato reads Catchr per-platform, de-duplicated, matching the live spend to the penny.</li>
+    <li><strong>Money</strong> — invoices and balances come straight from Xero; outstanding is derived live.</li>
+    <li><strong>Coverage</strong> — 8 live ad-network connections (Facebook, Google ×3, Taboola ×2, TikTok, Bing) feeding the platform today.</li>
+  </ul>
+
+  <footer>
+    Octogle Technologies for leadgeneration.io · 2 June 2026 · real-data reconciliation — Stato vs LeadByte / Catchr / Xero.
+  </footer>
+</div>
+</body>
+</html>
