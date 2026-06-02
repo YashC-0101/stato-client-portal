@@ -72,11 +72,22 @@
     for reference. All pages need the access code the Octogle Team sent you.
   </p>
 
+  <a class="card" href="2026-06-01-stato-status-update.html">
+    <div class="row">
+      <div class="ic" style="background: #e6f7ec;">🔍</div>
+      <div>
+        <h2>Status update — 1 June 2026 (proactive audit fixes) <span style="font-size:11px;font-weight:600;background:#1d7a3a;color:#fff;padding:2px 8px;border-radius:999px;margin-left:6px;letter-spacing:0.04em;">LATEST</span></h2>
+        <p><strong>10 consistency fixes across the admin panel and client portal — all found by our own proactive audits of the live platform, not flagged by you, and all shipped to prod and verified live as the client.</strong> The theme: <strong>the admin side and the portal now agree everywhere</strong>. <strong>(1)</strong> Leads "By Campaign" table now matches the summary tile (110 valid leads, not 144 — the table was counting Direct + unmapped suppliers). <strong>(2)</strong> Compliance copy — "Open compliance items" header, "this month" window label, and "NA" feedback no longer rendered as a real note. <strong>(3)</strong> Admin Agreements page now shows "Signed" for an offline-signed client, matching the portal and dashboard (was "Sent") — locked in with regression tests. <strong>(4)</strong> Client record "Remove" button works and shows the real campaign name/vertical/CPL (was "Remove undefined"). <strong>(5)</strong> Active campaign counts now real on the client list (were showing 0). <strong>(6)</strong> Dashboard P&amp;L "Ad spend (Catchr)" now shows real spend, matching the Reports page (was £0). <strong>(7)</strong> Dashboard and Reports cache unified — no more mid-day drift between the two. <strong>(8)</strong> Duplicate LeadByte buyer ("Trustmark Law") de-duplicated. <strong>(9)</strong> Runaway percentages ("+88,333%", "-2,746%") capped at ±999% with an arrow — underlying £ figures stay exact. <strong>(10)</strong> Dashboard currency formatting made consistent. <strong>8 prod screenshots embedded.</strong></p>
+      </div>
+      <div class="arrow">›</div>
+    </div>
+  </a>
+
   <a class="card" href="2026-05-29-stato-status-update-jam-video-3.html">
     <div class="row">
       <div class="ic" style="background: #e6f7ec;">🎯</div>
       <div>
-        <h2>Status update — 29 May 2026 (jam-video #3 corrections) <span style="font-size:11px;font-weight:600;background:#1d7a3a;color:#fff;padding:2px 8px;border-radius:999px;margin-left:6px;letter-spacing:0.04em;">LATEST</span></h2>
+        <h2>Status update — 29 May 2026 (jam-video #3 corrections)</h2>
         <p><strong>Same-day shipment of every paragraph from Sam's 29-May jam-video #3 — 22 of 22 items addressed.</strong> 19 verbatim asks (18 fully live, 1 partial) + 3 extra bugs caught while testing prod afterwards, all fixed and deployed the same day. <strong>(1) Real figures only</strong> — every "estimated" label removed, lead counts from LeadByte truth, ad spend from Catchr deduped MAX-CTE. <strong>(2) Dashboard = 110 leads</strong> — matches admin /reports exactly (Sam's quoted "Google 18 + Facebook 92 = 110"). <strong>(3+4+5) Side-panel layout</strong> on Compliance + Creatives — grid-left, detail-right ("they click in, you can see all the ads on the right hand side"), inline thumbnails, no more "open in a new tab", click switches the panel without modal open/close. <strong>(6+7) Signed-off attribution</strong> on every row + full datetime audit ("Signed off by Coby Benson on 27 May 2026, 11:52") + section-header counts ("Media · 2 approved assets"). <strong>(10) Campaign-performance card</strong> next to every creative — real Catchr spend £9,019.03 / real LeadByte 110 valid leads / £82 CPL, no estimates (per-individual-ad metrics queued as separate spec, needs platform-ad_id mapping). <strong>Admin-side delete</strong> with confirm dialog on /campaigns/:id (portal stays display-only). <strong>Extra +1:</strong> Leads By Source was vanishing on This Month / Week / Last Month — timezone bug (BST midnight → UTC previous day) fixed. <strong>Extra +2:</strong> Creatives header redundant Compliance cross-reference removed. <strong>Extra +3:</strong> Dashboard said "Signed" but Agreement tab said "Pending" — fixed (admin boolean now overrides). <strong>7 prod screenshots embedded</strong> showing real Benson Goldstein PCP-claim creatives with real £9,019 / 110 / £82 numbers. <strong>Cross-checked against Catchr MCP live</strong> — all 6 numbers match within cache drift; the same query also re-verified the earlier jam-video #2 dedupe fix (£5,646 vs £1,882) is still working.</p>
       </div>
       <div class="arrow">›</div>

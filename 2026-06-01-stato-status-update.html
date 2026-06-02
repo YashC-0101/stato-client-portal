@@ -1,0 +1,383 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Stato — Status Update · 1 June (proactive audit fixes)</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Arial, sans-serif;
+    background: #fafafa; color: #1d1d1f;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.55;
+  }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 56px 22px; }
+  .back { display: inline-block; color: #0066cc; text-decoration: none; font-size: 14px; margin-bottom: 24px; }
+  .back:hover { text-decoration: underline; }
+  h1 { font-size: 32px; font-weight: 700; letter-spacing: -0.02em; margin: 0 0 6px 0; }
+  .meta { color: #6e6e73; font-size: 14px; margin: 0 0 28px 0; }
+  h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.01em; margin: 44px 0 14px 0; }
+  h3 { font-size: 16px; font-weight: 600; margin: 22px 0 8px 0; }
+  code { font-family: 'SF Mono', Menlo, Consolas, monospace; font-size: 12px; background: #f0f0f3; padding: 1px 5px; border-radius: 4px; }
+
+  .acknow {
+    background: linear-gradient(135deg, #e6f7ec 0%, #d0f5da 100%);
+    border: 1px solid #8ad6a3; border-radius: 14px;
+    padding: 20px 22px; margin: 0 0 22px 0;
+  }
+  .acknow .lbl {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+    color: #155a2c; margin-bottom: 6px;
+  }
+  .acknow p { margin: 0 0 8px 0; font-size: 15px; color: #1d4429; }
+  .acknow p:last-child { margin: 0; }
+  .acknow .stat-row {
+    display: flex; gap: 16px; margin-top: 12px;
+    flex-wrap: wrap;
+  }
+  .acknow .stat {
+    background: #fff; border: 1px solid #b8e3c5; border-radius: 10px;
+    padding: 10px 14px; flex: 1; min-width: 180px;
+  }
+  .acknow .stat .num {
+    font-size: 22px; font-weight: 700; color: #155a2c; line-height: 1.2;
+  }
+  .acknow .stat .lab {
+    font-size: 12px; color: #1d4429; margin-top: 2px;
+  }
+
+  .ask {
+    background: #fff; border: 1px solid #e8e8ed; border-radius: 14px;
+    padding: 22px 24px; margin: 0 0 14px 0;
+  }
+  .ask .head {
+    display: flex; align-items: baseline; gap: 12px; margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+  .ask .num {
+    font-size: 12px; font-weight: 700; color: #fff;
+    background: #1d1d1f; padding: 3px 9px; border-radius: 999px;
+    min-width: 28px; text-align: center;
+  }
+  .ask .title { font-size: 16px; font-weight: 700; color: #1d1d1f; flex: 1; }
+  .badge {
+    display: inline-block;
+    font-size: 11px; font-weight: 600;
+    padding: 3px 9px; border-radius: 999px;
+    white-space: nowrap;
+  }
+  .badge.done    { background: #e6f7ec; color: #1d7a3a; }
+  .badge.partial { background: #fff3e0; color: #a04a00; }
+  .ask .action { font-size: 14px; color: #424245; margin: 6px 0 0 0; }
+  .ask .action strong { color: #1d1d1f; }
+  .ask .where {
+    font-size: 13px; color: #6e6e73; margin: 8px 0 0 0;
+    padding: 8px 12px; background: #fafafa; border-radius: 8px;
+    border: 1px solid #f0f0f3;
+  }
+
+  .shot-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;
+    margin: 18px 0;
+  }
+  @media (max-width: 900px) { .shot-grid { grid-template-columns: 1fr; } }
+  .shot {
+    background: #fff; border: 1px solid #e8e8ed; border-radius: 12px;
+    overflow: hidden;
+  }
+  .shot img {
+    width: 100%; height: auto; display: block;
+    border-bottom: 1px solid #f0f0f3;
+    background: #fafafa;
+  }
+  .shot .caption {
+    padding: 12px 14px; font-size: 13px; color: #424245;
+  }
+  .shot .caption strong { color: #1d1d1f; }
+  .shot.featured {
+    grid-column: 1 / -1;
+    border: 2px solid #1d7a3a;
+  }
+
+  table.data {
+    width: 100%; border-collapse: collapse; margin: 8px 0;
+    font-size: 13.5px; background: #fff;
+    border: 1px solid #e8e8ed; border-radius: 10px;
+    overflow: hidden;
+  }
+  table.data th, table.data td {
+    text-align: left; padding: 11px 14px;
+    border-bottom: 1px solid #f0f0f3;
+    vertical-align: top;
+  }
+  table.data th {
+    font-weight: 600; color: #6e6e73; font-size: 11px;
+    text-transform: uppercase; letter-spacing: 0.04em;
+    background: #fafafa;
+    border-bottom: 1px solid #e8e8ed;
+  }
+  table.data tr:last-child td { border-bottom: none; }
+  table.data .right { text-align: right; font-variant-numeric: tabular-nums; }
+  table.data .strike { text-decoration: line-through; color: #a52a2a; }
+  table.data .truth { color: #1d7a3a; font-weight: 600; }
+
+  .source-check {
+    background: #f0f7ff; border: 1px solid #b8d4f5; border-radius: 12px;
+    padding: 18px 22px; margin: 18px 0;
+  }
+  .source-check .head {
+    font-size: 14px; font-weight: 700; color: #0a4480; margin-bottom: 10px;
+  }
+  .source-check p {
+    font-size: 13.5px; color: #1d3a5f; margin: 0;
+  }
+  .source-check code { background: #d8e7f8; color: #0a4480; }
+
+  footer {
+    margin-top: 60px; padding-top: 18px;
+    border-top: 1px solid #e8e8ed;
+    color: #86868b; font-size: 12px; text-align: center;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="index.html">← Back to all reports</a>
+
+  <h1>Stato — Status update · 1 June 2026</h1>
+  <p class="meta">Proactive audit-driven fixes · admin + portal consistency · all shipped to prod and verified live as the client</p>
+
+  <div class="acknow">
+    <div class="lbl">Proactive QA — found and fixed by us, not flagged by you</div>
+    <p>Sam — this batch came entirely from our own end-to-end audits of the live platform, not from a complaint. We walked every admin and portal page, found the places where two screens showed the same thing differently, and shipped the fixes. <strong>10 consistency fixes live</strong> across the admin panel and client portal, each verified on prod signed in as the real client.</p>
+    <p>The theme this round: <strong>the admin side and the portal side now agree everywhere</strong> — the same lead count, the same spend, the same agreement status, on whichever screen you open.</p>
+    <div class="stat-row">
+      <div class="stat"><div class="num">10 fixes</div><div class="lab">shipped to prod</div></div>
+      <div class="stat"><div class="num">2 deploys</div><div class="lab">backend + frontend</div></div>
+      <div class="stat"><div class="num">8 screenshots</div><div class="lab">verified live on prod</div></div>
+      <div class="stat"><div class="num">0 open</div><div class="lab">code-side items pending</div></div>
+    </div>
+  </div>
+
+  <h2>What we fixed</h2>
+
+  <!-- 1 -->
+  <div class="ask">
+    <div class="head">
+      <span class="num">1</span>
+      <span class="title">Leads "By Campaign" table now matches the summary tile</span>
+      <span class="badge done">Live</span>
+    </div>
+    <p class="action"><strong>Problem:</strong> on the portal Leads page the summary tile read <strong>110</strong> valid leads (LeadByte truth) but the By&nbsp;Campaign table below it still read <strong>144</strong> — because the table counted every supplier including Direct and unmapped sources. Two numbers, same "Leads" label, same page.</p>
+    <p class="action"><strong>Fix:</strong> the By&nbsp;Campaign table now applies the same LeadByte per-supplier truth the summary tile and admin <code>/reports</code> use. The table and the tile now show the same number for the same campaign and date range.</p>
+    <p class="where">Verified live on prod: PCP Claim shows 110 in both the tile and the table.</p>
+  </div>
+
+  <!-- 2 -->
+  <div class="ask">
+    <div class="head">
+      <span class="num">2</span>
+      <span class="title">Compliance page wording + empty-feedback cleanup</span>
+      <span class="badge done">Live</span>
+    </div>
+    <p class="action"><strong>Fix (3 copy issues):</strong></p>
+    <ul style="margin: 6px 0 12px 20px; font-size: 14px; color: #424245;">
+      <li>Header "Creatives awaiting review" → <strong>"Open compliance items"</strong> — the list also includes rejected items for re-decide, so the old header contradicted the "0 Pending review" stat tile.</li>
+      <li>Metrics card window label "last 29 days" → <strong>"this month"</strong> — the window is month-to-date, not 29 days back, which avoids a misleading comparison against Facebook's "Last 30 days" preset.</li>
+      <li>When a reviewer types "NA"/"none"/"-" as feedback, the feedback row is now <strong>hidden</strong> instead of rendering the literal placeholder text as if it were a real note.</li>
+    </ul>
+  </div>
+
+  <!-- 3 -->
+  <div class="ask">
+    <div class="head">
+      <span class="num">3</span>
+      <span class="title">Admin Agreements page now shows "Signed" — matching the portal</span>
+      <span class="badge done">Live</span>
+    </div>
+    <p class="action"><strong>Problem:</strong> for a client signed off offline (the admin "mark as signed" override), the portal and dashboard correctly showed <strong>"Signed"</strong>, but the admin Agreements page still read <strong>"Sent"</strong> from the raw envelope row. Internal and external screens disagreed on the same agreement.</p>
+    <p class="action"><strong>Fix:</strong> the admin Agreements list now honours the same signed-override the portal already respects, so both surfaces read "Signed". Locked in with regression tests so it can't silently drift back.</p>
+    <p class="where">Verified live: Benson Goldstein reads "Signed" on the admin Agreements page and on the portal.</p>
+  </div>
+
+  <!-- 4 -->
+  <div class="ask">
+    <div class="head">
+      <span class="num">4</span>
+      <span class="title">Benson client record — "Remove" button works + campaign details show</span>
+      <span class="badge done">Live</span>
+    </div>
+    <p class="action"><strong>Problem:</strong> on the client record the linked-campaign row showed a "Remove undefined" label and the unlink button targeted the wrong id, so removing a campaign didn't work. Campaign name / vertical / cost-per-lead weren't coming through either.</p>
+    <p class="action"><strong>Fix:</strong> the backend now returns the campaign name, vertical and cost-per-lead the client record expects, and the unlink button targets the campaign correctly — "Remove" now works and shows the real campaign name.</p>
+  </div>
+
+  <!-- 5 -->
+  <div class="ask">
+    <div class="head">
+      <span class="num">5</span>
+      <span class="title">Active campaign counts now real on the client list (was 0)</span>
+      <span class="badge done">Live</span>
+    </div>
+    <p class="action"><strong>Problem:</strong> clients like UK Energy Saving Network and Benson Goldstein showed <strong>0 linked campaigns</strong> even though they clearly had active campaigns — the count was reading an older single-link field that's empty for multi-buyer campaigns.</p>
+    <p class="action"><strong>Fix:</strong> the count now reads the proper campaign-to-client link table, so the number reflects the real linked campaigns.</p>
+  </div>
+
+  <!-- 6 -->
+  <div class="ask">
+    <div class="head">
+      <span class="num">6</span>
+      <span class="title">Dashboard P&amp;L "Ad spend (Catchr)" now shows real spend (was £0)</span>
+      <span class="badge done">Live</span>
+    </div>
+    <p class="action"><strong>Problem:</strong> the admin Dashboard P&amp;L line for Catchr ad spend showed <strong>£0</strong> while the Reports page showed the real figure — they were computing spend two different ways, and the dashboard's method excluded every Catchr row.</p>
+    <p class="action"><strong>Fix:</strong> the dashboard P&amp;L now attributes Catchr spend the same way the Reports page does (through the ad-account → campaign links), de-duplicated for Catchr's re-auth duplicates. The Dashboard P&amp;L and Reports now match instead of disagreeing.</p>
+  </div>
+
+  <!-- 7 -->
+  <div class="ask">
+    <div class="head">
+      <span class="num">7</span>
+      <span class="title">Dashboard and Reports no longer drift apart mid-day</span>
+      <span class="badge done">Live</span>
+    </div>
+    <p class="action"><strong>Problem:</strong> the Dashboard and the Reports page cached the same LeadByte data for different lengths of time, so depending on which page you opened first, the two could show slightly different numbers for a while.</p>
+    <p class="action"><strong>Fix:</strong> unified the cache lifetime so both pages read the same freshly-cached data — they stay in step.</p>
+  </div>
+
+  <!-- 8 -->
+  <div class="ask">
+    <div class="head">
+      <span class="num">8</span>
+      <span class="title">Duplicate LeadByte buyer ("Trustmark Law") removed from the list</span>
+      <span class="badge done">Live</span>
+    </div>
+    <p class="action"><strong>Problem:</strong> LeadByte's API returns the same legal entity twice when it has both a legacy numeric ID and the newer slug ID — so "Trustmark Law" appeared twice in the Buyers list and read as a Stato bug.</p>
+    <p class="action"><strong>Fix:</strong> the Buyers list now de-duplicates by company name, keeping the current slug ID. One row per buyer.</p>
+  </div>
+
+  <!-- 9 -->
+  <div class="ask">
+    <div class="head">
+      <span class="num">9</span>
+      <span class="title">Runaway percentages capped ("+88,333%" / "-2,746%")</span>
+      <span class="badge done">Live</span>
+    </div>
+    <p class="action"><strong>Problem:</strong> when a prior period's revenue was near zero, the period-over-period change blew up to things like <strong>"+88,333.5%"</strong> and a <strong>-2,746%</strong> margin — mathematically real, but it reads as broken.</p>
+    <p class="action"><strong>Fix:</strong> these now display capped at <strong>±999%</strong> with an up/down arrow. The underlying £ revenue and £ change figures stay exact — only the derived ratio is clamped for readability.</p>
+  </div>
+
+  <!-- 10 -->
+  <div class="ask">
+    <div class="head">
+      <span class="num">10</span>
+      <span class="title">Currency formatting consistent on the dashboard</span>
+      <span class="badge done">Live</span>
+    </div>
+    <p class="action"><strong>Problem:</strong> on the same dashboard one widget showed <code>£305,840.32</code> next to a tile showing <code>£305,840</code> — same number, two formats.</p>
+    <p class="action"><strong>Fix:</strong> the P&amp;L widget now uses whole-pound formatting to match the tiles, so the page reads as one consistent unit. Detail pages still show pennies where line-item precision matters.</p>
+  </div>
+
+  <!-- State table -->
+  <h2>All 10 fixes at a glance</h2>
+  <table class="data">
+    <thead><tr><th>#</th><th>Fix</th><th>Surface</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>Leads By&nbsp;Campaign table matches the summary tile (110, not 144)</td><td>Portal</td><td><span class="badge done">Live</span></td></tr>
+      <tr><td>2</td><td>Compliance header + window label + hide "NA" feedback</td><td>Portal</td><td><span class="badge done">Live</span></td></tr>
+      <tr><td>3</td><td>Admin Agreements shows "Signed" (matches portal override)</td><td>Admin</td><td><span class="badge done">Live</span></td></tr>
+      <tr><td>4</td><td>Client record "Remove" button + campaign name/vertical/CPL</td><td>Admin</td><td><span class="badge done">Live</span></td></tr>
+      <tr><td>5</td><td>Active campaign counts real (was 0) on client list</td><td>Admin</td><td><span class="badge done">Live</span></td></tr>
+      <tr><td>6</td><td>Dashboard P&amp;L Catchr spend real (was £0), matches Reports</td><td>Admin</td><td><span class="badge done">Live</span></td></tr>
+      <tr><td>7</td><td>Dashboard ↔ Reports cache unified (no mid-day drift)</td><td>Admin</td><td><span class="badge done">Live</span></td></tr>
+      <tr><td>8</td><td>Duplicate LeadByte buyer de-duplicated</td><td>Admin</td><td><span class="badge done">Live</span></td></tr>
+      <tr><td>9</td><td>Runaway % capped at ±999% with arrow</td><td>Admin</td><td><span class="badge done">Live</span></td></tr>
+      <tr><td>10</td><td>Dashboard currency formatting consistent</td><td>Admin</td><td><span class="badge done">Live</span></td></tr>
+    </tbody>
+  </table>
+
+  <!-- Screenshots -->
+  <h2>Verified live in browser — prod</h2>
+  <p style="font-size: 14px; color: #424245;">All screenshots taken from <code>sato-frontend.vercel.app</code> on prod, after the deploy.</p>
+
+  <div class="shot-grid">
+
+    <div class="shot featured">
+      <img src="screenshots/PROD-17-pnl-a2-p7-live.png" alt="Dashboard P&L — real Catchr spend + consistent currency" />
+      <div class="caption">
+        <strong>Fixes 6 + 10.</strong> Dashboard P&amp;L now shows real Catchr ad spend (no longer £0) and the currency formatting matches the tiles across the page.
+      </div>
+    </div>
+
+    <div class="shot">
+      <img src="screenshots/PROD-11-leads-by-campaign-fixed.png" alt="Leads By Campaign table matches the summary tile" />
+      <div class="caption">
+        <strong>Fix 1.</strong> By&nbsp;Campaign table reads the same 110 valid leads as the summary tile — no more 110-vs-144 on the same page.
+      </div>
+    </div>
+
+    <div class="shot">
+      <img src="screenshots/PROD-15-agreements-a3-fixed.png" alt="Admin Agreements shows Signed" />
+      <div class="caption">
+        <strong>Fix 3.</strong> Admin Agreements page now shows "Signed" for Benson Goldstein — matching the portal and dashboard.
+      </div>
+    </div>
+
+    <div class="shot">
+      <img src="screenshots/PROD-14-benson-b2-fixed.png" alt="Benson client record — Remove button + campaign details" />
+      <div class="caption">
+        <strong>Fix 4.</strong> Client record shows the real campaign name/vertical/CPL and the "Remove" button works (no more "Remove undefined").
+      </div>
+    </div>
+
+    <div class="shot">
+      <img src="screenshots/PROD-16-leadbyte-b7-fixed.png" alt="LeadByte buyers de-duplicated" />
+      <div class="caption">
+        <strong>Fix 8.</strong> LeadByte Buyers list shows one row per buyer — the duplicate "Trustmark Law" entry is gone.
+      </div>
+    </div>
+
+    <div class="shot">
+      <img src="screenshots/PROD-13-dashboard-c1c2-live.png" alt="Dashboard percentage caps" />
+      <div class="caption">
+        <strong>Fix 9.</strong> Period-over-period change and margin now cap at ±999% with an arrow instead of "+88,333%".
+      </div>
+    </div>
+
+    <div class="shot">
+      <img src="screenshots/PROD-12-compliance-copy-fixed.png" alt="Compliance copy fixes" />
+      <div class="caption">
+        <strong>Fix 2.</strong> "Open compliance items" header + "this month" window label; "NA" feedback no longer shown as a real note.
+      </div>
+    </div>
+
+    <div class="shot">
+      <img src="screenshots/PROD-18-dashboard-hard-refresh-verified.png" alt="Dashboard verified after hard refresh" />
+      <div class="caption">
+        <strong>Verified.</strong> Dashboard re-checked after a hard refresh — numbers hold and stay consistent between Dashboard and Reports.
+      </div>
+    </div>
+
+  </div>
+
+  <div class="source-check">
+    <div class="head">How these were found</div>
+    <p>Every fix in this update came from our own proactive walk of the live platform — comparing each number against the screen that owns it (LeadByte, Catchr, Xero) and against the admin side. None of these were reported by you; we caught and shipped them before the next review.</p>
+  </div>
+
+  <h2>Deploys</h2>
+  <table class="data">
+    <thead><tr><th>Layer</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td>Backend (Railway) — agreement parity, P&amp;L Catchr attribution, campaign counts, cache unification</td><td><span class="badge done">/health 200</span></td></tr>
+      <tr><td>Frontend (Vercel, <code>sato-frontend.vercel.app</code>) — By Campaign table, compliance copy, buyer de-dup, % caps, currency</td><td><span class="badge done">Ready</span></td></tr>
+    </tbody>
+  </table>
+
+  <footer>
+    Octogle Technologies for leadgeneration.io · 1 June 2026 · proactive audit fixes — admin + portal consistency.
+  </footer>
+</div>
+</body>
+</html>
