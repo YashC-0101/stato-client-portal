@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Statto — Client & Admin Flows</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+<style>
+  /* ===== STATTO DESIGN SYSTEM TOKENS (from colors_and_type.css) ===== */
+  :root, html[data-theme="light"]{
+    --statto-lime:#9FE870; --statto-ink:#062F28;
+    --lime-50:#F1FCE7; --lime-100:#E3F8CF; --lime-400:#9FE870; --lime-500:#84D451; --lime-600:#66B534;
+    --green-700:#123F36; --green-900:#062F28;
+    --white:#FFFFFF; --gray-50:#F6F6F7; --gray-100:#ECECEE; --gray-150:#E7E7E9; --gray-200:#DDDDE0;
+    --gray-300:#C9C9CD; --gray-400:#A9A9AF; --gray-500:#7B7B7B; --gray-600:#5C5C60;
+    --positive:#66B534; --positive-bg:#E9F8DC; --negative:#E5575B; --negative-bg:#FCE6E6;
+    --warning:#E8A13A; --warning-bg:#FBF0DC; --info:#3E7E8C; --info-bg:#E3F0F2;
+    --bg:var(--gray-150); --surface:var(--white); --surface-2:var(--gray-50); --surface-ink:var(--statto-ink);
+    --fg1:var(--statto-ink); --fg2:var(--gray-500); --fg3:var(--gray-400);
+    --fg-on-ink:#EAF3EF; --border:#E3E3E6; --border-strong:#D2D2D6;
+    --shadow-xs:0 1px 2px rgba(6,47,40,.04); --shadow-sm:0 2px 8px rgba(6,47,40,.05);
+    --shadow-md:0 6px 20px rgba(6,47,40,.06); --shadow-lg:0 16px 40px rgba(6,47,40,.08);
+    --shadow-lime:0 8px 24px rgba(132,212,81,.35);
+    --r-md:16px; --r-lg:20px; --r-xl:24px; --r-2xl:28px; --r-pill:999px;
+    --font-sans:'Poppins','Inter',system-ui,-apple-system,sans-serif;
+    --transition:180ms cubic-bezier(.4,0,.2,1);
+  }
+  html[data-theme="dark"]{
+    --bg:#07211B; --surface:#0E2A22; --surface-2:#123128; --surface-ink:#041E18;
+    --fg1:#EAF3EF; --fg2:#9FB3AC; --fg3:#6E847C;
+    --gray-50:#123128; --gray-100:#1C3A31; --gray-150:#07211B;
+    --border:#1C3A31; --border-strong:#27483D;
+    --positive-bg:rgba(102,181,52,.18); --negative-bg:rgba(229,87,91,.2);
+    --warning-bg:rgba(232,161,58,.18); --info-bg:rgba(62,126,140,.2); --lime-50:rgba(159,232,112,.14);
+    --shadow-xs:0 1px 2px rgba(0,0,0,.4); --shadow-sm:0 2px 8px rgba(0,0,0,.45);
+    --shadow-md:0 6px 20px rgba(0,0,0,.5); --shadow-lg:0 16px 40px rgba(0,0,0,.6);
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{font-family:var(--font-sans);background:var(--bg);color:var(--fg1);-webkit-font-smoothing:antialiased;transition:background .25s,color .25s}
+  button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+  .mono{font-variant-numeric:tabular-nums}
+
+  /* ===== SHELL ===== */
+  .app{display:flex;height:100vh;overflow:hidden}
+  .main{flex:1;display:flex;flex-direction:column;min-width:0}
+  .viewport{flex:1;overflow-y:auto;padding:8px 28px 90px}
+
+  /* ===== SIDEBAR (slim 80px) ===== */
+  .sidebar{width:80px;background:var(--surface-ink);display:flex;flex-direction:column;align-items:center;padding:22px 0;gap:8px;flex-shrink:0}
+  .brand-dot{width:42px;height:42px;border-radius:13px;background:var(--statto-lime);display:flex;align-items:center;justify-content:center;margin-bottom:18px}
+  .brand-dot svg{width:22px;height:22px;color:var(--statto-ink)}
+  .nav-btn{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;color:#7E978F;transition:var(--transition);position:relative}
+  .nav-btn svg{width:22px;height:22px}
+  .nav-btn:hover{color:#CFE0DA;background:rgba(255,255,255,.05)}
+  .nav-btn.active{color:var(--statto-ink);background:var(--statto-lime)}
+  .nav-btn[data-tip]:hover::after{content:attr(data-tip);position:absolute;left:58px;white-space:nowrap;background:var(--statto-ink);color:#fff;font-size:12px;font-weight:500;padding:6px 10px;border-radius:8px;z-index:80;box-shadow:var(--shadow-md)}
+  .nav-spacer{flex:1}
+  #navItems{overflow-y:auto;scrollbar-width:none}
+  #navItems::-webkit-scrollbar{display:none}
+
+  /* ===== TOPBAR ===== */
+  .topbar{height:72px;display:flex;align-items:center;gap:20px;padding:0 28px;flex-shrink:0;background:var(--bg)}
+  .tb-title{min-width:210px}
+  .tb-title h1{font-size:20px;font-weight:600;letter-spacing:-.01em}
+  .tb-title p{font-size:12.5px;color:var(--fg2);font-style:italic;margin-top:1px}
+  .search{flex:1;max-width:520px;margin:0 auto;display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:11px 16px;box-shadow:var(--shadow-xs)}
+  .search svg{width:18px;height:18px;color:var(--fg2)}
+  .search input{flex:1;border:none;outline:none;font-size:14px;font-family:inherit;color:var(--fg1);background:none}
+  .search input::placeholder{color:var(--fg2)}
+  .kbd{display:flex;gap:4px}
+  .kbd span{font-size:11px;font-weight:600;color:var(--fg2);background:var(--gray-100);border-radius:6px;padding:2px 7px}
+  .tb-actions{display:flex;align-items:center;gap:12px}
+  .icon-circle{width:40px;height:40px;border-radius:999px;background:var(--surface);display:flex;align-items:center;justify-content:center;color:var(--fg1);box-shadow:var(--shadow-xs);transition:var(--transition)}
+  .icon-circle:hover{background:var(--gray-50)}
+  .icon-circle svg{width:19px;height:19px}
+  .avatar{width:42px;height:42px;border-radius:999px;background:radial-gradient(circle at 60% 35%,#E8794F,#9B2D1F 70%);box-shadow:var(--shadow-sm);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;font-size:14px}
+  .avatar.sam{background:radial-gradient(circle at 65% 38%,#C7F59C,#5FB54A 55%,#0C3A2C)}
+
+  /* ===== SCREENS ===== */
+  .screen{display:none}
+  .screen.active{display:block;animation:fade .35s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .wrap{max-width:1180px;margin:0 auto}
+  .lede{font-size:13.5px;color:var(--fg2);margin:2px 0 18px;max-width:70ch}
+  .lede b{color:var(--fg1);font-weight:600}
+
+  /* ===== CARDS ===== */
+  .card{background:var(--surface);border-radius:var(--r-xl);box-shadow:var(--shadow-md)}
+  .pad{padding:22px 24px}
+  .card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:14px}
+  .card-head h3{font-size:18px;font-weight:600;letter-spacing:-.01em}
+  .card-head .sub{font-size:12.5px;color:var(--fg2);margin-top:2px}
+  .grid{display:grid;gap:20px}
+  .g4{grid-template-columns:repeat(4,1fr)} .g3{grid-template-columns:repeat(3,1fr)} .g2{grid-template-columns:repeat(2,1fr)}
+  .g-2-1{grid-template-columns:1.55fr 1fr}
+  @media(max-width:920px){.g4,.g3,.g2,.g-2-1{grid-template-columns:1fr 1fr}}
+  .row{display:flex;align-items:center;gap:12px}
+  .between{display:flex;align-items:center;justify-content:space-between;gap:16px}
+
+  /* ===== STAT TILES ===== */
+  .stat-tile{background:var(--surface);border-radius:var(--r-lg);padding:16px 18px;box-shadow:var(--shadow-sm);display:flex;flex-direction:column;gap:10px}
+  .st-top{display:flex;align-items:center;justify-content:space-between}
+  .st-ic{width:34px;height:34px;border-radius:10px;background:var(--gray-50);display:flex;align-items:center;justify-content:center}
+  .st-ic svg{width:17px;height:17px;color:var(--statto-ink)}
+  html[data-theme="dark"] .st-ic svg{color:var(--statto-lime)}
+  .st-val{font-size:26px;font-weight:600;letter-spacing:-.02em}
+  .st-val.lime{color:var(--lime-600)} .st-val.neg{color:var(--negative)} .st-val.warn{color:var(--warning)}
+  .st-lab{font-size:12px;font-weight:500;color:var(--fg2)}
+
+  /* ===== PILLS / BADGES ===== */
+  .pill{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:600;padding:4px 10px;border-radius:999px;white-space:nowrap}
+  .pill svg{width:12px;height:12px}
+  .p-pos{background:var(--positive-bg);color:var(--positive)}
+  .p-neg{background:var(--negative-bg);color:var(--negative)}
+  .p-warn{background:var(--warning-bg);color:var(--warning)}
+  .p-info{background:var(--info-bg);color:var(--info)}
+  .p-soft{background:var(--lime-50);color:var(--lime-600)}
+  .p-gray{background:var(--gray-100);color:var(--fg2)}
+
+  /* ===== BUTTONS ===== */
+  .btn{font-weight:600;font-size:14px;padding:11px 18px;border-radius:14px;display:inline-flex;align-items:center;gap:8px;transition:var(--transition)}
+  .btn svg{width:16px;height:16px}
+  .btn:active{transform:scale(.98)}
+  .b-primary{background:var(--statto-lime);color:var(--statto-ink)}
+  .b-primary:hover{background:var(--lime-500)}
+  .b-dark{background:var(--statto-ink);color:#fff}
+  .b-dark:hover{background:var(--green-700)}
+  .b-dark .lime{color:var(--statto-lime)}
+  .b-ghost{background:var(--surface);color:var(--fg1);border:1px solid var(--border-strong)}
+  .b-ghost:hover{background:var(--gray-50)}
+  .b-sm{padding:8px 14px;font-size:13px;border-radius:12px}
+  .dd{display:inline-flex;align-items:center;gap:7px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:9px 14px;font-size:13px;font-weight:500;color:var(--fg1)}
+  .dd svg{width:15px;height:15px;color:var(--fg2)}
+
+  /* ===== TABLE ===== */
+  table{width:100%;border-collapse:collapse}
+  thead th{text-align:left;font-size:12px;font-weight:500;color:var(--fg2);padding:10px 12px;border-bottom:1px solid var(--border)}
+  tbody td{padding:14px 12px;font-size:13.5px;border-bottom:1px solid var(--gray-100);vertical-align:middle}
+  tbody tr:last-child td{border-bottom:none}
+  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+  tr.clickable{cursor:pointer} tr.clickable:hover td{background:var(--surface-2)}
+  .row-strong td{font-weight:700}
+
+  /* ===== TABS (lime underline) ===== */
+  .tabs{display:flex;border-bottom:1.5px solid var(--gray-100);margin-bottom:18px}
+  .tab{padding:11px 18px;font-size:14px;font-weight:600;color:var(--fg2);position:relative;transition:var(--transition);display:inline-flex;align-items:center;gap:7px}
+  .tab .cnt{font-size:11px;font-weight:600;background:var(--gray-100);color:var(--fg2);padding:1px 8px;border-radius:999px}
+  .tab.active{color:var(--statto-ink)} html[data-theme="dark"] .tab.active{color:var(--fg1)}
+  .tab.active .cnt{background:var(--positive-bg);color:var(--positive)}
+  .tab.active:after{content:"";position:absolute;left:0;right:0;bottom:-1.5px;height:2.5px;background:var(--statto-lime);border-radius:2px}
+
+  /* ===== INPUTS ===== */
+  .field{margin-bottom:14px}
+  .field label{display:block;font-size:13px;font-weight:500;color:var(--fg2);margin-bottom:7px}
+  .input{width:100%;height:42px;border:1px solid var(--border);background:var(--surface);border-radius:14px;padding:0 14px;font-size:14px;font-family:inherit;color:var(--fg1)}
+  .input:focus{outline:none;border-color:var(--statto-lime)}
+  .field-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+
+  /* ===== CREATIVE / APPROVAL ROWS ===== */
+  .crow{display:flex;align-items:center;gap:14px;padding:14px 16px;border:1px solid var(--border);border-radius:var(--r-md);margin-bottom:10px;background:var(--surface)}
+  .crow:last-child{margin-bottom:0}
+  .cthumb{width:46px;height:46px;border-radius:12px;background:var(--gray-50);color:var(--fg2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .cthumb.round{border-radius:999px;background:var(--lime-50);color:var(--lime-600);font-weight:600;font-size:13px}
+  .cmeta{flex:1;min-width:0}
+  .cmeta .t{font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .cmeta .t .lk{color:var(--fg3);display:inline-flex}
+  .cmeta .m{font-size:12px;color:var(--fg2);margin-top:3px}
+  .feedback{background:var(--surface-2);border-radius:12px;padding:10px 13px;font-size:12.5px;color:var(--fg2);line-height:1.5}
+  .feedback b{color:var(--fg1)}
+  .group-date{font-size:14px;font-weight:600;margin:4px 0 12px;display:flex;align-items:center;gap:10px}
+  .group-date .cnt{font-size:12px;font-weight:400;color:var(--fg2)}
+
+  /* ===== EMPTY ===== */
+  .empty{padding:40px 20px;text-align:center}
+  .empty .eic{width:52px;height:52px;border-radius:999px;background:var(--gray-50);color:var(--fg3);display:flex;align-items:center;justify-content:center;margin:0 auto 12px}
+  .empty h4{font-size:14.5px;font-weight:600}
+  .empty p{font-size:12.5px;color:var(--fg2);margin-top:5px;max-width:42ch;margin-inline:auto;line-height:1.5}
+
+  /* ===== REVIEW SPLIT ===== */
+  .review{display:grid;grid-template-columns:1.25fr 1fr;border-radius:var(--r-xl);overflow:hidden;box-shadow:var(--shadow-md)}
+  .review .pv{background:linear-gradient(135deg,#0C3A2C,#062F28);min-height:380px;display:flex;flex-direction:column;justify-content:flex-end;padding:26px;color:#fff;position:relative}
+  .review .pv .tag{position:absolute;top:18px;left:18px;font-size:11px;font-weight:600;background:rgba(255,255,255,.12);padding:4px 10px;border-radius:999px}
+  .review .pv .h{font-size:22px;font-weight:600;line-height:1.2}
+  .review .pv .p{font-size:12.5px;opacity:.85;margin-top:8px;max-width:32ch}
+  .review .pv .cta{margin-top:16px;align-self:flex-start;background:var(--statto-lime);color:var(--statto-ink);font-weight:600;font-size:12.5px;padding:9px 15px;border-radius:12px}
+  .review .pn{background:var(--surface);padding:26px;display:flex;flex-direction:column}
+  .ml{margin:16px 0}
+  .ml .r{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--gray-100);font-size:13.5px}
+  .ml .r .k{color:var(--fg2)}
+
+  /* ===== HERO (success) ===== */
+  .hero{text-align:center;padding:40px 20px 26px}
+  .hero .orb-sm{width:72px;height:72px;border-radius:999px;margin:0 auto 18px;background:radial-gradient(circle at 70% 38%,#C7F59C 0%,#9FE870 22%,#5FB54A 52%,#1E6B43 78%,#0C3A2C 100%);box-shadow:0 12px 36px rgba(95,181,74,.4);display:flex;align-items:center;justify-content:center;color:#fff}
+  .hero h2{font-size:24px;font-weight:600;letter-spacing:-.01em}
+  .hero p{font-size:14px;color:var(--fg2);margin-top:8px;max-width:48ch;margin-inline:auto;line-height:1.5}
+
+  /* ===== TERMS / SIGN ===== */
+  .terms{background:var(--surface-2);border-radius:var(--r-md);padding:18px 20px}
+  .terms .tr{display:flex;gap:12px;font-size:13.5px;line-height:1.5;padding:8px 0}
+  .terms .tr .n{font-weight:600;color:var(--lime-600)}
+  .sep{height:1px;background:var(--border);margin:20px 0}
+  .signbox{border:1.5px dashed var(--border-strong);border-radius:var(--r-md);padding:24px;text-align:center;background:var(--surface-2)}
+  .signbox .sig{font-size:30px;font-style:italic;font-weight:500}
+  .signbox .cap{font-size:11.5px;color:var(--fg2);margin-top:6px}
+
+  /* ===== TOGGLE / CHIPS (access) ===== */
+  .toggle{width:44px;height:25px;border-radius:999px;background:var(--gray-200);position:relative;transition:.2s;flex:none}
+  .toggle.on{background:var(--statto-lime)}
+  .toggle::after{content:"";position:absolute;top:2.5px;left:2.5px;width:20px;height:20px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 1px 2px rgba(0,0,0,.25)}
+  .toggle.on::after{transform:translateX(19px)}
+  .tabpick{display:flex;flex-wrap:wrap;gap:9px}
+  .chip-pick{display:flex;align-items:center;gap:8px;padding:10px 14px;border:1px solid var(--border);border-radius:14px;background:var(--surface);font-size:13px;font-weight:500;color:var(--fg2);user-select:none}
+  .chip-pick .bx{width:18px;height:18px;border-radius:6px;border:1.5px solid var(--border-strong);display:flex;align-items:center;justify-content:center}
+  .chip-pick .bx svg{width:11px;height:11px;stroke:var(--statto-ink);opacity:0}
+  .chip-pick.on{border-color:var(--statto-lime);background:var(--lime-50);color:var(--fg1)}
+  .chip-pick.on .bx{background:var(--statto-lime);border-color:var(--statto-lime)}
+  .chip-pick.on .bx svg{opacity:1}
+  .perm{display:flex;flex-direction:column;gap:7px}
+  .perm .pr{display:flex;align-items:center;font-size:13px;padding:9px 12px;border-radius:12px;background:var(--surface-2)}
+  .perm .pr.off{opacity:.42}
+  .perm .pr .st{margin-left:auto;font-size:11px;font-weight:600}
+  .perm .pr .st.y{color:var(--positive)} .perm .pr .st.n{color:var(--fg2)}
+
+  /* charts */
+  .spendrow{display:flex;justify-content:space-between;align-items:center;padding:15px 0;border-bottom:1px solid var(--gray-100);font-size:14.5px}
+  .spendrow:last-child{border-bottom:none}
+  .spendrow .amt{font-weight:600;font-variant-numeric:tabular-nums}
+  .cf-svg{width:100%;height:180px;display:block}
+
+  /* presets */
+  .preset{font-size:13px;font-weight:500;height:38px;padding:0 14px;border-radius:12px;border:1px solid var(--border);background:var(--surface);color:var(--fg1)}
+  .preset:hover{background:var(--gray-50)}
+  .preset.on{background:var(--statto-ink);color:#fff;border-color:var(--statto-ink)}
+
+  /* alert */
+  .alert{display:flex;align-items:center;gap:16px;padding:18px 20px;border-radius:var(--r-lg);border:1px solid var(--warning);background:var(--warning-bg)}
+  .alert.ok{border-color:var(--positive);background:var(--positive-bg)}
+  .alert .aic{width:44px;height:44px;border-radius:13px;background:var(--surface);color:var(--warning);display:flex;align-items:center;justify-content:center;flex:none}
+  .alert.ok .aic{color:var(--positive)}
+  .alert .at{font-size:14px;font-weight:600;color:var(--fg1)}
+  .alert .am{font-size:12.5px;color:var(--fg2);margin-top:2px}
+
+  /* floating */
+  .fab-orb{position:fixed;bottom:22px;right:24px;width:56px;height:56px;border-radius:999px;background:radial-gradient(circle at 70% 38%,#C7F59C 0%,#9FE870 22%,#5FB54A 52%,#1E6B43 78%,#0C3A2C 100%);box-shadow:0 12px 30px rgba(95,181,74,.45);z-index:55;animation:drift 9s ease-in-out infinite}
+  @keyframes drift{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+  .dock{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:6px 8px;box-shadow:var(--shadow-lg);z-index:60}
+  .dock .seg{display:flex;background:var(--gray-100);border-radius:999px;padding:3px}
+  .dock .seg button{font-size:12.5px;font-weight:600;color:var(--fg2);padding:7px 16px;border-radius:999px}
+  .dock .seg button.on{background:var(--statto-ink);color:#fff}
+  html[data-theme="dark"] .dock .seg button.on{background:var(--statto-lime);color:var(--statto-ink)}
+  .dock .dv{width:1px;height:22px;background:var(--border)}
+  .dock .tbtn{width:38px;height:38px;border-radius:999px;display:flex;align-items:center;justify-content:center;color:var(--fg1)}
+  .dock .tbtn:hover{background:var(--gray-50)}
+
+  .srcnote{margin-top:24px;padding-top:14px;border-top:1px dashed var(--border);font-size:11.5px;color:var(--fg2);line-height:1.5}
+  .srcnote b{color:var(--fg1);font-weight:600}
+  .ico{stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- ===== SIDEBAR ===== -->
+  <nav class="sidebar">
+    <div class="brand-dot"><svg viewBox="0 0 24 24" class="ico" style="stroke-width:2.5"><path d="M13 2 3 14h9l-1 8 10-12h-9z"/></svg></div>
+    <div id="navItems" style="display:flex;flex-direction:column;gap:8px;align-items:center;flex:1;min-height:0;padding:2px 0"></div>
+    <button class="nav-btn" data-tip="Help" style="margin-top:8px"><svg viewBox="0 0 24 24" class="ico"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></svg></button>
+  </nav>
+
+  <!-- ===== MAIN ===== -->
+  <div class="main">
+    <header class="topbar">
+      <div class="tb-title"><h1 id="tbTitle">Dashboard</h1><p id="tbSub">Benson Goldstein Ltd · Client Portal</p></div>
+      <div class="search"><svg viewBox="0 0 24 24" class="ico"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg><input placeholder="Search anything" /><span class="kbd"><span>⌘</span><span>F</span></span></div>
+      <div class="tb-actions">
+        <button class="icon-circle"><svg viewBox="0 0 24 24" class="ico"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
+        <div class="avatar" id="tbAvatar">CB</div>
+      </div>
+    </header>
+
+    <div class="viewport">
+
+    <!-- ================= CLIENT ================= -->
+
+    <!-- DASHBOARD -->
+    <section class="screen" data-id="c-dashboard"><div class="wrap">
+      <div class="grid g4" style="margin-bottom:20px">
+        <div class="stat-tile"><div class="st-top"><div class="st-ic"><svg viewBox="0 0 24 24" class="ico"><path d="m3 11 18-5v12L3 14v-3zM11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg></div></div><div class="st-val">1</div><div class="st-lab">Active Campaigns</div></div>
+        <div class="stat-tile"><div class="st-top"><div class="st-ic"><svg viewBox="0 0 24 24" class="ico"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><span class="pill p-pos"><svg viewBox="0 0 24 24" class="ico"><path d="m18 15-6-6-6 6"/></svg> +12%</span></div><div class="st-val">215</div><div class="st-lab">Leads This Month</div></div>
+        <div class="stat-tile"><div class="st-top"><div class="st-ic"><svg viewBox="0 0 24 24" class="ico"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg></div><span class="pill p-soft">New</span></div><div class="st-val">£12,514</div><div class="st-lab">Ad Spend · this month</div></div>
+        <div class="stat-tile"><div class="st-top"><div class="st-ic"><svg viewBox="0 0 24 24" class="ico"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><span class="pill p-soft">New</span></div><div class="st-val">£58.21</div><div class="st-lab">Cost per Lead</div></div>
+      </div>
+      <div class="grid g-2-1">
+        <div class="card pad"><div class="card-head"><div><h3>Recent Lead Deliveries</h3><div class="sub">Last 14 days</div></div><span class="dd">This Month <svg viewBox="0 0 24 24" class="ico"><path d="m6 9 6 6 6-6"/></svg></span></div>
+          <svg class="cf-svg" viewBox="0 0 600 180" preserveAspectRatio="none">
+            <defs><linearGradient id="lg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9FE870" stop-opacity=".35"/><stop offset="1" stop-color="#9FE870" stop-opacity="0"/></linearGradient></defs>
+            <path d="M0,140 L60,120 L120,128 L180,96 L240,104 L300,70 L360,40 L420,90 L480,110 L540,86 L600,72 L600,180 L0,180 Z" fill="url(#lg)"/>
+            <path d="M0,140 L60,120 L120,128 L180,96 L240,104 L300,70 L360,40 L420,90 L480,110 L540,86 L600,72" fill="none" stroke="#84D451" stroke-width="2.5" vector-effect="non-scaling-stroke"/>
+          </svg>
+          <div class="row" style="justify-content:space-between;font-size:11px;color:var(--fg3);padding:0 2px;margin-top:4px"><span>14 May</span><span>17</span><span>20</span><span>23 May</span></div>
+        </div>
+        <div class="card pad"><div class="card-head"><div><h3>Ad spend by platform</h3><div class="sub">This month · Catchr</div></div></div>
+          <div class="spendrow"><span>facebook-ads</span><span class="amt">£6,868.36</span></div>
+          <div class="spendrow"><span>google-ads</span><span class="amt">£5,646.30</span></div>
+          <div class="spendrow"><span style="font-weight:600">Total</span><span class="amt">£12,514.66</span></div>
+        </div>
+      </div>
+      <div class="srcnote"><b>Sam · 27 May review (03:11):</b> "we want to be able to see the ad spend… for this client." Ad spend + cost-per-lead are the new dashboard tiles.</div>
+    </div></section>
+
+    <!-- LEADS -->
+    <section class="screen" data-id="c-leads"><div class="wrap">
+      <div class="card pad" style="margin-bottom:20px"><div class="card-head"><div><h3>Date range</h3><div class="sub">Pick a preset or set a custom period</div></div></div>
+        <div class="row" style="flex-wrap:wrap;gap:10px;align-items:flex-end">
+          <div class="field" style="margin:0"><label>From</label><input class="input" value="28-04-2026" style="width:150px"></div>
+          <div class="field" style="margin:0"><label>To</label><input class="input" value="27-05-2026" style="width:150px"></div>
+          <button class="preset" onclick="pset(this)">7d</button><button class="preset on" onclick="pset(this)">30d</button><button class="preset" onclick="pset(this)">90d</button><button class="preset" onclick="pset(this)">YTD</button>
+        </div>
+      </div>
+      <div class="grid g3" style="margin-bottom:20px">
+        <div class="stat-tile"><div class="st-val">215</div><div class="st-lab">Total Leads</div></div>
+        <div class="stat-tile"><div class="st-val">20</div><div class="st-lab">Avg / Day</div></div>
+        <div class="stat-tile"><div class="st-val">165</div><div class="st-lab">Peak Day</div></div>
+      </div>
+      <div class="card pad"><div class="card-head"><div><h3>By Campaign</h3><div class="sub">Lead counts grouped per campaign — click a row for the daily breakdown</div></div></div>
+        <table><thead><tr><th>Campaign</th><th>Date Range</th><th class="num">Days</th><th class="num">Leads</th></tr></thead>
+          <tbody><tr><td style="font-weight:600">PCP Claim (UK) Main</td><td style="color:var(--fg2)">12 May – 23 May</td><td class="num">11</td><td class="num">215</td></tr></tbody></table>
+      </div>
+      <div class="srcnote"><b>Leads</b> — date presets, total/avg/peak, by-campaign breakdown reconciled to LeadByte.</div>
+    </div></section>
+
+    <!-- INVOICES -->
+    <section class="screen" data-id="c-invoices"><div class="wrap">
+      <div class="card"><div class="pad" style="padding-bottom:6px"><div class="card-head"><div><h3>Recent invoices</h3><div class="sub">Synced from Xero · outstanding first</div></div><span class="pill p-warn">£2,340.00 outstanding</span></div></div>
+        <div class="pad" style="padding-top:0">
+        <table><thead><tr><th>Invoice</th><th>Issued</th><th>Due</th><th class="num">Amount</th><th style="text-align:right">Status</th></tr></thead>
+          <tbody>
+            <tr class="clickable" onclick="show('c-invoice')"><td style="font-weight:600">INV-1043</td><td>28 May 2026</td><td>11 Jun 2026</td><td class="num">£2,340.00</td><td style="text-align:right"><span class="pill p-warn">Pending Payment</span></td></tr>
+            <tr><td style="font-weight:600">INV-1038</td><td>14 May 2026</td><td>28 May 2026</td><td class="num">£1,980.00</td><td style="text-align:right"><span class="pill p-pos">Paid</span></td></tr>
+            <tr><td style="font-weight:600">INV-1031</td><td>30 Apr 2026</td><td>14 May 2026</td><td class="num">£2,610.00</td><td style="text-align:right"><span class="pill p-pos">Paid</span></td></tr>
+            <tr><td style="font-weight:600">INV-1024</td><td>16 Apr 2026</td><td>30 Apr 2026</td><td class="num">£2,115.00</td><td style="text-align:right"><span class="pill p-pos">Paid</span></td></tr>
+          </tbody></table>
+        </div>
+      </div>
+      <div class="srcnote"><b>20-May sprint (T8):</b> "Pending Payment" label + outstanding-first ordering. Click INV-1043 for detail.</div>
+    </div></section>
+
+    <section class="screen" data-id="c-invoice"><div class="wrap" style="max-width:720px">
+      <div class="between" style="margin-bottom:16px"><div></div><button class="btn b-ghost b-sm" onclick="show('c-invoices')">← All invoices</button></div>
+      <div class="card pad">
+        <div class="between" style="margin-bottom:18px"><div><div class="st-lab" style="text-transform:uppercase;letter-spacing:.08em">Invoice</div><div style="font-size:26px;font-weight:600">INV-1043</div><div style="margin-top:8px"><span class="pill p-warn">Pending Payment · due 11 Jun</span></div></div><div style="text-align:right"><div class="st-lab">Amount due</div><div style="font-size:28px;font-weight:600">£2,340.00</div></div></div>
+        <table><thead><tr><th>Description</th><th class="num">Qty</th><th class="num">Unit</th><th class="num">Total</th></tr></thead>
+          <tbody>
+            <tr><td>PCP Claim — valid leads (Facebook)</td><td class="num">92</td><td class="num">£18.00</td><td class="num">£1,656.00</td></tr>
+            <tr><td>PCP Claim — valid leads (Google)</td><td class="num">18</td><td class="num">£18.00</td><td class="num">£324.00</td></tr>
+            <tr><td>Management fee</td><td class="num">1</td><td class="num">£360.00</td><td class="num">£360.00</td></tr>
+            <tr class="row-strong"><td>Total (inc. VAT)</td><td class="num"></td><td class="num"></td><td class="num">£2,340.00</td></tr>
+          </tbody></table>
+        <div class="row" style="margin-top:20px"><button class="btn b-ghost"><svg viewBox="0 0 24 24" class="ico"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> Download PDF</button><button class="btn b-primary" style="flex:1;justify-content:center">Pay £2,340.00 now</button></div>
+      </div>
+    </div></section>
+
+    <!-- COMPLIANCE -->
+    <section class="screen" data-id="c-compliance"><div class="wrap">
+      <div class="grid g3" style="margin-bottom:22px">
+        <div class="stat-tile"><div class="st-val warn">1</div><div class="st-lab">Pending review</div></div>
+        <div class="stat-tile"><div class="st-val lime">2</div><div class="st-lab">Approved</div></div>
+        <div class="stat-tile"><div class="st-val neg">1</div><div class="st-lab">Rejected</div></div>
+      </div>
+      <div class="tabs"><button class="tab active">Compliance <span class="cnt">1</span></button><button class="tab" onclick="show('c-creatives')">Creatives <span class="cnt">3</span></button></div>
+      <div class="card pad" style="margin-bottom:20px"><div class="card-head"><div><h3>Creatives awaiting review</h3><div class="sub">PCP Claim (UK) Main · 1 creative pending</div></div></div>
+        <div class="crow">
+          <div class="cthumb"><svg viewBox="0 0 24 24" class="ico"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg></div>
+          <div class="cmeta"><div class="t">CFC_PCP_StaticV1_1x1.png <span class="lk"><svg width="13" height="13" viewBox="0 0 24 24" class="ico"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14 21 3"/></svg></span> <span class="pill p-gray">Image</span></div><div class="m">Uploaded 27 May 2026</div></div>
+          <div class="row"><button class="btn b-ghost b-sm" style="color:var(--negative);border-color:var(--negative)">Reject</button><button class="btn b-primary b-sm" onclick="show('c-review')">Review</button></div>
+        </div>
+      </div>
+      <div class="card pad"><div class="card-head"><div><h3>Landing Pages</h3><div class="sub">0 pages</div></div></div>
+        <div class="empty"><div class="eic"><svg width="22" height="22" viewBox="0 0 24 24" class="ico"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20"/></svg></div><h4>No landing pages</h4><p>Landing pages registered for this campaign will appear here.</p></div>
+      </div>
+      <div class="srcnote"><b>Sam · 27 May review (04:06–05:34):</b> content lands in Compliance pending; approve → it appears in Creatives under its date; reject → it never shows.</div>
+    </div></section>
+
+    <section class="screen" data-id="c-review"><div class="wrap">
+      <div class="between" style="margin-bottom:16px"><div></div><button class="btn b-ghost b-sm" onclick="show('c-compliance')">← Back to compliance</button></div>
+      <div class="review">
+        <div class="pv"><div class="tag">Facebook · Static · 1×1</div><div class="h">Mis-sold car finance? You could be owed £1,000s.</div><div class="p">Check your PCP claim in 60 seconds. No win, no fee. FCA-regulated partners.</div><span class="cta">Check my claim →</span></div>
+        <div class="pn"><h3 style="font-size:18px;font-weight:600">Asset details</h3>
+          <div class="ml"><div class="r"><span class="k">Campaign</span><span>PCP Claim (UK) Main</span></div><div class="r"><span class="k">Type</span><span>Image</span></div><div class="r"><span class="k">Uploaded</span><span>27 May 2026</span></div></div>
+          <div class="feedback" style="margin-bottom:18px"><b>Compliance:</b> claim wording + FCA disclaimer must be approved before the ad runs. Your decision is logged with a timestamp.</div>
+          <div class="row" style="margin-top:auto;gap:10px"><button class="btn b-ghost" style="flex:1;justify-content:center;color:var(--negative);border-color:var(--negative)" onclick="show('c-compliance')">Reject</button><button class="btn b-primary" style="flex:1;justify-content:center" onclick="show('c-creatives')">Approve</button></div>
+        </div>
+      </div>
+    </div></section>
+
+    <!-- CREATIVES -->
+    <section class="screen" data-id="c-creatives"><div class="wrap">
+      <p class="lede">Approved assets currently running on your campaigns, grouped by the day they were approved. Items still awaiting review live on the <b>Compliance</b> tab.</p>
+      <div class="tabs"><button class="tab" onclick="show('c-compliance')">Compliance <span class="cnt">1</span></button><button class="tab active">Creatives <span class="cnt">3</span></button></div>
+      <div class="card pad" style="margin-bottom:20px"><div class="card-head"><div><h3>Media</h3><div class="sub">3 approved assets · grouped by approval date</div></div></div>
+        <div class="group-date">Wednesday, 27 May 2026 <span class="cnt">· 3 assets</span></div>
+        <div class="crow"><div class="cthumb"><svg viewBox="0 0 24 24" class="ico"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg></div><div class="cmeta"><div class="t">CFC_PCP_StaticV1_1x1.png <span class="lk"><svg width="13" height="13" viewBox="0 0 24 24" class="ico"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14 21 3"/></svg></span> <span class="pill p-pos">Approved</span></div><div class="m">PCP Claim (UK) Main · Uploaded 27 May · Approved 27 May 2026</div></div></div>
+        <div class="crow"><div class="cthumb"><svg viewBox="0 0 24 24" class="ico"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg></div><div class="cmeta"><div class="t">CFC_PCP_StaticV1_9x16.png <span class="lk"><svg width="13" height="13" viewBox="0 0 24 24" class="ico"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14 21 3"/></svg></span> <span class="pill p-pos">Approved</span></div><div class="m">PCP Claim (UK) Main · Uploaded 27 May · Approved 27 May 2026</div></div></div>
+        <div class="crow"><div class="cthumb"><svg viewBox="0 0 24 24" class="ico"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg></div><div class="cmeta"><div class="t">CFC_PCP_StaticV1_4x5.png <span class="lk"><svg width="13" height="13" viewBox="0 0 24 24" class="ico"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14 21 3"/></svg></span> <span class="pill p-pos">Approved</span></div><div class="m">PCP Claim (UK) Main · Uploaded 27 May · Approved 27 May 2026</div></div></div>
+      </div>
+      <div class="card pad"><div class="card-head"><div><h3>Copy &amp; landing pages</h3><div class="sub">0 approved assets</div></div></div>
+        <div class="empty"><div class="eic"><svg width="22" height="22" viewBox="0 0 24 24" class="ico"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></div><h4>Nothing here yet</h4><p>Ad copy and landing page URLs appear here once approved on the Compliance tab.</p></div>
+      </div>
+      <div class="srcnote"><b>Creatives</b> — approved assets only, grouped into a dated folder (the "Wednesday 27th" model Sam described).</div>
+    </div></section>
+
+    <!-- AD SPEND -->
+    <section class="screen" data-id="c-adspend"><div class="wrap" style="max-width:780px">
+      <div class="card pad"><div class="card-head"><div><h3>Spend by platform</h3><div class="sub">Current month to date</div></div></div>
+        <div class="spendrow"><span>facebook-ads</span><span class="amt">£6,868.36</span></div>
+        <div class="spendrow"><span>google-ads</span><span class="amt">£5,646.30</span></div>
+        <div class="spendrow"><span style="font-weight:600">Total</span><span class="amt">£12,514.66</span></div>
+      </div>
+      <div class="srcnote"><b>Sam · 27 May review (03:11):</b> the dedicated Ad Spend tab — spend by platform via Catchr. Sam's #1 ask for the day.</div>
+    </div></section>
+
+    <!-- AGREEMENT -->
+    <section class="screen" data-id="c-agreement"><div class="wrap" style="max-width:740px">
+      <div class="card pad">
+        <div class="between"><div class="row"><div style="width:42px;height:42px;border-radius:13px;background:var(--warning-bg);color:var(--warning);display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 24 24" class="ico"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></div><div><div style="font-weight:600;font-size:16px">Lead Generation Service Agreement</div><div style="font-size:12.5px;color:var(--fg2)">v2.1 · PDF · 4 pages</div></div></div><span class="pill p-warn">Pending signature</span></div>
+        <div class="sep"></div>
+        <div class="terms">
+          <div class="tr"><span class="n">1.</span><div><b>Service.</b> Validated PCP-claim leads via Facebook and Google, managed end-to-end.</div></div>
+          <div class="tr"><span class="n">2.</span><div><b>Pricing.</b> £18.00 per valid lead + a fixed monthly management fee, billed weekly in arrears.</div></div>
+          <div class="tr"><span class="n">3.</span><div><b>Payment.</b> Invoices due 14 days from issue, settled via the portal.</div></div>
+          <div class="tr"><span class="n">4.</span><div><b>Compliance.</b> All creatives require client approval before going live; an audit trail is retained.</div></div>
+        </div>
+        <div class="signbox" style="margin-top:18px"><div style="font-size:13px;color:var(--fg2);margin-bottom:10px">Sign as <b style="color:var(--fg1)">Coby Benson</b></div><button class="btn b-primary" style="margin:0 auto" onclick="show('c-agreement-signed')"><svg viewBox="0 0 24 24" class="ico"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg> Sign agreement</button></div>
+      </div>
+      <div class="srcnote"><b>SignNow flow</b> — review &amp; e-sign in-portal. Existing clients who signed offline are cleared from the admin side (Admin → Agreement).</div>
+    </div></section>
+
+    <section class="screen" data-id="c-agreement-signed"><div class="wrap" style="max-width:540px">
+      <div class="hero"><div class="orb-sm"><svg width="28" height="28" viewBox="0 0 24 24" class="ico" style="stroke:#fff;stroke-width:2.4"><path d="M20 6 9 17l-5-5"/></svg></div><h2>Agreement signed</h2><p>Thank you. Your service agreement is now active.</p></div>
+      <div class="card pad">
+        <div class="signbox" style="border-style:solid;border-color:var(--positive);background:var(--positive-bg)"><div class="sig">Coby Benson</div><div class="cap">Signed 4 Jun 2026 · 16:42 BST · via SignNow</div></div>
+        <div style="text-align:center;margin-top:16px"><button class="btn b-ghost"><svg viewBox="0 0 24 24" class="ico"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> Download signed PDF</button></div>
+      </div>
+    </div></section>
+
+    <!-- USERS -->
+    <section class="screen" data-id="c-users"><div class="wrap">
+      <div class="between" style="margin-bottom:18px"><div></div><button class="btn b-primary" onclick="show('c-user-add')"><svg viewBox="0 0 24 24" class="ico"><path d="M12 5v14M5 12h14"/></svg> Add user</button></div>
+      <div class="card pad" style="padding-top:8px">
+        <div class="crow" style="border:none;border-bottom:1px solid var(--gray-100);border-radius:0;margin:0"><div class="cthumb round">CB</div><div class="cmeta"><div class="t">Coby Benson</div><div class="m">coby@bensongoldstein.co.uk</div></div><span class="pill p-pos">Full access</span><span class="pill p-gray">Primary</span></div>
+        <div class="crow" style="border:none;border-radius:0;margin:0"><div class="cthumb round">RD</div><div class="cmeta"><div class="t">Rachel Doyle</div><div class="m">rachel@bensongoldstein.co.uk</div></div><span class="pill p-pos">Full access</span><button class="btn b-ghost b-sm">Manage</button></div>
+      </div>
+      <div class="srcnote"><b>Sam · 27 May review (06:20–06:50):</b> add more people under the account with separate logins; everyone full access today.</div>
+    </div></section>
+
+    <section class="screen" data-id="c-user-add"><div class="wrap" style="max-width:560px">
+      <div class="between" style="margin-bottom:16px"><div></div><button class="btn b-ghost b-sm" onclick="show('c-users')">← Back</button></div>
+      <div class="card pad">
+        <div class="field-2"><div class="field"><label>Full name</label><input class="input" placeholder="e.g. James Okafor"></div><div class="field"><label>Email (login)</label><input class="input" placeholder="name@bensongoldstein.co.uk"></div></div>
+        <div class="row" style="justify-content:space-between;padding:14px 0;border-top:1px solid var(--gray-100);margin-top:6px"><div><div style="font-weight:600;font-size:14px">Full access</div><div style="font-size:12px;color:var(--fg2)">Sees every tab. Tab-by-tab control is the next phase.</div></div><button class="toggle on" onclick="this.classList.toggle('on')"></button></div>
+        <div style="margin-top:18px;text-align:right"><button class="btn b-primary" style="margin-left:auto" onclick="show('c-user-created')">Create user &amp; send invite</button></div>
+      </div>
+    </div></section>
+
+    <section class="screen" data-id="c-user-created"><div class="wrap" style="max-width:520px">
+      <div class="hero"><div class="orb-sm"><svg width="28" height="28" viewBox="0 0 24 24" class="ico" style="stroke:#fff;stroke-width:2.4"><path d="M20 6 9 17l-5-5"/></svg></div><h2>User added</h2><p>James Okafor has been invited with full access and will set a password from the invite email.</p></div>
+      <div class="card pad" style="padding:12px"><div class="crow" style="border:none;margin:0"><div class="cthumb round">JO</div><div class="cmeta"><div class="t">James Okafor</div><div class="m">james@bensongoldstein.co.uk</div></div><span class="pill p-warn">Invite sent</span><span class="pill p-pos">Full access</span></div></div>
+      <div style="text-align:center;margin-top:18px"><button class="btn b-ghost" onclick="show('c-users')">← Back to users</button></div>
+    </div></section>
+
+    <!-- ACCOUNT -->
+    <section class="screen" data-id="c-account"><div class="wrap">
+      <div class="grid g2">
+        <div class="card pad"><div class="card-head"><h3>Profile</h3></div>
+          <div class="between" style="padding:9px 0;border-bottom:1px solid var(--gray-100)"><span style="color:var(--fg2);font-size:13px">Name</span><span style="font-weight:600;font-size:13.5px">Coby Benson</span></div>
+          <div class="between" style="padding:9px 0;border-bottom:1px solid var(--gray-100)"><span style="color:var(--fg2);font-size:13px">Email</span><span style="font-weight:600;font-size:13.5px">coby@bensongoldstein.co.uk</span></div>
+          <div class="between" style="padding:9px 0"><span style="color:var(--fg2);font-size:13px">Company</span><span style="font-weight:600;font-size:13.5px">Benson Goldstein Ltd</span></div>
+        </div>
+        <div class="card pad"><div class="card-head"><h3>Change password</h3></div>
+          <div class="field"><label>New password</label><input class="input" type="password" placeholder="••••••••"></div>
+          <div class="field"><label>Confirm password</label><input class="input" type="password" placeholder="••••••••"></div>
+          <div style="text-align:right"><button class="btn b-primary" style="margin-left:auto">Update password</button></div>
+        </div>
+      </div>
+    </div></section>
+
+    <!-- ================= ADMIN ================= -->
+
+    <section class="screen" data-id="a-clients"><div class="wrap">
+      <div class="between" style="margin-bottom:18px"><div></div><button class="btn b-dark"><svg viewBox="0 0 24 24" class="ico"><path d="M12 5v14M5 12h14"/></svg> <span class="lime">New client</span></button></div>
+      <div class="grid g3" style="margin-bottom:20px">
+        <div class="stat-tile"><div class="st-val">3</div><div class="st-lab">Active clients</div></div>
+        <div class="stat-tile"><div class="st-val">£14,120</div><div class="st-lab">Spend managed (MTD)</div></div>
+        <div class="stat-tile"><div class="st-val warn">3</div><div class="st-lab">Awaiting client approval</div></div>
+      </div>
+      <div class="card pad"><div class="card-head"><h3>All clients</h3></div>
+        <table><thead><tr><th>Client</th><th class="num">Campaigns</th><th class="num">Spend MTD</th><th>Approvals</th><th>Agreement</th><th></th></tr></thead>
+          <tbody>
+            <tr class="clickable" onclick="show('a-client')"><td style="font-weight:600">Benson Goldstein</td><td class="num">1</td><td class="num">£12,514</td><td><span class="pill p-warn">1 pending</span></td><td><span class="pill p-neg">Action needed</span></td><td style="text-align:right;color:var(--fg2)">Open →</td></tr>
+            <tr class="clickable" onclick="show('a-client')"><td style="font-weight:600">Harcourt Legal</td><td class="num">2</td><td class="num">£3,260</td><td><span class="pill p-pos">None</span></td><td><span class="pill p-pos">Signed</span></td><td style="text-align:right;color:var(--fg2)">Open →</td></tr>
+            <tr class="clickable" onclick="show('a-client')"><td style="font-weight:600">Mercer Claims</td><td class="num">1</td><td class="num">£1,464</td><td><span class="pill p-pos">None</span></td><td><span class="pill p-pos">Signed</span></td><td style="text-align:right;color:var(--fg2)">Open →</td></tr>
+          </tbody></table>
+      </div>
+      <div class="srcnote"><b>Agency admin home</b> — Sam opens a client to manage users, creatives and the agreement.</div>
+    </div></section>
+
+    <section class="screen" data-id="a-creatives"><div class="wrap">
+      <div class="card pad"><div class="card-head"><div><h3>Draft creatives · PCP Claim (UK) Main</h3><div class="sub">not yet sent to client</div></div></div>
+        <div style="border:1.5px dashed var(--border-strong);border-radius:var(--r-md);padding:26px;text-align:center;background:var(--surface-2);margin-bottom:14px">
+          <div style="width:46px;height:46px;border-radius:13px;background:var(--surface);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;color:var(--statto-ink)"><svg width="20" height="20" viewBox="0 0 24 24" class="ico"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg></div>
+          <div style="font-weight:600;font-size:14px">Drop creatives here or browse</div><div style="font-size:12px;color:var(--fg2);margin-top:4px">PNG, JPG, MP4 · up to 50 MB each</div>
+        </div>
+        <div class="crow"><div class="cthumb"><svg viewBox="0 0 24 24" class="ico"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg></div><div class="cmeta"><div class="t">CFC_PCP_StaticV1_1x1.png</div><div class="m">added today</div></div><span class="pill p-gray">Draft</span></div>
+        <div class="crow"><div class="cthumb"><svg viewBox="0 0 24 24" class="ico"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg></div><div class="cmeta"><div class="t">CFC_PCP_StaticV1_9x16.png</div><div class="m">added today</div></div><span class="pill p-gray">Draft</span></div>
+        <div class="row" style="justify-content:flex-end;gap:10px;margin-top:14px"><button class="btn b-ghost">Save drafts</button><button class="btn b-primary" onclick="show('a-creatives-submitted')">Submit to client compliance →</button></div>
+      </div>
+      <div class="srcnote"><b>Admin half of the compliance flow (04:06)</b> — submitted assets appear on the client's Compliance tab.</div>
+    </div></section>
+
+    <section class="screen" data-id="a-creatives-submitted"><div class="wrap" style="max-width:560px">
+      <div class="hero"><div class="orb-sm"><svg width="26" height="26" viewBox="0 0 24 24" class="ico" style="stroke:#fff;stroke-width:2.2"><path d="m22 2-7 20-4-9-9-4Z"/></svg></div><h2>Sent for approval</h2><p>Assets are now on Benson Goldstein's Compliance tab. Approved items land in their Creatives under today's date.</p></div>
+      <div style="text-align:center"><button class="btn b-ghost" onclick="show('c-compliance')">See the client's Compliance view →</button></div>
+    </div></section>
+
+    <section class="screen" data-id="a-access"><div class="wrap">
+      <p class="lede">"Create a user, select the tabs they can see, press create." <b style="color:var(--warning)">Planned for after launch.</b></p>
+      <div class="grid g-2-1">
+        <div class="card pad"><div class="card-head"><h3>New user · select access</h3></div>
+          <div class="field-2"><div class="field"><label>Full name</label><input class="input" value="Dana Lewis"></div><div class="field"><label>Email (login)</label><input class="input" value="dana@bensongoldstein.co.uk"></div></div>
+          <label style="font-size:13px;font-weight:500;color:var(--fg2);display:block;margin:6px 0 10px">Visible tabs</label>
+          <div class="tabpick" id="tabpick">
+            <div class="chip-pick on" data-tab="Dashboard" onclick="ttab(this)"><span class="bx"><svg viewBox="0 0 24 24" class="ico"><path d="M20 6 9 17l-5-5"/></svg></span> Dashboard</div>
+            <div class="chip-pick on" data-tab="Leads" onclick="ttab(this)"><span class="bx"><svg viewBox="0 0 24 24" class="ico"><path d="M20 6 9 17l-5-5"/></svg></span> Leads</div>
+            <div class="chip-pick on" data-tab="Ad Spend" onclick="ttab(this)"><span class="bx"><svg viewBox="0 0 24 24" class="ico"><path d="M20 6 9 17l-5-5"/></svg></span> Ad Spend</div>
+            <div class="chip-pick" data-tab="Creatives" onclick="ttab(this)"><span class="bx"><svg viewBox="0 0 24 24" class="ico"><path d="M20 6 9 17l-5-5"/></svg></span> Creatives</div>
+            <div class="chip-pick" data-tab="Invoices" onclick="ttab(this)"><span class="bx"><svg viewBox="0 0 24 24" class="ico"><path d="M20 6 9 17l-5-5"/></svg></span> Invoices</div>
+            <div class="chip-pick" data-tab="Agreement" onclick="ttab(this)"><span class="bx"><svg viewBox="0 0 24 24" class="ico"><path d="M20 6 9 17l-5-5"/></svg></span> Agreement</div>
+          </div>
+          <div style="margin-top:18px;text-align:right"><button class="btn b-primary" style="margin-left:auto">Create user</button></div>
+        </div>
+        <div class="card pad"><div class="card-head"><div><h3>What Dana sees</h3><div class="sub">Live preview as you tick</div></div></div><div class="perm" id="perm"></div><div class="feedback" style="margin-top:14px">A junior staffer can see <b>leads</b> and <b>ad spend</b> without ever seeing <b>invoices</b> or the <b>agreement</b>.</div></div>
+      </div>
+      <div class="srcnote"><b>Sam · 27 May review (07:33–08:27):</b> simple tab-tick model, not a roles matrix. Flagged as next-phase.</div>
+    </div></section>
+
+    <section class="screen" data-id="a-agreements"><div class="wrap">
+      <div class="alert" style="margin-bottom:18px"><div class="aic"><svg width="20" height="20" viewBox="0 0 24 24" class="ico"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg></div><div><div class="at">Pending agreement — action needed</div><div class="am">No signed agreement is on file in the portal for Benson Goldstein.</div></div><button class="btn b-primary" style="margin-left:auto" onclick="show('a-override')">Signed offline? Override</button></div>
+      <div class="card pad"><div class="card-head"><div><h3>Client agreements</h3><div class="sub">Lead Generation Service Agreement · v2.1</div></div><span class="dd">All clients <svg viewBox="0 0 24 24" class="ico"><path d="m6 9 6 6 6-6"/></svg></span></div>
+        <table><thead><tr><th>Client</th><th>Template</th><th>Status</th><th>Signed</th><th></th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:600">Benson Goldstein</td><td style="color:var(--fg2)">Service Agreement v2.1</td><td><span class="pill p-warn">Sent · unsigned</span></td><td style="color:var(--fg2)">—</td><td style="text-align:right"><button class="btn b-ghost b-sm" onclick="show('a-override')">Override</button></td></tr>
+            <tr><td style="font-weight:600">Harcourt Legal</td><td style="color:var(--fg2)">Service Agreement v2.1</td><td><span class="pill p-pos">Signed</span></td><td>02 May 2026</td><td style="text-align:right;color:var(--fg2)">View →</td></tr>
+            <tr><td style="font-weight:600">Mercer Claims</td><td style="color:var(--fg2)">Service Agreement v2.0</td><td><span class="pill p-pos">Signed</span></td><td>18 Apr 2026</td><td style="text-align:right;color:var(--fg2)">View →</td></tr>
+          </tbody></table>
+      </div>
+      <div class="srcnote"><b>Sam · 27 May review (03:38–03:59):</b> existing client signed off-platform — needs a manual override for the "action needed" prompt. Override is logged (who/when/IP).</div>
+    </div></section>
+
+    <section class="screen" data-id="a-override"><div class="wrap" style="max-width:560px">
+      <div class="between" style="margin-bottom:16px"><div></div><button class="btn b-ghost b-sm" onclick="show('a-agreements')">← Cancel</button></div>
+      <div class="card pad">
+        <div class="card-head"><div><h3>Mark agreement as signed offline</h3><div class="sub">Clears the alert and logs who, when and why</div></div></div>
+        <div class="field-2"><div class="field"><label>Date signed</label><input class="input" value="14 Feb 2026"></div><div class="field"><label>Reference (optional)</label><input class="input" placeholder="DocuSign # / paper ref"></div></div>
+        <div class="field"><label>Reason / note</label><input class="input" value="Signed before portal onboarding — paper copy on file."></div>
+        <div class="feedback"><b>Logged</b> against your account (name, timestamp, IP). Clears the alert; does not remove the requirement to file the paper copy.</div>
+        <div class="row" style="margin-top:16px;justify-content:flex-end;gap:10px"><button class="btn b-ghost" onclick="show('a-agreements')">Cancel</button><button class="btn b-primary" onclick="show('a-override-done')">Confirm override</button></div>
+      </div>
+    </div></section>
+
+    <section class="screen" data-id="a-override-done"><div class="wrap" style="max-width:620px">
+      <div class="hero"><div class="orb-sm"><svg width="28" height="28" viewBox="0 0 24 24" class="ico" style="stroke:#fff;stroke-width:2.4"><path d="M20 6 9 17l-5-5"/></svg></div><h2>Alert cleared</h2><p>The agreement now shows as signed offline, with the override on record.</p></div>
+      <div class="alert ok"><div class="aic"><svg width="20" height="20" viewBox="0 0 24 24" class="ico"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14M22 4 12 14.01l-3-3"/></svg></div><div><div class="at">Agreement on file — signed offline</div><div class="am">Recorded 14 Feb 2026 · override by Sam · 4 Jun 2026, 16:42 · 81.2.69.142</div></div><span class="pill p-pos" style="margin-left:auto">Resolved</span></div>
+    </div></section>
+
+    <!-- AGENCY DASHBOARD -->
+    <section class="screen" data-id="a-dashboard"><div class="wrap">
+      <div class="grid g4" style="margin-bottom:20px">
+        <div class="stat-tile"><div class="st-top"><div class="st-ic"><svg viewBox="0 0 24 24" class="ico"><path d="M3 21h18M6 21V7l6-4 6 4v14"/></svg></div></div><div class="st-val">3</div><div class="st-lab">Active clients</div></div>
+        <div class="stat-tile"><div class="st-top"><div class="st-ic"><svg viewBox="0 0 24 24" class="ico"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><span class="pill p-pos"><svg viewBox="0 0 24 24" class="ico"><path d="m18 15-6-6-6 6"/></svg> +9%</span></div><div class="st-val">353</div><div class="st-lab">Leads this month</div></div>
+        <div class="stat-tile"><div class="st-top"><div class="st-ic"><svg viewBox="0 0 24 24" class="ico"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg></div></div><div class="st-val">£17,238</div><div class="st-lab">Ad spend managed · MTD</div></div>
+        <div class="stat-tile"><div class="st-top"><div class="st-ic"><svg viewBox="0 0 24 24" class="ico"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><span class="pill p-pos">58.2% margin</span></div><div class="st-val lime">£41,280</div><div class="st-lab">Revenue · MTD</div></div>
+      </div>
+      <div class="grid g-2-1" style="margin-bottom:20px">
+        <div class="card pad"><div class="card-head"><div><h3>Leads across all clients</h3><div class="sub">Last 30 days</div></div><span class="dd">This Month <svg viewBox="0 0 24 24" class="ico"><path d="m6 9 6 6 6-6"/></svg></span></div>
+          <svg class="cf-svg" viewBox="0 0 600 180" preserveAspectRatio="none">
+            <defs><linearGradient id="lg2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9FE870" stop-opacity=".35"/><stop offset="1" stop-color="#9FE870" stop-opacity="0"/></linearGradient></defs>
+            <path d="M0,150 L60,132 L120,138 L180,108 L240,96 L300,110 L360,64 L420,80 L480,52 L540,70 L600,44 L600,180 L0,180 Z" fill="url(#lg2)"/>
+            <path d="M0,150 L60,132 L120,138 L180,108 L240,96 L300,110 L360,64 L420,80 L480,52 L540,70 L600,44" fill="none" stroke="#84D451" stroke-width="2.5" vector-effect="non-scaling-stroke"/>
+          </svg>
+          <div class="row" style="justify-content:space-between;font-size:11px;color:var(--fg3);padding:0 2px;margin-top:4px"><span>06 May</span><span>13</span><span>20</span><span>04 Jun</span></div>
+        </div>
+        <div class="card pad"><div class="card-head"><div><h3>P&amp;L · this month</h3><div class="sub">leadgeneration.io</div></div></div>
+          <div class="spendrow"><span>Revenue (client billing)</span><span class="amt">£41,280.00</span></div>
+          <div class="spendrow"><span>Ad spend (Catchr)</span><span class="amt">−£17,238.00</span></div>
+          <div class="spendrow"><span>Lead cost (LeadByte)</span><span class="amt">−£3,420.00</span></div>
+          <div class="spendrow"><span style="font-weight:600">Net profit</span><span class="amt" style="color:var(--lime-600)">£20,622.00</span></div>
+        </div>
+      </div>
+      <div class="card pad"><div class="card-head"><div><h3>Needs attention</h3><div class="sub">2 items</div></div></div>
+        <div class="crow" style="cursor:pointer" onclick="show('a-agreements')"><div class="cthumb" style="color:var(--warning)"><svg viewBox="0 0 24 24" class="ico"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg></div><div class="cmeta"><div class="t">Benson Goldstein · agreement unsigned</div><div class="m">No signed agreement on file — override if signed offline</div></div><span class="pill p-warn">Action needed</span></div>
+        <div class="crow" style="cursor:pointer" onclick="show('a-client')"><div class="cthumb"><svg viewBox="0 0 24 24" class="ico"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><div class="cmeta"><div class="t">Benson Goldstein · 1 creative awaiting client approval</div><div class="m">CFC_PCP_StaticV1_1x1.png submitted 27 May</div></div><span class="pill p-warn">Pending</span></div>
+      </div>
+      <div class="srcnote"><b>Admin home</b> — the agency-wide view Sam lands on: clients, leads, managed ad spend, P&amp;L and the items that need his attention.</div>
+    </div></section>
+
+    <!-- CLIENT DETAIL -->
+    <section class="screen" data-id="a-client"><div class="wrap">
+      <div class="between" style="margin-bottom:16px"><div class="row"><div class="cthumb round" style="width:42px;height:42px">BG</div><div><div style="font-weight:600;font-size:16px">Benson Goldstein Ltd</div><div style="font-size:12.5px;color:var(--fg2)">Primary contact: Coby Benson · onboarded 12 May 2026</div></div></div><button class="btn b-ghost b-sm" onclick="show('a-clients')">← All clients</button></div>
+      <div class="tabs"><button class="tab active" onclick="atab(this)">Overview</button><button class="tab" onclick="show('a-campaigns')">Campaigns <span class="cnt">1</span></button><button class="tab" onclick="show('a-creatives')">Creatives</button><button class="tab" onclick="show('a-agreements')">Agreement</button></div>
+      <div class="grid g4" style="margin-bottom:20px">
+        <div class="stat-tile"><div class="st-val">1</div><div class="st-lab">Campaigns</div></div>
+        <div class="stat-tile"><div class="st-val">215</div><div class="st-lab">Leads MTD</div></div>
+        <div class="stat-tile"><div class="st-val">£12,514</div><div class="st-lab">Ad spend MTD</div></div>
+        <div class="stat-tile"><div class="st-val warn">1</div><div class="st-lab">Pending approval</div></div>
+      </div>
+      <div class="grid g2">
+        <div class="card pad"><div class="card-head"><h3>Status</h3></div>
+          <div class="between" style="padding:9px 0;border-bottom:1px solid var(--gray-100)"><span style="color:var(--fg2);font-size:13px">Account status</span><span class="pill p-pos">Active</span></div>
+          <div class="between" style="padding:9px 0;border-bottom:1px solid var(--gray-100)"><span style="color:var(--fg2);font-size:13px">Onboarding</span><span class="pill p-pos">Complete · 4 of 4</span></div>
+          <div class="between" style="padding:9px 0;border-bottom:1px solid var(--gray-100)"><span style="color:var(--fg2);font-size:13px">Agreement</span><span class="pill p-warn">Unsigned</span></div>
+          <div class="between" style="padding:9px 0"><span style="color:var(--fg2);font-size:13px">Portal users</span><span style="font-weight:600;font-size:13.5px">2</span></div>
+        </div>
+        <div class="card pad"><div class="card-head"><h3>Quick actions</h3></div>
+          <div class="row" style="flex-wrap:wrap;gap:10px">
+            <button class="btn b-primary b-sm" onclick="show('a-creatives')">Submit creatives</button>
+            <button class="btn b-ghost b-sm" onclick="show('a-override')">Override agreement</button>
+            <button class="btn b-ghost b-sm" onclick="show('c-dashboard')">View their portal →</button>
+          </div>
+          <div class="feedback" style="margin-top:14px">Everything Sam does for a client — assets, agreement, users — lives on one page. The client's own portal is one click away.</div>
+        </div>
+      </div>
+      <div class="srcnote"><b>Client detail</b> — the per-client hub. Tabs mirror what the client sees; quick actions are the admin counterparts of the client flows.</div>
+    </div></section>
+
+    <!-- CAMPAIGNS -->
+    <section class="screen" data-id="a-campaigns"><div class="wrap">
+      <div class="grid g4" style="margin-bottom:20px">
+        <div class="stat-tile"><div class="st-val">4</div><div class="st-lab">Campaigns</div></div>
+        <div class="stat-tile"><div class="st-val lime">3</div><div class="st-lab">Active</div></div>
+        <div class="stat-tile"><div class="st-val">353</div><div class="st-lab">Leads MTD</div></div>
+        <div class="stat-tile"><div class="st-val">£17,238</div><div class="st-lab">Spend MTD</div></div>
+      </div>
+      <div class="card pad"><div class="card-head"><div><h3>All campaigns</h3><div class="sub">Across every managed client · this month</div></div></div>
+        <table><thead><tr><th>Campaign</th><th>Client</th><th>Status</th><th class="num">Leads</th><th class="num">Spend</th><th class="num">CPL</th><th></th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:600">PCP Claim (UK) Main</td><td style="color:var(--fg2)">Benson Goldstein</td><td><span class="pill p-pos">Active</span></td><td class="num">215</td><td class="num">£12,514</td><td class="num">£58.21</td><td style="text-align:right"><button class="btn b-ghost b-sm" onclick="show('a-creatives')">Creatives</button></td></tr>
+            <tr><td style="font-weight:600">Debt Help (UK)</td><td style="color:var(--fg2)">Harcourt Legal</td><td><span class="pill p-pos">Active</span></td><td class="num">96</td><td class="num">£2,180</td><td class="num">£22.71</td><td style="text-align:right"><button class="btn b-ghost b-sm" onclick="show('a-creatives')">Creatives</button></td></tr>
+            <tr><td style="font-weight:600">Housing Disrepair</td><td style="color:var(--fg2)">Harcourt Legal</td><td><span class="pill p-pos">Active</span></td><td class="num">—</td><td class="num">£1,080</td><td class="num">—</td><td style="text-align:right"><button class="btn b-ghost b-sm" onclick="show('a-creatives')">Creatives</button></td></tr>
+            <tr><td style="font-weight:600">Hearing Aids (FR)</td><td style="color:var(--fg2)">Mercer Claims</td><td><span class="pill p-gray">Paused</span></td><td class="num">42</td><td class="num">£1,464</td><td class="num">£34.86</td><td style="text-align:right"><button class="btn b-ghost b-sm" onclick="show('a-creatives')">Creatives</button></td></tr>
+          </tbody></table>
+      </div>
+      <div class="srcnote"><b>Campaigns</b> — every campaign across clients with live leads, spend and cost-per-lead. "Creatives" opens the submit-for-approval flow.</div>
+    </div></section>
+
+    <!-- REPORTS -->
+    <section class="screen" data-id="a-reports"><div class="wrap">
+      <div class="card pad" style="margin-bottom:20px"><div class="card-head"><div><h3>Report period</h3><div class="sub">Leads, spend, revenue and margin reconciled to LeadByte + Catchr + Xero</div></div></div>
+        <div class="row" style="flex-wrap:wrap;gap:10px;align-items:flex-end">
+          <div class="field" style="margin:0"><label>From</label><input class="input" value="01-05-2026" style="width:150px"></div>
+          <div class="field" style="margin:0"><label>To</label><input class="input" value="04-06-2026" style="width:150px"></div>
+          <button class="preset" onclick="pset(this)">7d</button><button class="preset on" onclick="pset(this)">MTD</button><button class="preset" onclick="pset(this)">90d</button><button class="preset" onclick="pset(this)">YTD</button>
+        </div>
+      </div>
+      <div class="card pad"><div class="card-head"><div><h3>Unified report</h3><div class="sub">By campaign · this month</div></div><button class="btn b-ghost b-sm"><svg viewBox="0 0 24 24" class="ico"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> Export CSV</button></div>
+        <table><thead><tr><th>Campaign</th><th class="num">Leads</th><th class="num">Valid</th><th class="num">Ad spend</th><th class="num">Revenue</th><th class="num">Margin</th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:600">PCP Claim (UK) Main</td><td class="num">215</td><td class="num">110</td><td class="num">£12,514</td><td class="num">£28,340</td><td class="num"><span class="pill p-pos">55.8%</span></td></tr>
+            <tr><td style="font-weight:600">Debt Help (UK)</td><td class="num">96</td><td class="num">88</td><td class="num">£2,180</td><td class="num">£8,640</td><td class="num"><span class="pill p-pos">74.8%</span></td></tr>
+            <tr><td style="font-weight:600">Housing Disrepair</td><td class="num">—</td><td class="num">—</td><td class="num">£1,080</td><td class="num">£0</td><td class="num"><span class="pill p-neg">—</span></td></tr>
+            <tr><td style="font-weight:600">Hearing Aids (FR)</td><td class="num">42</td><td class="num">38</td><td class="num">£1,464</td><td class="num">£4,300</td><td class="num"><span class="pill p-pos">66.0%</span></td></tr>
+            <tr class="row-strong"><td>Total</td><td class="num">353</td><td class="num">236</td><td class="num">£17,238</td><td class="num">£41,280</td><td class="num">58.2%</td></tr>
+          </tbody></table>
+      </div>
+      <div class="srcnote"><b>Reports</b> — the single source of truth Sam compares against the client portal. Numbers tie out to LeadByte, Catchr and Xero to the lead and the penny.</div>
+    </div></section>
+
+    <!-- TASKS -->
+    <section class="screen" data-id="a-tasks"><div class="wrap">
+      <div class="grid g3" style="margin-bottom:20px">
+        <div class="stat-tile"><div class="st-val warn">3</div><div class="st-lab">Open</div></div>
+        <div class="stat-tile"><div class="st-val">2</div><div class="st-lab">Due this week</div></div>
+        <div class="stat-tile"><div class="st-val lime">12</div><div class="st-lab">Completed (30d)</div></div>
+      </div>
+      <div class="card pad"><div class="card-head"><div><h3>Tasks</h3><div class="sub">Showing 4 of 4</div></div><button class="btn b-primary b-sm"><svg viewBox="0 0 24 24" class="ico"><path d="M12 5v14M5 12h14"/></svg> New task</button></div>
+        <table><thead><tr><th>Task</th><th>Client</th><th>Assignee</th><th>Due</th><th>Status</th><th></th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:600">Set up Benson Goldstein as new client</td><td style="color:var(--fg2)">Benson Goldstein</td><td>Sam</td><td>—</td><td><span class="pill p-pos">Done</span></td><td style="text-align:right;color:var(--fg3)" title="System task">🔒</td></tr>
+            <tr><td style="font-weight:600">Chase signed agreement</td><td style="color:var(--fg2)">Benson Goldstein</td><td>Sam</td><td>06 Jun 2026</td><td><span class="pill p-warn">Open</span></td><td style="text-align:right"><button class="btn b-ghost b-sm">Delete</button></td></tr>
+            <tr><td style="font-weight:600">Map unlinked Catchr ad accounts</td><td style="color:var(--fg2)">—</td><td>Pratteek</td><td>09 Jun 2026</td><td><span class="pill p-warn">Open</span></td><td style="text-align:right"><button class="btn b-ghost b-sm">Delete</button></td></tr>
+            <tr><td style="font-weight:600">Review Q2 lead-quality caps</td><td style="color:var(--fg2)">Harcourt Legal</td><td>Hari</td><td>13 Jun 2026</td><td><span class="pill p-info">In progress</span></td><td style="text-align:right"><button class="btn b-ghost b-sm">Delete</button></td></tr>
+          </tbody></table>
+      </div>
+      <div class="srcnote"><b>Tasks</b> — internal workload across the team. System-created tasks (lock icon) can't be deleted; manual ones can.</div>
+    </div></section>
+
+    <!-- WORKFLOWS -->
+    <section class="screen" data-id="a-workflows"><div class="wrap">
+      <div class="between" style="margin-bottom:18px"><p class="lede" style="margin:0">Automations that run the agency on rails — triggered by events in LeadByte, Xero and the portal.</p><button class="btn b-primary b-sm" style="flex:none"><svg viewBox="0 0 24 24" class="ico"><path d="M12 5v14M5 12h14"/></svg> New workflow</button></div>
+      <div class="grid g2">
+        <div class="card pad"><div class="between"><div class="row"><div class="st-ic"><svg viewBox="0 0 24 24" class="ico"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><div><div style="font-weight:600;font-size:15px">New client onboarding</div><div style="font-size:12px;color:var(--fg2)">Trigger: client created · 5 steps</div></div></div><span class="pill p-pos">Active</span></div></div>
+        <div class="card pad"><div class="between"><div class="row"><div class="st-ic"><svg viewBox="0 0 24 24" class="ico"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></div><div><div style="font-weight:600;font-size:15px">Weekly invoice run</div><div style="font-size:12px;color:var(--fg2)">Trigger: every Mon 08:00 · 3 steps</div></div></div><span class="pill p-pos">Active</span></div></div>
+        <div class="card pad"><div class="between"><div class="row"><div class="st-ic"><svg viewBox="0 0 24 24" class="ico"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg></div><div><div style="font-weight:600;font-size:15px">Lead-quality alert</div><div style="font-size:12px;color:var(--fg2)">Trigger: invalid rate &gt; 30% · 2 steps</div></div></div><span class="pill p-pos">Active</span></div></div>
+        <div class="card pad" style="opacity:.7"><div class="between"><div class="row"><div class="st-ic"><svg viewBox="0 0 24 24" class="ico"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg></div><div><div style="font-weight:600;font-size:15px">Monthly client report</div><div style="font-size:12px;color:var(--fg2)">Trigger: 1st of month · 4 steps</div></div></div><span class="pill p-gray">Paused</span></div></div>
+      </div>
+      <div class="srcnote"><b>Workflows</b> — 4 automations, 3 active and 1 paused, matching the live admin panel.</div>
+    </div></section>
+
+    <!-- SOPS -->
+    <section class="screen" data-id="a-sops"><div class="wrap">
+      <div class="between" style="margin-bottom:18px"><div></div><button class="btn b-primary b-sm"><svg viewBox="0 0 24 24" class="ico"><path d="M12 5v14M5 12h14"/></svg> New SOP</button></div>
+      <div class="card pad"><div class="card-head"><div><h3>Standard operating procedures</h3><div class="sub">1 published</div></div></div>
+        <div class="crow"><div class="cthumb"><svg viewBox="0 0 24 24" class="ico"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div><div class="cmeta"><div class="t">Client onboarding</div><div class="m">7 steps · last updated 12 May 2026 · owner Sam</div></div><span class="pill p-pos">Published</span><button class="btn b-ghost b-sm">Open</button></div>
+      </div>
+      <div class="srcnote"><b>SOPs</b> — repeatable playbooks the team follows. Onboarding SOP is wired into the New-client workflow.</div>
+    </div></section>
+
+    <!-- STAFF -->
+    <section class="screen" data-id="a-staff"><div class="wrap">
+      <div class="tabs"><button class="tab active" onclick="atab(this)">Members <span class="cnt">1</span></button><button class="tab" onclick="atab(this)">Roles</button></div>
+      <div class="between" style="margin-bottom:18px"><p class="lede" style="margin:0">Internal team members and what each can access.</p><button class="btn b-primary b-sm" style="flex:none" onclick="show('a-access')"><svg viewBox="0 0 24 24" class="ico"><path d="M12 5v14M5 12h14"/></svg> Add staff &amp; set access</button></div>
+      <div class="card pad" style="padding-top:8px">
+        <div class="crow" style="border:none;border-radius:0;margin:0"><div class="cthumb round">S</div><div class="cmeta"><div class="t">Sam</div><div class="m">sam@leadgeneration.io</div></div><span class="pill p-pos">Owner</span><span class="pill p-gray">All access</span></div>
+      </div>
+      <div class="srcnote"><b>Staff</b> — agency-side users. "Add staff &amp; set access" opens the tab-by-tab access flow Sam described (next phase).</div>
+    </div></section>
+
+    <!-- NOTIFICATIONS -->
+    <section class="screen" data-id="a-notifications"><div class="wrap">
+      <div class="between" style="margin-bottom:18px"><div></div><button class="btn b-ghost b-sm">Mark all read</button></div>
+      <div class="card pad" style="padding-top:8px">
+        <div class="crow" style="border:none;border-bottom:1px solid var(--gray-100);border-radius:0;margin:0"><div class="cthumb" style="color:var(--positive)"><svg viewBox="0 0 24 24" class="ico"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14M22 4 12 14.01l-3-3"/></svg></div><div class="cmeta"><div class="t">INV-1038 marked paid</div><div class="m">Benson Goldstein · £1,980.00 · 2h ago</div></div><span class="pill p-soft">New</span></div>
+        <div class="crow" style="border:none;border-bottom:1px solid var(--gray-100);border-radius:0;margin:0"><div class="cthumb" style="color:var(--warning)"><svg viewBox="0 0 24 24" class="ico"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/></svg></div><div class="cmeta"><div class="t">Lead spike on PCP Claim (UK) Main</div><div class="m">+165 leads in 24h · yesterday</div></div></div>
+        <div class="crow" style="border:none;border-radius:0;margin:0"><div class="cthumb"><svg viewBox="0 0 24 24" class="ico"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></div><div class="cmeta"><div class="t">Benson Goldstein agreement still unsigned</div><div class="m">Reminder · 2 days ago</div></div></div>
+      </div>
+      <div class="srcnote"><b>Notifications</b> — agency activity feed: payments, lead spikes and outstanding actions.</div>
+    </div></section>
+
+    <!-- SOS QUEUE -->
+    <section class="screen" data-id="a-sos"><div class="wrap">
+      <div class="grid g3" style="margin-bottom:20px">
+        <div class="stat-tile"><div class="st-val neg">7</div><div class="st-lab">Open requests</div></div>
+        <div class="stat-tile"><div class="st-val">2</div><div class="st-lab">Awaiting reply</div></div>
+        <div class="stat-tile"><div class="st-val lime">31</div><div class="st-lab">Resolved (30d)</div></div>
+      </div>
+      <div class="card pad"><div class="card-head"><div><h3>Client SOS requests</h3><div class="sub">Raised from the red SOS button in the client portal</div></div></div>
+        <table><thead><tr><th>Client</th><th>User</th><th>Message</th><th>Raised</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:600">Benson Goldstein</td><td>Coby Benson</td><td style="color:var(--fg2)">Can't see this week's leads</td><td>Today 09:14</td><td><span class="pill p-warn">Open</span></td></tr>
+            <tr><td style="font-weight:600">Harcourt Legal</td><td>Priya Shah</td><td style="color:var(--fg2)">Invoice query — VAT line</td><td>Today 08:02</td><td><span class="pill p-warn">Open</span></td></tr>
+            <tr><td style="font-weight:600">Mercer Claims</td><td>Tom Mercer</td><td style="color:var(--fg2)">Need to add a colleague</td><td>Yesterday</td><td><span class="pill p-info">Replied</span></td></tr>
+            <tr><td style="font-weight:600">Benson Goldstein</td><td>Rachel Doyle</td><td style="color:var(--fg2)">Creative rejected — why?</td><td>03 Jun</td><td><span class="pill p-info">Replied</span></td></tr>
+          </tbody></table>
+      </div>
+      <div class="srcnote"><b>SOS queue</b> — where the client portal's red SOS button lands. 7 open across all clients.</div>
+    </div></section>
+
+    <!-- INTEGRATIONS -->
+    <section class="screen" data-id="a-integrations"><div class="wrap">
+      <div class="grid g4">
+        <div class="card pad"><div class="between" style="margin-bottom:10px"><div style="font-weight:600">LeadByte</div><span class="pill p-pos">Live</span></div><div style="font-size:12px;color:var(--fg2)">Lead source · synced 4m ago</div></div>
+        <div class="card pad"><div class="between" style="margin-bottom:10px"><div style="font-weight:600">Catchr</div><span class="pill p-pos">Live</span></div><div style="font-size:12px;color:var(--fg2)">Ad spend · synced 12m ago</div></div>
+        <div class="card pad"><div class="between" style="margin-bottom:10px"><div style="font-weight:600">Xero</div><span class="pill p-pos">Live</span></div><div style="font-size:12px;color:var(--fg2)">Invoices &amp; bank · synced 1h ago</div></div>
+        <div class="card pad"><div class="between" style="margin-bottom:10px"><div style="font-weight:600">SignNow</div><span class="pill p-pos">Live</span></div><div style="font-size:12px;color:var(--fg2)">E-signatures · connected</div></div>
+        <div class="card pad"><div class="between" style="margin-bottom:10px"><div style="font-weight:600">Resend</div><span class="pill p-pos">Live</span></div><div style="font-size:12px;color:var(--fg2)">Transactional email · connected</div></div>
+        <div class="card pad"><div class="between" style="margin-bottom:10px"><div style="font-weight:600">Twilio</div><span class="pill p-pos">Live</span></div><div style="font-size:12px;color:var(--fg2)">SMS alerts · connected</div></div>
+        <div class="card pad"><div class="between" style="margin-bottom:10px"><div style="font-weight:600">Cloudflare R2</div><span class="pill p-pos">Live</span></div><div style="font-size:12px;color:var(--fg2)">File storage · connected</div></div>
+        <div class="card pad"><div class="between" style="margin-bottom:10px"><div style="font-weight:600">Anthropic</div><span class="pill p-pos">Live</span></div><div style="font-size:12px;color:var(--fg2)">AI assistant · connected</div></div>
+      </div>
+      <div class="srcnote"><b>Integrations</b> — 8 connected services, all live, powering the data across the platform.</div>
+    </div></section>
+
+    <!-- FINANCE · INVOICES -->
+    <section class="screen" data-id="a-finance"><div class="wrap">
+      <div class="tabs"><button class="tab active">Invoices <span class="cnt">59</span></button><button class="tab" onclick="show('a-bankfeed')">Bank feed <span class="cnt">489</span></button></div>
+      <div class="grid g3" style="margin-bottom:20px">
+        <div class="stat-tile"><div class="st-val">59</div><div class="st-lab">Invoices (Xero)</div></div>
+        <div class="stat-tile"><div class="st-val warn">£6,860</div><div class="st-lab">Outstanding</div></div>
+        <div class="stat-tile"><div class="st-val lime">£41,280</div><div class="st-lab">Billed MTD</div></div>
+      </div>
+      <div class="card pad"><div class="card-head"><div><h3>Recent invoices</h3><div class="sub">Synced from Xero · outstanding first</div></div></div>
+        <table><thead><tr><th>Invoice</th><th>Client</th><th>Issued</th><th class="num">Amount</th><th style="text-align:right">Status</th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:600">INV-1043</td><td style="color:var(--fg2)">Benson Goldstein</td><td>28 May 2026</td><td class="num">£2,340.00</td><td style="text-align:right"><span class="pill p-warn">Pending Payment</span></td></tr>
+            <tr><td style="font-weight:600">INV-1042</td><td style="color:var(--fg2)">Harcourt Legal</td><td>26 May 2026</td><td class="num">£2,180.00</td><td style="text-align:right"><span class="pill p-warn">Pending Payment</span></td></tr>
+            <tr><td style="font-weight:600">INV-1040</td><td style="color:var(--fg2)">Mercer Claims</td><td>21 May 2026</td><td class="num">£2,340.00</td><td style="text-align:right"><span class="pill p-warn">Pending Payment</span></td></tr>
+            <tr><td style="font-weight:600">INV-1038</td><td style="color:var(--fg2)">Benson Goldstein</td><td>14 May 2026</td><td class="num">£1,980.00</td><td style="text-align:right"><span class="pill p-pos">Paid</span></td></tr>
+          </tbody></table>
+      </div>
+      <div class="srcnote"><b>Finance · Invoices</b> — 59 real Xero invoices flow through here with pagination; outstanding shown first.</div>
+    </div></section>
+
+    <!-- FINANCE · BANK FEED -->
+    <section class="screen" data-id="a-bankfeed"><div class="wrap">
+      <div class="tabs"><button class="tab" onclick="show('a-finance')">Invoices <span class="cnt">59</span></button><button class="tab active">Bank feed <span class="cnt">489</span></button></div>
+      <div class="grid g3" style="margin-bottom:20px">
+        <div class="stat-tile"><div class="st-val">489</div><div class="st-lab">Transactions</div></div>
+        <div class="stat-tile"><div class="st-val warn">489</div><div class="st-lab">Uncategorised</div></div>
+        <div class="stat-tile"><div class="st-val">0</div><div class="st-lab">Reconciled</div></div>
+      </div>
+      <div class="card pad"><div class="card-head"><div><h3>Bank transactions</h3><div class="sub">Synced from Xero · awaiting categorisation</div></div><button class="btn b-primary b-sm">Auto-categorise</button></div>
+        <table><thead><tr><th>Date</th><th>Description</th><th class="num">Amount</th><th style="text-align:right">Category</th></tr></thead>
+          <tbody>
+            <tr><td>04 Jun 2026</td><td style="color:var(--fg2)">FACEBK *ADS 7842</td><td class="num">−£1,204.55</td><td style="text-align:right"><span class="pill p-gray">Uncategorised</span></td></tr>
+            <tr><td>03 Jun 2026</td><td style="color:var(--fg2)">GOOGLE ADS 553110</td><td class="num">−£886.20</td><td style="text-align:right"><span class="pill p-gray">Uncategorised</span></td></tr>
+            <tr><td>02 Jun 2026</td><td style="color:var(--fg2)">BENSON GOLDSTEIN LTD</td><td class="num">+£1,980.00</td><td style="text-align:right"><span class="pill p-gray">Uncategorised</span></td></tr>
+          </tbody></table>
+      </div>
+      <div class="srcnote"><b>Finance · Bank feed:</b> 489 transactions pulled from Xero, all awaiting categorisation — a Sam-side data-tidy task, flagged in the platform audit.</div>
+    </div></section>
+
+    <!-- LEADBYTE · BUYERS -->
+    <section class="screen" data-id="a-leadbyte"><div class="wrap">
+      <div class="tabs"><button class="tab active">Buyers <span class="cnt">47</span></button><button class="tab" onclick="show('a-leadbyte-deliveries')">Delivery rules <span class="cnt">96</span></button></div>
+      <div class="card pad"><div class="card-head"><div><h3>Lead buyers</h3><div class="sub">Synced from LeadByte</div></div></div>
+        <table><thead><tr><th>Buyer</th><th>BID</th><th class="num">Leads (30d)</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:600">Trustmark Law</td><td style="color:var(--fg2)">TRUSTMARK-LAW</td><td class="num">812</td><td><span class="pill p-pos">Active</span></td></tr>
+            <tr><td style="font-weight:600">Apex Claims</td><td style="color:var(--fg2)">APEX-01</td><td class="num">540</td><td><span class="pill p-pos">Active</span></td></tr>
+            <tr><td style="font-weight:600">Northgate Legal</td><td style="color:var(--fg2)">NORTH-LG</td><td class="num">318</td><td><span class="pill p-pos">Active</span></td></tr>
+            <tr><td style="font-weight:600">Meridian Finance</td><td style="color:var(--fg2)">MERIDIAN</td><td class="num">0</td><td><span class="pill p-gray">Paused</span></td></tr>
+          </tbody></table>
+      </div>
+      <div class="srcnote"><b>LeadByte · Buyers</b> — 47 buyers who purchase leads, with 30-day volume and status.</div>
+    </div></section>
+
+    <!-- LEADBYTE · DELIVERIES -->
+    <section class="screen" data-id="a-leadbyte-deliveries"><div class="wrap">
+      <div class="tabs"><button class="tab" onclick="show('a-leadbyte')">Buyers <span class="cnt">47</span></button><button class="tab active">Delivery rules <span class="cnt">96</span></button></div>
+      <div class="grid g3" style="margin-bottom:20px">
+        <div class="stat-tile"><div class="st-val">96</div><div class="st-lab">Delivery rules</div></div>
+        <div class="stat-tile"><div class="st-val lime">41</div><div class="st-lab">Active</div></div>
+        <div class="stat-tile"><div class="st-val">55</div><div class="st-lab">Inactive</div></div>
+      </div>
+      <div class="card pad"><div class="card-head"><div><h3>Delivery rules</h3><div class="sub">Which campaign feeds which buyer</div></div></div>
+        <table><thead><tr><th>Rule</th><th>Campaign</th><th>Buyer</th><th class="num">Cap/day</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:600">PCP → Trustmark</td><td style="color:var(--fg2)">PCP Claim (UK) Main</td><td>Trustmark Law</td><td class="num">250</td><td><span class="pill p-pos">Active</span></td></tr>
+            <tr><td style="font-weight:600">Debt → Apex</td><td style="color:var(--fg2)">Debt Help (UK)</td><td>Apex Claims</td><td class="num">120</td><td><span class="pill p-pos">Active</span></td></tr>
+            <tr><td style="font-weight:600">Hearing → Meridian</td><td style="color:var(--fg2)">Hearing Aids (FR)</td><td>Meridian Finance</td><td class="num">80</td><td><span class="pill p-gray">Inactive</span></td></tr>
+          </tbody></table>
+      </div>
+      <div class="srcnote"><b>LeadByte · Delivery rules</b> — 96 rules, 41 active, mapping campaigns to buyers with daily caps (the LeadByte caps Sam raised on 15 May).</div>
+    </div></section>
+
+    <!-- SETTINGS -->
+    <section class="screen" data-id="a-settings"><div class="wrap">
+      <div class="tabs"><button class="tab active" onclick="atab(this)">Profile</button><button class="tab" onclick="atab(this)">Business</button><button class="tab" onclick="atab(this)">Notifications</button><button class="tab" onclick="atab(this)">Billing</button></div>
+      <div class="grid g2">
+        <div class="card pad"><div class="card-head"><h3>Your profile</h3></div>
+          <div class="field"><label>Name</label><input class="input" value="Sam"></div>
+          <div class="field"><label>Email</label><input class="input" value="sam@leadgeneration.io"></div>
+          <div style="text-align:right"><button class="btn b-primary" style="margin-left:auto">Save</button></div>
+        </div>
+        <div class="card pad"><div class="card-head"><h3>Business</h3></div>
+          <div class="between" style="padding:9px 0;border-bottom:1px solid var(--gray-100)"><span style="color:var(--fg2);font-size:13px">Company</span><span style="font-weight:600;font-size:13.5px">leadgeneration.io</span></div>
+          <div class="between" style="padding:9px 0;border-bottom:1px solid var(--gray-100)"><span style="color:var(--fg2);font-size:13px">VAT no.</span><span style="font-weight:600;font-size:13.5px">GB 412 6688 02</span></div>
+          <div class="between" style="padding:9px 0;border-bottom:1px solid var(--gray-100)"><span style="color:var(--fg2);font-size:13px">Default currency</span><span style="font-weight:600;font-size:13.5px">GBP (£)</span></div>
+          <div class="between" style="padding:9px 0"><span style="color:var(--fg2);font-size:13px">Plan</span><span class="pill p-soft">Agency</span></div>
+        </div>
+      </div>
+      <div class="srcnote"><b>Settings</b> — profile, business details, notifications and billing across four tabs.</div>
+    </div></section>
+
+    </div>
+  </div>
+</div>
+
+<div class="fab-orb" title="AI Assistant"></div>
+<div class="dock">
+  <div class="seg" id="seg"><button class="on" onclick="side('client')">Client</button><button onclick="side('admin')">Admin</button></div>
+  <div class="dv"></div>
+  <button class="tbtn" onclick="toggleTheme()" id="themeBtn"><svg width="17" height="17" viewBox="0 0 24 24" class="ico" id="themeIcon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>
+</div>
+
+<script>
+  const I = {
+    grid:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/>',
+    leads:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/>',
+    inv:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M16 13H8M16 17H8M10 9H8"/>',
+    shield:'<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+    spend:'<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/>',
+    creat:'<path d="m3 11 18-5v12L3 14v-3zM11.6 16.8a3 3 0 1 1-5.8-1.6"/>',
+    agree:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 15l2 2 4-4"/>',
+    users:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>',
+    acct:'<circle cx="12" cy="8" r="4"/><path d="M6 21v-2a6 6 0 0 1 12 0v2"/>',
+    clients:'<path d="M3 21h18M6 21V7l6-4 6 4v14"/><path d="M9 9h.01M15 9h.01M9 13h.01M15 13h.01"/>',
+    image:'<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/>',
+    sliders:'<path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/>',
+    dash:'<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/>',
+    camp:'<path d="M3 11v2a1 1 0 0 0 1 1h2l3.5 4V6L6 10H4a1 1 0 0 0-1 1zM15 8a5 5 0 0 1 0 8M18.5 5a9 9 0 0 1 0 14"/>',
+    report:'<path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="6"/><rect x="12" y="7" width="3" height="10"/><rect x="17" y="13" width="3" height="4"/>',
+    task:'<path d="m9 11 3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>',
+    flow:'<line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/>',
+    book:'<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>',
+    bell:'<path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/>',
+    sos:'<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><path d="m4.93 4.93 4.24 4.24M14.83 14.83l4.24 4.24M14.83 9.17l4.24-4.24M9.17 14.83l-4.24 4.24"/>',
+    plug:'<path d="M9 17H7A5 5 0 0 1 7 7h2M15 7h2a5 5 0 0 1 0 10h-2M8 12h8"/>',
+    finance:'<path d="M6 2h9a2 2 0 0 1 2 2v17l-3-2-3 2-3-2-3 2V4a2 2 0 0 1 2-2z"/><path d="M9 7h5M9 11h5"/>',
+    db:'<ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5M3 12c0 1.66 4 3 9 3s9-1.34 9-3"/>',
+    gear:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>',
+  };
+  const CLIENT_NAV = [
+    {nav:'dashboard',screen:'c-dashboard',icon:I.grid,label:'Dashboard'},
+    {nav:'leads',screen:'c-leads',icon:I.leads,label:'Leads'},
+    {nav:'invoices',screen:'c-invoices',icon:I.inv,label:'Invoices'},
+    {nav:'compliance',screen:'c-compliance',icon:I.shield,label:'Compliance'},
+    {nav:'adspend',screen:'c-adspend',icon:I.spend,label:'Ad Spend'},
+    {nav:'creatives',screen:'c-creatives',icon:I.creat,label:'Creatives'},
+    {nav:'agreement',screen:'c-agreement',icon:I.agree,label:'Agreement'},
+    {nav:'users',screen:'c-users',icon:I.users,label:'Users'},
+    {nav:'account',screen:'c-account',icon:I.acct,label:'Account'},
+  ];
+  const ADMIN_NAV = [
+    {nav:'dashboard',screen:'a-dashboard',icon:I.dash,label:'Dashboard'},
+    {nav:'clients',screen:'a-clients',icon:I.clients,label:'Clients'},
+    {nav:'campaigns',screen:'a-campaigns',icon:I.camp,label:'Campaigns'},
+    {nav:'reports',screen:'a-reports',icon:I.report,label:'Reports'},
+    {nav:'tasks',screen:'a-tasks',icon:I.task,label:'Tasks'},
+    {nav:'workflows',screen:'a-workflows',icon:I.flow,label:'Workflows'},
+    {nav:'sops',screen:'a-sops',icon:I.book,label:'SOPs'},
+    {nav:'staff',screen:'a-staff',icon:I.users,label:'Staff'},
+    {nav:'agreements',screen:'a-agreements',icon:I.agree,label:'Agreements'},
+    {nav:'notifications',screen:'a-notifications',icon:I.bell,label:'Notifications'},
+    {nav:'sos',screen:'a-sos',icon:I.sos,label:'SOS queue'},
+    {nav:'integrations',screen:'a-integrations',icon:I.plug,label:'Integrations'},
+    {nav:'finance',screen:'a-finance',icon:I.finance,label:'Finance'},
+    {nav:'leadbyte',screen:'a-leadbyte',icon:I.db,label:'LeadByte'},
+    {nav:'settings',screen:'a-settings',icon:I.gear,label:'Settings'},
+  ];
+  const MAP = {
+    'c-dashboard':{s:'client',nav:'dashboard',t:'Dashboard',sub:'Benson Goldstein Ltd · Client Portal'},
+    'c-leads':{s:'client',nav:'leads',t:'Lead Deliveries',sub:'Lead breakdown by campaign'},
+    'c-invoices':{s:'client',nav:'invoices',t:'Invoices',sub:'Synced from Xero'},
+    'c-invoice':{s:'client',nav:'invoices',t:'INV-1043',sub:'Invoice detail'},
+    'c-compliance':{s:'client',nav:'compliance',t:'Compliance',sub:'Review and approve creatives'},
+    'c-review':{s:'client',nav:'compliance',t:'Review creative',sub:'CFC_PCP_StaticV1_1x1.png'},
+    'c-creatives':{s:'client',nav:'creatives',t:'Creatives',sub:'Approved assets by date'},
+    'c-adspend':{s:'client',nav:'adspend',t:'Ad Spend',sub:'By platform · this month'},
+    'c-agreement':{s:'client',nav:'agreement',t:'Agreement',sub:'Your service agreement'},
+    'c-agreement-signed':{s:'client',nav:'agreement',t:'Agreement',sub:'Signed'},
+    'c-users':{s:'client',nav:'users',t:'Users',sub:'People with portal access'},
+    'c-user-add':{s:'client',nav:'users',t:'Add a user',sub:'Benson Goldstein'},
+    'c-user-created':{s:'client',nav:'users',t:'Users',sub:'User added'},
+    'c-account':{s:'client',nav:'account',t:'Account',sub:'Profile and password'},
+    'a-dashboard':{s:'admin',nav:'dashboard',t:'Agency dashboard',sub:'leadgeneration.io · all clients'},
+    'a-clients':{s:'admin',nav:'clients',t:'Managed clients',sub:'Across all clients'},
+    'a-client':{s:'admin',nav:'clients',t:'Benson Goldstein',sub:'Client detail'},
+    'a-campaigns':{s:'admin',nav:'campaigns',t:'Campaigns',sub:'Across all clients'},
+    'a-creatives':{s:'admin',nav:'campaigns',t:'Submit creatives',sub:'Benson Goldstein · PCP Claim'},
+    'a-creatives-submitted':{s:'admin',nav:'campaigns',t:'Submit creatives',sub:'Sent for approval'},
+    'a-reports':{s:'admin',nav:'reports',t:'Unified report',sub:'Leads · spend · revenue · margin'},
+    'a-tasks':{s:'admin',nav:'tasks',t:'Tasks',sub:'Team workload'},
+    'a-workflows':{s:'admin',nav:'workflows',t:'Workflows',sub:'Automations'},
+    'a-sops':{s:'admin',nav:'sops',t:'SOPs',sub:'Standard operating procedures'},
+    'a-staff':{s:'admin',nav:'staff',t:'Staff',sub:'Internal team & access'},
+    'a-access':{s:'admin',nav:'staff',t:'Tab access',sub:'Future phase'},
+    'a-agreements':{s:'admin',nav:'agreements',t:'Agreements',sub:'Client service agreements'},
+    'a-override':{s:'admin',nav:'agreements',t:'Manual override',sub:'Benson Goldstein'},
+    'a-override-done':{s:'admin',nav:'agreements',t:'Agreement',sub:'Override complete'},
+    'a-notifications':{s:'admin',nav:'notifications',t:'Notifications',sub:'Recent activity'},
+    'a-sos':{s:'admin',nav:'sos',t:'SOS queue',sub:'Client help requests'},
+    'a-integrations':{s:'admin',nav:'integrations',t:'Integrations',sub:'Connected services'},
+    'a-finance':{s:'admin',nav:'finance',t:'Finance',sub:'Invoices · synced from Xero'},
+    'a-bankfeed':{s:'admin',nav:'finance',t:'Finance',sub:'Bank feed'},
+    'a-leadbyte':{s:'admin',nav:'leadbyte',t:'LeadByte',sub:'Buyers'},
+    'a-leadbyte-deliveries':{s:'admin',nav:'leadbyte',t:'LeadByte',sub:'Delivery rules'},
+    'a-settings':{s:'admin',nav:'settings',t:'Settings',sub:'Agency configuration'},
+  };
+
+  function renderNav(side, activeNav){
+    const items = side==='client'?CLIENT_NAV:ADMIN_NAV;
+    document.getElementById('navItems').innerHTML = items.map(it=>
+      `<button class="nav-btn ${it.nav===activeNav?'active':''}" data-tip="${it.label}" onclick="show('${it.screen}')"><svg viewBox="0 0 24 24" class="ico">${it.icon}</svg></button>`).join('');
+  }
+  function show(id){
+    const m = MAP[id]; if(!m) return;
+    renderNav(m.s, m.nav);
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+    document.querySelector(`.screen[data-id="${id}"]`).classList.add('active');
+    document.getElementById('tbTitle').textContent = m.t;
+    document.getElementById('tbSub').textContent = m.sub;
+    const av = document.getElementById('tbAvatar');
+    if(m.s==='admin'){ av.textContent='S'; av.classList.add('sam'); } else { av.textContent='CB'; av.classList.remove('sam'); }
+    document.querySelectorAll('#seg button').forEach((b,i)=>b.classList.toggle('on',(i===0)===(m.s==='client')));
+    document.querySelector('.viewport').scrollTop = 0;
+    if(id==='a-access') renderPerm();
+  }
+  function side(w){ show(w==='client'?'c-dashboard':'a-dashboard'); }
+  function atab(el){ el.parentElement.querySelectorAll('.tab').forEach(t=>t.classList.remove('active')); el.classList.add('active'); }
+  function toggleTheme(){
+    const d = document.documentElement;
+    const dark = d.getAttribute('data-theme')==='dark';
+    d.setAttribute('data-theme', dark?'light':'dark');
+    document.getElementById('themeIcon').innerHTML = dark
+      ? '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>'
+      : '<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>';
+  }
+  function pset(b){ document.querySelectorAll('.preset').forEach(p=>p.classList.remove('on')); b.classList.add('on'); }
+  const ALL=['Dashboard','Leads','Ad Spend','Creatives','Invoices','Agreement'];
+  function ttab(el){ el.classList.toggle('on'); renderPerm(); }
+  function renderPerm(){
+    const on=new Set([...document.querySelectorAll('#tabpick .chip-pick.on')].map(c=>c.dataset.tab));
+    const w=document.getElementById('perm'); if(!w) return;
+    w.innerHTML=ALL.map(t=>`<div class="pr ${on.has(t)?'':'off'}"><span>${t}</span><span class="st ${on.has(t)?'y':'n'}">${on.has(t)?'Visible':'Hidden'}</span></div>`).join('');
+  }
+  show('c-dashboard');
+</script>
+</body>
+</html>
