@@ -1,0 +1,747 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Stato — Email & WhatsApp Setup</title>
+<style>
+  :root {
+    --ink: #1d1d1f;
+    --muted: #6e6e73;
+    --line: #e8e8ed;
+    --bg: #fafafa;
+    --card: #ffffff;
+    --blue: #0066cc;
+    --green: #16a34a;
+    --amber: #d97706;
+    --red: #dc2626;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 32px 20px 80px; }
+
+  a { color: var(--blue); }
+
+  header.cover {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 36px 32px;
+    margin-bottom: 24px;
+  }
+  header.cover .eyebrow {
+    color: var(--blue);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin: 0 0 6px 0;
+  }
+  header.cover h1 {
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 0 0 10px 0;
+  }
+  header.cover .lede {
+    color: var(--muted);
+    font-size: 15px;
+    margin: 0 0 20px 0;
+  }
+  header.cover .meta {
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    gap: 6px 16px;
+    font-size: 13px;
+    color: var(--muted);
+    border-top: 1px solid var(--line);
+    padding-top: 16px;
+  }
+  header.cover .meta strong { color: var(--ink); font-weight: 600; }
+
+  /* ── Progress bar ── */
+  .progress {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 20px;
+    margin-bottom: 20px;
+    border-radius: 14px;
+    border: 1px solid var(--line);
+    position: sticky;
+    top: 12px;
+    z-index: 10;
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    background: rgba(255, 255, 255, 0.92);
+  }
+  .progress .bar {
+    flex: 1;
+    height: 6px;
+    background: var(--line);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .progress .bar > div {
+    height: 100%;
+    background: var(--blue);
+    width: 0%;
+    transition: width 220ms ease;
+    border-radius: 999px;
+  }
+  .progress .label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    min-width: 64px;
+    text-align: right;
+  }
+
+  section.card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 18px;
+  }
+  section.card h2 {
+    margin: 0 0 6px 0;
+    font-size: 19px;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  section.card h2 .num {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: var(--blue);
+    color: white;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    flex-shrink: 0;
+  }
+  section.card .sub {
+    color: var(--muted);
+    font-size: 14px;
+    margin: 0 0 18px 38px;
+  }
+
+  /* ── Steps list ── */
+  .steps {
+    counter-reset: step;
+    list-style: none;
+    padding: 0;
+    margin: 0 0 20px 0;
+  }
+  .steps li {
+    position: relative;
+    padding: 0 0 14px 40px;
+    font-size: 14px;
+    color: var(--ink);
+    line-height: 1.55;
+  }
+  .steps li:last-child { padding-bottom: 0; }
+  .steps li::before {
+    counter-increment: step;
+    content: counter(step);
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: #f0f7ff;
+    color: var(--blue);
+    font-size: 13px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .steps li .st-title { font-weight: 600; }
+  .steps li .st-desc { color: var(--muted); font-size: 13px; }
+
+  .field { margin: 18px 0; }
+  .field label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .field .help {
+    font-size: 13px;
+    color: var(--muted);
+    margin: 0 0 8px 0;
+    line-height: 1.5;
+  }
+  .field input[type="text"],
+  .field input[type="email"],
+  .field input[type="password"],
+  .field textarea,
+  .field select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    font: inherit;
+    font-size: 14px;
+    color: var(--ink);
+    background: white;
+    outline: none;
+    transition: border-color 120ms ease, box-shadow 120ms ease;
+  }
+  .field input:focus,
+  .field textarea:focus,
+  .field select:focus {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.15);
+  }
+  .field textarea { min-height: 80px; resize: vertical; }
+
+  /* Secret field with show/hide toggle */
+  .secret { position: relative; }
+  .secret input { padding-right: 62px !important; }
+  .secret .toggle {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--blue);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 6px;
+  }
+  .secret .toggle:hover { background: #f0f7ff; }
+
+  .field-clear {
+    background: none;
+    border: none;
+    color: #6e6e73;
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 2px 8px;
+    margin-left: 8px;
+    border-radius: 999px;
+    transition: color 120ms ease, background 120ms ease;
+    display: none;
+    vertical-align: middle;
+    line-height: 1.2;
+  }
+  .field-clear:hover { color: #dc2626; background: #fef2f2; }
+  .field.has-value > label > .field-clear { display: inline-block; }
+
+  .callout {
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 13px;
+    margin: 14px 0;
+    line-height: 1.55;
+  }
+  .callout.info { background: #f0f9ff; border: 1px solid #bae6fd; color: #075985; }
+  .callout.green { background: #f0fdf4; border: 1px solid #bbf7d0; color: #14532d; }
+  .callout.amber { background: #fffbeb; border: 1px solid #fde68a; color: #78350f; }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .badge.info { background: #dbeafe; color: var(--blue); }
+  .badge.warning { background: #fef3c7; color: var(--amber); }
+
+  code {
+    background: #f5f5f7;
+    padding: 1px 6px;
+    border-radius: 5px;
+    font-size: 12px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+
+  .footer-actions {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 28px;
+    text-align: center;
+    margin-top: 24px;
+  }
+  .footer-actions p {
+    color: var(--muted);
+    font-size: 14px;
+    margin: 0 0 18px 0;
+  }
+  .button-row {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  button {
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 12px 22px;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: transform 80ms ease, background 120ms ease;
+  }
+  button.primary { background: var(--blue); color: white; }
+  button.primary:hover { background: #0058b3; }
+  button.primary:disabled { background: #c0c0c5; cursor: progress; }
+  button.secondary { background: white; color: var(--ink); border-color: var(--line); }
+  button.secondary:hover { border-color: var(--ink); }
+  button:active { transform: scale(0.98); }
+
+  .saved-hint {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--green);
+    font-size: 12px;
+    font-weight: 600;
+    margin-top: 14px;
+    opacity: 0;
+    transition: opacity 200ms ease;
+  }
+  .saved-hint.visible { opacity: 1; }
+  .saved-hint::before {
+    content: "✓";
+    width: 14px;
+    height: 14px;
+    background: var(--green);
+    color: white;
+    border-radius: 50%;
+    font-size: 9px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .back-link {
+    display: inline-block;
+    margin-bottom: 16px;
+    font-size: 14px;
+    color: var(--muted);
+    text-decoration: none;
+  }
+  .back-link:hover { color: var(--blue); }
+
+  @media (max-width: 520px) {
+    header.cover .meta { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <a class="back-link" href="index.html">‹ Back to portal</a>
+
+  <header class="cover">
+    <p class="eyebrow">Stato · Setup</p>
+    <h1>Email &amp; WhatsApp — send from your own domain</h1>
+    <p class="lede">
+      Hi Sam — these two integrations let Stato send RFQs, quotes, POs and
+      supplier messages directly from your brand instead of a generic address.
+      Follow the steps in each section, paste the credentials, and hit
+      <strong>Submit securely</strong> at the bottom. Everything you type is
+      encrypted in your browser before it's stored — see the note below.
+    </p>
+    <div class="meta">
+      <strong>Date</strong><span>21 July 2026</span>
+      <strong>For</strong><span>Sam — leadgeneration.io</span>
+      <strong>From</strong><span>Octogle Team (yash.c@octogle.com)</span>
+      <strong>Time needed</strong><span>~10 minutes</span>
+    </div>
+  </header>
+
+  <!-- ── Security note ── -->
+  <div class="callout green" style="margin: 0 0 20px 0;">
+    🔒 <strong>This is the secure channel.</strong> Do <em>not</em> send these
+    keys over WhatsApp or plain email. Anything you enter here is encrypted in
+    your browser (AES-256) before it leaves your device, so even the stored
+    copy is unreadable without the access code. If you'd rather share via a
+    password manager (1Password / Bitwarden), that's fine too — just let us
+    know and skip the submit.
+  </div>
+
+  <!-- ── Progress ── -->
+  <div class="progress">
+    <div class="label" id="progressLabel">0%</div>
+    <div class="bar"><div id="progressBar"></div></div>
+    <div class="label" id="progressCount">0 / 6</div>
+  </div>
+
+  <form id="setupForm">
+
+    <!-- ═══════════════ EMAIL ═══════════════ -->
+    <section class="card">
+      <h2><span class="num">📧</span> Email</h2>
+      <p class="sub">
+        Lets the platform send RFQs, quotes, POs and other emails directly from
+        your domain (e.g. <code>quotes@swiftsitesolutions.co.uk</code>).
+      </p>
+
+      <div class="callout info">
+        <strong>Don't have Resend set up yet?</strong> It's a quick, one-time
+        process — follow these steps first, then fill in the fields below.
+      </div>
+
+      <ol class="steps">
+        <li>
+          <span class="st-title">Create an account</span>
+          <span class="st-desc"> — sign up at <a href="https://resend.com" target="_blank" rel="noopener">resend.com</a> (free tier is plenty to start).</span>
+        </li>
+        <li>
+          <span class="st-title">Verify your domain</span>
+          <span class="st-desc"> — Resend gives you a few DNS records (SPF / DKIM). Add them at your domain host (GoDaddy). We can do this part for you if you've already shared GoDaddy access.</span>
+        </li>
+        <li>
+          <span class="st-title">Generate an API key</span>
+          <span class="st-desc"> — in Resend, go to <em>API Keys → Create</em>, give it a name (e.g. "Stato"), and copy the key. It starts with <code>re_…</code> and is shown only once.</span>
+        </li>
+      </ol>
+
+      <div class="field">
+        <label for="email_provider">Email provider <span class="field-clear" data-clear="email_provider">× Clear</span></label>
+        <p class="help">We recommend Resend, but SendGrid or Postmark also work.</p>
+        <select id="email_provider" name="email_provider" data-q>
+          <option value="">Select a provider…</option>
+          <option value="resend">Resend (recommended)</option>
+          <option value="sendgrid">SendGrid</option>
+          <option value="postmark">Postmark</option>
+          <option value="other">Other (add a note below)</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="email_api_key">API key <span class="field-clear" data-clear="email_api_key">× Clear</span></label>
+        <p class="help">Paste the key from your provider. It's encrypted before storage — see the note above.</p>
+        <div class="secret">
+          <input type="password" id="email_api_key" name="email_api_key" placeholder="e.g. re_xxxxxxxxxxxxxxxxxxxx" autocomplete="off" data-q />
+          <button type="button" class="toggle" data-toggle="email_api_key">Show</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="from_email">"From" email address <span class="field-clear" data-clear="from_email">× Clear</span></label>
+        <p class="help">The address suppliers see. Must be on the domain you verified above.</p>
+        <input type="email" id="from_email" name="from_email" placeholder="e.g. quotes@swiftsitesolutions.co.uk" autocomplete="off" data-q />
+      </div>
+
+      <div class="field">
+        <label for="email_notes">Anything else about email? <span class="field-clear" data-clear="email_notes">× Clear</span></label>
+        <p class="help">Optional — e.g. a reply-to address, people to CC, or if you'd like us to handle the DNS verification.</p>
+        <textarea id="email_notes" name="email_notes" placeholder="Optional notes…"></textarea>
+      </div>
+
+      <div class="callout green">
+        ✓ Once we have these, <strong>email can be enabled the same day</strong>.
+      </div>
+    </section>
+
+    <!-- ═══════════════ WHATSAPP ═══════════════ -->
+    <section class="card">
+      <h2><span class="num">💬</span> WhatsApp</h2>
+      <p class="sub">
+        Lets the platform send WhatsApp messages directly to suppliers via Twilio.
+      </p>
+
+      <div class="callout amber">
+        <strong>Nothing is blocked while this is set up.</strong> For now the
+        platform already opens WhatsApp with the message pre-filled — this just
+        makes sending fully automatic.
+      </div>
+
+      <ol class="steps">
+        <li>
+          <span class="st-title">Open your Twilio Console</span>
+          <span class="st-desc"> — sign in at <a href="https://console.twilio.com" target="_blank" rel="noopener">console.twilio.com</a>.</span>
+        </li>
+        <li>
+          <span class="st-title">Copy your Account SID &amp; Auth Token</span>
+          <span class="st-desc"> — both are on the Console dashboard under <em>Account Info</em>. The SID starts with <code>AC…</code>.</span>
+        </li>
+        <li>
+          <span class="st-title">Find your WhatsApp sender number</span>
+          <span class="st-desc"> — under <em>Messaging → Senders → WhatsApp senders</em>. If you don't have one yet, we'll help register it (Meta has to approve the WhatsApp Business sender — that can take a little time).</span>
+        </li>
+      </ol>
+
+      <div class="field">
+        <label for="twilio_sid">Twilio Account SID <span class="field-clear" data-clear="twilio_sid">× Clear</span></label>
+        <p class="help">Starts with <code>AC</code> followed by a long string.</p>
+        <input type="text" id="twilio_sid" name="twilio_sid" placeholder="ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" autocomplete="off" data-q />
+      </div>
+
+      <div class="field">
+        <label for="twilio_token">Twilio Auth Token <span class="field-clear" data-clear="twilio_token">× Clear</span></label>
+        <p class="help">Treat this like a password. It's encrypted before storage.</p>
+        <div class="secret">
+          <input type="password" id="twilio_token" name="twilio_token" placeholder="Your Twilio auth token" autocomplete="off" data-q />
+          <button type="button" class="toggle" data-toggle="twilio_token">Show</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="whatsapp_number">WhatsApp sender number <span class="field-clear" data-clear="whatsapp_number">× Clear</span></label>
+        <p class="help">In full international format, e.g. <code>+44 7700 900123</code>.</p>
+        <input type="text" id="whatsapp_number" name="whatsapp_number" placeholder="+44 7700 900123" autocomplete="off" data-q />
+      </div>
+
+      <div class="field">
+        <label for="whatsapp_notes">Anything else about WhatsApp? <span class="field-clear" data-clear="whatsapp_notes">× Clear</span></label>
+        <p class="help">Optional — e.g. if you still need a sender registered, or a display name for the business profile.</p>
+        <textarea id="whatsapp_notes" name="whatsapp_notes" placeholder="Optional notes…"></textarea>
+      </div>
+
+      <div class="callout amber">
+        ⏳ WhatsApp goes live once the WhatsApp Business sender has been
+        <strong>approved by Meta</strong>. We'll keep you posted on that.
+      </div>
+    </section>
+
+    <!-- ── Footer actions ── -->
+    <div class="footer-actions">
+      <p>
+        Your entries save to this device automatically as you type. When you're
+        ready, submit securely and we'll take it from there.
+      </p>
+      <div class="button-row">
+        <button type="button" class="secondary" id="clearBtn" style="color: #dc2626; border-color: #fecaca;">Clear all</button>
+        <button type="button" class="primary" id="submitBtn">Submit securely</button>
+      </div>
+      <div id="submitStatus" style="margin-top: 14px; font-size: 13px; min-height: 18px;"></div>
+      <div><span class="saved-hint" id="savedHint">Saved automatically</span></div>
+    </div>
+
+  </form>
+</div>
+
+<script src="lib.js"></script>
+<script>
+(function () {
+  const form = document.getElementById('setupForm');
+  const STORAGE_KEY = 'stato-integrations-setup-2026-07-21';
+  const REMOTE_FILE = 'integrations.json'; // separate from submissions.json / messages.json
+
+  const LABELS = {
+    email_provider: 'Email provider',
+    email_api_key: 'Email API key',
+    from_email: 'From email address',
+    email_notes: 'Email notes',
+    twilio_sid: 'Twilio Account SID',
+    twilio_token: 'Twilio Auth Token',
+    whatsapp_number: 'WhatsApp sender number',
+    whatsapp_notes: 'WhatsApp notes',
+  };
+
+  function snapshot() {
+    const data = {};
+    new FormData(form).forEach((v, k) => { data[k] = v; });
+    return data;
+  }
+
+  function load() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return;
+      const data = JSON.parse(raw);
+      for (const [name, value] of Object.entries(data)) {
+        const els = form.querySelectorAll('[name="' + name + '"]');
+        els.forEach((el) => { el.value = value; });
+      }
+    } catch (e) {
+      console.warn('load failed', e);
+    }
+    refreshProgress();
+  }
+
+  let saveTimer;
+  function flashSaved() {
+    const hint = document.getElementById('savedHint');
+    hint.classList.add('visible');
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(() => hint.classList.remove('visible'), 1400);
+  }
+
+  function save() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot()));
+    flashSaved();
+  }
+
+  function refreshProgress() {
+    const required = form.querySelectorAll('[data-q]');
+    let answered = 0;
+    let total = 0;
+    required.forEach((el) => {
+      total += 1;
+      if (el.value && el.value.trim().length) answered += 1;
+    });
+    const pct = total ? Math.round((answered / total) * 100) : 0;
+    document.getElementById('progressBar').style.width = pct + '%';
+    document.getElementById('progressLabel').textContent = pct + '%';
+    document.getElementById('progressCount').textContent = answered + ' / ' + total;
+  }
+
+  function refreshFieldClearVisibility() {
+    form.querySelectorAll('.field').forEach((field) => {
+      const inputs = field.querySelectorAll('input, textarea, select');
+      let hasValue = false;
+      inputs.forEach((el) => { if (el.value && el.value.trim()) hasValue = true; });
+      field.classList.toggle('has-value', hasValue);
+    });
+  }
+
+  function setStatus(text, color) {
+    const el = document.getElementById('submitStatus');
+    el.textContent = text;
+    el.style.color = color || '#6e6e73';
+  }
+
+  // ── Encrypted submit to a dedicated repo file (not submissions.json) ──
+  async function submitIntegrations(password, data) {
+    const payload = {
+      submittedAt: new Date().toISOString(),
+      submittedBy: 'sam',
+      integrations: data,
+    };
+    const cipher = await encryptJson(password, payload);
+    const envelope = {
+      v: 1,
+      encrypted: true,
+      lastUpdated: payload.submittedAt,
+      data: cipher,
+    };
+    const { sha } = await fetchFile(REMOTE_FILE);
+    return writeFile(
+      REMOTE_FILE,
+      envelope,
+      sha,
+      sha ? 'Update integration credentials' : 'Add integration credentials',
+    );
+  }
+
+  async function loadRemote(password) {
+    const { blob } = await fetchFile(REMOTE_FILE);
+    if (!blob || !blob.encrypted || !blob.data) return null;
+    try {
+      const decrypted = await decryptJson(password, blob.data);
+      return decrypted.integrations || null;
+    } catch {
+      return null;
+    }
+  }
+
+  function getPasswordOrPrompt() {
+    const pw = getStoredPassword();
+    if (pw) return Promise.resolve(pw);
+    return new Promise((resolve) => mountPasswordGate(resolve));
+  }
+
+  // ── Show / hide toggles for secret fields ──
+  form.querySelectorAll('.toggle[data-toggle]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const input = document.getElementById(btn.dataset.toggle);
+      if (!input) return;
+      const showing = input.type === 'text';
+      input.type = showing ? 'password' : 'text';
+      btn.textContent = showing ? 'Show' : 'Hide';
+    });
+  });
+
+  // ── Per-field clear buttons ──
+  form.querySelectorAll('.field-clear[data-clear]').forEach((btn) => {
+    btn.addEventListener('click', (ev) => {
+      ev.preventDefault();
+      const name = btn.dataset.clear;
+      form.querySelectorAll('[name="' + name + '"]').forEach((el) => { el.value = ''; });
+      save();
+      refreshProgress();
+      refreshFieldClearVisibility();
+    });
+  });
+
+  document.getElementById('clearBtn').addEventListener('click', () => {
+    const ok = confirm(
+      'Clear everything on this page?\n\n' +
+      'This only empties the fields on this device. Anything you have already ' +
+      'submitted to the Octogle Team stays with us.'
+    );
+    if (!ok) return;
+    localStorage.removeItem(STORAGE_KEY);
+    form.reset();
+    refreshProgress();
+    refreshFieldClearVisibility();
+    setStatus('Cleared. You can start fresh.', '#6e6e73');
+    document.getElementById('submitBtn').textContent = 'Submit securely';
+  });
+
+  document.getElementById('submitBtn').addEventListener('click', async () => {
+    save();
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.textContent = 'Submitting…';
+    setStatus('');
+    try {
+      const password = await getPasswordOrPrompt();
+      const data = snapshot();
+      await submitIntegrations(password, data);
+      setStatus('✓ Submitted securely — the Octogle Team will pick these up. You can update them anytime by editing here and re-submitting.', '#16a34a');
+      btn.textContent = 'Update';
+    } catch (err) {
+      console.error(err);
+      setStatus('Sorry, submission failed: ' + (err.message || err), '#dc2626');
+      btn.textContent = 'Try again';
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  form.addEventListener('input', () => { save(); refreshProgress(); refreshFieldClearVisibility(); });
+  form.addEventListener('change', () => { save(); refreshProgress(); refreshFieldClearVisibility(); });
+
+  // Gate first; then local values, then try to pre-fill from the encrypted repo copy.
+  mountPasswordGate(async (password) => {
+    load();
+    refreshFieldClearVisibility();
+    try {
+      const remote = await loadRemote(password);
+      if (remote) {
+        for (const [name, value] of Object.entries(remote)) {
+          const els = form.querySelectorAll('[name="' + name + '"]');
+          els.forEach((el) => { if (!el.value) el.value = value; });
+        }
+        save();
+        refreshProgress();
+        refreshFieldClearVisibility();
+        document.getElementById('submitBtn').textContent = 'Update';
+      }
+    } catch (e) {
+      console.warn('remote prefill failed', e);
+    }
+  });
+})();
+</script>
+</body>
+</html>
