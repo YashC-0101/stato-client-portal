@@ -259,16 +259,6 @@
   .callout.green { background: #f0fdf4; border: 1px solid #bbf7d0; color: #14532d; }
   .callout.amber { background: #fffbeb; border: 1px solid #fde68a; color: #78350f; }
 
-  .badge {
-    display: inline-block;
-    padding: 2px 8px;
-    border-radius: 999px;
-    font-size: 11px;
-    font-weight: 600;
-  }
-  .badge.info { background: #dbeafe; color: var(--blue); }
-  .badge.warning { background: #fef3c7; color: var(--amber); }
-
   code {
     background: #f5f5f7;
     padding: 1px 6px;
@@ -378,11 +368,12 @@
   <!-- ── Security note ── -->
   <div class="callout green" style="margin: 0 0 20px 0;">
     🔒 <strong>This is the secure channel.</strong> Do <em>not</em> send these
-    keys over WhatsApp or plain email. Anything you enter here is encrypted in
-    your browser (AES-256) before it leaves your device, so even the stored
-    copy is unreadable without the access code. If you'd rather share via a
-    password manager (1Password / Bitwarden), that's fine too — just let us
-    know and skip the submit.
+    keys over WhatsApp or plain email. When you submit, everything is encrypted
+    in your browser (AES-256) before it's sent to us, so the copy we store is
+    unreadable without the access code. Your API key and auth token are
+    <strong>never saved to this device</strong> — close the tab and they're
+    gone. If you'd rather share via a password manager (1Password / Bitwarden),
+    that's fine too — just let us know and skip the submit.
   </div>
 
   <!-- ── Progress ── -->
@@ -545,16 +536,8 @@
   const STORAGE_KEY = 'stato-integrations-setup-2026-07-21';
   const REMOTE_FILE = 'integrations.json'; // separate from submissions.json / messages.json
 
-  const LABELS = {
-    email_provider: 'Email provider',
-    email_api_key: 'Email API key',
-    from_email: 'From email address',
-    email_notes: 'Email notes',
-    twilio_sid: 'Twilio Account SID',
-    twilio_token: 'Twilio Auth Token',
-    whatsapp_number: 'WhatsApp sender number',
-    whatsapp_notes: 'WhatsApp notes',
-  };
+  // Secret fields are submitted (encrypted) but never written to localStorage.
+  const SECRET_FIELDS = new Set(['email_api_key', 'twilio_token']);
 
   function snapshot() {
     const data = {};
@@ -586,7 +569,11 @@
   }
 
   function save() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot()));
+    // Persist everything EXCEPT secrets, so API keys / tokens never touch
+    // localStorage (they're only held in memory until an encrypted submit).
+    const data = snapshot();
+    for (const name of SECRET_FIELDS) delete data[name];
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
     flashSaved();
   }
 
@@ -674,6 +661,7 @@
   form.querySelectorAll('.field-clear[data-clear]').forEach((btn) => {
     btn.addEventListener('click', (ev) => {
       ev.preventDefault();
+      ev.stopPropagation();
       const name = btn.dataset.clear;
       form.querySelectorAll('[name="' + name + '"]').forEach((el) => { el.value = ''; });
       save();
