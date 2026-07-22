@@ -72,6 +72,17 @@
     for reference. All pages need the access code the Octogle Team sent you.
   </p>
 
+  <a class="card" href="2026-07-22-messaging-integrations.html">
+    <div class="row">
+      <div class="ic" style="background: #e6f7ec;">📧</div>
+      <div>
+        <h2>Messaging integrations — Email &amp; WhatsApp (22 July 2026) <span style="font-size:11px;font-weight:600;background:#1d7a3a;color:#fff;padding:2px 8px;border-radius:999px;margin-left:6px;letter-spacing:0.04em;">LATEST</span></h2>
+        <p><strong>Email and WhatsApp are now live in production.</strong> Transactional email (portal invites, quotes, RFQs, POs, statements, follow-ups) sends from your own verified domain via <strong>Resend</strong> (<code>swiftsitesolutions.uk</code>, DKIM + SPF verified). WhatsApp messages to suppliers send through your approved <strong>Twilio</strong> business number. Both run server-side on the backend — keys never touch the browser. This page covers what's live and how to test each one.</p>
+      </div>
+      <div class="arrow">›</div>
+    </div>
+  </a>
+
   <a class="card" href="2026-07-21-email-whatsapp-setup.html">
     <div class="row">
       <div class="ic" style="background: #f0f7ff;">📧</div>
@@ -87,7 +98,7 @@
     <div class="row">
       <div class="ic" style="background: #e6f7ec;">📊</div>
       <div>
-        <h2>Status update — 2 June 2026 (real-data reconciliation) <span style="font-size:11px;font-weight:600;background:#1d7a3a;color:#fff;padding:2px 8px;border-radius:999px;margin-left:6px;letter-spacing:0.04em;">LATEST</span></h2>
+        <h2>Status update — 2 June 2026 (real-data reconciliation)</h2>
         <p><strong>The proof that Stato shows the real numbers — every figure laid side-by-side against the third-party system that owns it.</strong> Integration connections <strong>re-checked today: 8 of 9 ad-network connections live and syncing</strong> (Facebook, Google ×3, Taboola ×2, TikTok, Bing — all SUCCESS; only Outbrain pending account access). <strong>Reconciliation for the managed client (PCP Claim), from our most recent live verification (31 May – 1 June):</strong> valid leads <strong>110</strong> (Stato) = <strong>110</strong> (LeadByte), Facebook 92 / Google 18. Ad spend <strong>£9,396</strong> (Stato) = <strong>£9,396</strong> (Catchr), Facebook £7,514 / Google £1,882. Invoices <strong>59</strong> and outstanding <strong>£0</strong> (Stato) = Xero. Agreement Signed 18 May = SignNow. <strong>The Google figure is the clincher:</strong> Catchr returns the same spend 3× (one per OAuth reconnect) = a naïve £5,646; Stato de-duplicates to the real £1,882 — the numbers are right <em>because</em> the platform understands how Catchr behaves. Figures reconcile and move daily (Catchr syncs hourly). <strong>Also shipped to prod today:</strong> per-client P&amp;L now counts paid + authorised (matches dashboard), all Xero calls auto-retry on rate-limit, ad-spend "needs-mapping" count fixed, plus 3 UI fixes (Avg/Day, CSV export escaping, "Due" link) — all tested + live.</p>
       </div>
       <div class="arrow">›</div>
