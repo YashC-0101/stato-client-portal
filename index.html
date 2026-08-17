@@ -56,6 +56,28 @@
     font-size: 14px; color: #6e6e73; margin: 0;
   }
   .arrow { color: #6e6e73; font-size: 18px; margin-left: auto; }
+  .sec-head {
+    display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
+    margin: 0 0 6px 2px;
+  }
+  .sec-head h3 {
+    font-size: 12px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.08em; color: #6e6e73; margin: 0;
+  }
+  .sec-head .tag {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.06em;
+    padding: 2px 7px; border-radius: 999px;
+  }
+  .sec-note {
+    font-size: 13px; color: #86868b; margin: 0 0 14px 2px;
+  }
+  .sec { margin-bottom: 34px; }
+  .sec + .sec { padding-top: 6px; }
+  .badge {
+    font-size: 11px; font-weight: 600; padding: 2px 8px;
+    border-radius: 999px; margin-left: 6px; letter-spacing: 0.04em;
+    color: #fff; white-space: nowrap;
+  }
   footer {
     margin-top: 40px; padding-top: 18px;
     border-top: 1px solid #e8e8ed;
@@ -67,10 +89,67 @@
 <div class="wrap">
   <h1>Stato — Client Portal</h1>
   <p class="lede">
-    Hi Sam — start with the green status update at the top — that's the
-    latest. Form below if you have new info to send. Earlier reports are kept
-    for reference. All pages need the access code the Octogle Team sent you.
+    Hi Sam — the newest work is at the top of each section. <strong>C1 Clearance
+    Lead Centre</strong> is a new project (17 August) — start with the overview,
+    then the clickable demo. Stato status updates follow below, newest first,
+    with the form and earlier reports at the end. All pages need the access code
+    the Octogle Team sent you.
   </p>
+
+  <div class="sec">
+    <div class="sec-head">
+      <h3>New project — C1 Clearance</h3>
+      <span class="tag" style="background:#e7f1fd;color:#0e5db8;">17 AUG 2026</span>
+    </div>
+    <p class="sec-note">
+      One Lead Centre — every enquiry from WhatsApp, the office line, email, the
+      website form and the van's QR code landing on a single record. Three pages:
+      what it is, what it looks like, and whether it's actually buildable.
+    </p>
+
+    <a class="card" href="2026-08-17-c1-lead-centre-overview.html">
+      <div class="row">
+        <div class="ic" style="background:#e7f1fd;">🎯</div>
+        <div>
+          <h2>C1 Lead Centre — project overview <span class="badge" style="background:#0e5db8;">START HERE</span></h2>
+          <p><strong>The pitch in one scroll — read this first.</strong> Today two numbers sit in two places with no shared memory: WhatsApp on a Lycamobile SIM in a van, and the office line <code>0330 133 9144</code>. Photos of a garage full of stuff live on one handset, so nobody else can quote from them; a missed call at 07:14 leaves no trace. After: <strong>five ways in, one record</strong> — WhatsApp, calls, email, website form and Meta/Google ads all matched on phone number, with photos treated as the primary content of the lead. Includes a <strong>live animated feed</strong> showing enquiries landing, the number that actually decides the job (<strong>speed to first reply — 3h 40m today, target under 15m</strong>), the six-week sequence, running cost, and the six things needed to start.</p>
+        </div>
+        <div class="arrow">›</div>
+      </div>
+    </a>
+
+    <a class="card" href="2026-08-17-c1-lead-centre-mockup.html">
+      <div class="row">
+        <div class="ic" style="background:#e6f6ee;">📱</div>
+        <div>
+          <h2>C1 Lead Centre — clickable mockup <span class="badge" style="background:#25a566;">DEMO</span></h2>
+          <p><strong>The product itself, mobile-first — tap through it as if it were live.</strong> Concept build of the lead centre as the crew and the office would actually use it: the unified inbox with every channel in one list, a lead record with the enquiry photos, postcode, access notes and volume estimate pinned to the top, the pipeline stages built around how a clearance job really runs, and the reply flow. Best opened on a phone. <strong>Interface concept — the figures inside are a demonstration, not live data.</strong></p>
+        </div>
+        <div class="arrow">›</div>
+      </div>
+    </a>
+
+    <a class="card" href="2026-08-17-c1-lead-centre-feasibility.html">
+      <div class="row">
+        <div class="ic" style="background:#fdf3e2;">🔧</div>
+        <div>
+          <h2>C1 Lead Centre — feasibility &amp; build plan <span class="badge" style="background:#b4720a;">TECHNICAL</span></h2>
+          <p><strong>Verdict: buildable — with three changes to the original plan.</strong> We went through Aircall's and Meta's documentation line by line instead of taking the plan at face value, and two assumptions in it work differently than expected. <strong>(1) Do not port the WhatsApp number.</strong> WhatsApp is tied to the number, not the SIM — moving <code>07440 517077</code> into Aircall gains nothing and risks the one thing that can't fail: the number is printed <em>inside</em> the QR code on the van, so if re-verification ever lands on a VoIP line and fails, that's a re-wrap, not a settings change. Meta's <strong>Coexistence</strong> route brings it in on its existing SIM, chat history intact, handset still answering. <strong>(2) A divert carries calls, not WhatsApp</strong> — the two are separate jobs, so WhatsApp (hours) doesn't wait on the port. <strong>(3) Six weeks, not 21 days</strong> — Aircall's own docs for UK ports — but the divert makes recording live in week one, so the wait costs nothing. Plus the three-asset ledger, what Coexistence costs you in features (7 constraints), the phase-by-phase sequence, running costs with the <strong>1 October 2026 Meta pricing change</strong> nobody's mentioning, an 8-row risk ledger and the compliance points on call recording.</p>
+        </div>
+        <div class="arrow">›</div>
+      </div>
+    </a>
+  </div>
+
+  <div class="sec">
+    <div class="sec-head">
+      <h3>Stato — leadgeneration.io</h3>
+      <span class="tag" style="background:#e6f7ec;color:#1d7a3a;">STATUS UPDATES</span>
+    </div>
+    <p class="sec-note">
+      Newest first. Start with the green update at the top — that's the latest.
+    </p>
+  </div>
 
   <a class="card" href="2026-07-22-messaging-integrations.html">
     <div class="row">
@@ -315,7 +394,7 @@
   </a>
 
   <footer>
-    Updated 27 May 2026 · Stato · Octogle Technologies for leadgeneration.io
+    Updated 17 August 2026 · Stato · Octogle Technologies for leadgeneration.io &amp; C1 Clearance
   </footer>
 </div>
 </body>

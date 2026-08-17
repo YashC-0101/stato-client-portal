@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#080C12">
+<title>C1 Clearance — One Lead Centre · Feasibility &amp; Build Plan · stato.tech</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,500;0,700;0,800;1,800&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#080C12;
+    --ink-2:#111823;
+    --steel:#5D6E82;
+    --steel-2:#8A9AAD;
+    --hair:#DFE5EC;
+    --paper:#F4F7FA;
+    --white:#fff;
+    --volt:#1477E6;
+    --volt-lo:#E7F1FD;
+    --glow:#63C9FF;
+    --amber:#B4720A;
+    --amber-lo:#FDF3E2;
+    --red:#C0392B;
+    --red-lo:#FCEDEB;
+    --go:#1D8A5C;
+    --go-lo:#E7F5EE;
+    --mono:"IBM Plex Mono",ui-monospace,monospace;
+    --sans:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    --disp:"Archivo","Arial Narrow",system-ui,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0;background:var(--paper);color:var(--ink);
+    font-family:var(--sans);font-size:16.5px;line-height:1.62;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:940px;margin:0 auto;padding:0 26px}
+
+  /* ---------- cover ---------- */
+  .cover{
+    background:var(--ink);color:var(--white);
+    padding:54px 0 46px;position:relative;overflow:hidden;
+  }
+  .cover:before{
+    content:"";position:absolute;inset:0;
+    background:
+      linear-gradient(112deg,transparent 55%,rgba(20,119,230,.42) 72%,transparent 74%),
+      linear-gradient(112deg,transparent 62%,rgba(99,201,255,.28) 78%,transparent 80%),
+      linear-gradient(112deg,transparent 68%,rgba(20,119,230,.20) 88%,transparent 90%);
+    pointer-events:none;
+  }
+  .cover .wrap{position:relative}
+  .eyebrow{
+    font-family:var(--mono);font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--glow);margin:0 0 20px;
+  }
+  h1{
+    font-family:var(--disp);font-weight:800;font-style:italic;
+    font-size:clamp(34px,6.4vw,62px);line-height:.98;letter-spacing:-.025em;
+    text-transform:uppercase;margin:0 0 18px;
+  }
+  h1 em{font-style:italic;color:var(--glow)}
+  .standfirst{
+    font-size:clamp(16px,2.2vw,19px);color:#C3D0DE;max-width:60ch;margin:0 0 30px;
+  }
+  .metaline{
+    display:flex;flex-wrap:wrap;gap:0 32px;border-top:1px solid rgba(255,255,255,.16);
+    padding-top:18px;font-family:var(--mono);font-size:11.5px;letter-spacing:.05em;
+    text-transform:uppercase;color:var(--steel-2);
+  }
+  .metaline b{display:block;color:var(--white);font-weight:600;letter-spacing:.02em;margin-top:3px}
+
+  /* ---------- verdict ---------- */
+  .verdict{background:var(--ink-2);color:var(--white);padding:0 0 52px}
+  .verdict .wrap{position:relative}
+  .vgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,.13)}
+  .vcell{background:var(--ink-2);padding:26px 24px}
+  .vtag{
+    font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;
+    display:inline-block;padding:3px 8px;border-radius:3px;margin-bottom:14px;
+  }
+  .vtag.yes{background:rgba(29,138,92,.22);color:#6FDCA8}
+  .vtag.no{background:rgba(192,57,43,.22);color:#FF9A8D}
+  .vtag.watch{background:rgba(180,114,10,.24);color:#F5C377}
+  .vcell h3{font-family:var(--disp);font-weight:700;font-size:19px;line-height:1.2;margin:0 0 8px;letter-spacing:-.01em}
+  .vcell p{margin:0;font-size:14.5px;color:#B8C6D5;line-height:1.55}
+
+  /* ---------- sections ---------- */
+  section{padding:52px 0;border-top:1px solid var(--hair)}
+  section:first-of-type{border-top:0}
+  .shead{display:flex;gap:16px;align-items:baseline;margin:0 0 8px}
+  .snum{
+    font-family:var(--mono);font-size:12px;color:var(--volt);font-weight:600;
+    letter-spacing:.08em;padding-top:6px;flex:0 0 auto;
+  }
+  h2{
+    font-family:var(--disp);font-weight:800;text-transform:uppercase;letter-spacing:-.018em;
+    font-size:clamp(23px,3.4vw,31px);line-height:1.08;margin:0;
+  }
+  .sintro{color:var(--steel);max-width:70ch;margin:14px 0 0;font-size:16px}
+  h3{font-family:var(--disp);font-weight:700;font-size:18.5px;letter-spacing:-.01em;margin:34px 0 10px}
+  h4{font-family:var(--sans);font-weight:600;font-size:15px;margin:22px 0 6px}
+  p{margin:14px 0}
+  a{color:var(--volt);text-decoration:none;border-bottom:1px solid rgba(20,119,230,.3)}
+  a:hover{border-bottom-color:var(--volt)}
+  strong{font-weight:600}
+  code,.num{font-family:var(--mono);font-size:.92em}
+  .num{white-space:nowrap;font-weight:600}
+  ul,ol{margin:14px 0;padding-left:22px}
+  li{margin:7px 0}
+  li::marker{color:var(--volt)}
+
+  /* ---------- number ledger ---------- */
+  .ledger{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:26px}
+  .lcard{background:var(--white);border:1px solid var(--hair);border-radius:5px;padding:20px;position:relative;overflow:hidden}
+  .lcard:before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:var(--volt)}
+  .lcard.amber:before{background:var(--amber)}
+  .lcard.green:before{background:var(--go)}
+  .lkind{font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--steel-2)}
+  .lnum{font-family:var(--mono);font-weight:600;font-size:17px;margin:8px 0 2px;letter-spacing:-.02em}
+  .lwho{font-size:13px;color:var(--steel);margin:0 0 14px}
+  .lrow{border-top:1px solid var(--hair);padding-top:10px;margin-top:10px;font-size:13.5px}
+  .lrow span{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--steel-2);margin-bottom:3px}
+
+  /* ---------- signature: QR panel ---------- */
+  .qrpanel{
+    background:var(--ink);color:var(--white);border-radius:6px;margin-top:30px;
+    padding:30px;display:grid;grid-template-columns:150px 1fr;gap:30px;align-items:center;
+    position:relative;overflow:hidden;
+  }
+  .qrpanel:after{
+    content:"";position:absolute;top:-40%;right:-6%;width:44%;height:180%;
+    background:linear-gradient(112deg,transparent 46%,rgba(99,201,255,.16) 50%,transparent 54%);
+    pointer-events:none;
+  }
+  .qrart{position:relative;z-index:1}
+  .qrart svg{width:100%;height:auto;display:block;border-radius:4px}
+  .qrbody{position:relative;z-index:1}
+  .qrbody .eyebrow{margin-bottom:12px}
+  .qrbody h3{margin:0 0 12px;color:var(--white);font-size:22px;text-transform:uppercase;letter-spacing:-.015em}
+  .qrbody p{color:#BCCAD9;font-size:15px;margin:10px 0}
+  .urlstrip{
+    font-family:var(--mono);font-size:13.5px;background:rgba(255,255,255,.07);
+    border-left:3px solid var(--glow);padding:11px 14px;border-radius:0 4px 4px 0;
+    margin:16px 0 0;word-break:break-all;color:#9FB3C6;line-height:1.7;
+  }
+  .urlstrip b{color:var(--glow);font-weight:600;background:rgba(99,201,255,.14);padding:1px 3px;border-radius:2px}
+
+  /* ---------- callouts ---------- */
+  .call{border-radius:5px;padding:20px 22px;margin:26px 0;border:1px solid;font-size:15.5px}
+  .call p:first-child{margin-top:0}.call p:last-child{margin-bottom:0}
+  .call .ctag{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;display:block;margin-bottom:9px;font-weight:600}
+  .call.stop{background:var(--red-lo);border-color:#F0C2BB}
+  .call.stop .ctag{color:var(--red)}
+  .call.warn{background:var(--amber-lo);border-color:#EED9B2}
+  .call.warn .ctag{color:var(--amber)}
+  .call.go{background:var(--go-lo);border-color:#B9DFCB}
+  .call.go .ctag{color:var(--go)}
+  .call.info{background:var(--volt-lo);border-color:#C3DCF8}
+  .call.info .ctag{color:var(--volt)}
+
+  /* ---------- correction blocks ---------- */
+  .corr{background:var(--white);border:1px solid var(--hair);border-left:3px solid var(--volt);border-radius:0 5px 5px 0;padding:22px 24px;margin:20px 0}
+  .corr .claim{font-family:var(--mono);font-size:12.5px;color:var(--steel);margin:0 0 12px;padding-bottom:12px;border-bottom:1px dashed var(--hair)}
+  .corr .claim b{color:var(--ink)}
+  .corr h3{margin:0 0 8px;font-size:19px}
+  .corr p{margin:10px 0;font-size:15.5px}
+  .corr p:last-child{margin-bottom:0}
+
+  /* ---------- diagram ---------- */
+  figure{margin:30px 0 0;background:var(--white);border:1px solid var(--hair);border-radius:5px;padding:22px}
+  figure svg{width:100%;height:auto;display:block}
+  figcaption{font-size:13px;color:var(--steel);margin-top:16px;padding-top:14px;border-top:1px solid var(--hair);font-family:var(--mono);line-height:1.6}
+
+  /* ---------- tables ---------- */
+  .tblwrap{overflow-x:auto;margin:24px 0;border:1px solid var(--hair);border-radius:5px;background:var(--white)}
+  table{width:100%;border-collapse:collapse;font-size:14.5px;min-width:560px}
+  th{
+    text-align:left;font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--steel);font-weight:600;padding:13px 16px;background:var(--paper);border-bottom:1px solid var(--hair);
+    white-space:nowrap;
+  }
+  td{padding:13px 16px;border-bottom:1px solid var(--hair);vertical-align:top;line-height:1.5}
+  tr:last-child td{border-bottom:0}
+  td b{font-weight:600}
+  .pill{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;padding:3px 7px;border-radius:3px;white-space:nowrap;display:inline-block}
+  .pill.hi{background:var(--red-lo);color:var(--red)}
+  .pill.med{background:var(--amber-lo);color:var(--amber)}
+  .pill.lo{background:var(--go-lo);color:var(--go)}
+  .pill.new{background:var(--volt-lo);color:var(--volt)}
+
+  /* ---------- phases ---------- */
+  .phase{display:grid;grid-template-columns:104px 1fr;gap:22px;padding:20px 0;border-top:1px solid var(--hair)}
+  .phase:first-of-type{border-top:0}
+  .pwhen{font-family:var(--mono);font-size:12px;color:var(--volt);font-weight:600;letter-spacing:.04em;padding-top:3px}
+  .pwhen span{display:block;color:var(--steel-2);font-weight:400;letter-spacing:.1em;text-transform:uppercase;font-size:10px;margin-top:4px}
+  .pbody h3{margin:0 0 6px;font-size:17.5px}
+  .pbody p{margin:6px 0;font-size:15px}
+  .pbody ul{margin:8px 0 0}
+  .pbody li{font-size:15px}
+
+  /* ---------- money ---------- */
+  .money{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:26px}
+  .mcard{background:var(--white);border:1px solid var(--hair);border-radius:5px;padding:22px}
+  .mcard h3{margin:0 0 4px;font-size:17px}
+  .mfig{font-family:var(--disp);font-weight:800;font-size:30px;letter-spacing:-.03em;margin:10px 0 2px}
+  .mnote{font-size:13px;color:var(--steel);margin:0}
+  .mlist{list-style:none;padding:0;margin:16px 0 0;font-size:14px}
+  .mlist li{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-top:1px solid var(--hair);margin:0}
+  .mlist li span:last-child{font-family:var(--mono);font-weight:600;white-space:nowrap}
+
+  /* ---------- asks ---------- */
+  .asks{counter-reset:ask;list-style:none;padding:0;margin:26px 0 0}
+  .asks li{
+    counter-increment:ask;position:relative;padding:16px 0 16px 46px;border-top:1px solid var(--hair);margin:0;font-size:15.5px;
+  }
+  .asks li:before{
+    content:counter(ask,decimal-leading-zero);position:absolute;left:0;top:16px;
+    font-family:var(--mono);font-size:12px;color:var(--volt);font-weight:600;
+  }
+  .asks li b{display:block;margin-bottom:3px}
+  .asks li em{color:var(--steel);font-style:normal;font-size:14.5px}
+
+  footer{background:var(--ink);color:var(--steel-2);padding:38px 0;font-size:13px}
+  footer .wrap{display:flex;flex-wrap:wrap;gap:18px;justify-content:space-between;align-items:flex-end}
+  footer b{color:var(--white);font-family:var(--disp);font-weight:800;font-style:italic;text-transform:uppercase;font-size:17px;letter-spacing:-.01em}
+  .srcs{font-family:var(--mono);font-size:11px;line-height:1.9;color:var(--steel);max-width:52ch}
+
+  @media (max-width:820px){
+    .vgrid,.ledger,.money{grid-template-columns:1fr}
+    .qrpanel{grid-template-columns:1fr;gap:22px}
+    .qrart{max-width:150px}
+    .phase{grid-template-columns:1fr;gap:6px}
+  }
+  @media (max-width:620px){
+    body{font-size:16px}
+    .wrap{padding:0 18px}
+    .cover{padding:calc(34px + env(safe-area-inset-top,0px)) 0 32px}
+    .verdict{padding-bottom:36px}
+    .vcell{padding:22px 20px}
+    .metaline{gap:14px 26px;flex-direction:column}
+    section{padding:38px 0}
+    .shead{gap:12px;flex-direction:column;align-items:flex-start}
+    .snum{padding-top:0}
+    .qrpanel{padding:22px 20px}
+    .urlstrip{font-size:12px}
+    .call{padding:17px 18px;font-size:15px}
+    .corr{padding:18px 19px}
+    .tblwrap{border-radius:5px}
+    table{min-width:520px;font-size:14px}
+    th,td{padding:11px 13px}
+    .tblwrap:after{
+      content:"Scroll the table sideways";display:block;font-family:var(--mono);font-size:10px;
+      letter-spacing:.1em;text-transform:uppercase;color:var(--steel2);padding:8px 13px;border-top:1px solid var(--hair);
+    }
+    .mfig{font-size:26px}
+    .asks li{padding-left:38px}
+    footer .wrap{flex-direction:column;align-items:flex-start}
+    figure{padding:14px}
+    figure svg{min-width:0}
+  }
+  @media (max-width:520px){
+    figure{overflow-x:auto;-webkit-overflow-scrolling:touch}
+    figure svg{min-width:620px}
+    figcaption{min-width:0}
+  }
+  @media (prefers-reduced-motion:no-preference){
+    .reveal{opacity:0;transform:translateY(14px);transition:opacity .5s ease,transform .5s ease}
+    .reveal.in{opacity:1;transform:none}
+  }
+  @media print{
+    body{background:#fff;font-size:11pt}
+    .cover,.verdict,.qrpanel,footer{background:#fff!important;color:#000!important}
+    h1,.qrbody h3,footer b{color:#000!important}
+    .standfirst,.vcell p,.qrbody p,.srcs{color:#333!important}
+    .vcell,.qrpanel{border:1px solid #ccc}
+    section{page-break-inside:avoid}
+  }
+</style>
+</head>
+<body>
+
+<header class="cover">
+  <div class="wrap">
+    <p class="eyebrow">stato.tech · technical feasibility · confidential</p>
+    <h1>One lead centre<br>for <em>C1 Clearance</em></h1>
+    <p class="standfirst">Every enquiry — WhatsApp, the office line, email, the website form and the QR code on the van — landing in a single record, with the calls recorded and nothing lost between a phone in a van and a laptop in Stockport.</p>
+    <div class="metaline">
+      <div>Prepared for<b>C1 Clearance Limited</b></div>
+      <div>Scope<b>New module · stato.tech</b></div>
+      <div>Date<b>17 August 2026</b></div>
+      <div>Verdict<b>Buildable — with 3 changes</b></div>
+    </div>
+  </div>
+</header>
+
+<div class="verdict">
+  <div class="wrap">
+    <div class="vgrid">
+      <div class="vcell">
+        <span class="vtag yes">Yes</span>
+        <h3>The lead centre is buildable</h3>
+        <p>Aircall and WhatsApp both expose the webhooks we need. Nothing here depends on an unreleased feature or a workaround.</p>
+      </div>
+      <div class="vcell">
+        <span class="vtag no">Change of plan</span>
+        <h3>Don't port the WhatsApp number</h3>
+        <p>Moving <span class="num">07440 517077</span> to Aircall is the one step that could actually break WhatsApp. There's a route that keeps the number exactly where it is.</p>
+      </div>
+      <div class="vcell">
+        <span class="vtag watch">Timing</span>
+        <h3>Six weeks, not 21 days</h3>
+        <p>Aircall quotes up to six weeks for UK ports. The office line moves on a divert from week one, so the wait costs you nothing.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<main class="wrap">
+
+<section class="reveal">
+  <div class="shead"><span class="snum">01</span><h2>What we actually checked</h2></div>
+  <p class="sintro">Rather than take the plan at face value, we went through the provider documentation line by line, because two of the assumptions in it turn out to work differently than expected — and one of them is the kind of mistake you only find out about after the number has stopped working.</p>
+  <ul>
+    <li>Aircall's port requirements for the UK specifically — which number types they accept, what paperwork the carrier demands, and how long it really takes.</li>
+    <li>What WhatsApp is actually tied to: the SIM, the handset, or the number.</li>
+    <li>Meta's current route for bringing an existing WhatsApp Business number into an API without deleting the account — and what it costs you in features.</li>
+    <li>The live wiring on <a href="https://www.c1clearance.co.uk">c1clearance.co.uk</a>, including the destination of the WhatsApp button, which tells us what the van's QR code is almost certainly pointing at.</li>
+    <li>Meta's messaging rates, including the change landing on <strong>1 October 2026</strong> that nobody selling you a WhatsApp inbox this month is likely to mention.</li>
+  </ul>
+</section>
+
+<section class="reveal">
+  <div class="shead"><span class="snum">02</span><h2>The three numbers, and what happens to each</h2></div>
+  <p class="sintro">Everything in this project hangs off treating these as three separate assets with three different risk profiles — not as one "phone problem" to be solved in a single move.</p>
+
+  <div class="ledger">
+    <div class="lcard amber">
+      <p class="lkind">WhatsApp · mobile</p>
+      <p class="lnum">07440 517077</p>
+      <p class="lwho">Lycamobile SIM · in a van</p>
+      <div class="lrow"><span>Carries</span>Photo enquiries, the QR scans, the website chat button</div>
+      <div class="lrow"><span>Plan</span>Stays on a SIM. Joined to the lead centre, never ported.</div>
+      <div class="lrow"><span>Risk if wrong</span>Highest. The number is printed on the van.</div>
+    </div>
+    <div class="lcard">
+      <p class="lkind">Office · national</p>
+      <p class="lnum">0330 133 9144</p>
+      <p class="lwho">Signwritten on the van &amp; site-wide</p>
+      <div class="lrow"><span>Carries</span>Calls, the 24/7 emergency line</div>
+      <div class="lrow"><span>Plan</span>Port into Aircall. Divert first so recording starts now.</div>
+      <div class="lrow"><span>Risk if wrong</span>Low. Divert is reversible in minutes.</div>
+    </div>
+    <div class="lcard green">
+      <p class="lkind">Email</p>
+      <p class="lnum">hello@c1clearance.co.uk</p>
+      <p class="lwho">On the van, in the footer</p>
+      <div class="lrow"><span>Carries</span>Estate agents, solicitors, commercial contracts</div>
+      <div class="lrow"><span>Plan</span>Read into the lead centre. Mailbox unchanged.</div>
+      <div class="lrow"><span>Risk if wrong</span>None. Nothing moves.</div>
+    </div>
+  </div>
+
+  <div class="call info">
+    <span class="ctag">Worth saying out loud</span>
+    <p>The van carries the <span class="num">0330</span>, the email, the website and the QR code — but not the mobile number. That's lucky. It means the <em>printed</em> exposure on <span class="num">07440 517077</span> runs entirely through that QR code, which is exactly what the next section is about.</p>
+  </div>
+</section>
+
+<section class="reveal">
+  <div class="shead"><span class="snum">03</span><h2>The QR code is the constraint that sets the whole design</h2></div>
+  <p class="sintro">You said the QR code is why you can't afford any issues with the WhatsApp number. You're right, and we can now be specific about why.</p>
+
+  <div class="qrpanel">
+    <div class="qrart">
+      <svg viewBox="0 0 100 100" role="img" aria-label="Stylised QR code">
+        <rect width="100" height="100" fill="#fff"/>
+        <g fill="#080C12">
+          <path d="M8 8h22v22H8zm4 4v14h14V12z"/><rect x="16" y="16" width="6" height="6"/>
+          <path d="M70 8h22v22H70zm4 4v14h14V12z"/><rect x="78" y="16" width="6" height="6"/>
+          <path d="M8 70h22v22H8zm4 4v14h14V74z"/><rect x="16" y="78" width="6" height="6"/>
+          <rect x="34" y="10" width="4" height="4"/><rect x="42" y="10" width="4" height="4"/><rect x="54" y="10" width="4" height="4"/><rect x="62" y="10" width="4" height="4"/>
+          <rect x="38" y="18" width="4" height="4"/><rect x="46" y="18" width="4" height="4"/><rect x="58" y="18" width="4" height="4"/>
+          <rect x="34" y="26" width="4" height="4"/><rect x="50" y="26" width="4" height="4"/><rect x="62" y="26" width="4" height="4"/>
+          <rect x="10" y="34" width="4" height="4"/><rect x="18" y="34" width="4" height="4"/><rect x="26" y="34" width="4" height="4"/><rect x="42" y="34" width="4" height="4"/><rect x="54" y="34" width="4" height="4"/><rect x="70" y="34" width="4" height="4"/><rect x="86" y="34" width="4" height="4"/>
+          <rect x="14" y="42" width="4" height="4"/><rect x="30" y="42" width="4" height="4"/><rect x="38" y="42" width="4" height="4"/><rect x="50" y="42" width="4" height="4"/><rect x="62" y="42" width="4" height="4"/><rect x="78" y="42" width="4" height="4"/>
+          <rect x="10" y="50" width="4" height="4"/><rect x="22" y="50" width="4" height="4"/><rect x="34" y="50" width="4" height="4"/><rect x="46" y="50" width="4" height="4"/><rect x="58" y="50" width="4" height="4"/><rect x="70" y="50" width="4" height="4"/><rect x="82" y="50" width="4" height="4"/><rect x="90" y="50" width="4" height="4"/>
+          <rect x="18" y="58" width="4" height="4"/><rect x="26" y="58" width="4" height="4"/><rect x="42" y="58" width="4" height="4"/><rect x="54" y="58" width="4" height="4"/><rect x="66" y="58" width="4" height="4"/><rect x="86" y="58" width="4" height="4"/>
+          <rect x="34" y="66" width="4" height="4"/><rect x="46" y="66" width="4" height="4"/><rect x="62" y="66" width="4" height="4"/><rect x="74" y="66" width="4" height="4"/><rect x="90" y="66" width="4" height="4"/>
+          <rect x="34" y="74" width="4" height="4"/><rect x="50" y="74" width="4" height="4"/><rect x="70" y="74" width="4" height="4"/><rect x="82" y="74" width="4" height="4"/>
+          <rect x="38" y="82" width="4" height="4"/><rect x="46" y="82" width="4" height="4"/><rect x="58" y="82" width="4" height="4"/><rect x="74" y="82" width="4" height="4"/><rect x="90" y="82" width="4" height="4"/>
+          <rect x="34" y="90" width="4" height="4"/><rect x="50" y="90" width="4" height="4"/><rect x="66" y="90" width="4" height="4"/><rect x="78" y="90" width="4" height="4"/>
+        </g>
+      </svg>
+    </div>
+    <div class="qrbody">
+      <p class="eyebrow">Finding · scan for a free quote</p>
+      <h3>The number is printed inside the code</h3>
+      <p>The QR on the van is too low-resolution in the photo you sent for us to decode it outright — but it's a dense code, which means a long URL rather than a short domain. And the WhatsApp button on your own website points here:</p>
+      <p class="urlstrip">wa.me/<b>447440517077</b>?text=Hi%20C1%20Clearance…&amp;utm_source=website</p>
+      <p>If the van's QR is the same style of link — and the density says it is — then <strong>the mobile number is physically printed on the vehicle</strong>, just encoded rather than legible. Change the number and the QR points at a dead account. That's a re-wrap, not a settings change.</p>
+    </div>
+  </div>
+
+  <div class="call stop">
+    <span class="ctag">Action before anything else</span>
+    <p>Scan the actual van with a phone and screenshot where it lands. Two minutes, and it settles the single biggest unknown in this project. If it resolves to a <span class="num">wa.me/447440517077</span> link, the recommendation below becomes non-negotiable rather than merely sensible.</p>
+  </div>
+
+  <div class="call go">
+    <span class="ctag">Fix this permanently on the next print run</span>
+    <p>Point future QR codes at a short link on your own domain — <span class="num">c1clearance.co.uk/q</span> — which then redirects to WhatsApp. The printed code never has to change again, you can repoint it to a different number or channel whenever you like, and you get scan counts per vehicle. Right now every scan is invisible to you; you can't tell the van from Google. That's a fortnight of work for a permanent piece of flexibility, and it's reusable for every signwritten client stato.tech takes on.</p>
+  </div>
+</section>
+
+<section class="reveal">
+  <div class="shead"><span class="snum">04</span><h2>Three corrections to the original plan</h2></div>
+  <p class="sintro">The instinct — get everything into one place, use Aircall because it records and integrates cleanly — is right. Three of the mechanics need changing.</p>
+
+  <div class="corr">
+    <p class="claim"><b>Original plan:</b> transfer the WhatsApp number from Lycamobile to Aircall.</p>
+    <h3>WhatsApp is tied to the number, not the SIM — and that cuts both ways</h3>
+    <p>You don't need to move the number to get WhatsApp off a phone in a van. WhatsApp lives against the <em>number</em>, and Meta will let that number run on their API while it stays on its existing SIM. Porting it into Aircall doesn't help you and introduces a real hazard: the number stops living on a mobile network, so the next time WhatsApp asks to re-verify it — new handset, wiped phone, lost device, account check — you're depending on a verification code reaching a VoIP line. If that fails, the number printed inside the QR code on your van no longer has WhatsApp on it.</p>
+    <p><strong>Instead:</strong> leave <span class="num">07440 517077</span> on a SIM and bring it into the lead centre through Meta's <em>Coexistence</em> route. Same number, same chat history, staff can still answer on the handset, and the QR code never notices anything happened. If the reason for the move was getting off Lycamobile, port the number to a proper business mobile plan instead — that keeps it on a real network where verification is reliable.</p>
+  </div>
+
+  <div class="corr">
+    <p class="claim"><b>Original plan:</b> forward the number to Aircall while the 21-day port completes.</p>
+    <h3>A divert carries calls, not WhatsApp</h3>
+    <p>Call forwarding is a voice-network feature. WhatsApp traffic doesn't ride on it — messages keep arriving at whatever device holds that WhatsApp account, regardless of where the calls go. So the divert is a fine bridge for the office line, but it does nothing for the actual problem you're trying to solve, which is WhatsApp enquiries being stuck on one handset.</p>
+    <p><strong>Instead:</strong> treat the two as separate jobs. Voice gets diverted on day one. WhatsApp gets joined via Coexistence, which takes hours, not weeks — and is the part that immediately stops leads getting lost.</p>
+  </div>
+
+  <div class="corr">
+    <p class="claim"><b>Original plan:</b> 21 days to port.</p>
+    <h3>Aircall's own documentation says up to six weeks for the UK</h3>
+    <p>UK ports also need paperwork that trips people up: a Letter of Authorisation, a provider invoice from the last 30 days, the CUPID code or current carrier name, and — critically — the <strong>Main Billing Number</strong> confirmed with your existing provider. If the number you're porting is the main billing number, everything billed under it has to move or be disconnected at the same time. Mobile ports need a PAC as well, which you get by texting <span class="num">PAC</span> to <span class="num">65075</span> and which expires after 30 days.</p>
+    <p><strong>Instead:</strong> plan for four to six weeks and don't let the timeline matter. The divert means recording, routing and logging are live in week one; the port is just tidying up the plumbing behind it.</p>
+  </div>
+</section>
+
+<section class="reveal">
+  <div class="shead"><span class="snum">05</span><h2>What we'd build</h2></div>
+  <p class="sintro">Five inputs, one lead record. The lead centre in stato.tech owns the customer history; Aircall and WhatsApp are just pipes into it.</p>
+
+  <figure>
+    <svg viewBox="0 0 860 430" role="img" aria-label="Architecture diagram: five channels feeding one lead centre">
+      <defs>
+        <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+          <path d="M0 0 10 5 0 10z" fill="#8A9AAD"/>
+        </marker>
+        <marker id="arv" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+          <path d="M0 0 10 5 0 10z" fill="#1477E6"/>
+        </marker>
+      </defs>
+      <style>
+        .bx{fill:#fff;stroke:#DFE5EC;stroke-width:1.5;rx:5}
+        .t{font-family:"IBM Plex Sans",sans-serif;font-size:12.5px;fill:#080C12;font-weight:600}
+        .s{font-family:"IBM Plex Mono",monospace;font-size:9.5px;fill:#8A9AAD;letter-spacing:.06em}
+        .m{font-family:"IBM Plex Mono",monospace;font-size:10px;fill:#5D6E82}
+        .lbl{font-family:"IBM Plex Mono",monospace;font-size:9px;fill:#8A9AAD;letter-spacing:.1em}
+        .ln{stroke:#8A9AAD;stroke-width:1.3;fill:none}
+        .lnv{stroke:#1477E6;stroke-width:1.8;fill:none}
+      </style>
+
+      <text class="lbl" x="14" y="20">CUSTOMER TOUCHPOINTS</text>
+      <text class="lbl" x="318" y="20">TRANSPORT</text>
+      <text class="lbl" x="596" y="20">STATO.TECH</text>
+
+      <!-- channels -->
+      <g>
+        <rect class="bx" x="14" y="34" width="196" height="52"/>
+        <text class="t" x="28" y="56">QR on van · website chat</text><text class="m" x="28" y="72">→ WhatsApp 07440 517077</text>
+        <rect class="bx" x="14" y="98" width="196" height="52"/>
+        <text class="t" x="28" y="120">Phone call</text><text class="m" x="28" y="136">→ 0330 133 9144</text>
+        <rect class="bx" x="14" y="162" width="196" height="52"/>
+        <text class="t" x="28" y="184">Email</text><text class="m" x="28" y="200">→ hello@c1clearance.co.uk</text>
+        <rect class="bx" x="14" y="226" width="196" height="52"/>
+        <text class="t" x="28" y="248">Website quote form</text><text class="m" x="28" y="264">→ /contact</text>
+        <rect class="bx" x="14" y="290" width="196" height="52"/>
+        <text class="t" x="28" y="312">Meta &amp; Google ads</text><text class="m" x="28" y="328">→ click-to-WhatsApp, forms</text>
+      </g>
+
+      <!-- transport -->
+      <g>
+        <rect class="bx" x="288" y="34" width="200" height="66" fill="#E7F1FD" stroke="#C3DCF8"/>
+        <text class="t" x="302" y="58">WhatsApp Cloud API</text><text class="s" x="302" y="74">COEXISTENCE · VIA BSP</text><text class="m" x="302" y="90">SIM &amp; handset stay as-is</text>
+
+        <rect class="bx" x="288" y="112" width="200" height="66" fill="#E7F1FD" stroke="#C3DCF8"/>
+        <text class="t" x="302" y="136">Aircall</text><text class="s" x="302" y="152">RECORDING · IVR · ROUTING</text><text class="m" x="302" y="168">Divert now, port later</text>
+
+        <rect class="bx" x="288" y="190" width="200" height="52"/>
+        <text class="t" x="302" y="212">Inbound mail parser</text><text class="s" x="302" y="228">MAILBOX UNCHANGED</text>
+
+        <rect class="bx" x="288" y="254" width="200" height="52"/>
+        <text class="t" x="302" y="276">Form endpoint</text><text class="s" x="302" y="292">SERVER-SIDE POST</text>
+
+        <rect class="bx" x="288" y="318" width="200" height="52"/>
+        <text class="t" x="302" y="340">Lead ads webhook</text><text class="s" x="302" y="356">+ CTWA REFERRAL DATA</text>
+      </g>
+
+      <!-- arrows in -->
+      <path class="ln" d="M210 60 h70" marker-end="url(#ar)"/>
+      <path class="ln" d="M210 124 h70" marker-end="url(#ar)"/>
+      <path class="ln" d="M210 188 h70" marker-end="url(#ar)"/>
+      <path class="ln" d="M210 252 h70" marker-end="url(#ar)"/>
+      <path class="ln" d="M210 316 h70" marker-end="url(#ar)"/>
+
+      <!-- bus -->
+      <path class="lnv" d="M488 67 h44 M488 145 h44 M488 216 h44 M488 280 h44 M488 344 h44"/>
+      <path class="lnv" d="M532 67 V344"/>
+      <path class="lnv" d="M532 205 h34" marker-end="url(#arv)"/>
+      <text class="lbl" x="492" y="200" fill="#1477E6">WEBHOOKS</text>
+
+      <!-- lead centre -->
+      <rect x="576" y="34" width="270" height="248" rx="6" fill="#080C12"/>
+      <text x="596" y="62" style="font-family:'Archivo',sans-serif;font-size:15px;font-weight:800;fill:#fff;letter-spacing:.02em">LEAD CENTRE</text>
+      <text class="s" x="596" y="80" fill="#63C9FF">ONE RECORD PER CUSTOMER</text>
+      <g style="font-family:'IBM Plex Sans',sans-serif;font-size:11.5px;fill:#C3D0DE">
+        <text x="596" y="108">Identity match on phone number</text>
+        <text x="596" y="130">Unified timeline · calls, chats, photos</text>
+        <text x="596" y="152">Recordings, transcripts, AI summaries</text>
+        <text x="596" y="174">Pipeline · quote · job · invoice</text>
+        <text x="596" y="196">Source attribution &amp; response times</text>
+        <text x="596" y="218">SLA alerts on unanswered enquiries</text>
+      </g>
+      <rect x="596" y="238" width="230" height="1" fill="#2A3441"/>
+      <text class="s" x="596" y="262" fill="#8A9AAD">MULTI-TENANT · REUSABLE</text>
+
+      <rect class="bx" x="576" y="298" width="270" height="72"/>
+      <text class="t" x="596" y="322">Reporting</text>
+      <text class="m" x="596" y="340">Cost per lead by source · win rate</text>
+      <text class="m" x="596" y="356">Speed to first reply · missed enquiries</text>
+      <path class="lnv" d="M711 282 v14" marker-end="url(#arv)"/>
+    </svg>
+    <figcaption>Aircall and WhatsApp stay replaceable. Because the lead record lives in stato.tech, swapping either provider later is an adapter change, not a migration.</figcaption>
+  </figure>
+
+  <h3>The bit that matters for a clearance business specifically</h3>
+  <p>Clearance quoting runs on photographs. Someone points a phone at a garage full of stuff, sends four pictures, and wants a price. A generic CRM treats those as attachments and buries them. The lead centre should treat them as the primary content of the lead: photos on the record, on the quote, and on the job sheet the crew sees, with the postcode, access notes and volume estimate pulled out of the conversation and pinned to the top. That is the difference between a shared inbox and something that actually shortens the time from scan to quote.</p>
+
+  <h4>Reusable across stato.tech</h4>
+  <p>Almost none of this is C1-specific. Channel adapters, identity matching on phone numbers, the unified timeline, the pipeline engine, source attribution, SLA alerting — these are the module. C1 is tenant one, and the next trades client is a configuration exercise rather than a rebuild. That's the argument for building it properly now.</p>
+</section>
+
+<section class="reveal">
+  <div class="shead"><span class="snum">06</span><h2>What Coexistence costs you in features</h2></div>
+  <p class="sintro">This route protects the number, which is the priority. It isn't free of trade-offs, and the client should see them before signing rather than discover them in month two.</p>
+  <div class="tblwrap">
+    <table>
+      <thead><tr><th>Constraint</th><th>What it means day to day</th><th>Severity for C1</th></tr></thead>
+      <tbody>
+        <tr><td><b>The Business app must stay installed</b></td><td>Someone has to open WhatsApp Business on that handset at least once every 13 days, and it must not be uninstalled, or the connection drops. Needs to be a named person's job.</td><td><span class="pill med">Manage it</span></td></tr>
+        <tr><td><b>Set the profile photo first</b></td><td>Profile picture can't be changed after onboarding. Get the logo and business details right in the app beforehand.</td><td><span class="pill lo">One-off</span></td></tr>
+        <tr><td><b>No green verified badge</b></td><td>Official Business Account status isn't available on this route. Meta Verified for Business is the alternative if it matters commercially.</td><td><span class="pill lo">Low</span></td></tr>
+        <tr><td><b>WhatsApp calling API unsupported</b></td><td>You can't take WhatsApp voice calls through the API on a coexistence number. Voice stays on <span class="num">0330 133 9144</span>, which is where you want it anyway — that's the recorded line.</td><td><span class="pill lo">Low</span></td></tr>
+        <tr><td><b>Linked devices get reset</b></td><td>Any WhatsApp Web or desktop companions unlink at onboarding. Only supported ones can be re-linked; WhatsApp for Windows isn't one of them.</td><td><span class="pill med">Tell the team</span></td></tr>
+        <tr><td><b>Eligibility is Meta's call</b></td><td>Requires the WhatsApp Business app at version 2.24.17 or later, an account with genuine trading history, and a supported country. C1 qualifies on history; we confirm the rest before committing.</td><td><span class="pill med">Verify first</span></td></tr>
+        <tr><td><b>Group chats don't sync</b></td><td>Groups keep working in the app but won't appear in the lead centre. Not how clearance enquiries arrive, so no practical impact.</td><td><span class="pill lo">None</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="reveal">
+  <div class="shead"><span class="snum">07</span><h2>Sequence</h2></div>
+  <p class="sintro">Deliberately ordered so the risky, irreversible steps happen last and the visible wins happen first.</p>
+
+  <div class="phase">
+    <div class="pwhen">Days 1–3<span>Phase 0</span></div>
+    <div class="pbody">
+      <h3>Establish the facts</h3>
+      <ul>
+        <li>Scan the van QR and record exactly where it goes.</li>
+        <li>Pull the Lycamobile account details — registered name and address must match the port paperwork exactly, since mismatches are the main cause of rejection.</li>
+        <li>Confirm who holds <span class="num">0330 133 9144</span> and whether it's the main billing number on that account.</li>
+        <li>Check the WhatsApp Business app version, fix the profile photo and details, back up the chat history.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="phase">
+    <div class="pwhen">Week 1<span>Phase 1</span></div>
+    <div class="pbody">
+      <h3>Calls recorded and logged</h3>
+      <p>Aircall account, a temporary number, IVR and routing set up, and a divert from the office line onto it. Recording, voicemail and call logging go live immediately — no waiting on any port. Aircall webhooks wired into a staging lead centre so calls start creating records.</p>
+    </div>
+  </div>
+
+  <div class="phase">
+    <div class="pwhen">Weeks 1–2<span>Phase 2</span></div>
+    <div class="pbody">
+      <h3>WhatsApp into the lead centre</h3>
+      <p>Coexistence onboarding on <span class="num">07440 517077</span> through a BSP, then Cloud API webhooks into stato.tech. Chat history preserved, handset still works, QR code untouched. <strong>This is the phase that stops leads being lost</strong>, and it's the fastest one.</p>
+    </div>
+  </div>
+
+  <div class="phase">
+    <div class="pwhen">Weeks 2–6<span>Phase 3</span></div>
+    <div class="pbody">
+      <h3>Port the office line</h3>
+      <p>Submit the port for <span class="num">0330 133 9144</span> with the LOA, a recent invoice and carrier details. The divert stays in place throughout, so the cutover is invisible to callers. Nothing is cancelled with the existing provider until the port completes.</p>
+    </div>
+  </div>
+
+  <div class="phase">
+    <div class="pwhen">Weeks 3–6<span>Phase 4</span></div>
+    <div class="pbody">
+      <h3>The rest of the funnel, and the actual product</h3>
+      <p>Email, website form and Meta lead ads into the same record. Then the parts that earn their keep: pipeline stages built around how clearance jobs really run, photo-led quoting, response-time alerts, and source attribution so you finally know whether the van, Google or Meta is paying for itself.</p>
+    </div>
+  </div>
+
+  <div class="phase">
+    <div class="pwhen">Later<span>Phase 5</span></div>
+    <div class="pbody">
+      <h3>Automation, once the data is clean</h3>
+      <p>Call summaries, automatic extraction of postcode, access and volume from a conversation, first-response auto-replies out of hours. Worth doing after the foundation is live, not before — automation on top of messy data just produces confident nonsense faster.</p>
+    </div>
+  </div>
+</section>
+
+<section class="reveal">
+  <div class="shead"><span class="snum">08</span><h2>Running costs</h2></div>
+  <p class="sintro">Indicative, to be confirmed at quote. Aircall publishes in dollars and prices per licence with a three-licence minimum, which is the figure that surprises people.</p>
+
+  <div class="money">
+    <div class="mcard">
+      <h3>Aircall</h3>
+      <p class="mnote">Three-licence minimum. Annual billing is roughly 25% cheaper than monthly.</p>
+      <p class="mfig">~$90–150<span style="font-family:var(--sans);font-size:14px;font-weight:400;color:var(--steel)">/month</span></p>
+      <p class="mnote">3 licences on Essentials to Professional, annual.</p>
+      <ul class="mlist">
+        <li><span>Essentials, per licence, annual</span><span>$30</span></li>
+        <li><span>Professional, per licence, annual</span><span>$50</span></li>
+        <li><span>Extra numbers</span><span>~$6</span></li>
+        <li><span>AI Assist (included on Professional)</span><span>$9</span></li>
+        <li><span>Porting</span><span>Free</span></li>
+      </ul>
+    </div>
+    <div class="mcard">
+      <h3>WhatsApp</h3>
+      <p class="mnote">No licence fee to Meta. You pay per message, plus whatever your BSP charges.</p>
+      <p class="mfig">~£40–70<span style="font-family:var(--sans);font-size:14px;font-weight:400;color:var(--steel)">/month</span></p>
+      <p class="mnote">At roughly 400 enquiries a month from October onwards.</p>
+      <ul class="mlist">
+        <li><span>Marketing message, UK</span><span>~£0.038</span></li>
+        <li><span>Utility / service, UK</span><span>~£0.016</span></li>
+        <li><span>Replies from the handset</span><span>Free</span></li>
+        <li><span>Click-to-WhatsApp ad window</span><span>72h free</span></li>
+        <li><span>BSP platform fee</span><span>£0–50</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="call warn">
+    <span class="ctag">Time-sensitive · six weeks away</span>
+    <p>Meta is changing this on <strong>1 October 2026</strong>. Free-form replies inside the 24-hour customer service window have been free since November 2024 — from October they're charged per message at the same rate as utility templates, and in-window utility templates lose their free status too. Exact UK rates are due from Meta by 1 September.</p>
+    <p>Two consequences worth designing around. First, budget for it: at 400 enquiries and eight outbound replies each, that's roughly £50 a month rather than nothing. Second, <strong>messages sent from the WhatsApp Business app itself stay free</strong> — which is another quiet argument for Coexistence over a full API migration, because you keep a free channel for long back-and-forth threads while the API handles logging, automation and reporting. Conversations that start from a click-to-WhatsApp ad also keep a free 72-hour window, which makes ad-driven enquiries meaningfully cheaper than QR scans. That's a media-planning insight you can act on.</p>
+  </div>
+</section>
+
+<section class="reveal">
+  <div class="shead"><span class="snum">09</span><h2>Risk ledger</h2></div>
+  <div class="tblwrap">
+    <table>
+      <thead><tr><th>Risk</th><th>Exposure</th><th>How we hold it down</th></tr></thead>
+      <tbody>
+        <tr><td><b>WhatsApp number becomes unverifiable</b></td><td><span class="pill hi">Severe</span></td><td>Don't port it. Keep it on a SIM, use Coexistence, set a two-step verification PIN and store it where more than one person can reach it.</td></tr>
+        <tr><td><b>QR code points at a dead number</b></td><td><span class="pill hi">Severe</span></td><td>Number never changes. Next print run goes through a redirect you control.</td></tr>
+        <tr><td><b>Port rejected on paperwork</b></td><td><span class="pill med">Moderate</span></td><td>Verify account holder, address and main billing number before submitting. Request a Customer Service Record from the losing provider first.</td></tr>
+        <tr><td><b>Numbers lost by cancelling too early</b></td><td><span class="pill hi">Severe</span></td><td>Nothing is cancelled with any provider until the port has completed and been confirmed. This is the one rule with no exceptions.</td></tr>
+        <tr><td><b>Coexistence link silently drops</b></td><td><span class="pill med">Moderate</span></td><td>The 13-day app-open requirement becomes an owned task, plus a monitor in the lead centre that alerts if no WhatsApp events arrive for 48 hours.</td></tr>
+        <tr><td><b>Meta raises prices again</b></td><td><span class="pill med">Moderate</span></td><td>Keep the Business app as a free reply path, favour ad-driven entry points, and don't build workflows that depend on high-volume outbound templates.</td></tr>
+        <tr><td><b>Recording without proper notice</b></td><td><span class="pill med">Moderate</span></td><td>Announcement on the IVR, a lawful basis recorded, a stated retention period, and no recordings kept longer than that period.</td></tr>
+        <tr><td><b>Provider lock-in</b></td><td><span class="pill lo">Low</span></td><td>Lead records live in stato.tech, not in Aircall or the BSP. Either can be swapped by rewriting one adapter.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="reveal">
+  <div class="shead"><span class="snum">10</span><h2>Compliance, briefly</h2></div>
+  <p>Not legal advice, and worth a short conversation with whoever handles C1's data protection — but these are the four things this build touches.</p>
+  <ul>
+    <li><strong>Call recording.</strong> Callers need to be told at the start of the call, there needs to be a lawful basis for it, and a retention period that's actually enforced. Aircall keeps recordings for a year on the entry plan and indefinitely higher up — indefinitely is a liability, not a feature, so set a deletion rule.</li>
+    <li><strong>WhatsApp marketing.</strong> Replying to an enquiry is fine. Sending marketing templates to a list needs opt-in, and Meta polices this through message quality ratings independently of UK law.</li>
+    <li><strong>Photos of people's homes.</strong> Interior photographs of a property, tied to an address and a name, are personal data with a slightly awkward flavour. Retention limits, sensible access controls, and don't keep them past the invoice.</li>
+    <li><strong>Chat history.</strong> Migrating history into the lead centre widens who can see past conversations. Worth a line in the privacy policy and a role-based access model rather than everyone seeing everything.</li>
+  </ul>
+</section>
+
+<section class="reveal">
+  <div class="shead"><span class="snum">11</span><h2>What we need from you to start</h2></div>
+  <ol class="asks">
+    <li><b>A scan of the van's QR code</b><em>A screenshot of where it lands. This is the one blocker to a firm recommendation.</em></li>
+    <li><b>The Lycamobile account details</b><em>Registered name, address and whether the account is in the company's name or a director's. Determines whether a move off Lycamobile is straightforward.</em></li>
+    <li><b>Who currently supplies 0330 133 9144</b><em>And a recent invoice. 0330 numbers often sit with a call-handling provider on a contract that has to be unwound first.</em></li>
+    <li><b>How many people answer enquiries</b><em>Aircall bills per licence with a minimum of three, so headcount changes the number materially.</em></li>
+    <li><b>Whether the crew should keep answering WhatsApp on the handset</b><em>They can, and after October it's the cheaper path. But it changes how we design ownership of a conversation.</em></li>
+    <li><b>How long recordings and photos should be kept</b><em>Your call, and it needs to be a decision rather than a default.</em></li>
+  </ol>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <b>stato.tech</b>
+      <p style="margin:6px 0 0">Feasibility assessment · 17 August 2026 · valid 30 days</p>
+    </div>
+    <p class="srcs">
+      Verified against: Aircall porting requirements by country (UK) &amp; SMS availability docs · Meta / WhatsApp Business Platform migration and Coexistence documentation · 360dialog Coexistence reference · Meta per-message pricing and the 1 Oct 2026 service-message change · c1clearance.co.uk live markup.
+      Provider pricing and policies change without notice; confirm at point of purchase.
+    </p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var els=document.querySelectorAll('.reveal');
+  if(!('IntersectionObserver' in window)||window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    els.forEach(function(e){e.classList.add('in')});return;
+  }
+  var io=new IntersectionObserver(function(rows){
+    rows.forEach(function(r){if(r.isIntersecting){r.target.classList.add('in');io.unobserve(r.target)}})
+  },{rootMargin:'0px 0px -8% 0px'});
+  els.forEach(function(e){io.observe(e)});
+})();
+</script>
+</body>
+</html>

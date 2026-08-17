@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#080C12">
+<title>One Lead Centre for C1 Clearance — project overview · stato.tech</title>
+<meta name="description" content="Every enquiry from WhatsApp, the office line, email, the website and the van QR code landing in one place. Project overview and live demonstration.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,600;0,700;0,800;1,800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@0,400;0,500;0,600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#080C12;--ink2:#0E141D;--ink3:#161F2B;--ink4:#222C3A;
+  --volt:#1477E6;--volt-d:#0E5DB8;--volt-lo:#E7F1FD;--glow:#63C9FF;
+  --wa:#25A566;--paper:#F4F7FA;--white:#fff;--hair:#E2E8EF;--hair2:#EDF1F6;
+  --steel:#5D6E82;--steel2:#8A9AAD;
+  --amber:#B4720A;--amber-lo:#FDF3E2;--red:#C0392B;--red-lo:#FCEDEB;--go:#1D8A5C;--go-lo:#E7F5EE;
+  --mono:"IBM Plex Mono",ui-monospace,monospace;
+  --sans:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --disp:"Archivo",Arial,sans-serif;
+  --sb:env(safe-area-inset-bottom,0px);--st:env(safe-area-inset-top,0px);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:16.5px;line-height:1.62;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+button,a{font:inherit}
+button{border:0;background:none;cursor:pointer;color:inherit}
+:focus-visible{outline:2px solid var(--glow);outline-offset:3px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+.narrow{max-width:820px}
+
+/* ---------- nav ---------- */
+.nav{
+  position:sticky;top:0;z-index:60;background:rgba(8,12,18,.92);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--ink4);padding-top:var(--st);
+}
+.nav .wrap{display:flex;align-items:center;gap:20px;height:60px}
+.logo{font-family:var(--disp);font-weight:800;font-style:italic;text-transform:uppercase;font-size:17px;color:#fff;letter-spacing:-.01em;white-space:nowrap;text-decoration:none}
+.logo span{color:var(--glow)}
+.nlinks{display:flex;gap:22px;margin-left:auto}
+.nlinks a{color:#9FB3C6;text-decoration:none;font-size:13.5px}
+.nlinks a:hover{color:#fff}
+.livepill{
+  display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11px;color:var(--glow);
+  border:1px solid rgba(99,201,255,.3);background:rgba(99,201,255,.08);padding:6px 11px;border-radius:20px;
+  letter-spacing:.08em;text-transform:uppercase;white-space:nowrap;
+}
+.pulse{width:7px;height:7px;border-radius:50%;background:#3FDE8F;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(63,222,143,.5)}50%{opacity:.7;box-shadow:0 0 0 5px rgba(63,222,143,0)}}
+
+/* ---------- hero ---------- */
+.hero{background:var(--ink);color:#fff;position:relative;overflow:hidden;padding:64px 0 0}
+.hero:before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(112deg,transparent 52%,rgba(20,119,230,.38) 68%,transparent 70%),
+             linear-gradient(112deg,transparent 60%,rgba(99,201,255,.22) 76%,transparent 78%),
+             linear-gradient(112deg,transparent 70%,rgba(20,119,230,.16) 88%,transparent 90%);
+}
+.hero .wrap{position:relative;z-index:1}
+.eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.17em;text-transform:uppercase;color:var(--glow);margin:0 0 18px}
+h1{font-family:var(--disp);font-weight:800;font-style:italic;text-transform:uppercase;font-size:clamp(33px,6.6vw,64px);line-height:.98;letter-spacing:-.026em;margin:0 0 20px}
+h1 em{font-style:italic;color:var(--glow)}
+.lede{font-size:clamp(16.5px,2.1vw,19.5px);color:#BCCAD9;max-width:58ch;margin:0 0 30px}
+.herobtns{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:44px}
+.cta{
+  display:inline-flex;align-items:center;gap:9px;background:var(--volt);color:#fff;text-decoration:none;
+  padding:14px 22px;border-radius:7px;font-weight:500;font-size:15px;
+}
+.cta:hover{background:var(--volt-d)}
+.cta.ghost{background:none;border:1px solid rgba(255,255,255,.22);color:#fff}
+.cta.ghost:hover{border-color:var(--glow);background:rgba(99,201,255,.07)}
+
+/* live console in hero */
+.console{
+  background:var(--ink2);border:1px solid var(--ink4);border-radius:12px 12px 0 0;
+  overflow:hidden;box-shadow:0 -20px 60px rgba(0,0,0,.4);
+}
+.cbar{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--ink4);background:var(--ink3)}
+.cbar .dots{display:flex;gap:5px}
+.cbar .dots i{width:9px;height:9px;border-radius:50%;background:#39434F;display:block}
+.cbar h2{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--steel2);margin:0;font-weight:400}
+.clock{margin-left:auto;font-family:var(--mono);font-size:11.5px;color:var(--glow);letter-spacing:.06em}
+.cstats{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--ink4)}
+.cstat{padding:16px;border-right:1px solid var(--ink4)}
+.cstat:last-child{border-right:0}
+.cstat .k{font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--steel2);margin:0 0 6px}
+.cstat .v{font-family:var(--disp);font-weight:800;font-size:clamp(19px,3vw,27px);letter-spacing:-.02em;margin:0;transition:color .3s}
+.cstat .v.flash{color:var(--glow)}
+.cstat .s{font-family:var(--mono);font-size:10px;color:var(--steel);margin:3px 0 0}
+.feed{padding:8px 0;max-height:330px;overflow-y:auto;scrollbar-width:thin}
+.fitem{
+  display:flex;gap:12px;padding:12px 16px;border-bottom:1px solid rgba(34,44,58,.6);align-items:flex-start;
+}
+.fitem.new{animation:slidein .45s cubic-bezier(.2,.9,.3,1)}
+@keyframes slidein{from{opacity:0;transform:translateY(-10px);background:rgba(20,119,230,.14)}to{opacity:1;transform:none}}
+.fico{width:28px;height:28px;border-radius:7px;display:grid;place-items:center;flex:0 0 auto;font-family:var(--mono);font-size:11px;font-weight:600;color:#fff}
+.fbody{min-width:0;flex:1}
+.fbody p{margin:0;font-size:13.5px;color:#D3DEE9;line-height:1.5}
+.fbody p b{color:#fff;font-weight:600}
+.fmeta{font-family:var(--mono);font-size:10px;color:var(--steel);letter-spacing:.05em;margin-top:4px!important;display:flex;gap:8px;flex-wrap:wrap}
+.fmeta span{white-space:nowrap}
+.ftime{font-family:var(--mono);font-size:10.5px;color:var(--steel2);flex:0 0 auto;padding-top:2px}
+
+/* ---------- sections ---------- */
+section{padding:72px 0}
+.sec-tag{font-family:var(--mono);font-size:11px;letter-spacing:.17em;text-transform:uppercase;color:var(--volt);margin:0 0 14px}
+h2.big{font-family:var(--disp);font-weight:800;text-transform:uppercase;font-size:clamp(25px,4.2vw,40px);line-height:1.05;letter-spacing:-.024em;margin:0 0 18px}
+.sub{color:var(--steel);font-size:17px;max-width:62ch;margin:0 0 8px}
+h3{font-family:var(--disp);font-weight:700;font-size:19px;letter-spacing:-.01em;margin:0 0 8px}
+p{margin:14px 0}
+.dark{background:var(--ink);color:#fff}
+.dark .sub{color:#A9BACB}
+.dark h2.big{color:#fff}
+.dark .sec-tag{color:var(--glow)}
+
+/* problem: two columns */
+.split{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:34px}
+.card{background:var(--white);border:1px solid var(--hair);border-radius:10px;padding:24px}
+.card.bad{border-color:#F0C2BB;background:var(--red-lo)}
+.card.good{border-color:#B9DFCB;background:var(--go-lo)}
+.card .lab{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;margin:0 0 12px;font-weight:600}
+.card.bad .lab{color:var(--red)}.card.good .lab{color:var(--go)}
+.card ul{margin:12px 0 0;padding-left:20px}
+.card li{margin:8px 0;font-size:15.5px}
+.card.bad li::marker{color:var(--red)}.card.good li::marker{color:var(--go)}
+
+/* channels flow */
+.flow{display:grid;grid-template-columns:1fr 240px;gap:26px;align-items:center;margin-top:36px}
+.chans{display:grid;gap:10px}
+.chn{
+  display:flex;align-items:center;gap:13px;background:var(--ink2);border:1px solid var(--ink4);
+  border-radius:9px;padding:14px 16px;position:relative;transition:border-color .3s,transform .3s;
+}
+.chn.hot{border-color:var(--glow);transform:translateX(6px)}
+.chn .ci{width:32px;height:32px;border-radius:8px;display:grid;place-items:center;font-family:var(--mono);font-size:12px;font-weight:600;color:#fff;flex:0 0 auto}
+.chn b{display:block;font-size:14.5px;font-weight:600;color:#fff}
+.chn small{font-family:var(--mono);font-size:10.5px;color:var(--steel2)}
+.chn .lit{margin-left:auto;width:8px;height:8px;border-radius:50%;background:var(--ink4);flex:0 0 auto;transition:background .3s}
+.chn.hot .lit{background:var(--glow);box-shadow:0 0 10px var(--glow)}
+.hubbox{
+  background:linear-gradient(160deg,var(--volt),#0B4F9E);border-radius:12px;padding:26px 22px;text-align:center;
+  box-shadow:0 16px 50px rgba(20,119,230,.28);
+}
+.hubbox .hlab{font-family:var(--mono);font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.75);margin:0 0 8px}
+.hubbox h3{font-family:var(--disp);font-weight:800;font-size:21px;color:#fff;text-transform:uppercase;letter-spacing:-.01em;margin:0 0 10px}
+.hubbox p{margin:0;font-size:13px;color:rgba(255,255,255,.85);line-height:1.5}
+.hubcount{font-family:var(--disp);font-weight:800;font-size:38px;color:#fff;letter-spacing:-.03em;margin:12px 0 2px;line-height:1}
+.hubbox .hsub{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.7)}
+
+/* response clock */
+.clockrow{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:34px}
+.cbox{background:var(--white);border:1px solid var(--hair);border-radius:10px;padding:22px;text-align:center}
+.cbox .cnum{font-family:var(--disp);font-weight:800;font-size:clamp(26px,4.6vw,38px);letter-spacing:-.03em;margin:6px 0 4px;line-height:1}
+.cbox.now .cnum{color:var(--red)}
+.cbox.then .cnum{color:var(--go)}
+.cbox .clab{font-family:var(--mono);font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--steel2);margin:0}
+.cbox p{font-size:13.5px;color:var(--steel);margin:8px 0 0}
+
+/* timeline */
+.tl{margin-top:34px;border-left:2px solid var(--hair);padding-left:0;list-style:none}
+.tl li{position:relative;padding:0 0 26px 28px}
+.tl li:last-child{padding-bottom:0}
+.tl li:before{content:"";position:absolute;left:-7px;top:6px;width:12px;height:12px;border-radius:50%;background:var(--white);border:2px solid var(--volt)}
+.tl li.done:before{background:var(--volt)}
+.tl .when{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--volt);margin:0 0 4px}
+.tl p{margin:6px 0 0;font-size:15.5px;color:var(--steel)}
+
+/* number strip */
+.strip{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:32px}
+.nbox{background:var(--ink2);border:1px solid var(--ink4);border-radius:10px;padding:20px}
+.nbox .nk{font-family:var(--mono);font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--steel2);margin:0 0 8px}
+.nbox .nv{font-family:var(--mono);font-weight:600;font-size:16px;color:#fff;margin:0 0 4px;letter-spacing:-.02em}
+.nbox .nd{font-size:13.5px;color:#9FB3C6;margin:8px 0 0;line-height:1.5}
+.nbox .flag{display:inline-block;font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;padding:3px 7px;border-radius:3px;margin-top:12px}
+.flag.keep{background:rgba(29,138,92,.2);color:#6FDCA8}
+.flag.port{background:rgba(20,119,230,.2);color:var(--glow)}
+.flag.link{background:rgba(180,114,10,.24);color:#F5C377}
+
+/* qr callout */
+.qrbox{
+  margin-top:34px;background:var(--white);border:1px solid var(--hair);border-left:4px solid var(--amber);
+  border-radius:0 10px 10px 0;padding:26px;
+}
+.qrbox .lab{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);font-weight:600;margin:0 0 10px}
+.code{
+  font-family:var(--mono);font-size:13.5px;background:var(--ink);color:#9FB3C6;padding:13px 15px;
+  border-radius:6px;margin:16px 0 0;word-break:break-all;line-height:1.7;
+}
+.code b{color:var(--glow);background:rgba(99,201,255,.15);padding:1px 4px;border-radius:3px}
+
+/* money */
+.mgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:32px}
+.mrow{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-top:1px solid var(--hair);font-size:14px}
+.mrow:first-of-type{border-top:0}
+.mrow b{font-family:var(--mono);font-weight:600;white-space:nowrap}
+.mtot{font-family:var(--disp);font-weight:800;font-size:28px;letter-spacing:-.03em;margin:4px 0 2px}
+
+/* cta band */
+.band{background:linear-gradient(150deg,var(--volt),#0A4488)}
+.band .wrap{padding-top:56px;padding-bottom:56px;text-align:center}
+.band h2{font-family:var(--disp);font-weight:800;font-style:italic;text-transform:uppercase;font-size:clamp(25px,4.4vw,40px);color:#fff;letter-spacing:-.025em;line-height:1.02;margin:0 0 16px}
+.band p{color:rgba(255,255,255,.88);max-width:52ch;margin:0 auto 26px;font-size:17px}
+.band .cta{background:#fff;color:var(--volt)}
+.band .cta:hover{background:var(--ink);color:#fff}
+.asks{list-style:none;padding:0;margin:32px auto 0;max-width:620px;text-align:left;counter-reset:a}
+.asks li{counter-increment:a;position:relative;padding:14px 0 14px 42px;border-top:1px solid rgba(255,255,255,.22);color:#fff;font-size:15.5px}
+.asks li:before{content:counter(a,decimal-leading-zero);position:absolute;left:0;top:14px;font-family:var(--mono);font-size:12px;color:rgba(255,255,255,.7)}
+
+footer{background:var(--ink);color:var(--steel2);padding:36px 0 calc(36px + var(--sb));font-size:13px;border-top:1px solid var(--ink4)}
+footer .wrap{display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap;align-items:flex-end}
+footer b{font-family:var(--disp);font-weight:800;font-style:italic;text-transform:uppercase;color:#fff;font-size:16px}
+.note{font-family:var(--mono);font-size:10.5px;line-height:1.9;color:var(--steel);max-width:46ch}
+
+.reveal{opacity:0;transform:translateY(16px);transition:opacity .55s ease,transform .55s ease}
+.reveal.in{opacity:1;transform:none}
+
+@media (max-width:900px){
+  .flow{grid-template-columns:1fr}
+  .cstats{grid-template-columns:repeat(2,1fr)}
+  .cstat:nth-child(2){border-right:0}
+  .cstat:nth-child(1),.cstat:nth-child(2){border-bottom:1px solid var(--ink4)}
+  .mgrid,.strip,.clockrow{grid-template-columns:1fr}
+  .split{grid-template-columns:1fr}
+}
+@media (max-width:700px){
+  body{font-size:16px}
+  .nlinks{display:none}
+  .nav .wrap{height:56px;gap:12px}
+  .livepill{margin-left:auto}
+  .hero{padding-top:42px}
+  section{padding:52px 0}
+  .wrap{padding:0 18px}
+  .feed{max-height:300px}
+  .cstat{padding:13px}
+  .herobtns{gap:10px}
+  .cta{padding:13px 18px;font-size:14.5px;flex:1;justify-content:center}
+  .card,.qrbox,.nbox{padding:20px}
+  .code{font-size:12px}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *{animation:none!important;transition:none!important}
+  .reveal{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap">
+    <a class="logo" href="#top">C1 <span>Lead Centre</span></a>
+    <div class="nlinks">
+      <a href="#problem">The problem</a>
+      <a href="#how">How it works</a>
+      <a href="#numbers">The numbers</a>
+      <a href="#plan">Plan</a>
+      <a href="#cost">Cost</a>
+    </div>
+    <span class="livepill"><i class="pulse"></i>Live demo</span>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="wrap">
+    <p class="eyebrow">stato.tech · new module · C1 Clearance</p>
+    <h1>Every enquiry<br>in <em>one place</em></h1>
+    <p class="lede">WhatsApp, the office line, email, the website form and the QR code on the van — all landing on one record, with the calls recorded and nothing lost between a phone in a van and a laptop in Stockport.</p>
+    <div class="herobtns">
+      <a class="cta" href="#how">See how it works</a>
+      <a class="cta ghost" href="#plan">Six-week plan</a>
+    </div>
+
+    <div class="console" role="region" aria-label="Live demonstration of incoming enquiries">
+      <div class="cbar">
+        <span class="dots"><i></i><i></i><i></i></span>
+        <h2>Lead centre · live feed</h2>
+        <span class="clock" id="clock">--:--:--</span>
+      </div>
+      <div class="cstats">
+        <div class="cstat"><p class="k">Enquiries today</p><p class="v" id="s1">0</p><p class="s">across 5 channels</p></div>
+        <div class="cstat"><p class="k">Avg first reply</p><p class="v" id="s2">0m</p><p class="s">was 3h 40m</p></div>
+        <div class="cstat"><p class="k">Quoted today</p><p class="v" id="s3">£0</p><p class="s">priced from photos</p></div>
+        <div class="cstat"><p class="k">Nothing missed</p><p class="v" id="s4">0</p><p class="s">unanswered right now</p></div>
+      </div>
+      <div class="feed" id="feed"></div>
+    </div>
+  </div>
+</header>
+
+<section id="problem">
+  <div class="wrap narrow reveal">
+    <p class="sec-tag">Where things stand</p>
+    <h2 class="big">Two numbers, two places, no shared memory</h2>
+    <p class="sub">Leads arrive on a WhatsApp number sitting in a van on a Lycamobile SIM, and on an office line. Neither knows about the other, and neither leaves a record anyone else can pick up.</p>
+    <div class="split">
+      <div class="card bad">
+        <p class="lab">Today</p>
+        <h3>Whoever holds the phone holds the lead</h3>
+        <ul>
+          <li>Photos of a garage sit on one handset. Nobody else can quote from them.</li>
+          <li>A missed call at 07:14 leaves no trace and no follow-up.</li>
+          <li>No way to tell whether the van, Google or Meta produced a job.</li>
+          <li>If the phone breaks, the enquiry history goes with it.</li>
+        </ul>
+      </div>
+      <div class="card good">
+        <p class="lab">After</p>
+        <h3>The business holds the lead</h3>
+        <ul>
+          <li>Photos, calls and emails on one record, priced by anyone on the team.</li>
+          <li>Every missed call becomes a task with a timer on it.</li>
+          <li>Cost per lead by source, so ad spend has an answer.</li>
+          <li>Nothing lives on a handset. The number never has to change.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark" id="how">
+  <div class="wrap reveal">
+    <p class="sec-tag">How it works</p>
+    <h2 class="big">Five ways in. One record.</h2>
+    <p class="sub">Watch the channels light up as enquiries arrive. Aircall handles the calls, WhatsApp stays on its existing number, and stato.tech owns the customer history — so either provider can be swapped later without a migration.</p>
+    <div class="flow">
+      <div class="chans" id="chans">
+        <div class="chn" data-c="wa"><span class="ci" style="background:var(--wa)">W</span><span><b>WhatsApp · 07440 517077</b><small>Van QR, website chat, Meta ads</small></span><i class="lit"></i></div>
+        <div class="chn" data-c="ph"><span class="ci" style="background:var(--volt-d)">☎</span><span><b>Calls · 0330 133 9144</b><small>Recorded, transcribed, routed</small></span><i class="lit"></i></div>
+        <div class="chn" data-c="em"><span class="ci" style="background:#6B4CA8">@</span><span><b>hello@c1clearance.co.uk</b><small>Agents, solicitors, commercial</small></span><i class="lit"></i></div>
+        <div class="chn" data-c="fm"><span class="ci" style="background:var(--amber)">▤</span><span><b>Website quote form</b><small>Photos attached on submit</small></span><i class="lit"></i></div>
+        <div class="chn" data-c="ad"><span class="ci" style="background:#1877F2">f</span><span><b>Meta &amp; Google ads</b><small>Click-to-WhatsApp, lead forms</small></span><i class="lit"></i></div>
+      </div>
+      <div class="hubbox">
+        <p class="hlab">stato.tech</p>
+        <h3>Lead Centre</h3>
+        <p class="hubcount" id="hubc">0</p>
+        <p class="hsub">records created</p>
+        <p style="margin-top:14px">Matched on phone number, so a WhatsApp thread and a phone call become one customer, not two.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap narrow reveal">
+    <p class="sec-tag">The number that actually matters</p>
+    <h2 class="big">Speed to first reply</h2>
+    <p class="sub">Clearance work is won by whoever answers first. Someone standing in a garage with a phone will message three companies, and the first sensible price usually takes the job.</p>
+    <div class="clockrow">
+      <div class="cbox now">
+        <p class="clab">Now · unanswered</p>
+        <p class="cnum" id="rc">00:00</p>
+        <p>The oldest enquiry with no reply, counting up in real time.</p>
+      </div>
+      <div class="cbox">
+        <p class="clab">Current average</p>
+        <p class="cnum">3h 40m</p>
+        <p>Whenever someone next picks the phone up and scrolls back.</p>
+      </div>
+      <div class="cbox then">
+        <p class="clab">Target</p>
+        <p class="cnum">&lt; 15m</p>
+        <p>Alert on the record, on any device, before the lead goes cold.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark" id="numbers">
+  <div class="wrap narrow reveal">
+    <p class="sec-tag">The three assets</p>
+    <h2 class="big">One gets ported. One never moves.</h2>
+    <p class="sub">This is the part of the plan we changed. WhatsApp is tied to the number, not the SIM — so the mobile does not need to move, and moving it is the one step that could break it.</p>
+    <div class="strip">
+      <div class="nbox">
+        <p class="nk">WhatsApp · mobile</p>
+        <p class="nv">07440 517077</p>
+        <p class="nd">Stays on a SIM. Joined to the lead centre through Meta's Coexistence route — same number, chat history kept, crew can still answer on the handset.</p>
+        <span class="flag keep">Never ported</span>
+      </div>
+      <div class="nbox">
+        <p class="nk">Office · national</p>
+        <p class="nv">0330 133 9144</p>
+        <p class="nd">Ported into Aircall. Diverted from week one so recording and logging start immediately, rather than waiting on the carriers.</p>
+        <span class="flag port">Port · 4–6 weeks</span>
+      </div>
+      <div class="nbox">
+        <p class="nk">Email</p>
+        <p class="nv">hello@c1clearance.co.uk</p>
+        <p class="nd">Read into the lead centre and matched to the right customer. The mailbox itself is untouched, so nothing changes for whoever uses it today.</p>
+        <span class="flag link">Connected only</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap narrow reveal">
+    <p class="sec-tag">The constraint</p>
+    <h2 class="big">The van has the number printed on it</h2>
+    <p class="sub">Not in figures — inside the QR code. That is why the mobile number is treated as fixed for the life of the vehicle wrap.</p>
+    <div class="qrbox">
+      <p class="lab">Scan for a free quote</p>
+      <h3>Your website's WhatsApp button points here</h3>
+      <p style="color:var(--steel);font-size:15.5px">The QR on the van is a dense code, which means a long URL rather than a short domain — consistent with the same style of link. If it is, changing the number means re-wrapping the van.</p>
+      <p class="code">wa.me/<b>447440517077</b>?text=Hi%20C1%20Clearance…</p>
+      <p style="font-size:15.5px"><strong>Next print run:</strong> point the QR at <span style="font-family:var(--mono);font-size:14px">c1clearance.co.uk/q</span> and redirect. The printed code never changes again, and you finally get scan counts per vehicle.</p>
+    </div>
+  </div>
+</section>
+
+<section class="dark" id="plan">
+  <div class="wrap narrow reveal">
+    <p class="sec-tag">Sequence</p>
+    <h2 class="big">Wins first, irreversible steps last</h2>
+    <p class="sub">Nothing risky happens in week one, and nothing is cancelled with any provider until a port has completed.</p>
+    <ul class="tl">
+      <li class="done"><p class="when">Days 1–3 · Phase 0</p><h3 style="color:#fff">Establish the facts</h3><p>Scan the van QR. Pull the Lycamobile account details. Confirm who holds the 0330 and whether it is the main billing number.</p></li>
+      <li class="done"><p class="when">Week 1 · Phase 1</p><h3 style="color:#fff">Calls recorded and logged</h3><p>Aircall live with a divert from the office line. Recording, routing and voicemail working before any port is submitted.</p></li>
+      <li><p class="when">Weeks 1–2 · Phase 2</p><h3 style="color:#fff">WhatsApp into the lead centre</h3><p>Coexistence onboarding on the mobile. This is the phase that stops leads being lost, and it is the fastest one.</p></li>
+      <li><p class="when">Weeks 2–6 · Phase 3</p><h3 style="color:#fff">Port the office line</h3><p>Submitted with the divert still in place, so the cutover is invisible to callers.</p></li>
+      <li><p class="when">Weeks 3–6 · Phase 4</p><h3 style="color:#fff">Email, forms, ads and the pipeline</h3><p>Photo-led quoting, response-time alerts, and cost per lead by source.</p></li>
+      <li><p class="when">Later · Phase 5</p><h3 style="color:#fff">Automation on clean data</h3><p>Call summaries, postcode and volume extraction, out-of-hours replies.</p></li>
+    </ul>
+  </div>
+</section>
+
+<section id="cost">
+  <div class="wrap narrow reveal">
+    <p class="sec-tag">Running cost</p>
+    <h2 class="big">What it costs to keep on</h2>
+    <p class="sub">Indicative and to be confirmed at quote. Aircall bills per licence with a three-licence minimum, which is the figure that catches people out.</p>
+    <div class="mgrid">
+      <div class="card">
+        <p class="lab" style="color:var(--volt)">Aircall</p>
+        <p class="mtot">~$90–150</p>
+        <p style="font-size:13px;color:var(--steel);margin:0 0 12px">per month · 3 licences</p>
+        <div class="mrow"><span>Essentials / licence</span><b>$30</b></div>
+        <div class="mrow"><span>Professional / licence</span><b>$50</b></div>
+        <div class="mrow"><span>Porting</span><b>Free</b></div>
+      </div>
+      <div class="card">
+        <p class="lab" style="color:var(--wa)">WhatsApp</p>
+        <p class="mtot">~£40–70</p>
+        <p style="font-size:13px;color:var(--steel);margin:0 0 12px">per month · ~400 enquiries</p>
+        <div class="mrow"><span>Utility / service, UK</span><b>~£0.016</b></div>
+        <div class="mrow"><span>From the handset</span><b>Free</b></div>
+        <div class="mrow"><span>Click-to-WhatsApp</span><b>72h free</b></div>
+      </div>
+      <div class="card" style="background:var(--amber-lo);border-color:#EED9B2">
+        <p class="lab" style="color:var(--amber)">Watch this</p>
+        <h3>1 October 2026</h3>
+        <p style="font-size:14.5px;color:#7A5208;margin:8px 0 0">Meta starts charging for replies inside the 24-hour window, which have been free since November 2024. Roughly £50 a month at your volume. Replies sent from the WhatsApp Business app stay free — one more reason to keep it.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap narrow">
+    <h2>Six things and we can start</h2>
+    <p>Phase 0 is mostly information gathering. Once we have these, calls are recorded within the week.</p>
+    <a class="cta" href="mailto:hello@c1clearance.co.uk?subject=Lead%20Centre%20—%20Phase%200">Send the details over</a>
+    <ol class="asks">
+      <li>A scan of the van's QR code — a screenshot of where it lands</li>
+      <li>The Lycamobile account details, and whose name it is in</li>
+      <li>Who supplies 0330 133 9144, plus a recent invoice</li>
+      <li>How many people answer enquiries</li>
+      <li>Whether the crew should keep answering WhatsApp on the handset</li>
+      <li>How long recordings and photos should be kept</li>
+    </ol>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <b>stato.tech</b>
+      <p style="margin:6px 0 0">Project overview · 17 August 2026</p>
+    </div>
+    <p class="note">Figures in the live feed are a demonstration, not live data. Provider pricing and policies change without notice; confirm at point of purchase.</p>
+  </div>
+</footer>
+
+<script>
+/* ---------- live clock ---------- */
+const clockEl=document.getElementById('clock');
+function tick(){clockEl.textContent=new Date().toLocaleTimeString('en-GB',{hour12:false})}
+tick();setInterval(tick,1000);
+
+/* ---------- response timer ---------- */
+const rc=document.getElementById('rc');
+let secs=0;
+setInterval(()=>{
+  secs++;
+  const m=String(Math.floor(secs/60)).padStart(2,'0'),s=String(secs%60).padStart(2,'0');
+  rc.textContent=m+':'+s;
+},1000);
+
+/* ---------- live feed ---------- */
+const EVENTS=[
+  {c:'wa',ico:'W',bg:'var(--wa)',txt:'<b>Margaret Whitfield</b> sent 4 photos — garage and shed clearance',meta:['Van QR · van 1','SK4 3NF','Est. 6 yards'],rec:1},
+  {c:'wa',ico:'W',bg:'var(--wa)',txt:'Quote <b>£340</b> sent on WhatsApp, priced from the photos',meta:['Replied in 5m','Penda'],q:340},
+  {c:'ph',ico:'☎',bg:'var(--volt-d)',txt:'<b>Inbound call</b> 6m 12s — probate property in Sale, wants a written quote',meta:['Recorded','Summary ready','M33 2QL'],rec:1},
+  {c:'ad',ico:'f',bg:'#1877F2',txt:'<b>Aisha Rahman</b> from the Meta ad — flat clearance, needs it by Friday',meta:['Click-to-WhatsApp','Free 72h window','£8.40 CPL'],rec:1,unans:1},
+  {c:'em',ico:'@',bg:'#6B4CA8',txt:'<b>Covent Garden Stockport</b> — moving the weekly collection to Wednesdays',meta:['Existing account','14th job']},
+  {c:'ph',ico:'☎',bg:'var(--volt-d)',txt:'<b>Missed call</b> 07:14, no voicemail — flagged for callback',meta:['Out of hours','Nobody assigned'],rec:1,unans:1},
+  {c:'fm',ico:'▤',bg:'var(--amber)',txt:'<b>Tom Fielding</b> submitted the quote form — garden waste and old decking',meta:['SK7 2DL','1 photo','Organic'],rec:1},
+  {c:'wa',ico:'W',bg:'var(--wa)',txt:'Quote <b>£260</b> sent, both Saturdays offered',meta:['Replied in 12m','Penda'],q:260},
+  {c:'ph',ico:'☎',bg:'var(--volt-d)',txt:'<b>Callback made</b> — booked Tuesday 9am, added to the crew sheet',meta:['Stage · Booked','Chest freezer noted'],clear:1},
+  {c:'wa',ico:'W',bg:'var(--wa)',txt:'<b>New enquiry</b> from the van QR — office clearance in Heaton Lane',meta:['Van QR · van 1','Commercial'],rec:1,unans:1},
+  {c:'em',ico:'@',bg:'#6B4CA8',txt:'Written quote <b>£1,180</b> emailed for the solicitor file',meta:['Attachment sent','Repeat potential'],q:1180},
+  {c:'wa',ico:'W',bg:'var(--wa)',txt:'<b>Aisha Rahman</b> replied — happy with £180, booking Thursday',meta:['Stage · Booked','3 yards'],clear:1}
+];
+
+const feed=document.getElementById('feed');
+const S={leads:0,replies:[],quoted:0,unans:0,records:0};
+const el=id=>document.getElementById(id);
+let i=0;
+
+function flash(node){node.classList.add('flash');setTimeout(()=>node.classList.remove('flash'),700)}
+function stats(){
+  el('s1').textContent=S.leads;
+  const avg=S.replies.length?Math.round(S.replies.reduce((a,b)=>a+b,0)/S.replies.length):0;
+  el('s2').textContent=avg?avg+'m':'—';
+  el('s3').textContent='£'+S.quoted.toLocaleString('en-GB');
+  el('s4').textContent=S.unans;
+  el('hubc').textContent=S.records;
+  [el('s1'),el('s2'),el('s3'),el('s4')].forEach(flash);
+}
+function lightChannel(c){
+  const n=document.querySelector('.chn[data-c="'+c+'"]');
+  if(!n)return;
+  n.classList.add('hot');setTimeout(()=>n.classList.remove('hot'),1600);
+}
+
+function push(e){
+  const t=new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+  const row=document.createElement('div');
+  row.className='fitem new';
+  row.innerHTML=`<span class="fico" style="background:${e.bg}">${e.ico}</span>
+    <span class="fbody"><p>${e.txt}</p><p class="fmeta">${(e.meta||[]).map(m=>'<span>'+m+'</span>').join('')}</p></span>
+    <span class="ftime">${t}</span>`;
+  feed.prepend(row);
+  while(feed.children.length>7)feed.lastChild.remove();
+  setTimeout(()=>row.classList.remove('new'),500);
+
+  if(e.rec){S.leads++;S.records++}
+  if(e.q){S.quoted+=e.q;S.replies.push(5+Math.floor(Math.random()*9))}
+  if(e.unans)S.unans++;
+  if(e.clear&&S.unans>0)S.unans--;
+  if(e.clear)secs=0;
+  stats();lightChannel(e.c);
+}
+
+/* seed a few so the feed is never empty, then run live */
+[0,1,2].forEach(n=>push(EVENTS[n]));
+i=3;
+function loop(){
+  push(EVENTS[i%EVENTS.length]);i++;
+  setTimeout(loop,3200+Math.random()*2600);
+}
+if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+  setTimeout(loop,2600);
+}else{
+  EVENTS.slice(3,7).forEach(e=>push(e));
+}
+
+/* ---------- reveal ---------- */
+const rv=document.querySelectorAll('.reveal');
+if('IntersectionObserver' in window&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+  const io=new IntersectionObserver(rows=>{
+    rows.forEach(r=>{if(r.isIntersecting){r.target.classList.add('in');io.unobserve(r.target)}})
+  },{rootMargin:'0px 0px -8% 0px'});
+  rv.forEach(n=>io.observe(n));
+}else{rv.forEach(n=>n.classList.add('in'))}
+</script>
+</body>
+</html>
