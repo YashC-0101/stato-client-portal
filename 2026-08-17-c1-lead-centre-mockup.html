@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=5">
+<meta name="theme-color" content="#101823">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>C1 Clearance — Lead Centre · stato.tech concept</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,600;0,700;0,800;1,800&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@0,400;0,500;0,600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#080C12;--ink2:#101823;--ink3:#1B2432;--ink4:#232D3C;
+  --volt:#1477E6;--volt-d:#0E5DB8;--volt-lo:#E7F1FD;--glow:#63C9FF;
+  --wa:#25A566;--wa-lo:#E6F6EE;
+  --paper:#F4F7FA;--white:#fff;--hair:#E2E8EF;--hair2:#EDF1F6;
+  --steel:#5D6E82;--steel2:#8A9AAD;
+  --amber:#B4720A;--amber-lo:#FDF3E2;--red:#C0392B;--red-lo:#FCEDEB;--go:#1D8A5C;--go-lo:#E7F5EE;
+  --mono:"IBM Plex Mono",ui-monospace,monospace;
+  --sans:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --disp:"Archivo",Arial,sans-serif;
+  --safe-b:env(safe-area-inset-bottom,0px);
+  --safe-t:env(safe-area-inset-top,0px);
+  --topbar:56px;--banner:30px;--chips:0px;--bottombar:0px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{overscroll-behavior-y:none}
+body{
+  margin:0;background:var(--paper);font-family:var(--sans);color:var(--ink);font-size:14px;
+  -webkit-font-smoothing:antialiased;text-size-adjust:100%;
+}
+body.sheet-open{overflow:hidden}
+button{font:inherit;cursor:pointer;border:0;background:none;color:inherit;text-align:left}
+input,textarea{font:inherit;-webkit-appearance:none}
+:focus-visible{outline:2px solid var(--glow);outline-offset:2px}
+
+/* ---------- concept banner ---------- */
+.banner{
+  background:var(--ink);color:var(--steel2);padding:calc(8px + var(--safe-t)) 16px 8px;
+  font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  display:flex;gap:12px;justify-content:space-between;align-items:center;border-bottom:1px solid var(--ink4);
+}
+.banner b{color:var(--glow);font-weight:600}
+.banner .hide-sm{white-space:nowrap}
+
+/* ---------- top bar ---------- */
+.topbar{
+  background:var(--ink2);color:#fff;display:flex;align-items:center;gap:14px;
+  padding:0 14px;height:var(--topbar);position:relative;overflow:hidden;
+}
+.topbar:before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(112deg,transparent 58%,rgba(20,119,230,.35) 74%,transparent 76%),
+             linear-gradient(112deg,transparent 66%,rgba(99,201,255,.2) 82%,transparent 84%);
+}
+.brand{
+  font-family:var(--disp);font-weight:800;font-style:italic;text-transform:uppercase;
+  font-size:17px;letter-spacing:-.01em;position:relative;white-space:nowrap;
+}
+.brand span{color:var(--glow)}
+.search{flex:1;max-width:420px;position:relative;min-width:0}
+.search input{
+  width:100%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:#fff;
+  border-radius:6px;padding:9px 12px 9px 32px;font-size:13px;outline:none;
+}
+.search input::placeholder{color:#7B8CA0}
+.search input:focus{border-color:var(--glow);background:rgba(255,255,255,.13)}
+.search svg{position:absolute;left:10px;top:10px;opacity:.55;pointer-events:none}
+.topright{margin-left:auto;display:flex;align-items:center;gap:10px;position:relative}
+.sla{
+  font-family:var(--mono);font-size:11px;background:rgba(192,57,43,.2);color:#FF9A8D;
+  padding:5px 9px;border-radius:4px;letter-spacing:.04em;white-space:nowrap;
+}
+.avatar{
+  width:32px;height:32px;border-radius:50%;background:var(--volt);display:grid;place-items:center;
+  font-family:var(--mono);font-size:11px;font-weight:600;flex:0 0 auto;
+}
+
+/* ---------- chips (mobile filter row) ---------- */
+.chips{display:none}
+
+/* ---------- layout ---------- */
+.shell{
+  display:grid;grid-template-columns:216px minmax(280px,340px) 1fr 302px;
+  height:calc(100dvh - var(--topbar) - var(--banner));min-height:560px;
+}
+.col{overflow-y:auto;-webkit-overflow-scrolling:touch;background:var(--white);border-right:1px solid var(--hair)}
+.col:last-child{border-right:0}
+
+/* ---------- rail ---------- */
+.rail{background:var(--ink);color:#B8C6D5;padding:14px 0}
+.rlabel{
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:#5D6E82;padding:0 16px;margin:0 0 9px;
+}
+.rail hr{border:0;border-top:1px solid var(--ink4);margin:16px 0}
+.chan{display:flex;align-items:center;gap:10px;padding:10px 16px;width:100%;font-size:13.5px;border-left:2px solid transparent}
+.chan:hover{background:rgba(255,255,255,.05)}
+.chan[aria-current="true"]{background:rgba(20,119,230,.16);border-left-color:var(--glow);color:#fff;font-weight:500}
+.dot{
+  width:22px;height:22px;border-radius:5px;display:grid;place-items:center;
+  font-family:var(--mono);font-size:10px;font-weight:600;color:#fff;flex:0 0 auto;
+}
+.cnt{margin-left:auto;font-family:var(--mono);font-size:11px;color:#7B8CA0}
+.chan[aria-current="true"] .cnt{color:var(--glow)}
+
+/* ---------- list ---------- */
+.listhead{
+  padding:13px 16px;border-bottom:1px solid var(--hair);display:flex;align-items:center;gap:8px;
+  position:sticky;top:0;background:rgba(255,255,255,.94);backdrop-filter:blur(8px);z-index:3;
+}
+.listhead h2{font-family:var(--disp);font-weight:700;font-size:14px;text-transform:uppercase;letter-spacing:.02em;margin:0}
+.listhead .cnt2{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--steel2);white-space:nowrap}
+.lead{display:block;width:100%;padding:14px 16px;border-bottom:1px solid var(--hair2);border-left:3px solid transparent}
+.lead:active{background:var(--hair2)}
+@media (hover:hover){.lead:hover{background:var(--paper)}}
+.lead[aria-current="true"]{background:var(--volt-lo);border-left-color:var(--volt)}
+.lrow1{display:flex;align-items:center;gap:8px;margin-bottom:3px}
+.lname{font-weight:600;font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lwhen{margin-left:auto;font-family:var(--mono);font-size:10.5px;color:var(--steel2);white-space:nowrap;flex:0 0 auto}
+.lprev{color:var(--steel);font-size:12.5px;line-height:1.45;margin:0 0 8px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.tags{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+.tag{
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;
+  padding:3px 6px;border-radius:3px;background:var(--hair2);color:var(--steel);white-space:nowrap;
+}
+.tag.wa{background:var(--wa-lo);color:var(--wa)}
+.tag.ph{background:var(--volt-lo);color:var(--volt-d)}
+.tag.em{background:#F2EDFB;color:#6B4CA8}
+.tag.fm{background:var(--amber-lo);color:var(--amber)}
+.tag.qr{background:var(--ink);color:var(--glow)}
+.tag.hot{background:var(--red-lo);color:var(--red)}
+.unread{width:7px;height:7px;border-radius:50%;background:var(--volt);flex:0 0 auto}
+.pics{display:flex;gap:3px;margin-top:8px}
+.pics i{width:28px;height:28px;border-radius:3px;background:linear-gradient(135deg,#C6D2DF,#93A5B8);display:block}
+.pics i:nth-child(2){background:linear-gradient(135deg,#D6CFC4,#A79A87)}
+.pics i:nth-child(3){background:linear-gradient(135deg,#C3D0C6,#8CA292)}
+.pics i:nth-child(4){background:linear-gradient(135deg,#D2C8D4,#9C8FA3)}
+
+/* ---------- thread ---------- */
+.thread{background:var(--paper);display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.thead{
+  background:var(--white);border-bottom:1px solid var(--hair);padding:11px 16px;
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;flex:0 0 auto;
+}
+.back{display:none;width:34px;height:34px;border-radius:8px;place-items:center;flex:0 0 auto;margin-left:-6px}
+.back:active{background:var(--hair2)}
+.tnames{min-width:0;flex:1}
+.thead h2{font-family:var(--disp);font-weight:700;font-size:16.5px;margin:0;letter-spacing:-.01em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tmeta{font-family:var(--mono);font-size:10.5px;color:var(--steel);margin:3px 0 0;line-height:1.5}
+.tacts{display:flex;gap:6px;margin-left:auto;flex:0 0 auto}
+.ib{width:36px;height:36px;border-radius:7px;border:1px solid var(--hair);display:grid;place-items:center;background:var(--white)}
+.ib:active{background:var(--hair2)}
+@media (hover:hover){.ib:hover{border-color:var(--volt);color:var(--volt)}}
+.ib.pri{background:var(--go);border-color:var(--go);color:#fff}
+.ib.sheetbtn{display:none}
+.tbody{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:18px 16px;min-height:0}
+.daysep{text-align:center;font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--steel2);margin:22px 0 16px;position:relative}
+.daysep:first-child{margin-top:0}
+.daysep:before{content:"";position:absolute;left:0;right:0;top:50%;height:1px;background:var(--hair)}
+.daysep span{background:var(--paper);padding:0 12px;position:relative}
+.msg{max-width:76%;margin-bottom:16px}
+.msg.out{margin-left:auto}
+.mchan{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--steel2);margin:0 0 5px}
+.msg.out .mchan{text-align:right}
+.bub{background:var(--white);border:1px solid var(--hair);border-radius:3px 12px 12px 12px;padding:11px 14px;line-height:1.55;font-size:14px;overflow-wrap:break-word}
+.msg.out .bub{background:var(--volt);border-color:var(--volt);color:#fff;border-radius:12px 3px 12px 12px}
+.mtime{font-family:var(--mono);font-size:10px;color:var(--steel2);margin:5px 0 0}
+.msg.out .mtime{text-align:right}
+.photogrid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-top:9px}
+.photogrid i{aspect-ratio:1;border-radius:4px;background:linear-gradient(135deg,#CBD6E2,#8FA2B6)}
+.photogrid i:nth-child(2){background:linear-gradient(135deg,#D6CFC4,#A79A87)}
+.photogrid i:nth-child(3){background:linear-gradient(135deg,#C3D0C6,#8CA292)}
+.photogrid i:nth-child(4){background:linear-gradient(135deg,#D2C8D4,#9C8FA3)}
+
+.callev{background:var(--white);border:1px solid var(--hair);border-left:3px solid var(--volt);border-radius:0 8px 8px 0;padding:14px;margin-bottom:16px}
+.cehead{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;margin:0 0 10px;flex-wrap:wrap}
+.cehead .dur{font-family:var(--mono);font-size:11px;color:var(--steel);font-weight:400;margin-left:auto}
+.player{display:flex;align-items:center;gap:10px;background:var(--paper);border-radius:6px;padding:9px 11px}
+.play{width:30px;height:30px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;flex:0 0 auto}
+.play[data-on="1"]{background:var(--volt)}
+.wavef{flex:1;display:flex;align-items:center;gap:1.5px;height:24px;min-width:0}
+.wavef b{flex:1;background:var(--steel2);border-radius:1px;display:block;transition:background .2s}
+.wavef b.on{background:var(--volt)}
+.ptime{font-family:var(--mono);font-size:10.5px;color:var(--steel);white-space:nowrap}
+.ai{background:var(--ink);color:#C3D0DE;border-radius:8px;padding:14px;margin-top:10px;font-size:12.5px;line-height:1.6}
+.ai p{margin:0 0 8px}
+.aihead{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--glow);margin-bottom:8px}
+.ai ul{margin:0;padding-left:16px}
+.ai li{margin:4px 0}
+.ai li::marker{color:var(--glow)}
+.extract{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.ex{font-family:var(--mono);font-size:10px;background:rgba(99,201,255,.12);color:var(--glow);padding:4px 7px;border-radius:3px;letter-spacing:.04em}
+.sysev{
+  font-family:var(--mono);font-size:10.5px;color:var(--steel);letter-spacing:.04em;margin:0 auto 16px;
+  background:var(--white);border:1px dashed var(--hair);border-radius:20px;padding:7px 14px;
+  display:table;text-align:center;max-width:100%;
+}
+
+.composer{background:var(--white);border-top:1px solid var(--hair);padding:10px 16px calc(12px + var(--safe-b));flex:0 0 auto}
+.ctabs{display:flex;gap:5px;margin-bottom:9px;align-items:center;overflow-x:auto;scrollbar-width:none}
+.ctabs::-webkit-scrollbar{display:none}
+.ctab{
+  font-family:var(--mono);font-size:10px;letter-spacing:.09em;text-transform:uppercase;
+  padding:6px 9px;border-radius:5px;color:var(--steel);border:1px solid var(--hair);white-space:nowrap;
+}
+.ctab[aria-selected="true"]{background:var(--wa-lo);border-color:#BFE6D2;color:var(--wa);font-weight:600}
+.freefree{margin-left:auto;font-family:var(--mono);font-size:10px;color:var(--steel2);white-space:nowrap;padding-left:8px}
+.crow{display:flex;gap:9px;align-items:flex-end}
+.crow textarea{
+  flex:1;border:1px solid var(--hair);border-radius:8px;padding:11px 12px;font-size:14px;
+  resize:none;height:44px;max-height:120px;outline:none;line-height:1.4;min-width:0;
+}
+.crow textarea:focus{border-color:var(--volt)}
+.send{width:44px;height:44px;border-radius:8px;background:var(--volt);color:#fff;display:grid;place-items:center;flex:0 0 auto}
+.send:active{background:var(--volt-d)}
+
+/* ---------- detail ---------- */
+.detail{padding:0}
+.handle{display:none}
+.dsec{padding:16px;border-bottom:1px solid var(--hair)}
+.dlabel{font-family:var(--mono);font-size:9.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--steel2);margin:0 0 11px}
+.dcust{text-align:center;padding-top:20px}
+.dav{width:54px;height:54px;border-radius:50%;background:var(--ink);color:var(--glow);display:grid;place-items:center;margin:0 auto 10px;font-family:var(--disp);font-weight:800;font-size:18px}
+.dcust h3{font-family:var(--disp);font-weight:700;font-size:16px;margin:0 0 3px}
+.dcust p{font-family:var(--mono);font-size:11px;color:var(--steel);margin:0}
+.dchips{display:flex;gap:5px;justify-content:center;margin-top:10px;flex-wrap:wrap}
+.frow{display:flex;gap:10px;padding:8px 0;font-size:13.5px;align-items:flex-start}
+.frow em{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--steel2);font-style:normal;width:76px;flex:0 0 auto;padding-top:2px}
+.frow b{font-weight:500}
+.attr{background:var(--ink);border-radius:8px;padding:14px;color:#C3D0DE}
+.attr .dlabel{color:var(--glow);margin-bottom:9px}
+.attrbig{font-family:var(--disp);font-weight:800;font-size:15px;color:#fff;margin:0 0 4px;text-transform:uppercase;letter-spacing:-.01em}
+.attr p{margin:0;font-size:11.5px;line-height:1.55}
+.attrnum{font-family:var(--mono);font-size:10.5px;color:var(--glow);margin-top:9px;padding-top:9px;border-top:1px solid var(--ink4)}
+.pipe{list-style:none;padding:0;margin:0}
+.pipe li{display:flex;gap:11px;align-items:flex-start;position:relative;padding-bottom:15px}
+.pipe li:last-child{padding-bottom:0}
+.pipe li:not(:last-child):before{content:"";position:absolute;left:9px;top:21px;bottom:2px;width:1.5px;background:var(--hair)}
+.pipe li.done:not(:last-child):before{background:var(--go)}
+.pnode{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--hair);background:var(--white);display:grid;place-items:center;font-family:var(--mono);font-size:9px;color:var(--steel2);flex:0 0 auto;z-index:1}
+.pipe li.done .pnode{background:var(--go);border-color:var(--go);color:#fff}
+.pipe li.now .pnode{background:var(--volt);border-color:var(--volt);color:#fff;box-shadow:0 0 0 3px var(--volt-lo)}
+.ptxt{font-size:13.5px;padding-top:1px}
+.pipe li.now .ptxt{font-weight:600;color:var(--volt)}
+.pipe li:not(.done):not(.now) .ptxt{color:var(--steel2)}
+.ptxt small{display:block;font-family:var(--mono);font-size:10px;color:var(--steel2);font-weight:400;margin-top:1px}
+.quote{background:var(--go-lo);border:1px solid #C4E3D2;border-radius:8px;padding:14px}
+.qfig{font-family:var(--disp);font-weight:800;font-size:26px;color:var(--go);letter-spacing:-.02em;margin:2px 0 3px}
+.quote p{margin:0;font-size:11.5px;color:#2F6B51;line-height:1.5}
+.btn{display:block;width:100%;text-align:center;background:var(--ink);color:#fff;border-radius:7px;padding:12px;font-size:13px;font-weight:500;margin-top:10px}
+.btn:active{background:var(--volt)}
+.btn.ghost{background:none;color:var(--steel);border:1px solid var(--hair)}
+.btn.ghost:active{border-color:var(--volt);color:var(--volt)}
+.empty{display:grid;place-items:center;padding:56px 30px;text-align:center;color:var(--steel2)}
+.empty p{max-width:30ch;line-height:1.6;font-size:13.5px}
+
+/* ---------- toast ---------- */
+.toast{
+  position:fixed;left:50%;bottom:calc(24px + var(--safe-b));transform:translate(-50%,140%);
+  background:var(--ink);color:#fff;font-size:13px;padding:11px 18px;border-radius:24px;z-index:200;
+  transition:transform .3s cubic-bezier(.2,.9,.3,1);box-shadow:0 8px 30px rgba(8,12,18,.3);max-width:88vw;
+}
+.toast.up{transform:translate(-50%,0)}
+
+.backdrop{
+  position:fixed;inset:0;background:rgba(8,12,18,.5);z-index:65;opacity:0;pointer-events:none;
+  transition:opacity .25s;backdrop-filter:blur(2px);
+}
+body.sheet-open .backdrop{opacity:1;pointer-events:auto}
+.bottombar{display:none}
+
+/* ================= TABLET ================= */
+@media (max-width:1180px){
+  .shell{grid-template-columns:190px minmax(250px,320px) 1fr}
+  .detail{display:none}
+  .ib.sheetbtn{display:grid}
+  .detail{
+    position:fixed;right:0;top:0;bottom:0;width:min(340px,88vw);z-index:70;display:block;
+    transform:translateX(101%);transition:transform .28s cubic-bezier(.2,.9,.3,1);
+    box-shadow:-8px 0 40px rgba(8,12,18,.22);overflow-y:auto;border-left:1px solid var(--hair);
+  }
+  body.sheet-open .detail{transform:none}
+}
+
+/* ================= MOBILE ================= */
+@media (max-width:860px){
+  :root{--topbar:52px;--bottombar:60px}
+  .banner{font-size:9px;letter-spacing:.1em;padding:calc(7px + var(--safe-t)) 12px 7px}
+  .banner .hide-sm{display:none}
+  .topbar{gap:10px;padding:0 12px}
+  .brand{font-size:15.5px}
+  .topbar .search{display:none}
+  .sla{font-size:10px;padding:4px 8px}
+
+  /* mobile filter chips */
+  .chips{
+    display:flex;gap:6px;overflow-x:auto;padding:10px 12px;background:var(--ink);
+    border-bottom:1px solid var(--ink4);scrollbar-width:none;
+  }
+  .chips::-webkit-scrollbar{display:none}
+  .chip{
+    display:flex;align-items:center;gap:6px;flex:0 0 auto;padding:8px 12px;border-radius:20px;
+    background:rgba(255,255,255,.07);color:#B8C6D5;font-size:12.5px;white-space:nowrap;
+    border:1px solid rgba(255,255,255,.1);
+  }
+  .chip[aria-current="true"]{background:var(--volt);border-color:var(--volt);color:#fff;font-weight:500}
+  .chip b{font-family:var(--mono);font-size:10.5px;font-weight:600;opacity:.75}
+
+  /* mobile search row */
+  .msearch{display:block;padding:10px 12px;background:var(--ink);border-bottom:1px solid var(--ink4)}
+  .msearch .search{max-width:none;display:block}
+
+  .shell{display:block;height:auto;min-height:0}
+  .rail{display:none}
+  .col{border-right:0;overflow:visible}
+
+  /* list is the home screen */
+  #listcol{display:block;padding-bottom:calc(var(--bottombar) + var(--safe-b) + 8px);background:var(--white);min-height:60dvh}
+  body[data-view="thread"] #listcol{display:none}
+  .listhead{padding:14px 14px 12px}
+  .lead{padding:15px 14px}
+  .lead[aria-current="true"]{background:var(--white);border-left-color:transparent}
+  .lname{font-size:14.5px}
+  .lprev{font-size:13px}
+
+  /* thread becomes a full screen */
+  .thread{display:none}
+  body[data-view="thread"] .thread{
+    display:flex;position:fixed;inset:0;z-index:60;height:100dvh;
+    padding-top:var(--safe-t);background:var(--paper);
+  }
+  .back{display:grid}
+  .thead{padding:10px 12px}
+  .thead h2{font-size:16px}
+  .tacts{gap:5px}
+  .ib{width:38px;height:38px}
+  .tbody{padding:16px 14px}
+  .msg{max-width:88%}
+  .composer{padding:10px 12px calc(12px + var(--safe-b))}
+
+  /* detail becomes a bottom sheet */
+  .detail{
+    position:fixed;left:0;right:0;bottom:0;top:auto;width:auto;max-height:86dvh;
+    border-radius:16px 16px 0 0;border-left:0;transform:translateY(101%);
+    box-shadow:0 -10px 40px rgba(8,12,18,.28);z-index:80;
+    padding-bottom:var(--safe-b);
+  }
+  .handle{display:block;padding:10px 0 4px;text-align:center;position:sticky;top:0;background:var(--white);z-index:2;border-radius:16px 16px 0 0}
+  .handle i{display:inline-block;width:38px;height:4px;border-radius:3px;background:var(--hair)}
+
+  /* bottom nav */
+  .bottombar{
+    display:grid;grid-template-columns:repeat(4,1fr);position:fixed;left:0;right:0;bottom:0;z-index:55;
+    background:rgba(255,255,255,.96);backdrop-filter:blur(12px);border-top:1px solid var(--hair);
+    padding-bottom:var(--safe-b);
+  }
+  body[data-view="thread"] .bottombar{display:none}
+  .nav{display:grid;place-items:center;gap:3px;padding:9px 2px 8px;color:var(--steel2);position:relative}
+  .nav span{font-size:10px;letter-spacing:.01em}
+  .nav[aria-current="true"]{color:var(--volt)}
+  .nav[aria-current="true"]:before{content:"";position:absolute;top:0;left:22%;right:22%;height:2px;background:var(--volt);border-radius:0 0 2px 2px}
+  .nav i{font-family:var(--mono);font-style:normal;font-size:9px;position:absolute;top:5px;right:calc(50% - 21px);background:var(--red);color:#fff;border-radius:9px;padding:1px 5px;line-height:1.5}
+}
+@media (max-width:860px) and (display-mode:standalone){
+  .banner{display:none}
+}
+@media (min-width:861px){.msearch{display:none}}
+
+@media (prefers-reduced-motion:reduce){
+  *{transition:none!important;animation:none!important}
+}
+</style>
+</head>
+<body data-view="list">
+
+<div class="banner">
+  <span>stato.tech concept · <b>not live data</b></span>
+  <span class="hide-sm">Lead Centre module · <b>C1 Clearance</b> as tenant 01</span>
+</div>
+
+<div class="topbar">
+  <div class="brand">C1 <span>Lead Centre</span></div>
+  <div class="search">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7B8CA0" stroke-width="2.4"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4.3-4.3"/></svg>
+    <input type="search" id="q" placeholder="Search name, postcode, phone or what needs clearing…" aria-label="Search leads">
+  </div>
+  <div class="topright">
+    <span class="sla" id="slacount">2 past 15 min</span>
+    <div class="avatar">PC</div>
+  </div>
+</div>
+
+<div class="msearch">
+  <div class="search">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7B8CA0" stroke-width="2.4"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4.3-4.3"/></svg>
+    <input type="search" id="qm" placeholder="Search leads, postcodes, phone numbers…" aria-label="Search leads">
+  </div>
+</div>
+
+<nav class="chips" id="chips" aria-label="Filter leads"></nav>
+
+<div class="shell">
+  <nav class="col rail" id="rail" aria-label="Channels"></nav>
+
+  <div class="col" id="listcol">
+    <div class="listhead">
+      <h2 id="listtitle">Everything</h2>
+      <span class="cnt2" id="listcount"></span>
+    </div>
+    <div id="list"></div>
+  </div>
+
+  <div class="thread" id="thread"></div>
+
+  <aside class="col detail" id="detail" aria-label="Lead details" aria-hidden="true"></aside>
+</div>
+
+<div class="backdrop" id="backdrop"></div>
+
+<nav class="bottombar" aria-label="Views">
+  <button class="nav" data-ch="all" aria-current="true">
+    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M4 5h16M4 12h16M4 19h10"/></svg><span>Inbox</span>
+  </button>
+  <button class="nav" data-ch="unanswered">
+    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M12 8v5M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg><i>2</i><span>Chase</span>
+  </button>
+  <button class="nav" data-ch="quote">
+    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M6 3h9l5 5v13H6z"/><path d="M9 13h6M9 17h4"/></svg><span>Quotes</span>
+  </button>
+  <button class="nav" data-ch="booked">
+    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M8 13l2.5 2.5L16 11"/></svg><span>Booked</span>
+  </button>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ---------------- data ---------------- */
+const LEADS = [
+  { id:'l1', name:'Margaret Whitfield', init:'MW', ch:'wa', src:'van', hot:true, unread:true, when:'4m',
+    phone:'+44 7700 118432', addr:'12 Brantwood Rd, Stockport SK4 3NF', job:'Garage + shed clearance',
+    prev:'Sent 4 photos — "This is the garage and the shed behind it, both need emptying. Can you do next week?"',
+    photos:4, stage:2, quote:'£340', source:'QR code · van 1 · scanned outside Heaton Moor', cpl:'£0.00 · signage',
+    fields:[['Postcode','SK4 3NF'],['Volume','Est. 6 cubic yards'],['Access','Side gate, no van access to rear'],['Wanted','Next week, weekday'],['Heavy','Chest freezer, paint tins']],
+    timeline:[
+      {t:'day',v:'Today'},
+      {t:'sys',v:'QR code scanned · van 1 · 09:12'},
+      {t:'in',ch:'WhatsApp · +44 7700 118432',time:'09:14',body:'Hi, saw the QR on your van outside the shop. Need a garage and a shed cleared, is that something you do?'},
+      {t:'in',ch:'WhatsApp',time:'09:16',photos:4,body:'This is the garage and the shed behind it, both need emptying. Can you do next week?'},
+      {t:'out',ch:'Replied via WhatsApp · Penda',time:'09:21',body:'Morning Margaret — yes, both no problem. From the photos that looks like about 6 yards, so £340 all in including disposal and we sweep up after. Is Tuesday morning any good?'},
+      {t:'in',ch:'WhatsApp',time:'09:34',body:'Tuesday morning is perfect. There is a chest freezer in there too, is that extra?'}
+    ]},
+  { id:'l2', name:'Dominic Sale · Ashworth Estates', init:'DS', ch:'ph', src:'google', hot:false, unread:false, when:'22m',
+    phone:'+44 161 448 2210', addr:'3 Oak Villas, Sale M33 2QL', job:'Estate clearance — probate',
+    prev:'Called about a probate property in Sale. Full house, needs clearing before valuation. Wants a written quote for the solicitor.',
+    photos:0, stage:2, quote:'£1,180', source:'Google search · "estate clearance Sale"', cpl:'£11.20 · Google',
+    fields:[['Postcode','M33 2QL'],['Volume','Full 3-bed, est. 20 yards'],['Access','Driveway, van fits'],['Wanted','Within 2 weeks'],['Note','Written quote for solicitor file']],
+    timeline:[
+      {t:'day',v:'Today'},
+      {t:'call',dir:'Inbound call',time:'09:48',dur:'6 min 12 sec',
+       summary:'Estate agent handling a probate property in Sale. Full three-bedroom house needs clearing before valuation. Asked specifically for a written quote he can put on the solicitor file, and whether we can set aside items of possible value rather than disposing of everything.',
+       actions:['Send written quote by email, addressed to the firm','Confirm we photograph anything valuable before removal','He mentioned three more probate properties this quarter'],
+       extract:['M33 2QL','20 yards est.','Probate','Written quote','Repeat potential']},
+      {t:'out',ch:'Replied via email',time:'10:02',body:'Dominic — good speaking with you. Quote attached for the Oak Villas clearance at £1,180 including disposal, licensed waste transfer notes and a full photographic record before anything leaves. Anything with resale value we set aside and photograph for you first.'}
+    ]},
+  { id:'l3', name:'Aisha Rahman', init:'AR', ch:'wa', src:'meta', hot:true, unread:true, when:'1h',
+    phone:'+44 7883 447192', addr:'Flat 4, Beech Court, Didsbury M20 6PJ', job:'Flat clearance before tenancy end',
+    prev:'From the Facebook ad. Two photos of a spare room. "Landlord wants it empty by Friday, panicking a bit."',
+    photos:2, stage:1, quote:'—', source:'Meta ad · "Same week clearance" · click-to-WhatsApp', cpl:'£8.40 · Meta',
+    fields:[['Postcode','M20 6PJ'],['Volume','Est. 3 yards'],['Access','Second floor, no lift'],['Wanted','By Friday — urgent'],['Note','First-timer, price sensitive']],
+    timeline:[
+      {t:'day',v:'Today'},
+      {t:'sys',v:'Started from Meta ad · free 72-hour window open'},
+      {t:'in',ch:'WhatsApp · +44 7883 447192',time:'08:55',photos:2,body:'Hi, saw your ad. Landlord wants the flat empty by Friday and I am panicking a bit. Two photos of the spare room, there is more in the hallway. Roughly what would that cost?'}
+    ]},
+  { id:'l4', name:'Covent Garden Stockport', init:'CG', ch:'em', src:'repeat', hot:false, unread:false, when:'3h',
+    phone:'+44 161 429 7788', addr:'Regent House, Heaton Lane, Stockport SK4 1BS', job:'Weekly commercial waste — schedule change',
+    prev:'Regular commercial account. Asking to move the Thursday collection to Wednesday from next week.',
+    photos:0, stage:5, quote:'£95/wk', source:'Existing account · 14th job', cpl:'£0.00 · repeat',
+    fields:[['Account','Commercial · weekly'],['Since','January 2026'],['Jobs done','14'],['Terms','Invoiced monthly'],['Note','Moving to Wednesdays']],
+    timeline:[
+      {t:'day',v:'Today'},
+      {t:'in',ch:'Email · accounts@coventgardensk.co.uk',time:'07:40',body:'Morning — could we move our Thursday collection to Wednesdays from next week? Kitchen deliveries have changed and Thursday mornings are now chaos. Everything else as normal.'},
+      {t:'out',ch:'Replied via email · Penda',time:'08:10',body:'No problem at all, Wednesdays from next week. I have updated the schedule so the crew will see it on their sheet. Invoice stays monthly as it is.'}
+    ]},
+  { id:'l5', name:'Tom Fielding', init:'TF', ch:'fm', src:'google', hot:false, unread:false, when:'5h',
+    phone:'+44 7514 220981', addr:'Bramhall SK7 2DL', job:'Garden waste + old decking',
+    prev:'Website form. Garden clearance including rotten decking, wants a price before committing to a site visit.',
+    photos:1, stage:2, quote:'£260', source:'Website quote form · organic search', cpl:'£0.00 · organic',
+    fields:[['Postcode','SK7 2DL'],['Volume','Est. 5 yards'],['Access','Rear gate to alley'],['Wanted','No rush, 2 weeks'],['Note','Decking broken up on site']],
+    timeline:[
+      {t:'day',v:'Today'},
+      {t:'sys',v:'Website quote form submitted · 05:31'},
+      {t:'in',ch:'Website form',time:'05:31',photos:1,body:'Garden clearance — mostly green waste plus a rotten decking area about 4m x 3m that needs taking up. Photo attached. Would rather have a rough price first if possible.'},
+      {t:'out',ch:'Replied via WhatsApp · Penda',time:'08:02',body:'Morning Tom — from the photo, green waste plus breaking up and removing that decking comes to £260 including disposal. No site visit needed unless you would prefer one. Happy to book you in for either of the next two Saturdays.'}
+    ]},
+  { id:'l6', name:'Unknown caller', init:'?', ch:'ph', src:'van', hot:true, unread:true, when:'6h',
+    phone:'+44 7902 553318', addr:'Not captured', job:'Missed call — no voicemail',
+    prev:'Missed call at 07:14, no voicemail left. Number has not called before. Nothing sent back yet.',
+    photos:0, stage:0, quote:'—', source:'Unknown · first contact from this number', cpl:'—',
+    fields:[['Number','+44 7902 553318'],['Attempts','1 in, 0 out'],['Voicemail','None left'],['Status','No follow-up yet'],['Suggested','Send callback text']],
+    timeline:[
+      {t:'day',v:'Today'},
+      {t:'call',dir:'Missed call',time:'07:14',dur:'Rang 24 sec',
+       summary:'No voicemail and no follow-up. Out of hours, before the line opens. First contact from this number, so as things stand this lead ends here.',
+       actions:['Send the out-of-hours callback text','Ring back before 6pm'],
+       extract:['Unanswered','No voicemail','Out of hours','6h elapsed']}
+    ]}
+];
+
+const STAGES=['New enquiry','Contacted','Quoted','Booked','Cleared','Invoiced'];
+const CH={wa:['WhatsApp','wa'],ph:['Call','ph'],em:['Email','em'],fm:['Form','fm']};
+const SRC={van:['Van QR','qr'],meta:['Meta ad','fm'],google:['Google',''],repeat:['Repeat client','']};
+const VIEWS=[
+  {k:'all',   label:'Everything',      icon:'◎', col:'var(--volt)',  group:'ch'},
+  {k:'wa',    label:'WhatsApp',        icon:'W', col:'var(--wa)',    group:'ch'},
+  {k:'ph',    label:'Calls',           icon:'☎', col:'var(--volt-d)',group:'ch'},
+  {k:'em',    label:'Email',           icon:'@', col:'#6B4CA8',      group:'ch'},
+  {k:'fm',    label:'Website form',    icon:'▤', col:'var(--amber)', group:'ch'},
+  {k:'unanswered',label:'Not replied to',icon:'!',col:'var(--red)',  group:'do'},
+  {k:'quote', label:'Quote to send',   icon:'£', col:'var(--amber)', group:'do'},
+  {k:'booked',label:'Booked',          icon:'✓', col:'var(--go)',    group:'do'},
+  {k:'van',   label:'Van QR',          icon:'▦', col:'var(--ink3)',  group:'src'},
+  {k:'meta',  label:'Meta ads',        icon:'f', col:'#1877F2',      group:'src'},
+  {k:'google',label:'Google',          icon:'G', col:'#4285F4',      group:'src'}
+];
+
+let active='l1', filter='all', term='';
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const isMobile=()=>window.matchMedia('(max-width:860px)').matches;
+const isTablet=()=>window.matchMedia('(max-width:1180px)').matches;
+
+function match(l,k){
+  if(k==='all')return true;
+  if(k==='unanswered')return l.unread&&l.stage<2;
+  if(k==='quote')return l.stage===2;
+  if(k==='booked')return l.stage>=3;
+  if(['van','meta','google'].includes(k))return l.src===k;
+  return l.ch===k;
+}
+function visible(){
+  let r=LEADS.filter(l=>match(l,filter));
+  if(term){
+    const t=term.toLowerCase();
+    r=r.filter(l=>(l.name+' '+l.prev+' '+l.job+' '+l.addr+' '+l.phone+' '+l.fields.map(f=>f[1]).join(' ')).toLowerCase().includes(t));
+  }
+  return r;
+}
+const count=k=>LEADS.filter(l=>match(l,k)).length;
+
+/* ---------------- chrome ---------------- */
+function renderNav(){
+  const g={ch:'Where it came in',do:'Needs doing',src:'Where they found you'};
+  let html='',last='';
+  VIEWS.forEach(v=>{
+    if(v.group!==last){html+=(last?'<hr>':'')+`<p class="rlabel">${g[v.group]}</p>`;last=v.group}
+    html+=`<button class="chan" data-ch="${v.k}" aria-current="${v.k===filter}">
+      <span class="dot" style="background:${v.col}${v.k==='van'?';color:var(--glow)':''}">${v.icon}</span>${v.label}
+      <span class="cnt">${count(v.k)}</span></button>`;
+  });
+  document.getElementById('rail').innerHTML=html;
+  document.getElementById('chips').innerHTML=VIEWS.map(v=>
+    `<button class="chip" data-ch="${v.k}" aria-current="${v.k===filter}">${v.label} <b>${count(v.k)}</b></button>`).join('');
+  document.querySelectorAll('.nav').forEach(n=>n.setAttribute('aria-current',String(n.dataset.ch===filter)));
+  document.getElementById('slacount').textContent=count('unanswered')+' past 15 min';
+}
+
+function renderList(){
+  const rows=visible(), v=VIEWS.find(x=>x.k===filter);
+  document.getElementById('listtitle').textContent=v?v.label:'Everything';
+  document.getElementById('listcount').textContent=rows.length+(rows.length===1?' lead':' leads');
+  document.getElementById('list').innerHTML=rows.map(l=>{
+    const c=CH[l.ch]||['',''], s=SRC[l.src]||['',''];
+    return `<button class="lead" data-id="${l.id}" aria-current="${l.id===active}">
+      <span class="lrow1">${l.unread?'<i class="unread"></i>':''}<span class="lname">${esc(l.name)}</span><span class="lwhen">${l.when}</span></span>
+      <p class="lprev">${esc(l.prev)}</p>
+      <span class="tags">
+        <span class="tag ${c[1]}">${c[0]}</span>
+        <span class="tag ${s[1]}">${s[0]}</span>
+        ${l.hot?'<span class="tag hot">Needs reply</span>':''}
+        <span class="tag">${esc(l.job)}</span>
+      </span>
+      ${l.photos?`<span class="pics">${'<i></i>'.repeat(Math.min(l.photos,4))}</span>`:''}
+    </button>`;
+  }).join('')||`<div class="empty"><p>${term?'Nothing matches “'+esc(term)+'”.':'Nothing in this view — which is the good outcome.'}</p></div>`;
+}
+
+function bars(){let o='';for(let i=0;i<54;i++){const h=7+Math.abs(Math.sin(i*1.7))*15;o+=`<b class="${i<18?'on':''}" style="height:${h.toFixed(0)}px"></b>`}return o}
+
+function renderThread(){
+  const l=LEADS.find(x=>x.id===active), el=document.getElementById('thread');
+  if(!l){el.innerHTML='';return}
+  const body=l.timeline.map(e=>{
+    if(e.t==='day')return `<div class="daysep"><span>${esc(e.v)}</span></div>`;
+    if(e.t==='sys')return `<p class="sysev">${esc(e.v)}</p>`;
+    if(e.t==='call')return `<div class="callev">
+      <p class="cehead">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1477E6" stroke-width="2"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3 19.5 19.5 0 01-6-6A19.8 19.8 0 012.1 4.2 2 2 0 014.1 2h3a2 2 0 012 1.7c.1.9.4 1.8.7 2.6a2 2 0 01-.4 2.1L8.1 9.9a16 16 0 006 6l1.5-1.3a2 2 0 012.1-.4c.8.3 1.7.6 2.6.7a2 2 0 011.7 2z"/></svg>
+        ${esc(e.dir)} · ${esc(e.time)}<span class="dur">${esc(e.dur)}</span></p>
+      <div class="player">
+        <button class="play" data-play data-on="0" aria-label="Play recording"><svg width="9" height="10" viewBox="0 0 10 12" fill="#fff"><path d="M0 0l10 6-10 6z"/></svg></button>
+        <span class="wavef">${bars()}</span><span class="ptime">2:07</span>
+      </div>
+      <div class="ai">
+        <p class="aihead">Summary from the recording</p><p>${esc(e.summary)}</p>
+        <p class="aihead" style="margin-top:12px">To do</p>
+        <ul>${e.actions.map(a=>`<li>${esc(a)}</li>`).join('')}</ul>
+        <span class="extract">${e.extract.map(x=>`<span class="ex">${esc(x)}</span>`).join('')}</span>
+      </div></div>`;
+    const out=e.t==='out';
+    return `<div class="msg ${out?'out':'in'}">
+      <p class="mchan">${esc(e.ch)}</p>
+      <div class="bub">${esc(e.body)}${e.photos?`<div class="photogrid">${'<i></i>'.repeat(e.photos)}</div>`:''}</div>
+      <p class="mtime">${esc(e.time)}${out?' · delivered':''}</p></div>`;
+  }).join('');
+
+  el.innerHTML=`
+    <div class="thead">
+      <button class="back" data-back aria-label="Back to inbox"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 19l-7-7 7-7"/></svg></button>
+      <div class="tnames">
+        <h2>${esc(l.name)}</h2>
+        <p class="tmeta">${esc(l.job)} · ${esc(l.addr)}</p>
+      </div>
+      <div class="tacts">
+        <button class="ib" data-act="call" aria-label="Call back"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3 19.5 19.5 0 01-6-6A19.8 19.8 0 012.1 4.2 2 2 0 014.1 2h3a2 2 0 012 1.7c.1.9.4 1.8.7 2.6a2 2 0 01-.4 2.1L8.1 9.9a16 16 0 006 6l1.5-1.3a2 2 0 012.1-.4c.8.3 1.7.6 2.6.7a2 2 0 011.7 2z"/></svg></button>
+        <button class="ib sheetbtn" data-sheet aria-label="Lead details"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg></button>
+        <button class="ib pri" data-act="book" aria-label="Book the job"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg></button>
+      </div>
+    </div>
+    <div class="tbody" id="tbody">${body}</div>
+    <div class="composer">
+      <div class="ctabs">
+        <button class="ctab" aria-selected="${l.ch==='wa'}">WhatsApp</button>
+        <button class="ctab" aria-selected="${l.ch==='em'}">Email</button>
+        <button class="ctab">SMS</button>
+        <button class="ctab">Note</button>
+        <span class="freefree">${l.ch==='wa'?'Window open · 22h':'Sends from the office line'}</span>
+      </div>
+      <div class="crow">
+        <textarea id="msg" rows="1" placeholder="Reply to ${esc(l.name.split(' ')[0])}…"></textarea>
+        <button class="send" data-send aria-label="Send"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></svg></button>
+      </div>
+    </div>`;
+  const tb=document.getElementById('tbody'); if(tb)tb.scrollTop=tb.scrollHeight;
+}
+
+function renderDetail(){
+  const l=LEADS.find(x=>x.id===active); if(!l)return;
+  const s=SRC[l.src]||['',''];
+  document.getElementById('detail').innerHTML=`
+    <div class="handle"><i></i></div>
+    <div class="dsec dcust">
+      <div class="dav">${esc(l.init)}</div>
+      <h3>${esc(l.name)}</h3>
+      <p>${esc(l.phone)}</p>
+      <div class="dchips">
+        <span class="tag ${(CH[l.ch]||[])[1]||''}">${(CH[l.ch]||[])[0]||''}</span>
+        <span class="tag ${s[1]}">${s[0]}</span>
+      </div>
+    </div>
+    <div class="dsec">
+      <div class="attr">
+        <p class="dlabel">How they found you</p>
+        <p class="attrbig">${esc(s[0])}</p>
+        <p>${esc(l.source)}</p>
+        <p class="attrnum">Cost per lead · ${esc(l.cpl)}</p>
+      </div>
+    </div>
+    <div class="dsec">
+      <p class="dlabel">Pulled from the conversation</p>
+      ${l.fields.map(f=>`<div class="frow"><em>${esc(f[0])}</em><b>${esc(f[1])}</b></div>`).join('')}
+    </div>
+    <div class="dsec">
+      <p class="dlabel">Where the job is up to</p>
+      <ul class="pipe">${STAGES.map((st,i)=>`<li class="${i<l.stage?'done':i===l.stage?'now':''}">
+        <span class="pnode">${i<l.stage?'✓':i+1}</span>
+        <span class="ptxt">${st}${i===l.stage?'<small>current</small>':''}</span></li>`).join('')}</ul>
+    </div>
+    <div class="dsec">
+      ${l.quote!=='—'
+        ?`<div class="quote"><p class="dlabel" style="color:#2F6B51;margin-bottom:2px">Quoted</p>
+           <p class="qfig">${esc(l.quote)}</p>
+           <p>Priced from ${l.photos?l.photos+' photos':'the call'} · disposal included</p></div>`
+        :`<div class="quote" style="background:var(--amber-lo);border-color:#EED9B2">
+           <p class="dlabel" style="color:var(--amber);margin-bottom:2px">No price sent yet</p>
+           <p class="qfig" style="color:var(--amber)">—</p>
+           <p style="color:#8A5A08">${l.photos?'Photos are in. Price it and send.':'Not enough detail. Ask for photos.'}</p></div>`}
+      <button class="btn" data-act="quote">Send quote on WhatsApp</button>
+      <button class="btn ghost" data-act="sheetjob">Open job sheet for the crew</button>
+    </div>`;
+}
+
+function render(){renderNav();renderList();renderThread();renderDetail()}
+
+/* ---------------- interaction ---------------- */
+let toastT;
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('up');
+  clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('up'),2200);
+}
+function openSheet(){document.body.classList.add('sheet-open');document.getElementById('detail').setAttribute('aria-hidden','false')}
+function closeSheet(){document.body.classList.remove('sheet-open');document.getElementById('detail').setAttribute('aria-hidden',isTablet()?'true':'false')}
+function showThread(push){
+  if(!isMobile())return;
+  document.body.dataset.view='thread';
+  if(push!==false&&location.hash!=='#thread')history.pushState({v:'thread'},'','#thread');
+}
+function showList(){
+  document.body.dataset.view='list';
+  closeSheet();
+}
+
+document.addEventListener('click',e=>{
+  const t=e.target;
+
+  if(t.closest('[data-back]')){ if(location.hash==='#thread'){history.back()}else{showList()} return }
+  if(t.closest('[data-sheet]')){ openSheet(); return }
+  if(t.closest('#backdrop')){ closeSheet(); return }
+  if(t.closest('.handle')){ closeSheet(); return }
+
+  const lead=t.closest('.lead');
+  if(lead){
+    active=lead.dataset.id;
+    const l=LEADS.find(x=>x.id===active); if(l){l.unread=false;l.hot=false}
+    render(); showThread(); return;
+  }
+
+  const nav=t.closest('.chan,.chip,.nav');
+  if(nav){
+    filter=nav.dataset.ch;
+    const rows=visible();
+    if(rows.length&&!rows.find(r=>r.id===active))active=rows[0].id;
+    render();
+    if(!isMobile()&&document.body.dataset.view==='thread')showList();
+    const lc=document.getElementById('listcol'); if(lc)lc.scrollTop=0;
+    return;
+  }
+
+  const play=t.closest('[data-play]');
+  if(play){
+    const on=play.dataset.on==='1';
+    play.dataset.on=on?'0':'1';
+    play.innerHTML=on?'<svg width="9" height="10" viewBox="0 0 10 12" fill="#fff"><path d="M0 0l10 6-10 6z"/></svg>'
+                     :'<svg width="9" height="10" viewBox="0 0 10 12" fill="#fff"><rect width="3.4" height="12"/><rect x="6.6" width="3.4" height="12"/></svg>';
+    toast(on?'Recording paused':'Playing recording · 6 min 12 sec');
+    return;
+  }
+
+  const ctab=t.closest('.ctab');
+  if(ctab){
+    ctab.parentElement.querySelectorAll('.ctab').forEach(c=>c.setAttribute('aria-selected','false'));
+    ctab.setAttribute('aria-selected','true');
+    return;
+  }
+
+  if(t.closest('[data-send]')){ send(); return }
+
+  const act=t.closest('[data-act]');
+  if(act){
+    const l=LEADS.find(x=>x.id===active), a=act.dataset.act;
+    if(a==='book'){ if(l.stage<3){l.stage=3} render(); toast('Job booked — added to the crew sheet'); }
+    if(a==='call'){ toast('Dialling '+l.phone+' from 0330 133 9144'); }
+    if(a==='quote'){ toast(l.quote!=='—'?'Quote '+l.quote+' sent on WhatsApp':'Price it first, then send'); }
+    if(a==='sheetjob'){ toast('Job sheet opened — photos, postcode and access notes attached'); }
+    return;
+  }
+});
+
+function send(){
+  const box=document.getElementById('msg'); if(!box)return;
+  const v=box.value.trim(); if(!v)return;
+  const l=LEADS.find(x=>x.id===active);
+  const now=new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+  const chan=l.ch==='em'?'Replied via email · Penda':'Replied via WhatsApp · Penda';
+  l.timeline.push({t:'out',ch:chan,time:now,body:v});
+  if(l.stage<1)l.stage=1;
+  l.prev='You: '+v; l.when='now'; l.unread=false; l.hot=false;
+  box.value=''; box.style.height='44px';
+  render(); toast('Sent — logged against the lead');
+}
+
+document.addEventListener('input',e=>{
+  if(e.target.id==='q'||e.target.id==='qm'){
+    term=e.target.value;
+    const other=document.getElementById(e.target.id==='q'?'qm':'q');
+    if(other)other.value=term;
+    renderList();
+  }
+  if(e.target.id==='msg'){
+    e.target.style.height='44px';
+    e.target.style.height=Math.min(e.target.scrollHeight,120)+'px';
+  }
+});
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){ if(document.body.classList.contains('sheet-open'))closeSheet(); else if(isMobile()&&document.body.dataset.view==='thread')showList() }
+  if(e.key==='Enter'&&!e.shiftKey&&e.target.id==='msg'){ e.preventDefault(); send() }
+});
+
+window.addEventListener('popstate',()=>{ if(location.hash!=='#thread')showList() });
+window.addEventListener('resize',()=>{
+  if(!isMobile()&&document.body.dataset.view==='thread')document.body.dataset.view='list';
+  if(!isTablet())closeSheet();
+});
+
+if(location.hash==='#thread')history.replaceState(null,'','#');
+render();
+</script>
+</body>
+</html>
